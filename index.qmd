@@ -1,0 +1,22 @@
+---
+title: "Jennifer Lopes"
+toc: true # Adiciona um índice no relatório
+format: 
+    html: 
+      css: ["styles.css"] # Customização com css
+      toc: true
+      embed-resources: true
+      code-fold: false # code-fold: true para "ocultar" o bloco de códigos
+      code-tools: true  #code-tools: true para ativar ferramentas de interação com os códigos
+  #    number-sections: true # Número de seções/subseções
+#title-block-banner: "#D8BFD8" # Pode ser 'true', uma cor ou imagem
+code-annotations: hover # Para anotações em códigos
+---
+
+This is a Quarto website.
+
+To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+
+```{r}
+1 + 1
+```

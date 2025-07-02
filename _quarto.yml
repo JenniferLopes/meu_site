@@ -1,0 +1,19 @@
+project:
+  type: website
+
+website:
+  reader-mode: true
+  back-to-top-navigation: true
+  page-footer: 
+    center: Site by made with Quarto <https://quarto.org/docs/websites/> 
+  title: "Jennifer Luz Lopes"
+  navbar:
+    left:
+       - text: "Projetos"
+         href: Projeto1.qmd
+    right: 
+      - text: "Sobre mim"
+        href: about.qmd
+
+editor: visual
+
