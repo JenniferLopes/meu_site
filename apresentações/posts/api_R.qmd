@@ -1,0 +1,994 @@
+---
+title: "6. Consumo de APIs RESTful no R"
+subtitle: "Conectando seu código ao mundo dos dados"
+categories: [APIs, R, Web]
+image: imagens/api.png
+description: "Aprenda a consumir APIs RESTful e integrar dados externos aos seus projetos em R. É open use e compartilhe."
+format:
+  revealjs:
+    theme: simple
+    logo: "imagens/logo.png"
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes • Café com R"
+editor:
+  markdown:
+    wrap: 72
+---
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}
+
+## O que são APIs? {background-color="#E5D3B3"}
+
+**API = Application Programming Interface**
+
+Uma API é como um **garçom em um restaurante**:
+
+-   Você (seu código) faz um **pedido**
+-   O garçom (API) leva ao **cozinheiro** (servidor)
+-   Retorna com seu **prato** (dados)
+
+**Exemplos do dia a dia:**
+
+-   Previsão do tempo
+-   Cotação de moedas
+-   Dados do IBGE
+-   Twitter/X, GitHub, OpenAI
+-   Dados governamentais
+
+------------------------------------------------------------------------
+
+## Por que usar APIs? {background-color="#E5D3B3"}
+
+**Em vez de baixar arquivos manualmente:**
+
+``` r
+# ❌ Jeito manual (trabalhoso)
+# 1. Abrir navegador
+# 2. Baixar CSV
+# 3. Salvar em pasta
+# 4. Importar no R
+dados <- read.csv("dados_baixados.csv")
+```
+
+**Use APIs para automatizar:**
+
+``` r
+# ✅ Jeito automatizado
+library(httr2)
+resposta <- request("https://api.exemplo.com/dados") |>
+  req_perform()
+
+dados <- resp_body_json(resposta)
+```
+
+------------------------------------------------------------------------
+
+## REST: O padrão da web
+
+**REST = Representational State Transfer**
+
+**Princípios básicos:**
+
+1.  **URLs estruturadas** - Cada recurso tem um endereço único
+    -   `https://api.exemplo.com/usuarios`
+    -   `https://api.exemplo.com/usuarios/123`
+
+## REST: O padrão da web (continuação)
+
+2.  **Métodos HTTP** definem ações:
+    -   `GET` - Buscar dados
+    -   `POST` - Criar novo recurso
+    -   `PUT/PATCH` - Atualizar recurso
+    -   `DELETE` - Remover recurso
+
+## REST: O padrão da web (continuação)
+
+**Mais princípios:**
+
+3.  **Stateless** - Cada requisição é independente
+
+4.  **Formato JSON** - Dados estruturados e legíveis
+
+**Exemplo de URL REST:**
+
+```         
+GET https://api.loja.com/produtos/123
+GET https://api.loja.com/produtos?categoria=livros
+POST https://api.loja.com/produtos
+PUT https://api.loja.com/produtos/123
+DELETE https://api.loja.com/produtos/123
+```
+
+------------------------------------------------------------------------
+
+## Anatomia de uma requisição {background-color="#E5D3B3"}
+
+**Estrutura completa:**
+
+``` r
+requisicao <- request("https://api.exemplo.com/dados") |>
+  req_headers(
+    "Authorization" = "Bearer SEU_TOKEN",
+    "Content-Type" = "application/json"
+  ) |>
+  req_url_query(
+    limite = 100,
+    pagina = 1,
+    ordenar = "data_desc"
+  ) |>
+  req_body_json(list(
+    filtro = "ativo"
+  ))
+```
+
+------------------------------------------------------------------------
+
+## Anatomia de uma requisição (continuação)
+
+**Componentes:**
+
+-   **URL base** + **endpoint**
+    -   Base: `https://api.exemplo.com`
+    -   Endpoint: `/dados`
+-   **Headers** (cabeçalhos)
+    -   Autenticação, tipo de conteúdo
+
+## Anatomia de uma requisição (continuação)
+
+-   **Query parameters** (parâmetros)
+    -   Filtros, paginação, ordenação
+-   **Body** (corpo - para POST/PUT)
+    -   Dados a serem enviados
+
+------------------------------------------------------------------------
+
+## Pacotes para consumir APIs
+
+**Principais opções:**
+
+``` r
+# httr2 - Moderno e recomendado
+library(httr2)
+request("https://api.exemplo.com") |>
+  req_perform() |>
+  resp_body_json()
+
+# httr - Clássico (ainda usado)
+library(httr)
+GET("https://api.exemplo.com")
+
+# jsonlite - Para processar JSON
+library(jsonlite)
+fromJSON("dados.json")
+```
+
+**Recomendação: use `httr2` para projetos novos**
+
+------------------------------------------------------------------------
+
+## Seu primeiro GET request {background-color="#E5D3B3"}
+
+**API pública: JSONPlaceholder (para testes)**
+
+``` r
+library(httr2)
+
+# Fazer requisição
+resposta <- request("https://jsonplaceholder.typicode.com/users") |>
+  req_perform()
+
+# Ver status
+resp_status(resposta)  # 200 = sucesso
+
+# Extrair dados
+usuarios <- resp_body_json(resposta)
+```
+
+------------------------------------------------------------------------
+
+## Seu primeiro GET request (continuação)
+
+**Processar os dados:**
+
+``` r
+# Converter para data frame
+library(purrr)
+df_usuarios <- map_df(usuarios, as_tibble)
+
+head(df_usuarios)
+```
+
+**Resultado:** - Lista de usuários convertida em tibble - Pronto para
+análise!
+
+------------------------------------------------------------------------
+
+## Códigos de status HTTP
+
+**Entenda as respostas da API:**
+
+| Código  | Significado  | Descrição                         |
+|---------|--------------|-----------------------------------|
+| **200** | OK           | Sucesso! Dados retornados         |
+| **201** | Created      | Recurso criado com sucesso        |
+| **204** | No Content   | Sucesso, mas sem dados de retorno |
+| **400** | Bad Request  | Erro na sua requisição            |
+| **401** | Unauthorized | Autenticação necessária           |
+
+------------------------------------------------------------------------
+
+## Códigos de status HTTP (continuação)
+
+**Mais códigos importantes:**
+
+| Código  | Significado           | Descrição                      |
+|---------|-----------------------|--------------------------------|
+| **403** | Forbidden             | Sem permissão                  |
+| **404** | Not Found             | Recurso não existe             |
+| **429** | Too Many Requests     | Limite de requisições excedido |
+| **500** | Internal Server Error | Erro no servidor               |
+
+``` r
+# Verificar status
+resp_status(resposta)
+resp_status_desc(resposta)
+```
+
+------------------------------------------------------------------------
+
+## Trabalhando com JSON {background-color="#E5D3B3"}
+
+**JSON é o formato padrão de APIs REST:**
+
+``` json
+{
+  "id": 1,
+  "nome": "Ana Silva",
+  "email": "ana@exemplo.com",
+  "endereco": {
+    "rua": "Rua das Flores",
+    "cidade": "São Paulo"
+  },
+  "hobbies": ["leitura", "corrida"]
+}
+```
+
+------------------------------------------------------------------------
+
+## Trabalhando com JSON (continuação)
+
+**Processar no R:**
+
+``` r
+# Extrair JSON da resposta
+dados <- resp_body_json(resposta)
+
+# Acessar campos
+dados$nome
+dados$endereco$cidade
+dados$hobbies[[1]]
+
+# Converter lista complexa em data frame
+library(tidyr)
+df <- unnest_wider(as_tibble(dados), everything())
+```
+
+------------------------------------------------------------------------
+
+## Autenticação: API Keys
+
+**Muitas APIs exigem identificação:**
+
+``` r
+# NUNCA coloque tokens diretamente no código!
+# ❌ ERRADO
+api_key <- "abc123token456"
+
+# ✅ CORRETO: use variáveis de ambiente
+# No arquivo .Renviron:
+# API_KEY=abc123token456
+
+# No código:
+api_key <- Sys.getenv("API_KEY")
+```
+
+------------------------------------------------------------------------
+
+## Autenticação: API Keys (continuação)
+
+**Usar a chave nas requisições:**
+
+``` r
+requisicao <- request("https://api.exemplo.com/dados") |>
+  req_headers(
+    "Authorization" = paste("Bearer", api_key)
+  ) |>
+  req_perform()
+```
+
+**Configurar .Renviron:**
+
+``` r
+# Abrir arquivo
+usethis::edit_r_environ()
+
+# Adicionar:
+API_KEY=seu_token_aqui
+
+# Reiniciar R
+```
+
+------------------------------------------------------------------------
+
+## Parâmetros de consulta {background-color="#E5D3B3"}
+
+**Filtrar e personalizar resultados:**
+
+``` r
+# URL final: 
+# https://api.exemplo.com/produtos?categoria=eletronicos&limite=50
+
+request("https://api.exemplo.com/produtos") |>
+  req_url_query(
+    categoria = "eletronicos",
+    limite = 50,
+    ordem = "preco",
+    desconto = TRUE
+  ) |>
+  req_perform()
+```
+
+------------------------------------------------------------------------
+
+## Parâmetros de consulta (continuação)
+
+**Parâmetros dinâmicos:**
+
+``` r
+# Criar lista de filtros
+filtros <- list(
+  categoria = "eletronicos",
+  preco_max = 1000,
+  em_estoque = TRUE
+)
+
+# Usar com !!!
+request("https://api.exemplo.com/produtos") |>
+  req_url_query(!!!filtros) |>
+  req_perform()
+```
+
+------------------------------------------------------------------------
+
+## Paginação de resultados
+
+**APIs limitam quantidade de dados por requisição:**
+
+``` r
+buscar_todos_usuarios <- function(url_base) {
+  todos_dados <- list()
+  pagina <- 1
+  
+  repeat {
+    cat("Buscando página", pagina, "\n")
+    
+    resposta <- request(url_base) |>
+      req_url_query(
+        pagina = pagina,
+        limite = 100
+      ) |>
+      req_perform()
+    
+    dados <- resp_body_json(resposta)
+```
+
+------------------------------------------------------------------------
+
+## Paginação de resultados (continuação)
+
+``` r
+    # Parar se não houver mais dados
+    if (length(dados) == 0) break
+    
+    todos_dados <- c(todos_dados, dados)
+    pagina <- pagina + 1
+    
+    # Respeitar rate limits
+    Sys.sleep(1)
+  }
+  
+  return(todos_dados)
+}
+```
+
+------------------------------------------------------------------------
+
+## POST: Enviando dados {background-color="#E5D3B3"}
+
+**Criar novos recursos na API:**
+
+``` r
+# Dados a enviar
+novo_usuario <- list(
+  nome = "Carlos Santos",
+  email = "carlos@exemplo.com",
+  idade = 28
+)
+
+# POST request
+resposta <- request("https://api.exemplo.com/usuarios") |>
+  req_method("POST") |>
+  req_headers(
+    "Authorization" = paste("Bearer", api_key),
+    "Content-Type" = "application/json"
+  ) |>
+  req_body_json(novo_usuario) |>
+  req_perform()
+```
+
+------------------------------------------------------------------------
+
+## POST: Enviando dados (continuação)
+
+**Verificar o resultado:**
+
+``` r
+# Verificar sucesso
+resp_status(resposta)  # Deve ser 201
+
+# Ver recurso criado
+usuario_criado <- resp_body_json(resposta)
+usuario_criado$id
+```
+
+**Dica:** Status 201 (Created) indica que o recurso foi criado com
+sucesso!
+
+------------------------------------------------------------------------
+
+## Tratamento de erros
+
+**APIs podem falhar - esteja preparado:**
+
+``` r
+buscar_dados_seguro <- function(url) {
+  tryCatch({
+    resposta <- request(url) |>
+      req_retry(max_tries = 3) |>  # Tentar 3 vezes
+      req_timeout(30) |>            # Timeout de 30s
+      req_perform()
+    
+    # Verificar status
+    if (resp_status(resposta) != 200) {
+      stop("Erro na API: ", resp_status_desc(resposta))
+    }
+    
+    return(resp_body_json(resposta))
+```
+
+------------------------------------------------------------------------
+
+## Tratamento de erros (continuação)
+
+``` r
+  }, error = function(e) {
+    warning("Erro ao buscar dados: ", e$message)
+    return(NULL)
+  })
+}
+
+# Uso
+dados <- buscar_dados_seguro("https://api.exemplo.com/dados")
+
+if (!is.null(dados)) {
+  # Processar dados
+}
+```
+
+------------------------------------------------------------------------
+
+## Rate Limits {background-color="#E5D3B3"}
+
+**APIs limitam número de requisições:**
+
+::: callout-caution
+## Atenção aos limites
+
+**Exemplos comuns:** - 100 requisições por hora - 1000 requisições por
+dia - 10 requisições por minuto
+:::
+
+``` r
+# Função com controle de taxa
+buscar_com_limite <- function(urls, delay = 1) {
+  resultados <- list()
+  
+  for (i in seq_along(urls)) {
+    cat("Processando", i, "de", length(urls), "\n")
+```
+
+------------------------------------------------------------------------
+
+## Rate Limits (continuação)
+
+``` r
+    resultados[[i]] <- request(urls[i]) |>
+      req_perform() |>
+      resp_body_json()
+    
+    # Aguardar entre requisições
+    if (i < length(urls)) {
+      Sys.sleep(delay)
+    }
+  }
+  
+  return(resultados)
+}
+```
+
+**Dica:** Sempre respeite os limites para não ser bloqueado!
+
+------------------------------------------------------------------------
+
+## Exemplo prático: API do IBGE
+
+**Buscar municípios brasileiros:**
+
+``` r
+library(httr2)
+library(dplyr)
+
+# Buscar todos municípios
+url <- "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+
+resposta <- request(url) |>
+  req_perform()
+
+municipios <- resp_body_json(resposta)
+```
+
+------------------------------------------------------------------------
+
+## Exemplo prático: API do IBGE (continuação)
+
+**Processar os dados:**
+
+``` r
+# Converter para data frame
+df_municipios <- map_df(municipios, function(m) {
+  tibble(
+    id = m$id,
+    nome = m$nome,
+    uf = m$microrregiao$mesorregiao$UF$sigla,
+    regiao = m$microrregiao$mesorregiao$UF$regiao$nome
+  )
+})
+
+# Análise
+df_municipios |>
+  count(uf, sort = TRUE) |>
+  head(10)
+```
+
+------------------------------------------------------------------------
+
+## Exemplo prático: ViaCEP {background-color="#E5D3B3"}
+
+**Buscar endereço por CEP:**
+
+``` r
+buscar_cep <- function(cep) {
+  # Limpar CEP
+  cep_limpo <- gsub("[^0-9]", "", cep)
+  
+  # Validar
+  if (nchar(cep_limpo) != 8) {
+    stop("CEP deve ter 8 dígitos")
+  }
+  
+  # Buscar
+  url <- paste0("https://viacep.com.br/ws/", cep_limpo, "/json/")
+  
+  resposta <- request(url) |>
+    req_perform()
+```
+
+------------------------------------------------------------------------
+
+## Exemplo prático: ViaCEP (continuação)
+
+``` r
+  dados <- resp_body_json(resposta)
+  
+  # Verificar se encontrou
+  if (!is.null(dados$erro)) {
+    warning("CEP não encontrado")
+    return(NULL)
+  }
+  
+  return(as_tibble(dados))
+}
+
+# Uso
+endereco <- buscar_cep("01310-100")
+endereco$logradouro
+endereco$bairro
+endereco$localidade
+```
+
+------------------------------------------------------------------------
+
+## Exemplo: API do GitHub
+
+**Buscar repositórios de um usuário:**
+
+``` r
+buscar_repos_github <- function(usuario) {
+  url <- paste0("https://api.github.com/users/", usuario, "/repos")
+  
+  resposta <- request(url) |>
+    req_headers(
+      "User-Agent" = "R-httr2",
+      "Accept" = "application/vnd.github.v3+json"
+    ) |>
+    req_url_query(
+      sort = "updated",
+      per_page = 100
+    ) |>
+    req_perform()
+```
+
+------------------------------------------------------------------------
+
+## Exemplo: API do GitHub (continuação)
+
+``` r
+  repos <- resp_body_json(resposta)
+  
+  # Extrair informações relevantes
+  map_df(repos, function(r) {
+    tibble(
+      nome = r$name,
+      descricao = r$description %||% NA,
+      linguagem = r$language %||% NA,
+      stars = r$stargazers_count,
+      forks = r$forks_count,
+      atualizado = r$updated_at
+    )
+  })
+}
+
+# Uso
+meus_repos <- buscar_repos_github("hadley")
+```
+
+------------------------------------------------------------------------
+
+## Boas práticas {background-color="#E5D3B3"}
+
+**1. Segurança**
+
+-   Use HTTPS sempre
+
+-   Nunca commite tokens
+
+-   Rotacione credenciais
+
+**2. Performance**
+
+-   Cache resultados quando possível
+
+-   Respeite rate limits
+
+-   Use paginação
+
+------------------------------------------------------------------------
+
+## Boas práticas (continuação)
+
+**3. Confiabilidade**
+
+-   Trate erros graciosamente
+
+-   Implemente retry lógico
+
+-   Valide dados recebidos
+
+**4. Manutenibilidade**
+
+-   Documente endpoints
+
+-   Organize seu código
+
+-   Escreva testes
+
+## Boas práticas (continuação)
+
+``` r
+# Cache simples
+cache_api <- memoise::memoise(
+  function(url) {
+    request(url) |> req_perform() |> resp_body_json()
+  }
+)
+```
+
+------------------------------------------------------------------------
+
+## APIs do governo brasileiro {background-color="#E5D3B3"}
+
+**Recursos públicos disponíveis:**
+
+**1. IBGE** - Dados geográficos e estatísticos -
+<https://servicodados.ibge.gov.br/api/docs>
+
+**2. Banco Central** - Indicadores econômicos -
+<https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/>
+
+**3. Portal da Transparência** -
+<http://www.transparencia.gov.br/api-de-dados>
+
+------------------------------------------------------------------------
+
+## APIs do governo brasileiro (continuação)
+
+**4. Dados Abertos do Governo** - <https://dados.gov.br/>
+
+**5. TSE** - Dados eleitorais - <https://dadosabertos.tse.jus.br/>
+
+------------------------------------------------------------------------
+
+## Recursos e documentação
+
+**Documentação de APIs:**
+
+-   **Swagger/OpenAPI** - Padrão para documentar APIs REST
+-   **Postman** - Testar requisições antes de codificar
+-   **curl converter** - Converter comandos curl para httr2
+
+**Conversor curl para httr2:** <https://curlconverter.com/r/>
+
+------------------------------------------------------------------------
+
+## Pacotes úteis
+
+**Processamento:**
+
+``` r
+library(jsonlite)    # JSON
+library(xml2)        # XML
+library(rvest)       # Web scraping
+```
+
+**Utilitários:**
+
+``` r
+library(memoise)     # Cache
+library(progress)    # Barra de progresso
+library(polite)      # Web scraping ético
+```
+
+------------------------------------------------------------------------
+
+## Depuração de requisições
+
+**Entenda o que está acontecendo:**
+
+``` r
+# 1. Ver requisição completa
+req <- request("https://api.exemplo.com/dados") |>
+  req_headers("Authorization" = "Bearer TOKEN")
+
+# Ver detalhes antes de executar
+req_dry_run(req)
+
+# 2. Capturar respostas
+resposta <- req |>
+  req_perform()
+
+# Ver corpo completo
+resp_body_string(resposta)
+```
+
+------------------------------------------------------------------------
+
+## Depuração de requisições (continuação)
+
+``` r
+# Ver headers
+resp_headers(resposta)
+
+# 3. Modo verbose para debug
+resposta <- req |>
+  req_verbose() |>  # Mostra toda comunicação
+  req_perform()
+```
+
+**Dica:** Use `req_dry_run()` para testar sem fazer a requisição real!
+
+------------------------------------------------------------------------
+
+## Criando sua própria API {background-color="#E5D3B3"}
+
+**Com plumber - transforme funções R em API:**
+
+``` r
+library(plumber)
+
+# arquivo api.R
+#* @apiTitle Minha API de Análise
+#* @apiDescription API para análises estatísticas
+
+#* Calcular média
+#* @param valores Lista de números separados por vírgula
+#* @get /media
+function(valores) {
+  nums <- as.numeric(strsplit(valores, ",")[[1]])
+  mean(nums, na.rm = TRUE)
+}
+```
+
+------------------------------------------------------------------------
+
+## Criando sua própria API (continuação)
+
+``` r
+#* Testar normalidade
+#* @param valores Lista de números separados por vírgula
+#* @post /normalidade
+function(valores) {
+  nums <- as.numeric(strsplit(valores, ",")[[1]])
+  teste <- shapiro.test(nums)
+  list(
+    estatistica = teste$statistic,
+    p_valor = teste$p.value
+  )
+}
+
+# Iniciar servidor
+# plumber::plumb("api.R")$run(port = 8000)
+```
+
+------------------------------------------------------------------------
+
+## Resumo: Jornada com APIs {background-color="#E5D3B3"}
+
+**O que você aprendeu:**
+
+1.  **Fundamentos** - REST, HTTP, JSON
+2.  **Requisições** - GET, POST, autenticação
+3.  **Tratamento** - Erros, paginação, rate limits
+4.  **Práticas** - Segurança, cache
+5.  **Exemplos** - APIs reais (IBGE, ViaCEP, GitHub)
+
+------------------------------------------------------------------------
+
+## Resumo: Jornada com APIs (continuação)
+
+**Próximos passos:**
+
+1.  Escolha uma API de interesse
+2.  Leia a documentação
+3.  Crie funções para consultas
+4.  Automatize análises
+5.  Compartilhe seu código
+
+**Lembre-se:** APIs são portas para um mundo de dados!
+
+------------------------------------------------------------------------
+
+## Recursos para aprender mais
+
+**Documentação:**
+
+1.  **httr2** - <https://httr2.r-lib.org/>
+2.  **Plumber** - <https://www.rplumber.io/>
+3.  **HTTP Cats** (códigos de status com gatinhos!)
+    -   <https://http.cat/>
+
+**Tutoriais:**
+
+1.  Wickham, H. **Web APIs with httr2**
+    -   <https://httr2.r-lib.org/articles/>
+
+------------------------------------------------------------------------
+
+## Recursos para aprender mais (continuação)
+
+2.  **An Introduction to APIs** (Zapier)
+    -   <https://zapier.com/resources/guides/apis>
+3.  **REST API Tutorial**
+    -   <https://restfulapi.net/>
+
+**APIs para praticar:**
+
+-   JSONPlaceholder: <https://jsonplaceholder.typicode.com/>
+-   Public APIs List: <https://github.com/public-apis/public-apis>
+
+------------------------------------------------------------------------
+
+## Referências
+
+**Livros e Guias:**
+
+1.  Wickham, H. (2024). **httr2: Tools for HTTP**. R package.
+    <https://httr2.r-lib.org/>
+
+2.  Trost, J., & Richardson, E. (2022). **Plumber: An API Generator for
+    R**. <https://www.rplumber.io/>
+
+3.  Fielding, R. T. (2000). **Architectural Styles and the Design of
+    Network-based Software Architectures**. Doctoral dissertation.
+
+------------------------------------------------------------------------
+
+## Referências (continuação)
+
+4.  Mozilla Developer Network. **HTTP Methods**.
+    <https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods>
+
+**Slides criados com Quarto**
+
+<https://quarto.org/>
+
+<https://quarto.org/docs/presentations/revealjs/>
+
+------------------------------------------------------------------------
+
+## Boas APIs começam com boas requisições! {background-color="#E5D3B3"}
+
+#### Explore, automatize e integre dados externos aos seus projetos!
+
+``` r
+# Seu primeiro passo
+library(httr2)
+
+request("https://api.exemplo.com/dados") |>
+  req_perform() |>
+  resp_body_json()
+
+# O mundo de dados aguarda você!
+```
+
+**Dúvidas? Compartilhe suas experiências com APIs!**
+
+## Muito obrigada!
+
+Esta apresentação é parte do projeto **Café com R**
+
+**É OPEN, USE, COMPARTILHE!**
+
+Perguntas? Dúvidas? Sugestões?
+
+**Próximo passo**: Abra seu RStudio e comece a praticar!
+
+![](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/main/rstats-artwork/welcome_to_rstats_twitter.png){fig-align="center"
+width="40%"}
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}
+
+##  {background-color="#E5D3B3"}

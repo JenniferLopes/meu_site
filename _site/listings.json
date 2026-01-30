@@ -1,0 +1,51 @@
+[
+  {
+    "listing": "/apresentações/index.html",
+    "items": [
+      "/apresentações/posts/para_2026.html",
+      "/apresentações/posts/guia_inicial.html",
+      "/apresentações/posts/funções_jeni.html",
+      "/apresentações/posts/manipulacao.html",
+      "/apresentações/posts/visualizacao.html",
+      "/apresentações/posts/sql.html",
+      "/apresentações/posts/sql_comandos.html",
+      "/apresentações/posts/api_R.html",
+      "/apresentações/posts/tidymodels.html",
+      "/apresentações/posts/tidymodels_documentacao.html",
+      "/apresentações/posts/estatistica_basica.html",
+      "/apresentações/posts/apresentacao_tidy_eda.html",
+      "/apresentações/posts/apresentacao_r_python.html"
+    ]
+  },
+  {
+    "listing": "/cafecomr/index.html",
+    "items": [
+      "/cafecomr/posts/06_01_dose6.html",
+      "/cafecomr/posts/09_12_dose5.html",
+      "/cafecomr/posts/02_12_dose4.html",
+      "/cafecomr/posts/25_11_dose3.html",
+      "/cafecomr/posts/18_11-resenhalivro.html",
+      "/cafecomr/posts/13_11_R_AI.html",
+      "/cafecomr/posts/eventos.html",
+      "/cafecomr/posts/10_11_dose1.html"
+    ]
+  },
+  {
+    "listing": "/projetos/index.html",
+    "items": [
+      "/projetos/posts/2025-12-12-bigquery_pam.html",
+      "/projetos/posts/2025-12-12-desmatamento.html",
+      "/projetos/posts/2025-12-12-machine_rice.html",
+      "/projetos/posts/2025-12-01-curso positron.html",
+      "/projetos/posts/2025-12-01-gerenciamento_projetos.html",
+      "/projetos/posts/2025-11-02-grade_curso.html",
+      "/projetos/posts/2025-11-02-analise-experimental.html",
+      "/projetos/posts/2025-11-02-automacao_analise-experimental.html",
+      "/projetos/posts/2025-11-02-livro.html",
+      "/projetos/posts/2025-11-02-pacote_Collect _data.html",
+      "/projetos/posts/2025-11-02-pacote_expReport.html",
+      "/projetos/posts/2025-11-02-Doutorado.html",
+      "/projetos/posts/2024_sigm.html"
+    ]
+  }
+]

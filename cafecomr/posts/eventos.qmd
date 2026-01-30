@@ -1,0 +1,28 @@
+---
+title: "Eventos da Comunidade R"
+subtitle: "2025 | 2026"
+author: "Jennifer Luz Lopes"
+date: "2025-11-13"
+categories: [Eventos]
+image: ../imagens/eventos.png
+image-alt: ""
+description: "Em atualização sempre"
+---
+
+> Fique por dentro dos eventos, cursos e muito mais da comunidade R! <br>
+
+| Evento | Data | Formato | Link |
+|--------------|--------------|--------------|-----------------------------|
+| R/Pharma 2025 | 3-7 novembro 2025 | Online | <https://rinpharma.com/docs/RPH2025/> |
+| R+AI | 12-13 novembro 2025 | Online (Pago) | <https://r-consortium.org/posts/r_plus_ai_call_for_proposals/> |
+| **Evento R-Ladies Goiânia** | 29 novembro | Online | <https://www.meetup.com/rladies-goiania/> |
+| LatinR 2025 | 1-5 dezembro 2025 | Online | <https://latinr.org/en/> |
+
+# 2026
+
+| Evento | Data | Formato | Link |
+|---------------|---------------|---------------|--------------------------|
+| **R!sk 2026** | 18-19 | Online | <https://rconsortium.github.io/Risk_website/> |
+| **rainbowR Conference** | 25-26 fevereiro 2026 | Online | <https://conference.rainbowr.org/> |
+| **R/Medicine 2026** | 4-8 maio 2026 | Online | <https://rconsortium.github.io/RMedicine_website/> |
+| **Posit::conf(2026)** | 14-16 setembro 2026 | Presencial (Houston, USA) | <https://posit.co> |

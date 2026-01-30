@@ -1,0 +1,784 @@
+---
+title: "4. Visualização de Dados com ggplot2"
+subtitle: "Criando gráficos elegantes com o dataset CO2"
+description: "Aprenda a criar visualizações no R com ggplot2. É open use e compartilhe"
+categories: ["R", "ggplot2", "Visualização", "Tidyverse"]
+image: "imagens/visualizacao.png"
+
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    logo: "imagens/logo.png"
+    preview-links: auto
+    css: "estilo_jeni.css"
+    footer: "Jennifer Lopes • Café com R"
+
+editor:
+  markdown:
+    wrap: 72
+---
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}
+
+## Introdução à visualização de dados no R {background-color="#E5D3B3"}
+
+Visualização é a arte de contar histórias com dados.\
+O pacote **ggplot2** é a ferramenta mais poderosa para isso no R.
+
+![**Allison Horst.**](imagens/ggplot.png){fig-align="center"
+width="517"}
+
+## Introdução à visualização de dados no R {background-color="#E5D3B3"}
+
+**Você aprenderá:**
+
+-   Gramática de gráficos (Grammar of Graphics)
+-   Componentes essenciais do ggplot2
+-   Tipos de gráficos e suas aplicações
+-   Customização avançada
+-   Melhores práticas de visualização
+
+------------------------------------------------------------------------
+
+## Por que ggplot2? {background-color="#E5D3B3"}
+
+**Vantagens:**
+
+-   Sistema coerente e intuitivo
+-   Gráficos de alta qualidade
+-   Customização ilimitada
+-   Integração perfeita com tidyverse
+-   Comunidade ativa e recursos abundantes
+
+**Filosofia:** construir gráficos em camadas
+
+------------------------------------------------------------------------
+
+## Carregando pacotes e dados
+
+```{r echo=TRUE, eval=TRUE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tibble)
+
+# Carregando dados
+data(CO2)
+CO2 <- CO2 |> as_tibble()
+
+# Definindo paleta de cores
+cores <- c("#224573", "#6B4F4F", "#4A6FA5", "#E5D3B3")
+```
+
+------------------------------------------------------------------------
+
+## O dataset CO2: revisão rápida
+
+```{r echo=TRUE, eval=TRUE}
+glimpse(CO2)
+```
+
+**84 observações** de absorção de CO₂ em plantas de Quebec e
+Mississippi, sob diferentes tratamentos.
+
+------------------------------------------------------------------------
+
+## Gramática de Gráficos {background-color="#E5D3B3"}
+
+Todo gráfico no ggplot2 tem três componentes essenciais:
+
+1.  **Data**: os dados a serem visualizados
+2.  **Aesthetics (aes)**: mapeamento de variáveis para propriedades
+    visuais
+3.  **Geometries (geom)**: tipo de representação visual
+
+**Estrutura básica:**
+
+``` r
+ggplot(data = dados, aes(x = var_x, y = var_y)) +
+  geom_point()
+```
+
+------------------------------------------------------------------------
+
+## Primeiro gráfico: scatter plot
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake)) +
+  geom_point()
+```
+
+------------------------------------------------------------------------
+
+## Adicionando cor por grupo
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("#224573", "#6B4F4F"))
+```
+
+------------------------------------------------------------------------
+
+## Adicionando títulos e labels {background-color="#E5D3B3"}
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  labs(
+    title = "Absorção de CO₂ por Concentração",
+    x = "Concentração de CO₂ (mL/L)",
+    y = "Absorção de CO₂ (μmol/m²·s)",
+    color = "Tipo de Planta"
+  )
+```
+
+------------------------------------------------------------------------
+
+## Aesthetics: mapeamentos visuais
+
+**Principais aesthetics:**
+
+-   `x`, `y`: posição nos eixos
+-   `color`: cor de pontos/linhas
+-   `fill`: preenchimento de áreas
+-   `size`: tamanho
+-   `shape`: forma dos pontos
+-   `alpha`: transparência
+-   `linetype`: tipo de linha
+
+------------------------------------------------------------------------
+
+## Exemplo: múltiplos aesthetics
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, 
+                color = Type, shape = Treatment)) +
+  geom_point(size = 3, alpha = 0.7) +
+  scale_color_manual(values = c("#224573", "#6B4F4F"))
+```
+
+------------------------------------------------------------------------
+
+## Geometrias: geom_point() {background-color="#E5D3B3"}
+
+**Scatter plots** mostram relação entre duas variáveis contínuas.
+
+**Quando usar:**
+
+-   Correlações
+-   Distribuições bivariadas
+-   Identificar outliers
+-   Padrões e tendências
+
+**Customização:** `size`, `shape`, `alpha`, `color`
+
+------------------------------------------------------------------------
+
+## Geometrias: geom_line()
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, 
+                color = Plant, group = Plant)) +
+  geom_line(linewidth = 1, alpha = 0.7) +
+  scale_color_manual(values = rep(cores, length.out = 12))
+```
+
+------------------------------------------------------------------------
+
+## Combinando geometrias
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(size = 2, alpha = 0.6) +
+  geom_smooth(method = "loess", se = TRUE, linewidth = 1.5) +
+  scale_color_manual(values = c("#224573", "#6B4F4F"))
+```
+
+------------------------------------------------------------------------
+
+## geom_smooth(): tendências {background-color="#E5D3B3"}
+
+**Métodos disponíveis:**
+
+-   `"loess"`: suavização local (padrão para n \< 1000)
+-   `"lm"`: regressão linear
+-   `"glm"`: modelos lineares generalizados
+-   `"gam"`: modelos aditivos generalizados
+
+**Parâmetros:**
+
+-   `se`: mostrar intervalo de confiança
+-   `method`: método de ajuste
+-   `formula`: fórmula customizada
+
+------------------------------------------------------------------------
+
+## Gráfico de barras: geom_col()
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+CO2 |>
+  group_by(Type, Treatment) |>
+  summarise(media = mean(uptake), .groups = "drop") |>
+  ggplot(aes(x = Type, y = media, fill = Treatment)) +
+  geom_col(position = "dodge", width = 0.7) +
+  scale_fill_manual(values = c("#224573", "#6B4F4F"))
+```
+
+------------------------------------------------------------------------
+
+## Adicionando barras de erro
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+CO2 |>
+  group_by(Type, Treatment) |>
+  summarise(media = mean(uptake), se = sd(uptake)/sqrt(n()), 
+            .groups = "drop") |>
+  ggplot(aes(x = Type, y = media, fill = Treatment)) +
+  geom_col(position = position_dodge(0.7), width = 0.6) +
+  geom_errorbar(aes(ymin = media - se, ymax = media + se),
+                position = position_dodge(0.7), width = 0.2) +
+  scale_fill_manual(values = c("#224573", "#6B4F4F"))
+```
+
+------------------------------------------------------------------------
+
+## Boxplots: distribuições {background-color="#E5D3B3"}
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = Type, y = uptake, fill = Type)) +
+  geom_boxplot(alpha = 0.7, outlier.color = "#6B4F4F", 
+               outlier.size = 3) +
+  scale_fill_manual(values = c("#224573", "#4A6FA5")) +
+  labs(title = "Distribuição da Absorção de CO₂",
+       x = "Tipo de Planta", y = "Absorção")
+```
+
+------------------------------------------------------------------------
+
+## Violin plots: densidade
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = Type, y = uptake, fill = Type)) +
+  geom_violin(alpha = 0.7, trim = FALSE) +
+  geom_boxplot(width = 0.2, fill = "white", alpha = 0.8) +
+  scale_fill_manual(values = c("#224573", "#4A6FA5")) +
+  labs(title = "Distribuição Detalhada da Absorção")
+```
+
+------------------------------------------------------------------------
+
+## Comparando boxplot e violin {background-color="#E5D3B3"}
+
+**Boxplot:**
+
+-   Quartis e mediana
+-   Outliers claramente marcados
+-   Compacto e claro
+
+**Violin plot:**
+
+-   Densidade completa da distribuição
+-   Mostra bimodalidade
+-   Mais informativo, mas requer mais espaço
+
+------------------------------------------------------------------------
+
+## Facetas: facet_wrap()
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~Treatment, ncol = 2) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  labs(title = "Efeito do Tratamento na Absorção")
+```
+
+------------------------------------------------------------------------
+
+## Facetas: facet_grid()
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake)) +
+  geom_point(color = "#224573", size = 2) +
+  geom_smooth(method = "lm", color = "#6B4F4F") +
+  facet_grid(Type ~ Treatment) +
+  labs(title = "Absorção: Tipo x Tratamento")
+```
+
+------------------------------------------------------------------------
+
+## Diferença: wrap x grid {background-color="#E5D3B3"}
+
+**facet_wrap():**
+
+-   Uma variável de agrupamento
+-   Layout flexível (controle de colunas)
+-   Melhor para muitos níveis
+
+**facet_grid():**
+
+-   Duas variáveis (linhas e colunas)
+-   Grid estruturado
+-   Facilita comparações cruzadas
+
+------------------------------------------------------------------------
+
+## Histogramas: distribuição univariada
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = uptake, fill = Type)) +
+  geom_histogram(bins = 15, alpha = 0.7, 
+                 position = "identity") +
+  scale_fill_manual(values = c("#224573", "#4A6FA5")) +
+  labs(title = "Distribuição da Absorção de CO₂",
+       x = "Absorção", y = "Frequência")
+```
+
+------------------------------------------------------------------------
+
+## Densidade: curvas suaves
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = uptake, fill = Type, color = Type)) +
+  geom_density(alpha = 0.5, linewidth = 1.2) +
+  scale_fill_manual(values = c("#224573", "#4A6FA5")) +
+  scale_color_manual(values = c("#224573", "#4A6FA5")) +
+  labs(title = "Curvas de Densidade da Absorção")
+```
+
+------------------------------------------------------------------------
+
+## Temas: personalizando aparência {background-color="#E5D3B3"}
+
+**Temas prontos:**
+
+-   `theme_bw()`: fundo branco com grid
+-   `theme_minimal()`: minimalista
+-   `theme_classic()`: clássico (sem grid)
+-   `theme_dark()`: fundo escuro
+-   `theme_void()`: sem elementos
+
+------------------------------------------------------------------------
+
+## Aplicando temas
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  theme_classic() +
+  labs(title = "Absorção com theme_classic()")
+```
+
+------------------------------------------------------------------------
+
+## Customização avançada de tema
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=4.5}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", 
+                              color = "#224573"),
+    axis.title = element_text(size = 12, color = "#224573"),
+    legend.position = "top",
+    panel.grid.minor = element_blank())
+```
+
+------------------------------------------------------------------------
+
+## Escalas de cores: manuais {background-color="#E5D3B3"}
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = Type, y = uptake, fill = Treatment)) +
+  geom_boxplot(alpha = 0.8) +
+  scale_fill_manual(
+    values = c("nonchilled" = "#4A6FA5", "chilled" = "#6B4F4F"),
+    labels = c("Não Resfriado", "Resfriado")) +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Escalas de cores: gradientes
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+CO2 |>
+  group_by(Plant) |>
+  summarise(media = mean(uptake)) |>
+  ggplot(aes(x = Plant, y = media, fill = media)) +
+  geom_col() +
+  scale_fill_gradient(low = "#E5D3B3", high = "#224573") +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Jitter: evitando sobreposição
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = Type, y = uptake, color = Type)) +
+  geom_jitter(width = 0.2, alpha = 0.6, size = 2.5) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  theme_classic() +
+  labs(title = "Pontos com Jitter")
+```
+
+------------------------------------------------------------------------
+
+## Combinando boxplot e jitter {background-color="#E5D3B3"}
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = Treatment, y = uptake, fill = Type)) +
+  geom_boxplot(alpha = 0.6, outlier.shape = NA) +
+  geom_jitter(aes(color = Type), width = 0.15, 
+              alpha = 0.5, size = 2) +
+  scale_fill_manual(values = c("#224573", "#4A6FA5")) +
+  scale_color_manual(values = c("#224573", "#4A6FA5")) +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Anotações: adicionar texto
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE) +
+  annotate("text", x = 600, y = 45, 
+           label = "Tendência linear", 
+           color = "#224573", size = 5) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Coordenadas: transformações
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = Type, y = uptake, fill = Type)) +
+  geom_boxplot(alpha = 0.7) +
+  coord_flip() +
+  scale_fill_manual(values = c("#224573", "#4A6FA5")) +
+  theme_classic() +
+  labs(title = "Boxplot Horizontal")
+```
+
+------------------------------------------------------------------------
+
+## Limites dos eixos {background-color="#E5D3B3"}
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  coord_cartesian(xlim = c(200, 800), ylim = c(15, 45)) +
+  theme_classic() +
+  labs(title = "Zoom: 200-800 mL/L")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de linhas por planta
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake, 
+                color = Plant, group = Plant)) +
+  geom_line(linewidth = 0.8, alpha = 0.6) +
+  facet_wrap(~Type) +
+  scale_color_manual(values = rep(cores, length.out = 12)) +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+------------------------------------------------------------------------
+
+## Heatmap: tabela de médias
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+CO2 |>
+  mutate(conc_cat = cut(conc, breaks = 5)) |>
+  group_by(Type, Treatment, conc_cat) |>
+  summarise(media = mean(uptake), .groups = "drop") |>
+  ggplot(aes(x = conc_cat, y = interaction(Type, Treatment), 
+             fill = media)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "#E5D3B3", high = "#224573") +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de pontos com médias {background-color="#E5D3B3"}
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = Treatment, y = uptake, color = Type)) +
+  geom_jitter(width = 0.2, alpha = 0.4, size = 2) +
+  stat_summary(fun = mean, geom = "point", 
+               size = 5, shape = 18) +
+  stat_summary(fun = mean, geom = "line", 
+               aes(group = Type), linewidth = 1) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Gráfico complexo: multiple layers
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+ggplot(CO2, aes(x = conc, y = uptake)) +
+  geom_point(aes(color = Type), size = 2, alpha = 0.5) +
+  geom_smooth(method = "loess", color = "#224573", 
+              fill = "#E5D3B3", alpha = 0.3) +
+  facet_wrap(~Treatment) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  theme_classic() +
+  labs(title = "Análise Completa: Absorção por Concentração",
+       x = "Concentração de CO₂ (mL/L)",
+       y = "Absorção de CO₂ (μmol/m²·s)")
+```
+
+------------------------------------------------------------------------
+
+## Salvando gráficos
+
+``` r
+# Criar gráfico
+p <- ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  theme_classic()
+
+# Salvar
+ggsave("meu_grafico.png", p, 
+       width = 10, height = 6, dpi = 300)
+```
+
+**Formatos:** PNG, PDF, SVG, JPEG
+
+------------------------------------------------------------------------
+
+## Melhores práticas {background-color="#E5D3B3"}
+
+**Do's:**
+
+-   Use títulos descritivos e informativos
+-   Sempre rotule eixos com unidades
+-   Escolha cores acessíveis
+-   Mantenha simplicidade quando possível
+-   Use legenda quando necessário
+
+## Melhores práticas {background-color="#E5D3B3"}
+
+**Don'ts:**
+
+-   Não sobrecarregue com informação
+-   Evite 3D desnecessário
+-   Não use muitas cores diferentes
+-   Evite eixos cortados sem motivo
+
+------------------------------------------------------------------------
+
+## Gráfico para publicação
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=5}
+CO2 |>
+  group_by(Type, Treatment) |>
+  summarise(media = mean(uptake), se = sd(uptake)/sqrt(n()), 
+            .groups = "drop") |>
+  ggplot(aes(x = Type, y = media, fill = Treatment)) +
+  geom_col(position = position_dodge(0.8), width = 0.7) +
+  geom_errorbar(aes(ymin = media - se, ymax = media + se),
+                position = position_dodge(0.8), width = 0.25) +
+  scale_fill_manual(values = c("#224573", "#6B4F4F"),
+                    labels = c("Resfriado", "Não Resfriado")) +
+  theme_minimal(base_size = 14) +
+  labs(y = "Absorção média ± EP (μmol/m²·s)", x = NULL)
+```
+
+------------------------------------------------------------------------
+
+## Recursos avançados: patchwork {background-color="#E5D3B3"}
+
+``` r
+library(patchwork)
+
+p1 <- ggplot(CO2, aes(x = uptake)) + 
+  geom_histogram(fill = "#224573")
+
+p2 <- ggplot(CO2, aes(x = Type, y = uptake)) + 
+  geom_boxplot(fill = "#4A6FA5")
+
+p1 + p2  # combina lado a lado
+```
+
+**Patchwork** permite combinar múltiplos gráficos facilmente.
+
+------------------------------------------------------------------------
+
+## Extensões do ggplot2
+
+**Pacotes úteis:**
+
+-   `ggrepel`: labels sem sobreposição
+-   `gganimate`: gráficos animados
+-   `ggridges`: ridge plots
+-   `ggforce`: geometrias extras
+-   `cowplot`: composição de gráficos
+-   `patchwork`: combinar plots
+
+------------------------------------------------------------------------
+
+## Exemplo com ggrepel
+
+``` r
+library(ggrepel)
+
+CO2 |>
+  group_by(Plant) |>
+  summarise(media = mean(uptake), conc = mean(conc)) |>
+  ggplot(aes(x = conc, y = media, label = Plant)) +
+  geom_point(color = "#224573", size = 3) +
+  geom_text_repel(color = "#6B4F4F") +
+  theme_minimal()
+```
+
+------------------------------------------------------------------------
+
+## Gráfico interativo com plotly {background-color="#E5D3B3"}
+
+```{r warning=FALSE, message=FALSE}
+library(plotly)
+
+p <- ggplot(CO2, aes(x = conc, y = uptake, 
+                     color = Type, text = Plant)) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  theme_classic()
+
+ggplotly(p, tooltip = c("text", "x", "y"))
+```
+
+**Interatividade:** hover, zoom, pan automáticos!
+
+------------------------------------------------------------------------
+
+## Dicas finais: debugging
+
+**Construa incrementalmente:**
+
+``` r
+# Passo 1
+ggplot(CO2, aes(x = conc, y = uptake))
+
+# Passo 2
+ggplot(CO2, aes(x = conc, y = uptake)) +
+  geom_point()
+
+# Passo 3
+ggplot(CO2, aes(x = conc, y = uptake)) +
+  geom_point() +
+  theme_minimal()
+```
+
+------------------------------------------------------------------------
+
+## Recursos para aprender mais {background-color="#E5D3B3"}
+
+**Documentação e tutoriais:**
+
+-   Site oficial: <https://ggplot2.tidyverse.org>
+-   R Graphics Cookbook
+-   ggplot2: Elegant Graphics for Data Analysis
+-   Cheat sheet do RStudio
+
+## Recursos para aprender mais {background-color="#E5D3B3"}
+
+**Comunidade:**
+
+-   R-Ladies Goiânia
+-   Comunidade de Estatística - Thiago Marques
+-   Stack Overflow
+-   R4DS Online Learning Community
+-   Twitter: #rstats, #TidyTuesday
+
+------------------------------------------------------------------------
+
+## Considerações finais
+
+**Você aprendeu:**
+
+-   Gramática de gráficos e filosofia do ggplot2
+-   Componentes essenciais: data, aes, geom
+-   Principais tipos de gráficos
+-   Customização e temas
+-   Facetas e composição
+-   Melhores práticas de visualização
+
+------------------------------------------------------------------------
+
+## Próximos passos {background-color="#E5D3B3"}
+
+**Continue praticando:**
+
+-   Experimente com seus próprios dados
+-   Explore diferentes geometrias
+-   Teste temas e personalizações
+-   Participe do #TidyTuesday
+-   Combine com dplyr para pipelines completos
+-   Aprenda extensões como patchwork e gganimate
+
+**Lembre-se:** a melhor forma de aprender é fazendo!
+
+------------------------------------------------------------------------
+
+## Referências
+
+-   Wickham, H. *ggplot2: Elegant Graphics for Data Analysis*
+-   Chang, W. *R Graphics Cookbook*
+-   Healy, K. *Data Visualization: A Practical Introduction*
+-   Documentação oficial: <https://ggplot2.tidyverse.org>
+-   Galeria de gráficos: <https://r-graph-gallery.com>
+
+------------------------------------------------------------------------
+
+## Muito Obrigada! {background-color="#E5D3B3"}
+
+**É OPEN, USE, COMPARTILHE!**
+
+![**Allison Horst.**](imagens/ggplot2.png){fig-align="center"
+width="580"}
+
+**Pratique, explore e crie visualizações incríveis!**
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}

@@ -1,0 +1,286 @@
+/* ===========================================================
+   ESTILO GERAL – SITE JENNIFER LUZ LOPES
+   Estrutura: Projetos + Café com R
+   -----------------------------------------------------------
+   Cores: Azul #224573 (marca) + Marrom #6B4F4F (Café)
+   Fonte: Poppins (títulos) + Open Sans (texto)
+=========================================================== */
+
+/*-- scss:defaults --*/
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Poppins:wght@600;700&display=swap');
+
+$font-family-sans-serif: 'Open Sans', Tahoma, sans-serif !default;
+$presentation-heading-font: 'Poppins', Tahoma, sans-serif !default;
+
+$azul-base: #224573;
+$marrom-cafe: #6B4F4F;
+$bege-fundo: #f7f2ee;
+$cinza-suave: #f2f2f2;
+$link-color: $azul-base;
+$body-bg: #ffffff;
+$body-color: #000000;
+
+$h1-font-size: 1.7em;
+$h2-font-size: 1.4em;
+$h3-font-size: 1.2em;
+
+/*-- scss:rules --*/
+
+/* -----------------------------------------------------------
+   GERAL
+----------------------------------------------------------- */
+body {
+  background-color: $body-bg;
+  color: $body-color;
+  font-family: $font-family-sans-serif;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+a {
+  color: $azul-base;
+  text-decoration: none;
+  font-weight: 500;
+  &:hover {
+    color: darken($azul-base, 10%);
+    text-decoration: underline;
+  }
+}
+
+h1, h2, h3, h4 {
+  font-family: $presentation-heading-font;
+  color: $azul-base;
+  font-weight: 600;
+}
+
+h1 {
+  margin-bottom: 0.8em;
+  font-size: $h1-font-size;
+}
+
+h2 {
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  font-size: $h2-font-size;
+}
+
+p { margin-bottom: 1em; }
+
+/* -----------------------------------------------------------
+   NAVBAR – visual premium
+----------------------------------------------------------- */
+.navbar {
+  background: linear-gradient(90deg, $marrom-cafe 0%, darken($marrom-cafe, 10%) 100%) !important;
+  border-bottom: 5px solid darken($marrom-cafe, 12%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+  padding: 1em 2em;
+  transition: background-color 0.3s ease, padding 0.3s ease;
+}
+
+.navbar.scrolled {
+  background-color: darken($marrom-cafe, 15%) !important;
+  padding: 0.6em 1.5em;
+}
+
+.navbar .nav-link {
+  color: #ffffff !important;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 1.05em;
+  letter-spacing: 0.4px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Hover animado */
+.navbar .nav-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #f7f2ee;
+  transition: width 0.3s;
+}
+.navbar .nav-link:hover::after { width: 100%; }
+.navbar .nav-link:hover {
+  color: lighten($bege-fundo, 5%) !important;
+  transform: translateY(-2px);
+}
+
+/* Página ativa */
+.navbar .active > .nav-link {
+  border-bottom: 3px solid #f7f2ee;
+}
+
+/* Logo */
+.navbar .navbar-brand {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 1.2em;
+  color: #fff !important;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+.navbar .navbar-brand:hover {
+  color: lighten($bege-fundo, 5%) !important;
+}
+
+.navbar-toggler {
+  background-color: $bege-fundo !important;
+  border: none;
+  border-radius: 6px;
+}
+
+/* -----------------------------------------------------------
+   RODAPÉ
+----------------------------------------------------------- */
+.page-footer {
+  background-color: $bege-fundo;
+  color: $marrom-cafe;
+  text-align: center;
+  font-size: 0.9em;
+  padding: 1.2em 0;
+  border-top: 2px solid lighten($azul-base, 40%);
+}
+
+/* -----------------------------------------------------------
+   HERO TITLES – gradiente azul-marrom
+----------------------------------------------------------- */
+h1, h2 {
+  background: linear-gradient(90deg, $azul-base, $marrom-cafe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* -----------------------------------------------------------
+   PROJETOS / LISTAGENS
+----------------------------------------------------------- */
+.quarto-listing-container { margin-top: 2em; }
+
+.quarto-listing-item {
+  background: $bege-fundo;
+  border-left: 5px solid $marrom-cafe;
+  border-radius: 10px;
+  padding: 1.2em 1.5em;
+  margin-bottom: 1.2em;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+.quarto-listing-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+}
+
+.quarto-listing-item-title {
+  color: $azul-base;
+  font-family: $presentation-heading-font;
+  font-weight: 600;
+}
+
+/* -----------------------------------------------------------
+   CÓDIGO E OUTPUT
+----------------------------------------------------------- */
+pre code {
+  background-color: $cinza-suave;
+  border-radius: 6px;
+  padding: 0.8em 1em;
+  font-family: 'Inconsolata', monospace;
+  color: $azul-base;
+  font-size: 0.95em;
+}
+
+.cell-output {
+  border-left: 3px solid $azul-base;
+  background-color: #fafafa;
+  padding: 0.6em 1em;
+  border-radius: 4px;
+  margin-bottom: 1.2em;
+}
+
+/* -----------------------------------------------------------
+   BOTÕES
+----------------------------------------------------------- */
+.btn-primary, .btn {
+  background-color: $marrom-cafe;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.6em 1.2em;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  border: none;
+  transition: all 0.25s ease;
+}
+.btn-primary:hover, .btn:hover {
+  background-color: darken($marrom-cafe, 10%);
+  transform: translateY(-2px);
+}
+
+/* -----------------------------------------------------------
+   VOLTAR AO TOPO
+----------------------------------------------------------- */
+.back-to-top {
+  background-color: $marrom-cafe !important;
+  color: #fff !important;
+  border-radius: 50%;
+  padding: 0.6em;
+  font-size: 1.2em;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+.back-to-top:hover {
+  background-color: darken($marrom-cafe, 10%) !important;
+  transform: scale(1.1);
+}
+
+/* -----------------------------------------------------------
+   ANIMAÇÃO DE ENTRADA SUAVE
+----------------------------------------------------------- */
+section {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+@keyframes fadeInUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* -----------------------------------------------------------
+   SCROLLBAR PERSONALIZADA (marrom-café)
+----------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  transition: all 0.3s ease;
+}
+::-webkit-scrollbar-track {
+  background: $bege-fundo;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: $marrom-cafe;
+  border-radius: 10px;
+  border: 2px solid $bege-fundo;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: darken($marrom-cafe, 10%);
+  transform: scaleX(1.2);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $marrom-cafe $bege-fundo;
+}
+html { scroll-behavior: smooth; }
+
+/* -----------------------------------------------------------
+   RESPONSIVIDADE
+----------------------------------------------------------- */
+@media (max-width: 768px) {
+  .navbar { font-size: 0.9em; }
+  .quarto-listing-item { padding: 1em; }
+  h1 { font-size: 1.4em; }
+  h2 { font-size: 1.2em; }
+}

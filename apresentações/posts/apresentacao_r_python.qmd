@@ -1,0 +1,784 @@
+---
+title: "Aula 9. Integração R x Python com pacote Reticulate"
+subtitle: "Combinando o melhor de dois mundos"
+categories: [Python, R, Quarto, Reticulate]
+image: imagens/pyr.png
+description: "Combinando o melhor de dois mundos."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+editor: visual
+---
+
+## **Democratização**
+
+> **Fico feliz de construir aulas que podemos juntas(os) realizar a integração do R com outras linguagens e sistemas.**
+
+![**Aproveitem muito!!! Ahhh essa é a meguy, minha gatinha linda!**](imagens/meguy.jpg){fig-align="center" width="523"}
+
+## Códigos dos slides
+
+> Todos os códigos da aula estão funcionais. Prontos para reproduzir.
+
+![](imagens/py.png){fig-align="center" width="484"}
+
+## **Objetivos da apresentação**
+
+::: incremental
+-   **Compreender a integração entre `R` e `Python`**
+-   **Configurar o ambiente de trabalho**
+-   **Executar código Python no RStudio**
+-   **Transferir dados entre as linguagens**
+-   **Aplicar em casos práticos**
+:::
+
+## **Por que integrar R e Python?**
+
+::::: columns
+::: {.column width="50%"}
+**Vantagens do R**
+
+-   **Análise estatística**
+-   **Visualização com ggplot2**
+-   **Tidyverse para manipulação de dados**
+-   **Quarto e RMarkdown**
+:::
+
+::: {.column width="50%"}
+**Vantagens do Python**
+
+-   **Machine learning (scikit-learn)**
+-   **Deep learning (TensorFlow, PyTorch)**
+-   **Web scraping**
+-   **Processamento de linguagem natural**
+:::
+:::::
+
+## **O Pacote Reticulate**
+
+**Reticulate permite executar código Python dentro do ambiente R.**
+
+::: incremental
+-   **Desenvolvido pela Posit (RStudio)**
+-   **Tradução bidirecional de objetos**
+-   **Compartilhamento de dados entre linguagens**
+-   **Suporte a ambientes virtuais Python**
+-   **Acesse a [`documentação`](https://rstudio.github.io/reticulate/)**
+:::
+
+## **Estrutura da integração**
+
+```{mermaid}
+flowchart LR
+    A[R Environment] <-->|reticulate| B[Python Environment]
+    B --> C[pandas]
+    B --> D[numpy]
+    B --> E[scikit-learn]
+    A --> F[ggplot2]
+    A --> G[dplyr]
+    A --> H[tidyr]
+```
+
+# **Configuração do ambiente**
+
+## **Pré-requisitos**
+
+::: incremental
+1.  **R instalado (versão 4.0 ou superior)**
+2.  **RStudio (versão recente recomendada)**
+3.  **Python (versão 3.8 ou superior)**
+4.  **Quarto (para renderizar documentos .qmd)**
+:::
+
+## **Instalação do Python**
+
+**Opções de instalação:**
+
+::: incremental
+-   **Site oficial: [python.org/downloads](https://www.python.org/downloads/)**
+-   **Anaconda: Distribuição completa com pacotes científicos**
+-   **Miniconda: Versão minimalista do Anaconda**
+:::
+
+::: callout-tip
+## **Dica**
+
+**Anote o caminho de instalação do Python para configuração posterior.**
+:::
+
+## **Instalação do Quarto**
+
+-   **Acesse: [quarto.org/docs/get-started](https://quarto.org/docs/get-started/)**
+-   **Baixe o instalador para seu sistema operacional**
+-   **Execute a instalação padrão**
+
+::: callout-note
+**O Quarto é independente do R e pode ser usado com Python, Julia e Observable.**
+:::
+
+## **Instalação do Reticulate no R**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Instalar o pacote reticulate
+install.packages("reticulate")
+
+# Carregar o pacote
+library(reticulate)
+```
+
+# **Configuração inicial**
+
+## **Verificar configuração do Python**
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(reticulate)
+
+# Verificar qual Python está sendo usado
+py_config()
+```
+
+**Saída esperada: Informações sobre versão, caminho e pacotes disponíveis.**
+
+## **Definir Python manualmente**
+
+**Se o R não detectar o Python automaticamente:**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Windows
+use_python("C:/Python311/python.exe", required = TRUE)
+```
+
+::: callout-warning
+**Use o caminho completo para o executável do Python.**
+:::
+
+## **Criar ambiente virtual (recomendado)**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Criar ambiente virtual
+virtualenv_create("r-reticulate")
+
+# Usar o ambiente virtual
+use_virtualenv("r-reticulate")
+
+# Verificar
+py_config()
+```
+
+**Vantagem: Isolamento de dependências e evita conflitos.**
+
+## **Instalar pacotes Python via R**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Instalar pacotes necessários
+py_install(c("numpy", "pandas", "matplotlib"))
+
+# Verificar instalação - Retorna True ou False
+py_module_available("pandas")
+py_module_available("numpy")
+```
+
+::: callout-tip
+## **Alternativa**
+
+**Você também pode usar `pip install` no terminal.**
+:::
+
+# **Executando código Python**
+
+## **Estrutura de Chunks em Quarto**
+
+**Documentos `.qmd` permitem chunks de diferentes linguagens:**
+
+```` markdown
+```{{r}}
+# Código R
+library(dplyr)
+```
+
+```{{python}}
+# Código Python
+import pandas as pd
+```
+````
+
+## **Primeiro código em Python**
+
+```{python}
+#| eval: false
+#| echo: true
+
+import pandas as pd
+import numpy as np
+
+# Criar array
+numeros = np.array([1, 2, 3, 4, 5])
+print(f"Média: {numeros.mean()}")
+```
+
+**Resultado: O código Python executa diretamente no documento.**
+
+## **Declarar dependências**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Garantir que os pacotes estão disponíveis
+py_require("numpy")
+py_require("pandas")
+
+# Listar todos os pacotes instalados
+py_list_packages()
+```
+
+## **Executar Python dentro do R**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Executar código Python como string
+py_run_string("
+x = 10
+y = 20
+soma = x + y
+print(f'Resultado: {soma}')
+")
+```
+
+**Útil para: pequenos scripts ou testes rápidos.**
+
+# **Transferência de dados**
+
+## **R para Python: Objeto `py$`**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Criar data frame em R
+dados_R <- data.frame(
+  id = 1:5,
+  valor = c(10, 20, 30, 40, 50))
+
+# Transferir para Python
+py$dados_python <- dados_R
+```
+
+## **Acessar no Python**
+
+```{python}
+#| eval: false
+#| echo: true
+
+# Objeto transferido do R está disponível
+print(dados_python)
+
+# Manipular com pandas
+dados_python['dobro'] = dados_python['valor'] * 2
+print(dados_python)
+```
+
+## **Python para R: Objeto `py$`**
+
+```{python}
+#| eval: false
+#| echo: true
+
+import pandas as pd
+
+# Criar dataframe em Python
+resultado = pd.DataFrame({
+    'nome': ['Ana', 'Bruno', 'Carlos'],
+    'nota': [8.5, 9.0, 7.5]
+})
+```
+
+## **Acessar no R**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Recuperar objeto do Python
+resultado_R <- py$resultado
+
+# Usar no R
+library(dplyr)
+resultado_R %>%
+  filter(nota > 8.0) %>%
+  arrange(desc(nota))
+```
+
+## **Conversão automática de tipos**
+
+| **Python**             | **R**            |
+|------------------------|------------------|
+| **`dict`**             | **`list`**       |
+| **`list`**             | **`vector`**     |
+| **`tuple`**            | **`vector`**     |
+| **`pandas.DataFrame`** | **`data.frame`** |
+| **`numpy.ndarray`**    | **`matrix`**     |
+
+# **Prática: Análise de dados de café**
+
+## **Contexto do exemplo**
+
+**Análise de avaliações de café de diferentes países:**
+
+::: incremental
+-   **Fonte: TidyTuesday (dados públicos)**
+-   **Objetivo: Identificar países com melhor pontuação**
+-   **Processo: Importação (Python) + Visualização (R)**
+:::
+
+## **Importar dados com pandas**
+
+```{python}
+#| eval: false
+#| echo: true
+
+import pandas as pd
+
+# URL dos dados
+url = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/refs/heads/main/data/2020/2020-07-07/coffee_ratings.csv"
+
+# Importar
+dados = pd.read_csv(url)
+
+# Visualizar estrutura
+print(dados.shape)
+print(dados.head())
+```
+
+## **Inspeção inicial**
+
+```{python}
+#| eval: false
+#| echo: true
+
+# Estatísticas descritivas
+print(dados.describe())
+
+# Verificar valores ausentes
+print(dados.isnull().sum())
+
+# Informações das colunas
+print(dados.info())
+```
+
+## **Selecionar colunas relevantes**
+
+```{python}
+#| eval: false
+#| echo: true
+
+# Selecionar variáveis de interesse
+dados_filtrados = dados[[
+    "country_of_origin",
+    "aroma",
+    "flavor",
+    "aftertaste",
+    "acidity",
+    "total_cup_points"]]
+
+# Remover linhas sem país
+dados_filtrados = dados_filtrados.dropna(
+    subset=["country_of_origin"])
+```
+
+## **Agregação por país**
+
+```{python}
+#| eval: false
+#| echo: true
+
+# Calcular médias por país
+resumo_pais = (
+    dados_filtrados
+    .groupby("country_of_origin", as_index=False)
+    [[
+        "aroma", "flavor", "aftertaste",
+        "acidity", "total_cup_points"
+    ]]
+    .mean())
+
+print(resumo_pais.head())
+```
+
+## **Transferir para R**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Importar dados processados do Python
+resumo_pais_R <- py$resumo_pais
+
+# Verificar estrutura
+str(resumo_pais_R)
+head(resumo_pais_R)
+```
+
+## **Visualização com ggplot2**
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(ggplot2)
+library(dplyr)
+
+# 10 países principais
+
+grafico_cafe <- resumo_pais_R %>%
+  arrange(desc(total_cup_points)) %>%
+  slice_max(total_cup_points, n = 10) %>%
+  ggplot(aes(
+    x = reorder(country_of_origin, total_cup_points),
+    y = total_cup_points,
+    fill = country_of_origin)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip()
+```
+
+## **Gráfico completo**
+
+```{r}
+#| eval: false
+#| echo: true
+
+grafico_cafe +
+  labs(
+    title = "10 principais países - Pontuação média",
+    subtitle = "Dados processados em Python, visualização em R",
+    x = "País de origem",
+    y = "Pontuação média total",
+    caption = "Fonte: TidyTuesday | Coffee Ratings | Café com R") +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text = element_text(color = "gray30"))
+grafico_cafe
+```
+
+## **Exportar Gráfico**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Salvar em alta resolução
+ggsave(
+  filename = "principais_paises.png",
+  plot = grafico_cafe,
+  width = 10,
+  height = 6,
+  dpi = 300)
+```
+
+# **Funções equivalentes**
+
+## **Importação de dados**
+
+| **Operação**  | **Python**            | **R**                            |
+|---------------|-----------------------|----------------------------------|
+| **Ler CSV**   | **`pd.read_csv()`**   | **`read.csv()` ou `read_csv()`** |
+| **Ler Excel** | **`pd.read_excel()`** | **`read_excel()`**               |
+| **Ler JSON**  | **`pd.read_json()`**  | **`jsonlite::fromJSON()`**       |
+
+## **Visualização de dados**
+
+| **Operação**         | **Python**          | **R**             |
+|----------------------|---------------------|-------------------|
+| **Primeiras linhas** | **`df.head()`**     | **`head(df)`**    |
+| **Últimas linhas**   | **`df.tail()`**     | **`tail(df)`**    |
+| **Estrutura**        | **`df.info()`**     | **`str(df)`**     |
+| **Resumo**           | **`df.describe()`** | **`summary(df)`** |
+
+## **Manipulação de dados**
+
+| **Operação** | **Python** | **R (dplyr)** |
+|-------------------------|--------------------|---------------------------|
+| **Filtrar** | **`df[df['col'] > 5]`** | **`filter(df, col > 5)`** |
+| **Selecionar** | **`df[['col1', 'col2']]`** | **`select(df, col1, col2)`** |
+| **Criar coluna** | **`df['nova'] = df['a'] + df['b']`** | **`mutate(df, nova = a + b)`** |
+| **Agrupar** | **`df.groupby('grupo').mean()`** | **`group_by(df, grupo) %>% summarise(mean())`** |
+
+## **Ordenação e limpeza**
+
+| **Operação** | **Python** | **R (dplyr)** |
+|-----------------|---------------------------------|-----------------------|
+| **Ordenar** | **`df.sort_values('col')`** | **`arrange(df, col)`** |
+| **Remover NA** | **`df.dropna()`** | **`drop_na(df)`** |
+| **Renomear** | **`df.rename(columns={'old':'new'})`** | **`rename(df, new = old)`** |
+
+# **Boas práticas**
+
+## **Organização do projeto**
+
+```         
+projeto/
+├── dados/
+│   ├── raw/
+│   └── processed/
+├── scripts/
+│   ├── 01_importacao.qmd
+│   └── 02_analise.qmd
+├── outputs/
+│   ├── figuras/
+│   └── tabelas/
+└── requirements.txt
+```
+
+## **Documentação de dependências**
+
+**Python (`requirements.txt`):**
+
+```         
+pandas==2.0.0
+numpy==1.24.0
+matplotlib==3.7.0
+```
+
+**R (no início do script):**
+
+```{r}
+#| eval: false
+pacman::p_load(reticulate, tidyverse, ggplot2)
+```
+
+## **Controle de versão**
+
+::: incremental
+-   **Use ambientes virtuais para Python**
+-   **Documente versões dos pacotes**
+-   **Teste em ambiente limpo antes de compartilhar**
+-   **Use `renv` para R e `venv` para Python**
+:::
+
+## **Tratamento de erros**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Verificar se módulo está disponível
+if (py_module_available("pandas")) {
+  py_require("pandas")
+} else {
+  py_install("pandas")
+  py_require("pandas")
+}
+```
+
+## **Performance**
+
+::: incremental
+-   **Evite conversões desnecessárias entre R e Python**
+-   **Processe dados grandes na linguagem mais eficiente**
+-   **Use `data.table` (R) ou `polars` (Python) para grandes volumes**
+-   **Considere processamento paralelo quando apropriado**
+:::
+
+# **Casos de uso - alguns exemplos**
+
+## **Machine Learning**
+
+```{python}
+#| eval: false
+#| echo: true
+
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+# Treinar modelo em Python
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+modelo = RandomForestClassifier()
+modelo.fit(X_train, y_train)
+```
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Visualizar resultados no R
+predicoes <- py$modelo$predict(py$X_test)
+# Criar gráficos com ggplot2
+```
+
+## **Web Scraping**
+
+```{python}
+#| eval: false
+#| echo: true
+
+import requests
+from bs4 import BeautifulSoup
+
+# Coletar dados da web
+url = "https://exemplo.com/dados"
+response = requests.get(url)
+dados_web = extrair_tabela(response.text)
+```
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Analisar no R
+dados_R <- py$dados_web
+analise <- dados_R %>% ...
+```
+
+## **Deep Learning**
+
+```{python}
+#| eval: false
+#| echo: true
+
+import tensorflow as tf
+
+# Construir modelo
+modelo = tf.keras.Sequential([
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dense(10, activation='softmax')])
+
+# Treinar
+modelo.fit(X_train, y_train, epochs=10)
+```
+
+# **Solução de problemas**
+
+## **Python não é detectado**
+
+**Solução:**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Especificar caminho manualmente
+use_python("/caminho/para/python", required = TRUE)
+
+# Ou usar conda
+use_condaenv("nome_ambiente")
+```
+
+## **Pacotes Python não encontrados**
+
+**Solução:**
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Reinstalar no ambiente correto
+py_install("pandas", pip = TRUE)
+
+# Verificar
+py_module_available("pandas")
+```
+
+## **Erro de codificação**
+
+**Solução:**
+
+```{python}
+#| eval: false
+#| echo: true
+
+# Especificar encoding ao ler arquivos
+dados = pd.read_csv("arquivo.csv", encoding="utf-8")
+```
+
+## **Conflitos de versão**
+
+::: incremental
+-   **Use ambientes virtuais isolados**
+-   **Documente versões exatas dos pacotes**
+-   **Teste compatibilidade antes de atualizar**
+-   **Considere usar Docker para reprodutibilidade total**
+:::
+
+# **Recursos adicionais**
+
+## **Documentação oficial**
+
+-   **Reticulate: [rstudio.github.io/reticulate](https://rstudio.github.io/reticulate/)**
+-   **Pandas: [pandas.pydata.org/docs](https://pandas.pydata.org/docs/)**
+-   **NumPy: [numpy.org/doc](https://numpy.org/doc/)**
+-   **Quarto: [quarto.org](https://quarto.org/)**
+
+# **Conclusão**
+
+## **Principais aprendizados**
+
+::: incremental
+-   **Reticulate permite integração transparente R-Python**
+-   **Possível aproveitar bibliotecas específicas de cada linguagem**
+-   **Transferência bidirecional de dados é simples**
+-   **Configuração inicial requer atenção aos detalhes**
+:::
+
+## **Quando usar integração**
+
+::: incremental
+-   **Machine learning com scikit-learn/TensorFlow**
+-   **Web scraping complexo**
+-   **Processamento de linguagem natural**
+-   **Aproveitar pacotes específicos de cada ecossistema**
+:::
+
+## **Próximos passos**
+
+::: incremental
+1.  **Configurar ambiente local**
+2.  **Praticar com datasets reais**
+3.  **Explorar pacotes avançados**
+4.  **Compartilhar conhecimento com a comunidade**
+:::
+
+## **Obrigada!**
+
+![**Imagem: Allison Horst.**](imagens/comunidade.png){alt="Imagem: Allison Horst." fig-align="center" width="449"}
+
+**Continue praticando e explorando!**
+
+***Esta apresentação é parte do projeto `Café com R!` É OPEN, USE, COMPARTILHE!***
+
+------------------------------------------------------------------------
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> **Que cada gole desperte uma nova ideia.**
+>
+> **Que cada script abra uma nova conversa.**
+>
+> **Que o Café com R, se torne um ponto de encontro nosso!**

@@ -1,0 +1,18 @@
+---
+title: "Livro - Para Análise e Ciência de Dados"
+description: "em breve"
+author: "Jennifer Luz Lopes"
+date: 2025-10-15
+categories: [Escrita, Livro]
+
+# ✅ thumbnail do post (usado na listagem)
+image: ../imagens/livro.png
+image-alt: ""
+---
+
+# Start daqui a pouco
+
+Atualizações:
+
+1.  Grade pronta;
+2.  Submissão em janeiro para editora.

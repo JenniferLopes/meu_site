@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Jennifer Luz Lopes – 1. Seus primeiros passos com R</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
+  <link rel="stylesheet" href="estilo_jeni.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">1. Seus primeiros passos com R</h1>
+  <p class="subtitle">Um guia amigável para começar sua jornada com R</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="assine-o-café-com-r" class="slide level2">
+<h2><strong>☕ Assine o Café com R</strong></h2>
+<p><strong>Fique por dentro das aulas, conteúdos, newsletter!</strong></p>
+<blockquote>
+<p>Que cada <strong>gole</strong> desperte uma nova ideia.</p>
+<p>Que cada <strong>script</strong> abra uma nova conversa.</p>
+<p>Que o <strong>Café com R</strong>, se torne um ponto de encontro nosso!</p>
+</blockquote>
+
+<img data-src="imagens/qrcode.jpg" class="quarto-figure quarto-figure-center r-stretch" width="236"></section>
+<section id="bem-vindo-ao-mundo-do-r" class="slide level2" data-background-color="#E5D3B3">
+<h2>Bem-vindo ao mundo do R!</h2>
+<p>Se você está aqui, é porque decidiu aprender R e essa é uma excelente decisão!</p>
+
+<img data-src="imagens/comunidade.png" width="546" class="r-stretch quarto-figure-center"><p class="caption"><strong>Allison Horst.</strong></p></section>
+<section id="não-se-preocupe-se" class="slide level2">
+<h2><strong>Não se preocupe se:</strong></h2>
+<ul>
+<li>Você nunca programou antes</li>
+<li>Tudo parecer confuso no início</li>
+<li>Você cometer erros (todos cometemos!)</li>
+<li>Precisar de tempo para aprender</li>
+</ul>
+<p><strong>Lembre-se:</strong> toda jornada começa com um primeiro passo, e este guia vai te acompanhar nessa caminhada.</p>
+</section>
+<section id="o-que-é-r-afinal" class="slide level2">
+<h2>O que é R, afinal?</h2>
+<p><strong>R é uma linguagem de programação</strong> criada especialmente para análise de dados e estatística.</p>
+<p><strong>Por que R é especial:</strong></p>
+<ul>
+<li>Gratuito e de código aberto</li>
+<li>Comunidade enorme e acolhedora</li>
+<li>Milhares de pacotes prontos para usar</li>
+<li>Excelente para visualização de dados</li>
+<li>Muito usado em pesquisa e empresas</li>
+</ul>
+<p><strong>Em resumo:</strong> R é sua ferramenta para transformar dados em insights.</p>
+</section>
+<section id="passo-1-instalando-o-r" class="slide level2" data-background-color="#E5D3B3">
+<h2>Passo 1: Instalando o R</h2>
+<p>Primeiro, vamos instalar o R no seu computador.</p>
+<p><strong>Acesse:</strong></p>
+<ul>
+<li>Site oficial: <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a></li>
+<li>Escolha seu sistema operacional (Windows, Mac ou Linux)</li>
+<li>Baixe e instale a versão mais recente</li>
+</ul>
+</section>
+<section id="passo-1-instalando-o-r-cont" class="slide level2" data-background-color="#E5D3B3">
+<h2>Passo 1: Instalando o R (cont)</h2>
+<p><strong>Dica importante:</strong></p>
+<ul>
+<li><p>O R é o “motor” do seu carro.</p></li>
+<li><p>Ele faz todo o trabalho, mas você ainda precisa de um “painel de controle” mais amigável o RStudio.</p></li>
+<li><p><strong>Não vamos praticar isso agora</strong>, mas estes são os passos que você fará no seu computador!</p></li>
+</ul>
+</section>
+<section id="passo-2-instalando-o-rstudio" class="slide level2">
+<h2>Passo 2: Instalando o RStudio</h2>
+<p>O <strong>RStudio</strong> (agora chamado Posit) é uma interface que torna o R muito mais fácil de usar.</p>
+<p><strong>Acesse:</strong></p>
+<ul>
+<li>Site oficial: <a href="https://posit.co/download/rstudio-desktop/" class="uri">https://posit.co/download/rstudio-desktop/</a></li>
+<li>Baixe a versão gratuita (RStudio Desktop)</li>
+<li>Instale normalmente</li>
+</ul>
+</section>
+<section id="passo-2-instalando-o-rstudio-1" class="slide level2">
+<h2>Passo 2: Instalando o RStudio</h2>
+<p><strong>Analogia útil:</strong></p>
+<ul>
+<li>R = motor do carro</li>
+<li>RStudio = painel com volante, pedais, etc.</li>
+</ul>
+<p>Você <em>pode</em> usar só o R, mas o RStudio torna tudo mais confortável!</p>
+<p><strong>Esta etapa você fará no seu computador após a apresentação.</strong></p>
+</section>
+<section id="conhecendo-o-rstudio" class="slide level2">
+<h2>Conhecendo o RStudio</h2>
+<p>Quando você abrir o RStudio, verá 4 painéis principais:</p>
+<p><strong>1. Script (superior esquerdo)</strong>: Onde você escreve seus códigos</p>
+<p><strong>2. Console (inferior esquerdo)</strong>: Onde o R executa os comandos</p>
+<p><strong>3. Environment (superior direito)</strong>: Mostra objetos salvos na memória</p>
+<p><strong>4. Files/Plots/Help (inferior direito)</strong>: Arquivos, gráficos e ajuda</p>
+<p><strong>Respire fundo!</strong> No começo parece muito, mas logo você se acostuma.</p>
+</section>
+<section id="conhecendo-o-rstudio-1" class="slide level2" data-background-color="#E5D3B3">
+<h2>Conhecendo o RStudio</h2>
+
+<img data-src="imagens/trocar-ambiente.jpeg" width="596" class="r-stretch quarto-figure-center"><p class="caption"><strong>Essa imagem é minha e um pouco antiga, mas nada mudou!</strong></p></section>
+<section id="seu-primeiro-comando-no-r" class="slide level2">
+<h2>Seu primeiro comando no R</h2>
+<p>Vamos começar com algo simples. No <strong>Console</strong>, digite:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="dv">2</span> <span class="sc">+</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+</div>
+<p>Parabéns! Você acabou de fazer seu primeiro cálculo no R.</p>
+</section>
+<section id="seu-primeiro-comando-no-r-1" class="slide level2">
+<h2>Seu primeiro comando no R</h2>
+<p>Agora tente:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="st">"Olá, mundo do R!"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Olá, mundo do R!"</code></pre>
+</div>
+</div>
+<p><strong>Dica:</strong> O R pode ser uma calculadora super poderosa!</p>
+</section>
+<section id="criando-objetos-variáveis" class="slide level2" data-background-color="#E5D3B3">
+<h2>Criando objetos (variáveis)</h2>
+<p>No R, guardamos valores em objetos usando <code>&lt;-</code> (ou <code>=</code>):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># Criando objetos</span></span>
+<span id="cb5-2"><a></a>meu_nome <span class="ot">&lt;-</span> <span class="st">"Maria"</span></span>
+<span id="cb5-3"><a></a>minha_idade <span class="ot">&lt;-</span> <span class="dv">25</span></span>
+<span id="cb5-4"><a></a></span>
+<span id="cb5-5"><a></a><span class="co"># Mostrando valores</span></span>
+<span id="cb5-6"><a></a>meu_nome</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Maria"</code></pre>
+</div>
+</div>
+<p><strong>Pense nos objetos como gavetas</strong> onde você guarda informações para usar depois.</p>
+</section>
+<section id="regras-para-nomear-objetos" class="slide level2">
+<h2>Regras para nomear objetos</h2>
+<p><strong>Pode:</strong></p>
+<ul>
+<li>Usar letras, números e underscores: <code>dados_2024</code></li>
+<li>Começar com letra: <code>resultado</code></li>
+<li>Usar snake_case: <code>meus_dados</code></li>
+</ul>
+</section>
+<section id="regras-para-nomear-objetos-1" class="slide level2">
+<h2>Regras para nomear objetos</h2>
+<p><strong>Não pode:</strong></p>
+<ul>
+<li>Começar com número: <code>2dados</code></li>
+<li>Usar espaços: <code>meus dados</code></li>
+<li>Usar caracteres especiais: <code>dados@2024</code></li>
+</ul>
+<p><strong>Dica:</strong> Use nomes descritivos! <code>idade_pacientes</code> é melhor que <code>x</code>.</p>
+</section>
+<section id="criando-seu-primeiro-script" class="slide level2" data-background-color="#E5D3B3">
+<h2>Criando seu primeiro script</h2>
+<p>Scripts são arquivos onde você salva seus códigos.</p>
+<p><strong>Para criar um script:</strong></p>
+<ol type="1">
+<li>Clique em <strong>File → New File → R Script</strong></li>
+<li>Ou use o atalho: <code>Ctrl + Shift + N</code> (Windows/Linux) ou <code>Cmd + Shift + N</code> (Mac) ## Criando seu primeiro script {background-color=“#E5D3B3”} <strong>Vantagens do script:</strong></li>
+</ol>
+<ul>
+<li>Salva seu trabalho</li>
+<li>Permite revisitar e corrigir</li>
+<li>Compartilha com outras pessoas</li>
+<li>Reproduz análises</li>
+</ul>
+</section>
+<section id="seu-primeiro-script-na-prática" class="slide level2">
+<h2>Seu primeiro script na prática</h2>
+<p>Digite no script (não no console):</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># Meu primeiro script em R</span></span>
+<span id="cb7-2"><a></a><span class="co"># Data: 2025-11-29</span></span>
+<span id="cb7-3"><a></a><span class="co"># Autor: Seu Nome</span></span>
+<span id="cb7-4"><a></a></span>
+<span id="cb7-5"><a></a><span class="co"># Calculando média de notas</span></span>
+<span id="cb7-6"><a></a>nota1 <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb7-7"><a></a>nota2 <span class="ot">&lt;-</span> <span class="dv">7</span></span>
+<span id="cb7-8"><a></a>nota3 <span class="ot">&lt;-</span> <span class="dv">9</span></span>
+<span id="cb7-9"><a></a></span>
+<span id="cb7-10"><a></a>media <span class="ot">&lt;-</span> (nota1 <span class="sc">+</span> nota2 <span class="sc">+</span> nota3) <span class="sc">/</span> <span class="dv">3</span></span>
+<span id="cb7-11"><a></a><span class="fu">print</span>(media)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Para executar:</strong> selecione o código e pressione <code>Ctrl + Enter</code> (Windows/Linux) ou <code>Cmd + Enter</code> (Mac)</p>
+<p><strong>Experimente isso quando estiver no RStudio!</strong></p>
+</section>
+<section id="a-importância-dos-comentários" class="slide level2" data-background-color="#E5D3B3">
+<h2>A importância dos comentários</h2>
+<p>Comentários começam com <code>#</code> e são ignorados pelo R.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="co"># Isto é um comentário - o R não executa</span></span>
+<span id="cb8-2"><a></a>altura <span class="ot">&lt;-</span> <span class="fl">1.75</span>  <span class="co"># Comentário no final da linha</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Use comentários para explicar SEU RACIOCÍNIO</strong>, não o que o código faz (isso já está óbvio)</p>
+<p><strong>Bom comentário:</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="co"># Removendo outliers acima de 3 desvios padrão</span></span>
+<span id="cb9-2"><a></a>dados_limpos <span class="ot">&lt;-</span> dados[dados<span class="sc">$</span>valor <span class="sc">&lt;</span> media <span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>sd, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="a-importância-dos-comentários-1" class="slide level2" data-background-color="#E5D3B3">
+<h2>A importância dos comentários</h2>
+<p><strong>Comentário desnecessário:</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="co"># Criando variável x</span></span>
+<span id="cb10-2"><a></a>x <span class="ot">&lt;-</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="passo-3-instalando-pacotes" class="slide level2">
+<h2>Passo 3: Instalando pacotes</h2>
+<p><strong>Pacotes</strong> são coleções de funções prontas que expandem o R.</p>
+<p><strong>Para instalar um pacote:</strong></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="co"># Instalar (faz UMA vez)</span></span>
+<span id="cb11-2"><a></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Para carregar um pacote:</strong></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="co"># Carregar (faz TODA vez que abrir o R)</span></span>
+<span id="cb12-2"><a></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="passo-3-instalando-pacotes-1" class="slide level2">
+<h2>Passo 3: Instalando pacotes</h2>
+<p><strong>Analogia:</strong> Instalar é como baixar um app no celular. Carregar é como abrir o app para usar.</p>
+<p><strong>Não execute isso agora</strong> — só quando estiver no seu RStudio!</p>
+</section>
+<section id="o-kit-inicial-tidyverse" class="slide level2" data-background-color="#E5D3B3">
+<h2>O kit inicial: tidyverse</h2>
+<p>O <strong>tidyverse</strong> é um conjunto de pacotes que trabalham bem juntos:</p>
+<ul>
+<li><strong>readr</strong> — ler dados</li>
+<li><strong>dplyr</strong> — manipular dados</li>
+<li><strong>tidyr</strong> — organizar dados</li>
+<li><strong>ggplot2</strong> — visualizar dados</li>
+<li><strong>stringr</strong> — trabalhar com texto</li>
+<li><strong>lubridate</strong> — trabalhar com datas</li>
+</ul>
+<p><strong>Instalando tudo de uma vez (no seu computador):</strong></p>
+</section>
+<section id="o-kit-inicial-tidyverse-1" class="slide level2" data-background-color="#E5D3B3">
+<h2>O kit inicial: tidyverse</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
+<span id="cb13-2"><a></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="configurando-sua-pasta-de-trabalho" class="slide level2">
+<h2>Configurando sua pasta de trabalho</h2>
+<p><strong>Pasta de trabalho</strong> (working directory) é onde o R procura e salva arquivos.</p>
+<p><strong>Ver qual é sua pasta atual:</strong></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">getwd</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="configurando-sua-pasta-de-trabalho-1" class="slide level2">
+<h2>Configurando sua pasta de trabalho</h2>
+<p><strong>Definir nova pasta:</strong></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">setwd</span>(<span class="st">"C:/Users/SeuNome/Documentos/ProjetoR"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Dica melhor:</strong> Use <strong>Projetos do RStudio</strong> (falaremos disso em breve!)</p>
+<p><strong>Estes comandos você usará quando estiver trabalhando no RStudio.</strong></p>
+</section>
+<section id="criando-um-projeto-no-rstudio" class="slide level2" data-background-color="#E5D3B3">
+<h2>Criando um Projeto no RStudio</h2>
+<p><strong>Projetos</strong> organizam melhor seu trabalho.</p>
+<p><strong>Para criar:</strong></p>
+<ol type="1">
+<li>File → New Project</li>
+<li>Escolha “New Directory”</li>
+<li>Escolha “New Project”</li>
+<li>Dê um nome e escolha onde salvar</li>
+</ol>
+</section>
+<section id="criando-um-projeto-no-rstudio-1" class="slide level2">
+<h2>Criando um Projeto no RStudio</h2>
+<p><strong>Vantagens:</strong></p>
+<ul>
+<li>Organiza arquivos automaticamente</li>
+<li>Define pasta de trabalho</li>
+<li>Facilita retomar trabalho depois</li>
+<li>Facilita compartilhar</li>
+</ul>
+</section>
+<section id="estrutura-de-pastas-recomendada" class="slide level2">
+<h2>Estrutura de pastas recomendada</h2>
+<p>Dentro do seu projeto, crie pastas:</p>
+<pre><code>MeuProjeto/
+├── dados/           # Dados brutos
+├── scripts/         # Seus códigos R
+├── resultados/      # Tabelas e arquivos gerados
+├── graficos/        # Visualizações salvas
+└── relatorios/      # Relatórios finais</code></pre>
+<p><strong>Esta organização vai te salvar no futuro!</strong></p>
+</section>
+<section id="importando-dados---primeiro-exemplo" class="slide level2" data-background-color="#E5D3B3">
+<h2>Importando dados - Primeiro exemplo</h2>
+<p>Vamos usar um dataset que já vem com o R:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="co"># Carregar dados mtcars (dados de carros)</span></span>
+<span id="cb17-2"><a></a><span class="fu">data</span>(mtcars)</span>
+<span id="cb17-3"><a></a></span>
+<span id="cb17-4"><a></a><span class="co"># Ver primeiras linhas</span></span>
+<span id="cb17-5"><a></a><span class="fu">head</span>(mtcars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   mpg cyl disp  hp drat    wt  qsec vs am gear carb
+Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</code></pre>
+</div>
+</div>
+</section>
+<section id="importando-seus-próprios-dados" class="slide level2">
+<h2>Importando seus próprios dados</h2>
+<p><strong>Arquivos CSV:</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">library</span>(readr)</span>
+<span id="cb19-2"><a></a></span>
+<span id="cb19-3"><a></a><span class="co"># Importar CSV</span></span>
+<span id="cb19-4"><a></a>meus_dados <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"dados/arquivo.csv"</span>)</span>
+<span id="cb19-5"><a></a></span>
+<span id="cb19-6"><a></a><span class="co"># Ver estrutura dos dados</span></span>
+<span id="cb19-7"><a></a><span class="fu">glimpse</span>(meus_dados)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Onde está meu arquivo?</strong></p>
+<ul>
+<li>Se estiver na pasta <code>dados/</code> do seu projeto, use: <code>"dados/arquivo.csv"</code></li>
+<li>Use sempre caminhos relativos (nunca <code>"C:/Users/..."</code>)</li>
+</ul>
+</section>
+<section id="explorando-seus-dados" class="slide level2" data-background-color="#E5D3B3">
+<h2>Explorando seus dados</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># Ver estrutura</span></span>
+<span id="cb20-2"><a></a><span class="fu">str</span>(mtcars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   32 obs. of  11 variables:
+ $ mpg : num  21 21 22.8 21.4 18.7 18.1 14.3 24.4 22.8 19.2 ...
+ $ cyl : num  6 6 4 6 8 6 8 4 4 6 ...
+ $ disp: num  160 160 108 258 360 ...
+ $ hp  : num  110 110 93 110 175 105 245 62 95 123 ...
+ $ drat: num  3.9 3.9 3.85 3.08 3.15 2.76 3.21 3.69 3.92 3.92 ...
+ $ wt  : num  2.62 2.88 2.32 3.21 3.44 ...
+ $ qsec: num  16.5 17 18.6 19.4 17 ...
+ $ vs  : num  0 0 1 1 0 1 0 1 1 1 ...
+ $ am  : num  1 1 1 0 0 0 0 0 0 0 ...
+ $ gear: num  4 4 4 3 3 3 3 4 4 4 ...
+ $ carb: num  4 4 1 1 2 1 4 2 2 4 ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="co"># Resumo estatístico</span></span>
+<span id="cb22-2"><a></a><span class="fu">summary</span>(mtcars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      mpg             cyl             disp             hp       
+ Min.   :10.40   Min.   :4.000   Min.   : 71.1   Min.   : 52.0  
+ 1st Qu.:15.43   1st Qu.:4.000   1st Qu.:120.8   1st Qu.: 96.5  
+ Median :19.20   Median :6.000   Median :196.3   Median :123.0  
+ Mean   :20.09   Mean   :6.188   Mean   :230.7   Mean   :146.7  
+ 3rd Qu.:22.80   3rd Qu.:8.000   3rd Qu.:326.0   3rd Qu.:180.0  
+ Max.   :33.90   Max.   :8.000   Max.   :472.0   Max.   :335.0  
+      drat             wt             qsec             vs        
+ Min.   :2.760   Min.   :1.513   Min.   :14.50   Min.   :0.0000  
+ 1st Qu.:3.080   1st Qu.:2.581   1st Qu.:16.89   1st Qu.:0.0000  
+ Median :3.695   Median :3.325   Median :17.71   Median :0.0000  
+ Mean   :3.597   Mean   :3.217   Mean   :17.85   Mean   :0.4375  
+ 3rd Qu.:3.920   3rd Qu.:3.610   3rd Qu.:18.90   3rd Qu.:1.0000  
+ Max.   :4.930   Max.   :5.424   Max.   :22.90   Max.   :1.0000  
+       am              gear            carb      
+ Min.   :0.0000   Min.   :3.000   Min.   :1.000  
+ 1st Qu.:0.0000   1st Qu.:3.000   1st Qu.:2.000  
+ Median :0.0000   Median :4.000   Median :2.000  
+ Mean   :0.4062   Mean   :3.688   Mean   :2.812  
+ 3rd Qu.:1.0000   3rd Qu.:4.000   3rd Qu.:4.000  
+ Max.   :1.0000   Max.   :5.000   Max.   :8.000  </code></pre>
+</div>
+</div>
+</section>
+<section id="explorando-seus-dados-cont." class="slide level2">
+<h2>Explorando seus dados (cont.)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="co"># Ver nomes das colunas</span></span>
+<span id="cb24-2"><a></a><span class="fu">names</span>(mtcars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "mpg"  "cyl"  "disp" "hp"   "drat" "wt"   "qsec" "vs"   "am"   "gear"
+[11] "carb"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="co"># Primeiras e últimas linhas</span></span>
+<span id="cb26-2"><a></a><span class="fu">head</span>(mtcars, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               mpg cyl disp  hp drat    wt  qsec vs am gear carb
+Mazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+Mazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+Datsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</code></pre>
+</div>
+</div>
+</section>
+<section id="manipulação-básica-com-dplyr" class="slide level2" data-background-color="#E5D3B3">
+<h2>Manipulação básica com dplyr</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb28-2"><a></a></span>
+<span id="cb28-3"><a></a><span class="co"># Filtrar linhas</span></span>
+<span id="cb28-4"><a></a>carros_potentes <span class="ot">&lt;-</span> mtcars <span class="sc">|&gt;</span></span>
+<span id="cb28-5"><a></a>  <span class="fu">filter</span>(hp <span class="sc">&gt;</span> <span class="dv">150</span>)</span>
+<span id="cb28-6"><a></a></span>
+<span id="cb28-7"><a></a><span class="co"># Ver resultado</span></span>
+<span id="cb28-8"><a></a><span class="fu">head</span>(carros_potentes, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   mpg cyl  disp  hp drat   wt  qsec vs am gear carb
+Hornet Sportabout 18.7   8 360.0 175 3.15 3.44 17.02  0  0    3    2
+Duster 360        14.3   8 360.0 245 3.21 3.57 15.84  0  0    3    4
+Merc 450SE        16.4   8 275.8 180 3.07 4.07 17.40  0  0    3    3</code></pre>
+</div>
+</div>
+</section>
+<section id="selecionando-colunas" class="slide level2">
+<h2>Selecionando colunas</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="co"># Selecionar apenas algumas colunas</span></span>
+<span id="cb30-2"><a></a>carros_simples <span class="ot">&lt;-</span> mtcars <span class="sc">|&gt;</span></span>
+<span id="cb30-3"><a></a>  <span class="fu">select</span>(mpg, cyl, hp)</span>
+<span id="cb30-4"><a></a></span>
+<span id="cb30-5"><a></a><span class="fu">head</span>(carros_simples, <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                mpg cyl  hp
+Mazda RX4      21.0   6 110
+Mazda RX4 Wag  21.0   6 110
+Datsun 710     22.8   4  93
+Hornet 4 Drive 21.4   6 110</code></pre>
+</div>
+</div>
+<p><strong>O operador <code>|&gt;</code> (pipe)</strong> significa “e então…”</p>
+<p>Leia como: “Pegue mtcars, E ENTÃO selecione as colunas…”</p>
+</section>
+<section id="criando-novas-variáveis" class="slide level2" data-background-color="#E5D3B3">
+<h2>Criando novas variáveis</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="co"># Criar nova coluna</span></span>
+<span id="cb32-2"><a></a>mtcars_novo <span class="ot">&lt;-</span> mtcars <span class="sc">|&gt;</span></span>
+<span id="cb32-3"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb32-4"><a></a>    <span class="at">hp_por_cyl =</span> hp <span class="sc">/</span> cyl,</span>
+<span id="cb32-5"><a></a>    <span class="at">eficiente =</span> mpg <span class="sc">&gt;</span> <span class="dv">20</span></span>
+<span id="cb32-6"><a></a>  )</span>
+<span id="cb32-7"><a></a></span>
+<span id="cb32-8"><a></a><span class="fu">head</span>(mtcars_novo[, <span class="fu">c</span>(<span class="st">"hp"</span>, <span class="st">"cyl"</span>, <span class="st">"hp_por_cyl"</span>, <span class="st">"eficiente"</span>)], <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               hp cyl hp_por_cyl eficiente
+Mazda RX4     110   6   18.33333      TRUE
+Mazda RX4 Wag 110   6   18.33333      TRUE
+Datsun 710     93   4   23.25000      TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="seu-primeiro-gráfico" class="slide level2">
+<h2>Seu primeiro gráfico!</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb34-2"><a></a></span>
+<span id="cb34-3"><a></a><span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(<span class="at">x =</span> wt, <span class="at">y =</span> mpg)) <span class="sc">+</span></span>
+<span id="cb34-4"><a></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"#224573"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb34-5"><a></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb34-6"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb34-7"><a></a>    <span class="at">title =</span> <span class="st">"Relação entre Peso e Consumo"</span>,</span>
+<span id="cb34-8"><a></a>    <span class="at">x =</span> <span class="st">"Peso (1000 lbs)"</span>,</span>
+<span id="cb34-9"><a></a>    <span class="at">y =</span> <span class="st">"Milhas por galão"</span></span>
+<span id="cb34-10"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="guia_inicial_files/figure-revealjs/unnamed-chunk-12-1.png" width="864" class="r-stretch"></section>
+<section id="entendendo-o-ggplot2" class="slide level2" data-background-color="#E5D3B3">
+<h2>Entendendo o ggplot2</h2>
+<p>Todo gráfico ggplot2 tem 3 elementos:</p>
+<ol type="1">
+<li><strong>Dados:</strong> <code>ggplot(mtcars, ...)</code></li>
+<li><strong>Mapeamento estético:</strong> <code>aes(x = wt, y = mpg)</code></li>
+<li><strong>Geometria:</strong> <code>geom_point()</code> (tipo de gráfico)</li>
+</ol>
+<p><strong>Você CONSTRÓI gráficos adicionando camadas com <code>+</code></strong></p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">ggplot</span>(dados, <span class="fu">aes</span>(x, y)) <span class="sc">+</span>    <span class="co"># Base</span></span>
+<span id="cb35-2"><a></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>               <span class="co"># Adiciona pontos</span></span>
+<span id="cb35-3"><a></a>  <span class="fu">theme_minimal</span>()              <span class="co"># Adiciona tema</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="erros-comuns-e-como-evitá-los" class="slide level2">
+<h2>Erros comuns (e como evitá-los)</h2>
+<p><strong>Erro 1: Esquecer de carregar pacotes</strong></p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="co"># ❌ Erro</span></span>
+<span id="cb36-2"><a></a>dados <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"arquivo.csv"</span>)</span>
+<span id="cb36-3"><a></a></span>
+<span id="cb36-4"><a></a><span class="co"># ✅ Correto</span></span>
+<span id="cb36-5"><a></a><span class="fu">library</span>(readr)</span>
+<span id="cb36-6"><a></a>dados <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"arquivo.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Sempre carregue os pacotes no início do script!</strong></p>
+</section>
+<section id="erros-comuns-cont." class="slide level2" data-background-color="#E5D3B3">
+<h2>Erros comuns (cont.)</h2>
+<p><strong>Erro 2: Caminhos absolutos</strong></p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="co"># ❌ Ruim (só funciona no seu computador)</span></span>
+<span id="cb37-2"><a></a>dados <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"C:/Users/Maria/Desktop/dados.csv"</span>)</span>
+<span id="cb37-3"><a></a></span>
+<span id="cb37-4"><a></a><span class="co"># ✅ Bom (funciona em qualquer computador com o projeto)</span></span>
+<span id="cb37-5"><a></a>dados <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"dados/dados.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Use projetos e caminhos relativos!</strong></p>
+</section>
+<section id="erros-comuns-cont.-1" class="slide level2">
+<h2>Erros comuns (cont.)</h2>
+<p><strong>Erro 3: Sobrescrever objetos importantes</strong></p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="co"># ❌ Perigo!</span></span>
+<span id="cb38-2"><a></a>dados <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"originais.csv"</span>)</span>
+<span id="cb38-3"><a></a>dados <span class="ot">&lt;-</span> dados <span class="sc">|&gt;</span> <span class="fu">filter</span>(idade <span class="sc">&gt;</span> <span class="dv">18</span>)  <span class="co"># perdeu os originais!</span></span>
+<span id="cb38-4"><a></a></span>
+<span id="cb38-5"><a></a><span class="co"># ✅ Melhor</span></span>
+<span id="cb38-6"><a></a>dados <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"originais.csv"</span>)</span>
+<span id="cb38-7"><a></a>dados_adultos <span class="ot">&lt;-</span> dados <span class="sc">|&gt;</span> <span class="fu">filter</span>(idade <span class="sc">&gt;</span> <span class="dv">18</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Guarde o original e crie novos objetos!</strong></p>
+</section>
+<section id="erros-comuns-cont.-2" class="slide level2" data-background-color="#E5D3B3">
+<h2>Erros comuns (cont.)</h2>
+<p><strong>Erro 4: Não usar o pipe <code>|&gt;</code></strong></p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="co"># ❌ Difícil de ler</span></span>
+<span id="cb39-2"><a></a>resultado <span class="ot">&lt;-</span> <span class="fu">arrange</span>(<span class="fu">filter</span>(<span class="fu">select</span>(dados, nome, idade), idade <span class="sc">&gt;</span> <span class="dv">18</span>), nome)</span>
+<span id="cb39-3"><a></a></span>
+<span id="cb39-4"><a></a><span class="co"># ✅ Muito melhor!</span></span>
+<span id="cb39-5"><a></a>resultado <span class="ot">&lt;-</span> dados <span class="sc">|&gt;</span></span>
+<span id="cb39-6"><a></a>  <span class="fu">select</span>(nome, idade) <span class="sc">|&gt;</span></span>
+<span id="cb39-7"><a></a>  <span class="fu">filter</span>(idade <span class="sc">&gt;</span> <span class="dv">18</span>) <span class="sc">|&gt;</span></span>
+<span id="cb39-8"><a></a>  <span class="fu">arrange</span>(nome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>O pipe torna o código MUITO mais legível!</strong></p>
+</section>
+<section id="pedindo-ajuda-no-r" class="slide level2">
+<h2>Pedindo ajuda no R</h2>
+<p><strong>Ajuda sobre uma função:</strong></p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>?mean</span>
+<span id="cb40-2"><a></a><span class="fu">help</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Procurar ajuda:</strong></p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>??regression</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="pedindo-ajuda-no-r-1" class="slide level2">
+<h2>Pedindo ajuda no R</h2>
+<p><strong>Exemplos:</strong></p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">example</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Não tenha vergonha de pedir ajuda!</strong> Até programadores experientes consultam a documentação constantemente.</p>
+</section>
+<section id="onde-buscar-ajuda" class="slide level2" data-background-color="#E5D3B3">
+<h2>Onde buscar ajuda</h2>
+<p><strong>Dentro do R:</strong></p>
+<ul>
+<li>Aba “Help” no RStudio</li>
+<li><code>?funcao</code> para ajuda específica</li>
+<li>Vignettes dos pacotes</li>
+</ul>
+<p><strong>Na internet:</strong></p>
+<ul>
+<li>Stack Overflow (em inglês e português)</li>
+<li>Google: “como fazer X em R”</li>
+<li>ChatGPT/Claude para explicações</li>
+<li>Comunidade R Brasil (Telegram/Discord)</li>
+</ul>
+</section>
+<section id="sites-e-recursos-úteis" class="slide level2">
+<h2>Sites e recursos úteis</h2>
+<p><strong>Aprendizado:</strong></p>
+<ul>
+<li><a href="https://r4ds.hadley.nz/">R for Data Science</a>:Livro gratuito online</li>
+<li><a href="https://education.rstudio.com/">RStudio Education</a>:Tutoriais oficiais</li>
+<li><a href="https://posit.co/resources/cheatsheets/">Posit Cheatsheets</a>: Guias rápidos</li>
+</ul>
+<p><strong>Comunidade:</strong></p>
+<ul>
+<li><a href="https://community.rstudio.com/">RStudio Community</a></li>
+<li><a href="https://www.r-bloggers.com/">R-bloggers</a></li>
+<li><a href="https://www.rladiesgyn.com/">R-Ladies</a></li>
+<li><a href="">Comunidade de Estatística - Thiago Marques</a></li>
+</ul>
+</section>
+<section id="boas-práticas-desde-o-início" class="slide level2" data-background-color="#E5D3B3">
+<h2>Boas práticas desde o início</h2>
+<p><strong>1. Use projetos do RStudio</strong></p>
+<ul>
+<li>Mantém tudo organizado</li>
+<li>Facilita compartilhar</li>
+</ul>
+<p><strong>2. Comente seu código</strong></p>
+<ul>
+<li>Explique o PORQUÊ, não o QUÊ</li>
+<li>Seu eu-futuro agradece</li>
+</ul>
+<p><strong>3. Use nomes descritivos</strong></p>
+<ul>
+<li><code>dados_vendas_2024</code> &gt; <code>df1</code></li>
+<li><code>calcular_media()</code> &gt; <code>func()</code></li>
+</ul>
+</section>
+<section id="boas-práticas-cont." class="slide level2">
+<h2>Boas práticas (cont.)</h2>
+<p><strong>4. Salve frequentemente</strong></p>
+<ul>
+<li>Scripts: <code>Ctrl + S</code> / <code>Cmd + S</code></li>
+<li>Trabalho perdido dói!</li>
+</ul>
+<p><strong>5. Use versionamento</strong></p>
+<ul>
+<li>Git/GitHub quando estiver confortável</li>
+<li>Por enquanto, use datas nos nomes: <code>analise_2025-11-29.R</code></li>
+</ul>
+<p><strong>6. Teste em partes</strong></p>
+<ul>
+<li>Execute linha por linha</li>
+<li>Verifique resultados parciais</li>
+</ul>
+</section>
+<section id="workflow-típico-de-análise" class="slide level2" data-background-color="#E5D3B3">
+<h2>Workflow típico de análise</h2>
+<p><strong>1. Importar dados</strong></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a>dados <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"dados/arquivo.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>2. Explorar e limpar</strong></p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">glimpse</span>(dados)</span>
+<span id="cb44-2"><a></a>dados_limpos <span class="ot">&lt;-</span> dados <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(variavel))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>3. Transformar</strong></p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>dados_processados <span class="ot">&lt;-</span> dados_limpos <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a></a>  <span class="fu">mutate</span>(<span class="at">nova_var =</span> var1 <span class="sc">+</span> var2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Este será seu workflow quando trabalhar com dados reais!</strong></p>
+</section>
+<section id="workflow-típico-cont." class="slide level2">
+<h2>Workflow típico (cont.)</h2>
+<p><strong>4. Visualizar</strong></p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="fu">ggplot</span>(dados_processados, <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb46-2"><a></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>5. Modelar (quando necessário)</strong></p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>modelo <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> dados_processados)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>6. Comunicar resultados</strong></p>
+<ul>
+<li>Gráficos salvos</li>
+<li>Relatórios em Quarto/RMarkdown</li>
+</ul>
+<p><strong>Você vai praticar este workflow nos seus projetos!</strong></p>
+</section>
+<section id="exemplo-completo-do-zero" class="slide level2" data-background-color="#E5D3B3">
+<h2>Exemplo completo do zero</h2>
+<p>Vamos fazer uma análise completa com o dataset <code>iris</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="co"># 1. Carregar pacotes</span></span>
+<span id="cb48-2"><a></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb48-3"><a></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb48-4"><a></a></span>
+<span id="cb48-5"><a></a><span class="co"># 2. Carregar dados</span></span>
+<span id="cb48-6"><a></a><span class="fu">data</span>(iris)</span>
+<span id="cb48-7"><a></a></span>
+<span id="cb48-8"><a></a><span class="co"># 3. Explorar</span></span>
+<span id="cb48-9"><a></a><span class="fu">glimpse</span>(iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 150
+Columns: 5
+$ Sepal.Length &lt;dbl&gt; 5.1, 4.9, 4.7, 4.6, 5.0, 5.4, 4.6, 5.0, 4.4, 4.9, 5.4, 4.…
+$ Sepal.Width  &lt;dbl&gt; 3.5, 3.0, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.…
+$ Petal.Length &lt;dbl&gt; 1.4, 1.4, 1.3, 1.5, 1.4, 1.7, 1.4, 1.5, 1.4, 1.5, 1.5, 1.…
+$ Petal.Width  &lt;dbl&gt; 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.…
+$ Species      &lt;fct&gt; setosa, setosa, setosa, setosa, setosa, setosa, setosa, s…</code></pre>
+</div>
+</div>
+</section>
+<section id="exemplo-completo-cont." class="slide level2">
+<h2>Exemplo completo (cont.)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="co"># 4. Resumir dados</span></span>
+<span id="cb50-2"><a></a>resumo <span class="ot">&lt;-</span> iris <span class="sc">|&gt;</span></span>
+<span id="cb50-3"><a></a>  <span class="fu">group_by</span>(Species) <span class="sc">|&gt;</span></span>
+<span id="cb50-4"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb50-5"><a></a>    <span class="at">media_sepala =</span> <span class="fu">mean</span>(Sepal.Length),</span>
+<span id="cb50-6"><a></a>    <span class="at">media_petala =</span> <span class="fu">mean</span>(Petal.Length),</span>
+<span id="cb50-7"><a></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb50-8"><a></a>  )</span>
+<span id="cb50-9"><a></a></span>
+<span id="cb50-10"><a></a><span class="fu">print</span>(resumo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  Species    media_sepala media_petala     n
+  &lt;fct&gt;             &lt;dbl&gt;        &lt;dbl&gt; &lt;int&gt;
+1 setosa             5.01         1.46    50
+2 versicolor         5.94         4.26    50
+3 virginica          6.59         5.55    50</code></pre>
+</div>
+</div>
+</section>
+<section id="exemplo-completo-cont.-1" class="slide level2" data-background-color="#E5D3B3">
+<h2>Exemplo completo (cont.)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="co"># 5. Visualizar</span></span>
+<span id="cb52-2"><a></a><span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(<span class="at">x =</span> Sepal.Length, <span class="at">y =</span> Petal.Length, <span class="at">color =</span> Species)) <span class="sc">+</span></span>
+<span id="cb52-3"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb52-4"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#224573"</span>, <span class="st">"#6B4F4F"</span>, <span class="st">"#4A6FA5"</span>)) <span class="sc">+</span></span>
+<span id="cb52-5"><a></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb52-6"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb52-7"><a></a>    <span class="at">title =</span> <span class="st">"Relação entre Comprimento da Sépala e Pétala"</span>,</span>
+<span id="cb52-8"><a></a>    <span class="at">x =</span> <span class="st">"Comprimento da Sépala (cm)"</span>,</span>
+<span id="cb52-9"><a></a>    <span class="at">y =</span> <span class="st">"Comprimento da Pétala (cm)"</span></span>
+<span id="cb52-10"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="guia_inicial_files/figure-revealjs/unnamed-chunk-15-1.png" width="864" class="r-stretch"></section>
+<section id="salvando-seu-trabalho" class="slide level2">
+<h2>Salvando seu trabalho</h2>
+<p><strong>Salvar script:</strong></p>
+<ul>
+<li><code>Ctrl + S</code> / <code>Cmd + S</code></li>
+</ul>
+<p><strong>Salvar gráfico:</strong></p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a><span class="fu">ggsave</span>(<span class="st">"graficos/meu_grafico.png"</span>, </span>
+<span id="cb53-2"><a></a>       <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Salvar dados processados:</strong></p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a><span class="fu">write_csv</span>(dados_processados, <span class="st">"resultados/dados_finais.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="checklist-do-iniciante" class="slide level2" data-background-color="#E5D3B3">
+<h2>Checklist do iniciante</h2>
+<p><strong>Preparação:</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">R instalado</label></li>
+<li><label><input type="checkbox">RStudio instalado<br>
+</label></li>
+<li><label><input type="checkbox">Tidyverse instalado</label></li>
+<li><label><input type="checkbox">Projeto criado</label></li>
+<li><label><input type="checkbox">Estrutura de pastas pronta</label></li>
+</ul>
+<p><strong>Em cada análise:</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">Comentários no script</label></li>
+<li><label><input type="checkbox">Pacotes carregados</label></li>
+<li><label><input type="checkbox">Dados importados corretamente</label></li>
+<li><label><input type="checkbox">Exploração inicial feita</label></li>
+<li><label><input type="checkbox">Resultados verificados</label></li>
+<li><label><input type="checkbox">Trabalho salvo</label></li>
+</ul>
+</section>
+<section id="próximos-passos-na-sua-jornada" class="slide level2">
+<h2>Próximos passos na sua jornada</h2>
+<p><strong>Curto prazo:</strong></p>
+<ul>
+<li>Pratique com datasets do R (<code>iris</code>, <code>mtcars</code>, <code>diamonds</code>)</li>
+<li>Experimente diferentes gráficos no ggplot2</li>
+<li>Refaça tutoriais com seus próprios dados</li>
+</ul>
+<p><strong>Médio prazo:</strong></p>
+<ul>
+<li>Aprenda a criar relatórios com Quarto</li>
+<li>Explore análise exploratória com DataExplorer</li>
+<li>Aprenda mais sobre dplyr e tidyr</li>
+</ul>
+<p><strong>Longo prazo:</strong></p>
+<ul>
+<li>Modelagem estatística</li>
+<li>Machine learning com tidymodels</li>
+<li>Dashboards com Shiny</li>
+</ul>
+</section>
+<section id="dicas-de-ouro" class="slide level2" data-background-color="#E5D3B3">
+<h2>Dicas de ouro</h2>
+<p><strong>1. Pratique regularmente</strong></p>
+<ul>
+<li>15 minutos por dia &gt; 2 horas uma vez por semana</li>
+</ul>
+<p><strong>2. Copie e modifique</strong></p>
+<ul>
+<li>Não há problema em copiar código</li>
+<li>Entenda o que está fazendo</li>
+<li>Adapte para sua necessidade</li>
+</ul>
+<p><strong>3. Cometa erros</strong></p>
+<ul>
+<li>Erros são parte do aprendizado</li>
+<li>Leia as mensagens de erro com calma</li>
+<li>Google a mensagem de erro</li>
+</ul>
+</section>
+<section id="dicas-de-ouro-cont." class="slide level2">
+<h2>Dicas de ouro (cont.)</h2>
+<p><strong>4. Construa seu próprio banco de códigos</strong></p>
+<ul>
+<li>Salve snippets úteis</li>
+<li>Crie templates de análises</li>
+<li>Documente suas soluções</li>
+</ul>
+<p><strong>5. Participe da comunidade</strong></p>
+<ul>
+<li>Pergunte quando tiver dúvidas</li>
+<li>Compartilhe o que aprender</li>
+<li>Ajude outros iniciantes</li>
+</ul>
+<p><strong>6. Seja paciente consigo mesmo</strong></p>
+<ul>
+<li>Aprender leva tempo</li>
+<li>Celebre pequenas vitórias</li>
+<li>Compare-se apenas com você de ontem</li>
+</ul>
+</section>
+<section id="recursos-gratuitos-para-continuar" class="slide level2" data-background-color="#E5D3B3">
+<h2>Recursos gratuitos para continuar</h2>
+<p><strong>Livros online gratuitos:</strong></p>
+<ul>
+<li><a href="https://r4ds.hadley.nz/">R for Data Science</a></li>
+<li><a href="https://modernstatisticswithr.com/">Modern Statistics with R</a></li>
+<li><a href="https://rstudio-education.github.io/hopr/">Hands-On Programming with R</a></li>
+</ul>
+<p><strong>Tutoriais interativos:</strong></p>
+<ul>
+<li><a href="https://posit.cloud/learn/primers">RStudio Primers</a></li>
+<li><a href="https://swirlstats.com/">Swirl</a> (aprenda dentro do R!)</li>
+</ul>
+<p><strong>Comunidades brasileiras:</strong></p>
+<ul>
+<li><a href="https://t.me/rbrasiloficial">R Brasil (Telegram)</a></li>
+<li><a href="https://curso-r.com/">Curso-R</a></li>
+</ul>
+</section>
+<section id="um-último-conselho" class="slide level2" data-background-color="#E5D3B3">
+<h2>Um último conselho</h2>
+<blockquote>
+<p>“A melhor maneira de aprender R é <strong>usando</strong> R.”</p>
+</blockquote>
+<p>Não espere entender tudo antes de começar.</p>
+<p><strong>Comece pequeno:</strong></p>
+<ul>
+<li>Um gráfico simples hoje</li>
+<li>Uma análise básica amanhã</li>
+<li>Um mini projeto na semana que vem</li>
+</ul>
+<p><strong>Cada linha de código que você escreve é um passo na direção certa.</strong></p>
+<p>Você já deu o primeiro passo ao chegar até aqui. Parabéns!</p>
+</section>
+<section id="projeto-prático-sugerido" class="slide level2" data-background-color="#E5D3B3">
+<h2>Projeto prático sugerido</h2>
+<p><strong>Para praticar, faça um mini projeto:</strong></p>
+<ol type="1">
+<li>Escolha um dataset (pode ser do R: <code>iris</code>, <code>mtcars</code>, <code>diamonds</code>)</li>
+<li>Crie um projeto no RStudio</li>
+<li>Escreva um script que:
+<ul>
+<li>Carregue os dados</li>
+<li>Faça resumos estatísticos</li>
+<li>Crie 2-3 gráficos</li>
+<li>Tire pelo menos uma conclusão</li>
+</ul></li>
+<li>Salve tudo organizado nas pastas</li>
+<li>Adicione comentários explicando seu raciocínio</li>
+</ol>
+<p><strong>Este será seu primeiro projeto completo!</strong></p>
+</section>
+<section id="recapitulando" class="slide level2" data-background-color="#E5D3B3">
+<h2>Recapitulando</h2>
+<p><strong>Você aprendeu:</strong></p>
+<ul>
+<li>Instalar R e RStudio</li>
+<li>Criar projetos e scripts</li>
+<li>Usar o console e executar códigos</li>
+<li>Instalar e carregar pacotes</li>
+<li>Importar e explorar dados</li>
+<li>Manipular dados com dplyr</li>
+<li>Criar visualizações com ggplot2</li>
+<li>Boas práticas e organização</li>
+<li>Onde buscar ajuda</li>
+</ul>
+<p><strong>Isso é MUITO para um primeiro contato!</strong></p>
+</section>
+<section id="mensagem-final" class="slide level2">
+<h2>Mensagem final</h2>
+<p><strong>Você não precisa saber tudo agora.</strong></p>
+<p><strong>Você não precisa ser perfeito.</strong></p>
+<p><strong>Você só precisa começar.</strong></p>
+<p>O R é uma ferramenta poderosa, e você acabou de ganhar a chave para usá-la.</p>
+<p><strong>O resto é prática, paciência e persistência.</strong></p>
+<p>Bem-vindo à comunidade R!</p>
+</section>
+<section id="agora" class="slide level2" data-background-color="#E5D3B3">
+<h2>Agora</h2>
+<p><strong>Seus primeiros passos estão completos!</strong></p>
+<p>Agora é hora de praticar e explorar.</p>
+<p><strong>Lembre-se:</strong> a comunidade R está aqui para ajudar. Não hesite em perguntar!</p>
+<p><strong>Bons estudos e ótimas análises!</strong></p>
+</section>
+<section id="muito-obrigada" class="slide level2">
+<h2>Muito obrigada!</h2>
+<p><em>Esta apresentação é parte do projeto Café com R</em></p>
+<p><em>É OPEN, USE, COMPARTILHE!</em></p>
+
+<img data-src="imagens/comunidade.png" width="428" class="r-stretch quarto-figure-center"><p class="caption"><strong>Allison Horst.</strong></p></section>
+<section id="assine-o-café-com-r-1" class="slide level2">
+<h2><strong>☕ Assine o Café com R</strong></h2>
+<p><strong>Fique por dentro das aulas, conteúdos, newsletter!</strong></p>
+<blockquote>
+<p>Que cada <strong>gole</strong> desperte uma nova ideia.</p>
+<p>Que cada <strong>script</strong> abra uma nova conversa.</p>
+<p>Que o <strong>Café com R</strong>, se torne um ponto de encontro nosso!</p>
+</blockquote>
+
+
+
+<img data-src="imagens/qrcode.jpg" class="quarto-figure quarto-figure-center r-stretch" width="236"></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="imagens/logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Jennifer Lopes • Café com R</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jenniferlopes\.quarto\.pub\/portifolio");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

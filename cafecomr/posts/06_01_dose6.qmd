@@ -1,0 +1,455 @@
+---
+title: "Primeiro café do ano ☕"
+subtitle: "Como organizar seus projetos desenvolvidos em R para 2026"
+author: "Jennifer Luz Lopes"
+date: "2026-01-15"
+categories: [Projetos, R, Pacotes, Ferramentas]
+image: ../imagens/cafe6.png
+image-alt: ""
+description: "Sabe aquele momento em que você abre um projeto de R que fez há 3 meses e não consegue entender ou lembrar o que estava fazendo?"
+css: estilo_jeni.css
+---
+
+## Bem-vindo ao nosso encontro!
+
+Olá, **`querida comunidade`**!
+
+> Que alegria ter você aqui para **no primeiro café de 2026**. Nesta edição especial, preparei uma seleção de ferramentas e rotinas para você aplicar e organizar os seus projetos desenvolvidos no RStudio ou Positron.
+
+**Pegue sua xícara favorita e vamos juntos explorar o que há de mais interessante no universo R!**
+
+------------------------------------------------------------------------
+
+
+# Dose da Semana
+
+Pessoal .....
+
+Sabe aquele momento em que você abre um projeto de R que fez há 3 meses e não consegue entender ou lembrar o que estava fazendo?
+
+Já passei por isso muitas vezes. E se tem duas coisas que aprendi é que organização e documentação **É NECESSIDADE BÁSICA** no mundo dos dados.
+
+Começamos 2026 e muitos de nós estamos querendo uma melhor organização em tudo. Então que tal aproveitar para deixar seus projetos de R estruturados de um jeito que o você do futuro vai agradecer?
+
+Vem comigo que eu te mostro como.
+
+![**A meguy está junto com nós!**](images/clipboard-178450354.jpeg){fig-align="center" width="187"}
+
+------------------------------------------------------------------------
+
+## A base: estrutura de pastas que faz sentido
+
+Antes de mais nada, vamos combinar uma coisa: **cada projeto precisa ser um projeto dedicado**.
+
+**`Vocês concordam?`**
+
+Isso muda a forma que você trabalha porque você não precisa mais ficar usando **`setwd()`** para definir caminhos manualmente.
+
+**COMO COMEÇAR?**
+
+**BORA?**
+
+### Como criar um projeto no RStudio
+
+O primeiro passo é criar um projeto, se você está trabalhando no RStudio.
+
+**No RStudio, criar um projeto é simples:**
+
+1.  Vá em **File \> New Project**
+2.  Escolha uma das opções:
+    -   **New Directory**: cria uma pasta nova para o projeto
+    -   **Existing Directory**: transforma uma pasta existente em projeto
+    -   **Version Control**: clona um repositório Git
+3.  Se escolheu "New Directory", selecione **New Project**
+4.  Dê um nome para o projeto e escolha onde salvar
+5.  Clique em **Create Project**
+
+Pronto! O RStudio vai criar um arquivo `.Rproj` na pasta. É esse arquivo que você deve abrir para trabalhar no projeto.
+
+<div>
+
+**Veja como criar:**
+
+![**Fonte: R For Data Science.**](images/new-project.png){fig-align="center" width="496"}
+
+<div>
+
+![**Primeiro projeto. A imagem é antiga, mas nada mudou!**](images/primeiro projeto.png){fig-align="center" width="527"}
+
+### Como criar um projeto no Positron
+
+**O Positron, a nova IDE da Posit, também trabalha com projetos:**
+
+1.  Vá em **File \> New Project**
+2.  Escolha o tipo de projeto:
+    -   **New Folder from Template**: cria um projeto em branco
+    -   **Open Folder**: transforma uma pasta em projeto
+    -   **New Folder from git**: clona um repositório Git
+3.  Selecione a pasta onde quer criar o projeto
+4.  O Positron cria automaticamente a estrutura necessária
+
+::: callout-tip
+**O Positron reconhece projetos do RStudio (arquivos `.Rproj`) e vice-versa, então você pode alternar entre as duas IDEs sem problemas.**
+:::
+
+#### Uso de projetos no Positron:
+
+::: callout-important
+-   **No Positron, as palavras “pasta”, “espaço de trabalho” e “projeto” são usadas quase como sinônimos, pois a forma mais comum de trabalhar é em um espaço de trabalho de pasta única.**
+:::
+
+## **Criando projetos no Positron**
+
+### **Opção 1 - Barra file**
+
+-   O recurso “**`New Folder from Template`**” ajuda você a iniciar novos projetos mais rapidamente.
+
+![**Solicitação pelo menu file na barra superior, canto esquerdo.**](images/projeto1.png){fig-align="center" width="522"}
+
+### **Opção 1 - Welcome**
+
+![](images/new_folder.jfif){fig-align="center" width="469"}
+
+![](images/new_folder (1).jfif){fig-align="center" width="450"}
+
+### **Opção 2 - Modelos de pastas - `Open Folder`**
+
+-   Neste caso você já tem **uma pasta com os arquivos do seu projeto**.
+
+![](images/folder.jfif){fig-align="center" width="538"}
+
+### Opção 3 - **Modelos de pastas - `New Folder from git`**
+
+-   **Clonando** o repositório do **`GitHub`**
+
+![](images/git.jfif){fig-align="center" width="602"}
+
+## Aqui vai uma estrutura que uso e funciona muito bem:
+
+```         
+meu-projeto/
+│
+├── meu-projeto.Rproj           # O arquivo do projeto
+├── README.md                   # Explica o que é o projeto
+├── .gitignore                  # Ignora coisas desnecessárias
+│
+├── data/
+│   ├── raw/                    # Dados originais (NUNCA mexa aqui!)
+│   └── processed/              # Dados limpos e processados
+│
+├── R/
+│   ├── 01-importacao.R         # Scripts numerados = ordem clara
+│   ├── 02-limpeza.R
+│   ├── 03-analise.R
+│   └── funcoes.R               # Suas funções customizadas
+│
+├── output/
+│   ├── figures/                # Seus gráficos
+│   ├── tables/                 # Tabelas exportadas
+│   └── reports/                # Relatórios finais
+│
+└── docs/
+    └── analise.qmd             # Seus documentos Quarto/RMarkdown
+```
+
+**Por que essa estrutura?**
+
+1.  Você sempre sabe onde está cada coisa
+2.  Fica fácil compartilhar com outras pessoas
+3.  Dá pra versionar no Git sem problemas
+4.  Scripts numerados mostram a ordem do fluxo de trabalho
+
+------------------------------------------------------------------------
+
+## Pacotes que vão facilitar sua vida
+
+### 1. {here} - Fim dos problemas com caminhos de arquivo
+
+``` r
+install.packages("here")
+library(here)
+
+# Em vez de:
+dados <- read.csv("C:/Users/SeusDocumentos/Projetos/projeto1/data/arquivo.csv")
+
+# Faça:
+dados <- read.csv(here("data", "arquivo.csv"))
+```
+
+::: callout-tip
+O **`{here}`** sempre encontra a raiz do seu projeto, não importa de onde você rode o script. Funciona como um sistema de navegação para seus arquivos.
+:::
+
+[**Documentação do pacote**](https://here.r-lib.org/)**.**
+
+![](images/here.png){fig-align="center" width="479"}
+
+------------------------------------------------------------------------
+
+### 2. {renv} - Controle de versão de pacotes
+
+Sabe quando você volta num projeto antigo e nada funciona porque os pacotes atualizaram? O `{renv}` resolve isso criando um ambiente isolado para cada projeto.
+
+``` r
+install.packages("renv")
+
+# No seu projeto:
+renv::init()        # Cria o ambiente
+renv::snapshot()    # Salva as versões dos pacotes
+renv::restore()     # Restaura as versões salvas
+```
+
+::: callout-tip
+**Isso permite que você restaure exatamente as mesmas versões dos pacotes quando voltar ao projeto. Uso em todos os projetos importantes.**
+:::
+
+[**Documentação do pacote.**](https://rstudio.github.io/renv/)
+
+------------------------------------------------------------------------
+
+### 3. {usethis} - Automatiza tarefas repetitivas
+
+Este pacote é uma ferramenta versátil para criar e configurar projetos:
+
+``` r
+install.packages("usethis")
+library(usethis)
+
+# Cria um projeto novo já estruturado
+usethis::create_project("~/meu-novo-projeto")
+
+# Adiciona README
+usethis::use_readme_md()
+
+# Inicializa Git
+usethis::use_git()
+
+# Adiciona .gitignore com templates prontos
+usethis::git_vaccinate()
+
+# Cria arquivo de funções
+usethis::use_r("minhas_funcoes")
+```
+
+Ele automatiza em segundos o que você levaria vários minutos fazendo manualmente.
+
+EU AMO ESSE PACOTE!
+
+[**Documentação do pacote.**](https://usethis.r-lib.org/)
+
+------------------------------------------------------------------------
+
+### 4. {targets} - Para pipelines mais complexos
+
+Se você trabalha com análises que têm várias etapas e demoram para rodar, o `{targets}` é muito útil. Ele cria um pipeline onde só reprocessa o que mudou.
+
+``` r
+install.packages("targets")
+
+# Exemplo básico de _targets.R:
+library(targets)
+
+list(
+  tar_target(dados_raw, ler_dados()),
+  tar_target(dados_limpos, limpar_dados(dados_raw)),
+  tar_target(modelo, treinar_modelo(dados_limpos)),
+  tar_target(relatorio, gerar_relatorio(modelo)))
+```
+
+::: callout-tip
+**Mudou só a visualização? Ele não refaz a importação e limpeza dos dados. Isso economiza muito tempo.**
+:::
+
+[**Documentação**](https://books.ropensci.org/targets/)
+
+![**tar_visnetwork(): Exibe o gráfico de dependências do pipeline, mostrando um fluxo de trabalho natural da esquerda para a direita. É uma boa prática garantir que o gráfico tenha os nós corretos conectados com as arestas corretas. Leia mais sobre dependências e o gráfico na seção de dependências de um capítulo posterior .**](images/download.png){fig-align="center"}
+
+------------------------------------------------------------------------
+
+## Documente pensando no futuro
+
+> Você provavelmente vai esquecer detalhes do projeto depois de algum tempo. Por isso a documentação é importante.
+
+### README.md
+
+Todo projeto precisa de um README explicando:
+
+1.  O que é o projeto
+
+2.  Quais pacotes precisa
+
+3.  Como rodar
+
+4.  Quem criou e quando
+
+**Exemplo básico:**
+
+``` markdown
+# Análise de Vendas 2026
+
+Análise exploratória dos dados de vendas da empresa no último ano.
+
+## Pacotes necessários
+
+```r
+install.packages(c("tidyverse", "here", "janitor"))
+```
+
+## Como rodar
+
+1.  Abra o arquivo `analise-vendas.Rproj`
+2.  Execute os scripts na pasta `R/` em ordem numérica
+3.  O relatório final estará em `output/reports/`
+
+## Autor
+
+Seu Nome - Janeiro/2026
+
+```         
+
+---
+
+### Comente seu código (mas comente bem)
+
+```r
+# Comentário ruim:
+x <- dados %>% filter(idade > 18) # filtra idade
+
+# Comentário bom:
+# Remove menores de idade pois a análise foca apenas no público adulto
+dados_adultos <- dados %>% 
+  filter(idade > 18)
+
+# Ainda melhor - adiciona contexto de negócio:
+# Regulamentação interna exige análise separada para menores de idade
+# devido a políticas de proteção de dados (ver doc #123)
+dados_adultos <- dados %>% 
+  filter(idade > 18)
+```
+
+------------------------------------------------------------------------
+
+## Convenções de nomenclatura que funcionam
+
+**Arquivos de script:**
+
+1.  Use números para ordem: `01-`, `02-`, `03-`
+
+2.  Nomes descritivos: `01-importacao-dados.R`, não `script.R`
+
+3.  Tudo em minúsculo, use hífens: `analise-vendas.R`, não `AnáliseVendas.R`
+
+------------------------------------------------------------------------
+
+## Versione com Git (mesmo que seja só você)
+
+Muita gente acha que Git é só para trabalho em equipe, mas ele também é útil para não perder trabalho e poder voltar a versões anteriores quando necessário.
+
+**Comandos básicos para começar:**
+
+``` bash
+# No terminal do RStudio ou Positron:
+git init
+git add .
+git commit -m "Versão inicial do projeto"
+
+# A cada avanço importante:
+git add .
+git commit -m "Adiciona análise exploratória"
+```
+
+**Dica importante: faça commits com frequência.**
+
+Dica de livro, com explicações sobre Git e GitHub: [**Happy Git and GitHub for the useR**](https://happygitwithr.com/)
+
+------------------------------------------------------------------------
+
+## Template inicial
+
+Não precisa criar tudo do zero. Já trouxe um exemplo para você aplicar.
+
+``` r
+# Estrutura simples mas eficiente
+usethis::create_project("analise-rapida")
+usethis::use_readme_md()
+usethis::use_r("funcoes")
+fs::dir_create(c("data/raw", "data/processed", "output"))
+```
+
+------------------------------------------------------------------------
+
+## **Tutorial completo para apoiar vocês:**
+
+![](images/clipboard-2757705836.png){fig-align="center" width="578"}
+
+1.  [**Link Youtube**](https://www.youtube.com/watch?v=4gbxrmzRqYI&list=PLwz7-nXXTEyfb2ryxNedXT_apCVtlZ479)
+
+2.  [**Repositório no GitHub**](https://github.com/JenniferLopes/Gerenciamento_projetos_no_R)
+
+3.  [**Apresentação**](https://jenniferlopes.quarto.pub/organizacao_projetos_r/#/title-slide)
+
+------------------------------------------------------------------------
+
+## Minha rotina de início de projeto (checklist)
+
+**Quando começo um projeto novo, sigo estes passos:**
+
+1.  Criar projeto no RStudio ou Positron
+2.  Inicializar **`{renv}`** se for algo importante
+3.  Criar estrutura de pastas
+4.  Adicionar README.md
+5.  Inicializar Git
+6.  Criar .gitignore apropriado
+7.  Fazer primeiro commit
+
+**Parece muito, pouco? Depois de fazer algumas vezes vira automático, e o `{usethis}` ajuda bastante.**
+
+------------------------------------------------------------------------
+
+## Mensagem final para os cafezeiros de plantão!
+
+Sei que no começo pode parecer trabalhoso organizar tudo. Você está animado para fazer a análise e não quer perder tempo com estrutura, README, etc.
+
+Mas a verdade é: **você não está perdendo tempo, está ganhando tempo**.
+
+**Cada minuto que você investe organizando agora economiza horas depois quando precisar:**
+
+1.  Voltar no projeto daqui 6 meses
+
+2.  Compartilhar com alguém
+
+3.  Replicar a análise com dados novos
+
+4.  Descobrir onde há algum problema
+
+> **Comece com o básico (projetos + estrutura de pastas + README) e vá adicionando as outras práticas aos poucos. Não precisa ser perfeito, precisa ser melhor que antes.**
+
+------------------------------------------------------------------------
+
+**E você, como organiza seus projetos? Tem alguma dica que não mencionei aqui?**
+
+Me conta nos comentários ou responde esse email. Gosto de trocar ideias sobre workflow.
+
+Um abraço e bom café (com R)!
+
+------------------------------------------------------------------------
+
+**P.S.:** Se você achou útil, compartilhe com aquele amigo que vive perdido nos próprios scripts.
+
+## ☕ Assine o Café com R
+
+Que cada gole desperte uma nova ideia.
+
+Que cada script abra uma nova conversa.
+
+Que o Café com R, se torne um ponto de encontro nosso!
+
+```{=html}
+<iframe src="https://forms.gle/Q5SKuSK1ViTL6FAWA" width="100%" height="550" frameborder="0" marginheight="0" marginwidth="0" style="
+    border:3px solid #224573;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(34,69,115,0.3);
+  ">
+```
+
+</iframe>

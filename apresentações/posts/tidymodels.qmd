@@ -1,0 +1,769 @@
+---
+title: "7. Tidymodels para Regressão em R"
+subtitle: "Análise de Machine Learning"
+description: "Você já conhece o tidymodels? Aqui tem um tutorial."
+categories: ["R", "Machine Learning", "Regressão", "Tidymodels"]
+image: "imagens/models_image.png"
+
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    logo: "imagens/logo.png"
+    preview-links: auto
+    css: "estilo_jeni2.css"
+    footer: "Jennifer Lopes • Machine Learning com R"
+
+editor:
+  markdown:
+    wrap: 72
+---
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+[![](imagens/qrcode.jpg){fig-align="center"
+width="190"}](https://forms.gle/Q5SKuSK1ViTL6FAWA)
+
+## Introdução ao Tidymodels
+
+O **tidymodels** é uma coleção de pacotes para modelagem e **machine
+learning** seguindo os princípios do **tidyverse**.
+
+[![](imagens/tidymodels.JPG){fig-align="center"
+width="396"}](https://www.tidymodels.org/)
+
+------------------------------------------------------------------------
+
+## Pacotes Principais
+
+-   **rsample**: divisão de dados
+-   **recipes**: pré-processamento
+-   **parsnip**: especificação de modelos
+-   **workflows**: pipelines completos
+-   **yardstick**: métricas de avaliação
+-   **tune**: otimização de hiperparâmetros
+
+------------------------------------------------------------------------
+
+## Instalação e Carregamento {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+#| warning: false
+#| message: false
+
+# Carregar pacotes
+library(tidymodels)
+library(modeldata)
+library(ggplot2)
+library(dplyr)
+```
+
+------------------------------------------------------------------------
+
+## O que é Regressão?
+
+**Regressão** é uma técnica estatística para modelar a relação entre uma
+variável resposta (dependente) e uma ou mais variáveis preditoras
+(independentes).
+
+![**Imagem: Thales Ferraz.**](imagens/regress.jpeg){fig-align="center"
+width="423"}
+
+**Objetivo**: Prever valores numéricos contínuos.
+
+------------------------------------------------------------------------
+
+## Dataset Ames
+
+O dataset **Ames** contém dados de vendas de imóveis em Ames, Iowa
+(EUA).
+
+-   2930 observações
+-   74 variáveis
+-   Preço de venda e características das casas
+
+------------------------------------------------------------------------
+
+## Carregando os Dados {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+#| warning: false
+#| message: false
+
+# Carregar dataset Ames
+data("ames")
+
+# Visualizar primeiras linhas
+head(ames, 3)
+
+# Dimensões
+dim(ames)
+```
+
+------------------------------------------------------------------------
+
+## Variáveis Principais {background-color="#E5D3B3"}
+
+**Variável resposta**: `Sale_Price` (preço de venda)
+
+**Preditoras importantes**:
+
+-   Gr_Liv_Area: área habitável
+-   Year_Built: ano de construção
+-   Bldg_Type: tipo de construção
+-   Garage_Area: área da garagem
+
+------------------------------------------------------------------------
+
+## Análise Exploratória {background-color="#4A6FA5"}
+
+```{r}
+#| echo: true
+
+# Resumo estatístico
+summary(ames[, c("Sale_Price", "Gr_Liv_Area", 
+                 "Year_Built", "Garage_Area")])
+```
+
+------------------------------------------------------------------------
+
+## Distribuição do Preço {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 5
+
+ggplot(ames, aes(x = Sale_Price)) +
+  geom_histogram(bins = 50, fill = "#224573", color = "white") +
+  scale_x_continuous(labels = scales::dollar) +
+  labs(title = "Distribuição dos Preços de Venda",
+       x = "Preço de Venda", y = "Frequência", caption = "Jennifer Lopes.") +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Preço x Área Habitável {background-color="#224573"}
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 5
+
+ggplot(ames, aes(x = Gr_Liv_Area, y = Sale_Price)) +
+  geom_point(alpha = 0.5, color = "#4A6FA5") +
+  geom_smooth(method = "lm", color = "#6B4F4F", se = TRUE) +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(title = "Preço x Área Habitável",
+       x = "Área Habitável (sq ft)", y = "Preço de Venda", caption = "Jennifer Lopes.") +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Preço x Tipo de Construção {background-color="#4A6FA5"}
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 5
+
+ggplot(ames, aes(x = Bldg_Type, y = Sale_Price)) +
+  geom_boxplot(fill = "#6B4F4F", color = "#224573") +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(title = "Preço x Tipo de Construção",
+       x = "Tipo de Construção", y = "Preço de Venda", caption = "Jennifer Lopes.") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+------------------------------------------------------------------------
+
+## Correlações {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+
+# Selecionar variáveis numéricas
+numeric_vars <- ames %>%
+  select(Sale_Price, Gr_Liv_Area, Year_Built, 
+         Garage_Area, Total_Bsmt_SF, Lot_Area)
+
+# Matriz de correlação
+cor_matrix <- cor(numeric_vars, use = "complete.obs")
+round(cor_matrix[1, ], 3)
+```
+
+------------------------------------------------------------------------
+
+## Workflow do Tidymodels
+
+1.  **Divisão dos dados**: treino/teste
+2.  **Pré-processamento**: recipes
+3.  **Especificação do modelo**: parsnip
+4.  **Criação do workflow**: workflows
+5.  **Treinamento**: fit
+6.  **Avaliação**: yardstick
+
+------------------------------------------------------------------------
+
+## Passo 1: Divisão dos Dados {background-color="#6B4F4F"}
+
+```{r}
+#| echo: true
+
+# Definir seed para reprodutibilidade
+set.seed(123)
+
+# Dividir dados: 75% treino, 25% teste
+ames_split <- initial_split(ames, prop = 0.75)
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+
+# Verificar dimensões
+dim(ames_train)
+dim(ames_test)
+```
+
+------------------------------------------------------------------------
+
+## Passo 2: Criando uma Recipe {background-color="#4A6FA5"}
+
+```{r}
+#| echo: true
+
+# Criar recipe de pré-processamento
+ames_recipe <- recipe(Sale_Price ~ Gr_Liv_Area + Year_Built + 
+                      Bedroom_AbvGr + Garage_Area, 
+                      data = ames_train) %>%
+  step_normalize(all_numeric_predictors())
+
+ames_recipe
+```
+
+------------------------------------------------------------------------
+
+## O que é uma Recipe? {background-color="#E5D3B3"}
+
+**Recipe** define o pré-processamento dos dados:
+
+-   `step_normalize()`: padronização (z-score)
+-   `step_dummy()`: variáveis dummy para categóricas
+-   `step_log()`: transformação logarítmica
+-   `step_impute_*()`: imputação de valores faltantes
+-   `step_pca()`: análise de componentes principais
+
+------------------------------------------------------------------------
+
+## Passo 3: Especificação do Modelo {background-color="#224573"}
+
+```{r}
+#| echo: true
+
+# Especificar modelo de regressão linear
+lm_model <- linear_reg() %>%
+  set_engine("lm") %>%
+  set_mode("regression")
+
+lm_model
+```
+
+------------------------------------------------------------------------
+
+## Passo 4: Criando o Workflow {background-color="#4A6FA5"}
+
+```{r}
+#| echo: true
+
+# Criar workflow combinando recipe e modelo
+ames_workflow <- workflow() %>%
+  add_recipe(ames_recipe) %>%
+  add_model(lm_model)
+
+ames_workflow
+```
+
+------------------------------------------------------------------------
+
+## Passo 5: Treinamento {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+
+# Treinar o modelo
+ames_fit <- ames_workflow %>%
+  fit(data = ames_train)
+
+# Extrair coeficientes
+ames_fit %>%
+  extract_fit_parsnip() %>%
+  tidy()
+```
+
+------------------------------------------------------------------------
+
+## Passo 6: Predições {background-color="#224573"}
+
+```{r}
+#| echo: true
+
+# Fazer predições no conjunto de teste
+ames_pred <- predict(ames_fit, ames_test)
+
+# Combinar com valores reais
+ames_results <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(ames_pred)
+
+head(ames_results, 3)
+```
+
+------------------------------------------------------------------------
+
+## Visualizando Predições {background-color="#6B4F4F"}
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 5
+
+ggplot(ames_results, aes(x = Sale_Price, y = .pred)) +
+  geom_point(alpha = 0.5, color = "#4A6FA5") +
+  geom_abline(slope = 1, intercept = 0, 
+              color = "#224573", linetype = "dashed", linewidth = 1) +
+  scale_x_continuous(labels = scales::dollar) +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(title = "Valores Reais x Preditos",
+       x = "Valor Real", y = "Valor Predito") +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Métricas de Avaliação {background-color="#4A6FA5"}
+
+```{r}
+#| echo: true
+
+# Calcular métricas
+metrics_result <- ames_results %>%
+  metrics(truth = Sale_Price, estimate = .pred)
+
+metrics_result
+```
+
+------------------------------------------------------------------------
+
+## Entendendo as Métricas
+
+**RMSE** (Root Mean Squared Error): Erro médio em unidades originais,
+penaliza erros grandes.
+
+**RSQ** (R-squared): Proporção da variância explicada, varia de 0 a 1
+(quanto maior, melhor).
+
+**MAE** (Mean Absolute Error): Erro médio absoluto, mais robusto a
+outliers.
+
+------------------------------------------------------------------------
+
+## Resíduos {background-color="#224573"}
+
+```{r}
+#| echo: true
+
+# Calcular resíduos
+ames_results <- ames_results %>%
+  mutate(residuals = Sale_Price - .pred)
+
+summary(ames_results$residuals)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de Resíduos {background-color="#6B4F4F"}
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 5
+
+ggplot(ames_results, aes(x = .pred, y = residuals)) +
+  geom_point(alpha = 0.5, color = "#4A6FA5") +
+  geom_hline(yintercept = 0, color = "#224573", 
+             linetype = "dashed", linewidth = 1) +
+  scale_x_continuous(labels = scales::dollar) +
+  scale_y_continuous(labels = scales::dollar) +
+  labs(title = "Gráfico de Resíduos",
+       x = "Valores Preditos", y = "Resíduos") +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Validação Cruzada {background-color="#4A6FA5"}
+
+```{r}
+#| echo: true
+
+# Criar 10 folds
+set.seed(123)
+ames_folds <- vfold_cv(ames_train, v = 10)
+
+# Ajustar modelo com validação cruzada
+cv_results <- ames_workflow %>%
+  fit_resamples(ames_folds)
+
+# Coletar métricas
+collect_metrics(cv_results)
+```
+
+------------------------------------------------------------------------
+
+## Modelo com Mais Variáveis {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+
+# Recipe expandida
+ames_recipe2 <- recipe(Sale_Price ~ Gr_Liv_Area + Year_Built + 
+                       Bedroom_AbvGr + Garage_Area + Total_Bsmt_SF +
+                       Lot_Area + TotRms_AbvGrd, 
+                       data = ames_train) %>%
+  step_normalize(all_numeric_predictors())
+
+# Novo workflow e treino
+ames_workflow2 <- workflow() %>%
+  add_recipe(ames_recipe2) %>%
+  add_model(lm_model)
+
+ames_fit2 <- ames_workflow2 %>%
+  fit(data = ames_train)
+```
+
+------------------------------------------------------------------------
+
+## Comparando Modelos {background-color="#224573"}
+
+```{r}
+#| echo: true
+
+# Predições modelo 2
+ames_results2 <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(predict(ames_fit2, ames_test))
+
+# Comparação
+bind_rows(
+  ames_results %>% metrics(truth = Sale_Price, estimate = .pred) %>% mutate(model = "Modelo 1"),
+  ames_results2 %>% metrics(truth = Sale_Price, estimate = .pred) %>% mutate(model = "Modelo 2")
+) %>%
+  select(model, .metric, .estimate) %>%
+  filter(.metric == "rmse")
+```
+
+------------------------------------------------------------------------
+
+## Regressão Ridge {background-color="#6B4F4F"}
+
+```{r}
+#| echo: true
+
+# Especificar modelo Ridge
+ridge_model <- linear_reg(penalty = 0.01, mixture = 0) %>%
+  set_engine("glmnet") %>%
+  set_mode("regression")
+
+# Workflow e treino
+ridge_workflow <- workflow() %>%
+  add_recipe(ames_recipe2) %>%
+  add_model(ridge_model)
+
+ridge_fit <- ridge_workflow %>%
+  fit(data = ames_train)
+```
+
+------------------------------------------------------------------------
+
+## O que é Ridge?
+
+**Ridge Regression** adiciona penalização L2:
+
+-   Reduz coeficientes (mas não a zero)
+-   Previne overfitting
+-   Útil com multicolinearidade
+-   **penalty**: força da regularização
+-   **mixture = 0**: Ridge puro
+
+------------------------------------------------------------------------
+
+## Regressão Lasso {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+
+# Especificar modelo Lasso
+lasso_model <- linear_reg(penalty = 0.01, mixture = 1) %>%
+  set_engine("glmnet") %>%
+  set_mode("regression")
+
+# Workflow e treino
+lasso_workflow <- workflow() %>%
+  add_recipe(ames_recipe2) %>%
+  add_model(lasso_model)
+
+lasso_fit <- lasso_workflow %>%
+  fit(data = ames_train)
+```
+
+------------------------------------------------------------------------
+
+## O que é Lasso?
+
+**Lasso Regression** adiciona penalização L1:
+
+-   Pode zerar coeficientes
+-   Realiza seleção de variáveis
+-   Produz modelos esparsos
+-   **mixture = 1**: Lasso puro
+
+------------------------------------------------------------------------
+
+## Comparação Final {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+
+# Métricas de todos os modelos
+ridge_results <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(predict(ridge_fit, ames_test))
+
+lasso_results <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(predict(lasso_fit, ames_test))
+
+bind_rows(
+  ames_results %>% metrics(truth = Sale_Price, estimate = .pred) %>% mutate(model = "Linear"),
+  ridge_results %>% metrics(truth = Sale_Price, estimate = .pred) %>% mutate(model = "Ridge"),
+  lasso_results %>% metrics(truth = Sale_Price, estimate = .pred) %>% mutate(model = "Lasso")
+) %>%
+  select(model, .metric, .estimate) %>%
+  tidyr::pivot_wider(names_from = .metric, values_from = .estimate)
+```
+
+------------------------------------------------------------------------
+
+## Transformação Logarítmica {background-color="#4A6FA5"}
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 4
+
+# Criar datasets para treino (corrigido)
+ames_train_log <- ames_train %>%
+  mutate(Sale_Price_Log = log10(Sale_Price))
+
+# Recipe COM log na variável dependente
+log_recipe <- recipe(Sale_Price_Log ~ Gr_Liv_Area + Year_Built + 
+                     Garage_Area, 
+                     data = ames_train_log) %>%
+  step_normalize(all_numeric_predictors())
+```
+
+------------------------------------------------------------------------
+
+## Modelo com Transformação Log {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+
+# Workflow com log
+log_workflow <- workflow() %>%
+  add_recipe(log_recipe) %>%
+  add_model(lm_model)
+
+# Treinar
+log_fit <- log_workflow %>%
+  fit(ames_train_log)
+
+# Predições (reverter para escala original)
+ames_test_log <- ames_test %>%
+  mutate(Sale_Price_Log = log10(Sale_Price))
+
+log_results <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(predict(log_fit, ames_test_log)) %>%
+  mutate(.pred_original = 10^.pred)
+
+# Métricas
+log_results %>%
+  metrics(truth = Sale_Price, estimate = .pred_original)
+```
+
+------------------------------------------------------------------------
+
+## Random Forest {background-color="#224573"}
+
+```{r}
+#| echo: true
+
+# Especificar Random Forest
+rf_model <- rand_forest(trees = 500) %>%
+  set_engine("ranger") %>%
+  set_mode("regression")
+
+# Workflow e treino
+rf_workflow <- workflow() %>%
+  add_recipe(ames_recipe2) %>%
+  add_model(rf_model)
+
+rf_fit <- rf_workflow %>%
+  fit(data = ames_train)
+```
+
+------------------------------------------------------------------------
+
+## Avaliando Random Forest {background-color="#6B4F4F"}
+
+```{r}
+#| echo: true
+
+# Predições e métricas
+rf_results <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(predict(rf_fit, ames_test))
+
+rf_results %>%
+  metrics(truth = Sale_Price, estimate = .pred)
+```
+
+------------------------------------------------------------------------
+
+## Importância das Variáveis {background-color="#4A6FA5"}
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 5
+
+library(vip)
+
+ames_fit %>%
+  extract_fit_parsnip() %>%
+  vip(num_features = 10, 
+      aesthetics = list(fill = "#224573")) +
+  theme_classic()
+```
+
+------------------------------------------------------------------------
+
+## Predições em Novos Dados {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+
+# Criar dados hipotéticos
+new_house <- tibble(
+  Gr_Liv_Area = 2000,
+  Year_Built = 2010,
+  Bedroom_AbvGr = 3,
+  Garage_Area = 500)
+
+# Prever preço
+predicted_price <- predict(ames_fit, new_house)
+
+paste0("Preço estimado: $", 
+       scales::comma(round(predicted_price$.pred)))
+```
+
+------------------------------------------------------------------------
+
+## Salvando Modelos {background-color="#224573"}
+
+```{r}
+#| echo: true
+#| eval: false
+
+# Salvar workflow treinado
+saveRDS(ames_fit, "ames_model.rds")
+
+# Carregar modelo
+loaded_model <- readRDS("ames_model.rds")
+
+# Fazer predições
+new_pred <- predict(loaded_model, new_house)
+```
+
+------------------------------------------------------------------------
+
+## Boas Práticas
+
+1.  Sempre dividir dados antes de processar
+2.  Usar validação cruzada
+3.  Testar múltiplos modelos
+4.  Verificar suposições do modelo
+5.  Documentar decisões
+6.  Considerar contexto do negócio
+
+------------------------------------------------------------------------
+
+## Conclusão
+
+**Tidymodels oferece**:
+
+-   Framework consistente e intuitivo
+-   Facilita experimentação
+-   Reduz erros comuns
+-   Melhora reprodutibilidade
+-   Integração com tidyverse
+
+**Regressão** é fundamental para análise preditiva!
+
+## Referências
+
+1.  Documentação [**tidymodels**](https://www.tidymodels.org/)
+
+2.  [**Pacotes**](https://www.tidymodels.org/packages/) tidymodels
+
+3.  [**Tutoriais**](https://www.tidymodels.org/learn/) disponíveis
+
+4.  Livro: [**Tidy Modeling with R**](https://www.tmwr.org/)
+
+![](imagens/livro0tidy.png){fig-align="center" width="329"}
+
+## Obrigada!
+
+![**Imagem: Allison Horst.**](imagens/cover.png){fig-align="center"
+width="433"}
+
+Continue praticando e explorando!
+
+*Esta apresentação é parte do projeto **`Café com R!`**É OPEN, USE,
+COMPARTILHE!*
+
+**Happy modeling!**
+
+## **☕ Assine o Café com R**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="190"}

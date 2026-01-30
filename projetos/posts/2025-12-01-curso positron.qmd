@@ -1,0 +1,80 @@
+---
+title: "Curso Positron"
+description: "O novo Ambiente de Desenvolvimento da Posit(RStudio)."
+author: "Jennifer Luz Lopes"
+date: 2025-12-07
+categories: [Posit, IDE, Curso]
+image: ../imagens/positron.png
+image-alt: ""
+---
+
+# Curso Positron IDE
+
+[![Apresentação](https://img.shields.io/badge/Apresenta%C3%A7%C3%A3o-224573?style=for-the-badge&labelColor=6B4F4F)](https://jenniferlopes.quarto.pub/positron-ide/#/title-slide) [![YouTube](https://img.shields.io/badge/YouTube-224573?style=for-the-badge&labelColor=6B4F4F&logo=youtube&logoColor=FFFFFF)](https://www.youtube.com/watch?v=eBEIpfHpYA4) [![GitHub](https://img.shields.io/badge/GitHub-224573?style=for-the-badge&labelColor=6B4F4F&logo=github&logoColor=FFFFFF)](https://github.com/JenniferLopes/curso_positron_final)
+
+## O que é Positron?
+
+O **Positron** é uma IDE (Ambiente de Desenvolvimento Integrado) de última geração desenvolvida pela Posit, voltada para ciência de dados em **Python** e **R**.
+
+Baseado no VS Code (um fork do Code OSS), o Positron combina o poder de uma IDE completa com ferramentas interativas de ciência de dados, oferecendo uma interface moderna e performática para análise de dados.
+
+Este curso foi desenvolvido pela **R-Ladies Goiânia** para auxiliar na transição do RStudio para o Positron, apresentando suas principais funcionalidades e diferenciais.
+
+## Objetivos
+
+-   Conhecer a interface e componentes do Positron
+-   Dominar os atalhos essenciais
+-   Aprender a trabalhar com projetos no Positron
+-   Realizar análise de dados com as novas ferramentas
+-   Criar relatórios com Quarto
+
+## Pré-requisitos
+
+Antes de iniciar o curso, certifique-se de ter:
+
+1.  **R 4.2 ou superior** instalado
+    -   Download: <https://cloud.r-project.org/>
+2.  **Positron IDE** instalado
+    -   Download: <https://positron.posit.co/install.html>
+3.  **Pacotes R necessários**:
+    -   `tidyverse`
+
+**Nota para usuários Windows**: O Positron não inclui o [Rtools](https://cran.r-project.org/bin/windows/Rtools/) atualmente. Instale-o separadamente se necessário.
+
+## Como Baixar o Material do Curso
+
+### Passo 1: Baixar o repositório
+
+1.  Acesse a página do repositório no GitHub
+2.  Clique no botão verde **Code**
+3.  Selecione **Download ZIP**
+
+### Passo 2: Extrair e salvar
+
+1.  Extraia o arquivo ZIP baixado
+2.  Salve a pasta em um local de **fácil acesso** no seu computador
+    -   Exemplos: `Documentos/Cursos/`, `Desktop/`, `C:/Projetos/`
+3.  Anote o caminho da pasta para usar no próximo passo
+
+### Passo 3: Abrir no Positron
+
+1.  Abra o **Positron IDE**
+2.  No menu superior, clique em **File** → **Open Folder**
+3.  Navegue até a pasta extraída do curso
+4.  Selecione a pasta e clique em **Selecionar Pasta** (ou **Open**)
+
+Pronto! Agora você está pronto para começar o curso.
+
+## Sobre a R-Ladies Goiânia
+
+A **R-Ladies Goiânia** é um capítulo local da organização global R-Ladies, que promove a diversidade de gênero na comunidade R.
+
+**Nossas Redes**: <https://linktr.ee/rladiesgoiania>
+
+## Licença
+
+Material desenvolvido para R-Ladies Goiânia para fins educacionais.
+
+------------------------------------------------------------------------
+
+*Desenvolvido para R-Ladies Goiânia*

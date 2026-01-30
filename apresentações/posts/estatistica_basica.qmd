@@ -1,0 +1,1924 @@
+---
+title: "8. Estatística com R"
+subtitle: "Na prática"
+categories: [Estatística, R, Análise de Dados]
+image: imagens/estatistica.png
+description: "Aprenda os fundamentos de estatística aplicada usando R e o dataset CO2"
+format:
+  revealjs:
+    theme: simple
+    logo: "imagens/logo.png"
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes • Café com R"
+execute:
+    echo: true
+    warning: false
+    message: false
+editor:
+  markdown:
+    wrap: 72
+---
+
+## Introdução à estatística com R {background-color="#E5D3B3"}
+
+**Objetivo da aula:**
+
+Compreender e aplicar conceitos fundamentais de estatística descritiva e
+inferencial utilizando a linguagem R para análise de dados
+experimentais.
+
+**Conteúdo programático:**
+
+-   Estatística descritiva: medidas de tendência central e dispersão
+-   Distribuições de probabilidade e testes de normalidade
+-   Análise de variância (ANOVA)
+-   Interpretação de resultados e visualização de dados
+
+------------------------------------------------------------------------
+
+## Dataset CO2: contexto experimental {background-color="#E5D3B3"}
+
+**Experimento de tolerância ao frio em plantas**
+
+Estudo sobre a absorção de CO2 em plantas de *Echinochloa crus-galli*
+(capim-arroz) submetidas a diferentes condições de temperatura.
+
+**Design experimental:**
+
+-   12 plantas (6 de Quebec, 6 de Mississippi)
+-   2 tratamentos: resfriadas (chilled) e não resfriadas (nonchilled)
+-   7 níveis de concentração de CO2
+-   Medida: taxa de absorção de CO2
+
+------------------------------------------------------------------------
+
+## Carregamento e exploração inicial
+
+```{r}
+# Carregar o dataset
+data("CO2")
+
+# Examinar a estrutura
+str(CO2)
+```
+
+------------------------------------------------------------------------
+
+## Visualização das primeiras observações
+
+```{r}
+# Visualizar primeiras observações
+head(CO2, n = 10)
+```
+
+------------------------------------------------------------------------
+
+## Resumo estatístico inicial
+
+```{r}
+# Resumo estatístico
+summary(CO2)
+
+# Dimensões do dataset
+dim(CO2)
+```
+
+------------------------------------------------------------------------
+
+## Pacotes necessários
+
+```{r message=FALSE, warning=FALSE}
+# Instalar o pacman (apenas uma vez)
+if (!require("pacman")) install.packages("pacman")
+
+# Carregar bibliotecas
+pacman::p_load(
+  tidyverse,
+  ggplot2,
+  dplyr,
+  psych,
+  car,
+  nortest,
+  DescTools)
+
+# Definir paleta de cores Café com R
+cores_cafe <- c("#224573", "#6B4F4F", "#4A6FA5", "#E5D3B3")
+```
+
+------------------------------------------------------------------------
+
+# 1. Estatística descritiva {background-color="#224573"}
+
+------------------------------------------------------------------------
+
+## Conceitos fundamentais
+
+**Estatística descritiva** é o ramo da estatística que organiza, resume
+e apresenta dados de forma informativa, sem fazer inferências além dos
+dados observados.
+
+**Principais componentes:**
+
+1.  **Medidas de tendência central**: valores típicos ou centrais
+2.  **Medidas de dispersão**: variabilidade dos dados
+3.  **Medidas de posição**: localização relativa dos dados
+4.  **Medidas de forma**: simetria e achatamento da distribuição
+
+------------------------------------------------------------------------
+
+## Medidas de tendência central
+
+**Definições matemáticas:**
+
+**Média aritmética:** $$\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_i$$
+
+**Mediana:** valor que divide o conjunto ordenado ao meio
+
+**Moda:** valor mais frequente
+
+------------------------------------------------------------------------
+
+## Calculando medidas de tendência central
+
+```{r}
+# Calcular medidas de tendência central
+mean(CO2$uptake)
+median(CO2$uptake)
+
+# Resumo completo da variável uptake
+summary(CO2$uptake)
+```
+
+------------------------------------------------------------------------
+
+## Interpretação das medidas centrais
+
+**Resultado obtido:**
+
+-   Média de 27.21 μmol/m²s indica absorção moderada
+-   Mediana de 28.30 sugere distribuição aproximadamente simétrica
+-   Amplitude de 37.8 unidades (7.7 a 45.5) mostra variabilidade
+    considerável
+
+------------------------------------------------------------------------
+
+## Medidas de dispersão: conceitos
+
+**Variância:** média dos quadrados dos desvios
+$$s^2 = \frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})^2$$
+
+**Desvio padrão:** raiz quadrada da variância $$s = \sqrt{s^2}$$
+
+**Coeficiente de variação:** dispersão relativa
+$$CV = \frac{s}{\bar{x}} \times 100\%$$
+
+------------------------------------------------------------------------
+
+## Calculando medidas de dispersão
+
+```{r}
+# Variância
+var(CO2$uptake)
+
+# Desvio padrão
+sd(CO2$uptake)
+
+# Amplitude
+range_uptake <- range(CO2$uptake)
+amplitude <- diff(range_uptake)
+amplitude
+```
+
+------------------------------------------------------------------------
+
+## Calculando coeficiente de variação
+
+```{r}
+# Coeficiente de variação
+cv <- (sd(CO2$uptake) / mean(CO2$uptake)) * 100
+
+# Apresentar resultados
+data.frame(
+  Variancia = var(CO2$uptake),
+  Desvio_Padrao = sd(CO2$uptake),
+  Amplitude = amplitude,
+  CV_Percentual = cv)
+```
+
+------------------------------------------------------------------------
+
+## Interpretação das medidas de dispersão
+
+**Resultados obtidos:**
+
+O CV de aproximadamente 41.5% indica variabilidade moderada a alta,
+esperada em dados experimentais biológicos. O desvio padrão de 11.3
+representa cerca de 41% da média, sugerindo heterogeneidade nas
+respostas das plantas.
+
+------------------------------------------------------------------------
+
+## Medidas de posição: quartis
+
+```{r}
+# Calcular quartis
+quartis <- quantile(CO2$uptake, probs = c(0.25, 0.5, 0.75))
+quartis
+
+# Amplitude interquartílica (IQR)
+IQR(CO2$uptake)
+```
+
+------------------------------------------------------------------------
+
+## Identificação de outliers
+
+```{r}
+# Identificar outliers pelo critério IQR
+Q1 <- quantile(CO2$uptake, 0.25)
+Q3 <- quantile(CO2$uptake, 0.75)
+iqr <- IQR(CO2$uptake)
+
+limite_inferior <- Q1 - 1.5 * iqr
+limite_superior <- Q3 + 1.5 * iqr
+
+outliers <- CO2$uptake[CO2$uptake < limite_inferior | 
+                        CO2$uptake > limite_superior]
+outliers
+```
+
+------------------------------------------------------------------------
+
+## Estatísticas descritivas completas
+
+```{r}
+# Usando o pacote psych
+describe(CO2$uptake)
+```
+
+------------------------------------------------------------------------
+
+## Estatísticas por grupo
+
+```{r}
+# Estatísticas por grupo
+CO2 %>%
+  group_by(Type, Treatment) %>%
+  summarise(
+    n = n(),
+    Media = mean(uptake),
+    Mediana = median(uptake),
+    DP = sd(uptake),
+    Min = min(uptake),
+    Max = max(uptake),
+    Q1 = quantile(uptake, 0.25),
+    Q3 = quantile(uptake, 0.75),
+    .groups = "drop")
+```
+
+------------------------------------------------------------------------
+
+## Visualização: histograma com densidade
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+hist1 <- ggplot(CO2, aes(x = uptake)) +
+  geom_histogram(aes(y = after_stat(density)), 
+                 bins = 15, 
+                 fill = "#4A6FA5", 
+                 color = "#224573",
+                 alpha = 0.7) +
+  geom_density(color = "#6B4F4F", 
+               linewidth = 1.5) +
+  geom_vline(aes(xintercept = mean(uptake)),
+             color = "#224573", 
+             linetype = "dashed", 
+             linewidth = 1,
+             alpha = 0.8) +
+  geom_vline(aes(xintercept = median(uptake)),
+             color = "#6B4F4F", 
+             linetype = "dotted", 
+             linewidth = 1,
+             alpha = 0.8) +
+  labs(title = "Distribuição da absorção de CO2",
+       subtitle = "Linha tracejada: média | Linha pontilhada: mediana",
+       x = "Absorção de CO2 (μmol/m²s)",
+       y = "Densidade") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    plot.subtitle = element_text(color = "#6B4F4F"),
+    panel.grid.minor = element_blank())
+```
+
+------------------------------------------------------------------------
+
+## Visualização: histograma com densidade(cont)
+
+```{r}
+hist1
+```
+
+------------------------------------------------------------------------
+
+## Visualização: boxplot por grupos
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+box1 <- ggplot(CO2, aes(x = Type, y = uptake, fill = Treatment)) +
+  geom_boxplot(alpha = 0.7, 
+               outlier.color = "#6B4F4F",
+               outlier.size = 2) +
+  scale_fill_manual(values = c("#4A6FA5", "#E5D3B3"),
+                    labels = c("Não resfriada", "Resfriada")) +
+  labs(title = "Absorção de CO2 por origem e tratamento",
+       x = "Origem da planta",
+       y = "Absorção de CO2 (μmol/m²s)",
+       fill = "Tratamento") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    legend.position = "bottom",
+    panel.grid.major.x = element_blank())
+```
+
+------------------------------------------------------------------------
+
+## Visualização: boxplot por grupos(cont)
+
+```{r}
+box1
+```
+
+------------------------------------------------------------------------
+
+## Visualização: violin plot
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+violin1 <- ggplot(CO2, aes(x = Type, y = uptake, fill = Type)) +
+  geom_violin(alpha = 0.6, trim = FALSE) +
+  geom_boxplot(width = 0.2, 
+               fill = "white", 
+               alpha = 0.8,
+               outlier.color = "#6B4F4F") +
+  scale_fill_manual(values = c("#224573", "#4A6FA5")) +
+  labs(title = "Distribuição da absorção por origem",
+       subtitle = "Violin plot com boxplot sobreposto",
+       x = "Origem da planta",
+       y = "Absorção de CO2 (μmol/m²s)") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    legend.position = "none")
+```
+
+------------------------------------------------------------------------
+
+## Visualização: violin plot(cont)
+
+```{r}
+violin1
+```
+
+------------------------------------------------------------------------
+
+# 2. Distribuições de probabilidade {background-color="#224573"}
+
+------------------------------------------------------------------------
+
+## Conceito de distribuição normal
+
+**Distribuição normal (gaussiana):**
+
+Distribuição contínua simétrica em forma de sino, caracterizada por dois
+parâmetros: média (μ) e desvio padrão (σ).
+
+**Função densidade de probabilidade:**
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{1}{2}(\frac{x-\mu}{\sigma})^2}$$
+
+------------------------------------------------------------------------
+
+## Conceito de distribuição normal(cont)
+
+**Propriedades importantes:**
+
+-   Simétrica em torno da média
+-   Média = Mediana = Moda
+-   68% dos dados entre μ ± σ
+-   95% dos dados entre μ ± 1.96σ
+-   99.7% dos dados entre μ ± 3σ (regra empírica)
+
+------------------------------------------------------------------------
+
+## Importância da normalidade
+
+**Por que testar normalidade?**
+
+Muitos testes estatísticos paramétricos assumem que os dados seguem
+distribuição normal:
+
+-   Teste t de Student
+-   ANOVA (análise de variância)
+-   Regressão linear
+-   Intervalo de confiança para média
+
+------------------------------------------------------------------------
+
+## Importância da normalidade(cont)
+
+**Consequências da violação:**
+
+-   Resultados não confiáveis
+-   Aumento do erro tipo I (falso positivo)
+-   Perda de poder estatístico
+
+------------------------------------------------------------------------
+
+## Métodos para avaliar normalidade
+
+**1. Métodos gráficos:**
+
+-   Histograma com curva normal sobreposta
+-   Q-Q plot (quantile-quantile)
+-   Gráfico de densidade
+
+**2. Métodos numéricos:**
+
+-   Teste de Shapiro-Wilk
+-   Teste de Kolmogorov-Smirnov
+-   Teste de Anderson-Darling
+-   Medidas de assimetria e curtose
+
+------------------------------------------------------------------------
+
+## Gráfico Q-Q plot
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+qq1 <- ggplot(CO2, aes(sample = uptake)) +
+  stat_qq(color = "#4A6FA5", size = 2, alpha = 0.6) +
+  stat_qq_line(color = "#224573", linewidth = 1) +
+  labs(title = "Q-Q plot: absorção de CO2",
+       subtitle = "Normalidade da variável resposta (análise exploratória)",
+       x = "Quantis teóricos",
+       y = "Quantis amostrais") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    plot.subtitle = element_text(color = "#6B4F4F"))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico Q-Q plot(cont)
+
+```{r}
+qq1
+```
+
+------------------------------------------------------------------------
+
+## Teste de Shapiro-Wilk
+
+**Hipóteses:**
+
+-   H0: os dados seguem distribuição normal
+-   H1: os dados não seguem distribuição normal
+
+**Critério de decisão:**
+
+-   Se p-valor \> 0.05: não rejeita H0 (normalidade)
+-   Se p-valor ≤ 0.05: rejeita H0 (não normalidade)
+
+------------------------------------------------------------------------
+
+## Aplicando teste de Shapiro-Wilk
+
+```{r}
+# Teste de Shapiro-Wilk
+shapiro.test(CO2$uptake)
+```
+
+------------------------------------------------------------------------
+
+## Shapiro-Wilk por grupo
+
+```{r}
+# Por grupo
+CO2 %>%
+  group_by(Type, Treatment) %>%
+  summarise(
+    Shapiro_W = shapiro.test(uptake)$statistic,
+    p_valor = shapiro.test(uptake)$p.value,
+    .groups = "drop")
+```
+
+------------------------------------------------------------------------
+
+## Teste de Anderson-Darling
+
+```{r}
+# Teste de Anderson-Darling
+ad.test(CO2$uptake)
+
+# Teste de Kolmogorov-Smirnov
+ks.test(CO2$uptake, "pnorm", 
+        mean = mean(CO2$uptake), 
+        sd = sd(CO2$uptake))
+```
+
+------------------------------------------------------------------------
+
+## Assimetria e curtose
+
+```{r}
+# Calcular assimetria (skewness)
+skewness <- Skew(CO2$uptake)
+
+# Calcular curtose (kurtosis)
+kurtosis <- Kurt(CO2$uptake)
+
+# resultados
+resultado <- data.frame(
+  Medida = c("Assimetria", "Curtose"),
+  Valor = c(skewness, kurtosis),
+  Interpretacao = c(
+    ifelse(abs(skewness) < 0.5, "Simétrica",
+           ifelse(skewness > 0, "Assimétrica à direita", 
+                  "Assimétrica à esquerda")),
+    ifelse(abs(kurtosis) < 0.5, "Mesocúrtica",
+           ifelse(kurtosis > 0, "Leptocúrtica", "Platicúrtica"))))
+```
+
+------------------------------------------------------------------------
+
+## Assimetria e curtose(cont)
+
+```{r}
+resultado
+```
+
+------------------------------------------------------------------------
+
+## Histograma com curva normal
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+media <- mean(CO2$uptake)
+dp <- sd(CO2$uptake)
+
+hist2 <- ggplot(CO2, aes(x = uptake)) +
+  geom_histogram(aes(y = after_stat(density)), 
+                 bins = 15,
+                 fill = "#4A6FA5", 
+                 color = "#224573",
+                 alpha = 0.7) +
+  stat_function(fun = dnorm, 
+                args = list(mean = media, sd = dp),
+                color = "#6B4F4F", 
+                linewidth = 1.5) +
+  geom_vline(xintercept = media,
+             color = "#224573",
+             linetype = "dashed",
+             linewidth = 1) +
+  labs(title = "Distribuição observada x normal teórica",
+       subtitle = paste("Média:", round(media, 2), 
+                       "| DP:", round(dp, 2)),
+       x = "Absorção de CO2 (μmol/m²s)",
+       y = "Densidade") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"))
+```
+
+------------------------------------------------------------------------
+
+## Histograma com curva normal(cont)
+
+```{r}
+hist2
+```
+
+------------------------------------------------------------------------
+
+# 3. Análise de variância (ANOVA) {background-color="#224573"}
+
+------------------------------------------------------------------------
+
+## Conceito de ANOVA
+
+**ANOVA (analysis of variance):**
+
+Técnica estatística para comparar médias de três ou mais grupos
+simultaneamente, testando se existe diferença significativa entre elas.
+
+**Vantagens sobre múltiplos testes t:**
+
+-   Controla o erro tipo I (nível de significância)
+-   Mais eficiente estatisticamente
+-   Permite análise de múltiplos fatores
+
+------------------------------------------------------------------------
+
+## Conceito de ANOVA(cont)
+
+**Tipos principais:**
+
+-   ANOVA one-way: um fator
+-   ANOVA two-way: dois fatores
+-   ANOVA com medidas repetidas
+
+------------------------------------------------------------------------
+
+## Princípios da ANOVA
+
+**Decomposição da variância:**
+
+Variância total = variância entre grupos + variância dentro dos grupos
+
+$$SS_{total} = SS_{entre} + SS_{dentro}$$
+
+**Estatística F:**
+
+$$F = \frac{MS_{entre}}{MS_{dentro}} = \frac{SS_{entre}/df_{entre}}{SS_{dentro}/df_{dentro}}$$
+
+Onde MS = mean square (quadrado médio)
+
+------------------------------------------------------------------------
+
+## Pressupostos da ANOVA
+
+**Para aplicar ANOVA, os dados devem satisfazer:**
+
+1.  **Independência:** observações independentes entre si
+
+2.  **Normalidade:** resíduos seguem distribuição normal
+
+3.  **Homocedasticidade:** variâncias iguais entre grupos (homogeneidade
+    de variâncias)
+
+------------------------------------------------------------------------
+
+## Pressupostos da ANOVA(cont)
+
+**Consequências da violação:**
+
+-   Violação leve: ANOVA é robusta
+-   Violação severa: usar alternativas não-paramétricas (Kruskal-Wallis)
+
+------------------------------------------------------------------------
+
+## ANOVA one-way: efeito do tipo
+
+**Pergunta:** existe diferença significativa na absorção de CO2 entre
+plantas de Quebec e Mississippi?
+
+**Hipóteses:**
+
+-   H0: μ_Quebec = μ_Mississippi
+-   H1: μ_Quebec ≠ μ_Mississippi
+
+------------------------------------------------------------------------
+
+## Aplicando ANOVA one-way
+
+```{r}
+# ANOVA one-way
+anova_tipo <- aov(uptake ~ Type, data = CO2)
+
+# Resultados
+summary(anova_tipo)
+```
+
+------------------------------------------------------------------------
+
+## Interpretação da ANOVA one-way
+
+**Interpretação dos resultados:**
+
+-   F = 33.58 é grande, indicando diferença entre grupos
+-   p \< 0.001 (altamente significativo)
+-   Rejeita-se H0: existe diferença significativa entre Quebec e
+    Mississippi
+
+------------------------------------------------------------------------
+
+## ANOVA two-way: tipo e tratamento
+
+**Pergunta:** como Type e Treatment afetam a absorção de CO2? Há
+interação?
+
+```{r}
+# ANOVA two-way com interação
+anova_completa <- aov(uptake ~ Type * Treatment, data = CO2)
+
+# Resultados
+summary(anova_completa)
+```
+
+------------------------------------------------------------------------
+
+## Tamanho do efeito
+
+```{r}
+# Tamanho do efeito (Eta squared)
+library(effectsize)
+eta_squared(anova_completa)
+```
+
+------------------------------------------------------------------------
+
+## Interpretação da ANOVA two-way
+
+**Interpretação dos resultados:**
+
+-   Efeito principal de Type: significativo (p \< 0.001)
+-   Efeito principal de Treatment: significativo (p \< 0.001)
+-   Interação Type×Treatment: marginalmente não significativa (p = 0.07)
+
+------------------------------------------------------------------------
+
+## Verificação de pressupostos: normalidade dos resíduos
+
+```{r}
+# Extrair resíduos
+residuos <- residuals(anova_completa)
+
+# Teste de Shapiro-Wilk nos resíduos
+shapiro.test(residuos)
+```
+
+------------------------------------------------------------------------
+
+## Q-Q plot dos resíduos
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+qq2 <- ggplot(data.frame(residuos), aes(sample = residuos)) +
+  stat_qq(color = "#4A6FA5", size = 2) +
+  stat_qq_line(color = "#224573", linewidth = 1) +
+  labs(title = "Q-Q plot dos resíduos da ANOVA",
+       x = "Quantis teóricos",
+       y = "Resíduos") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"))
+```
+
+------------------------------------------------------------------------
+
+## Q-Q plot dos resíduos(cont)
+
+```{r}
+qq2
+```
+
+------------------------------------------------------------------------
+
+## Verificação: homocedasticidade
+
+**Teste de Levene:**
+
+-   H0: variâncias são iguais entre grupos
+-   H1: pelo menos uma variância difere
+
+```{r}
+# Teste de Levene
+leveneTest(uptake ~ Type * Treatment, data = CO2)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de resíduos x valores ajustados
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+valores_ajustados <- fitted(anova_completa)
+
+resid1 <- ggplot(data.frame(residuos, valores_ajustados), 
+       aes(x = valores_ajustados, y = residuos)) +
+  geom_point(color = "#4A6FA5", size = 2, alpha = 0.6) +
+  geom_hline(yintercept = 0, 
+             color = "#224573", 
+             linetype = "dashed") +
+  geom_smooth(method = "loess", 
+              color = "#6B4F4F", 
+              se = FALSE) +
+  labs(title = "Resíduos x valores ajustados",
+       subtitle = "Verificação de homocedasticidade",
+       x = "Valores ajustados",
+       y = "Resíduos") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de resíduos x valores ajustados(cont)
+
+```{r}
+resid1
+```
+
+------------------------------------------------------------------------
+
+## Calculando médias por grupo
+
+```{r}
+# Calcular médias por grupo
+medias_grupo <- CO2 %>%
+  group_by(Type, Treatment) %>%
+  summarise(
+    Media = mean(uptake),
+    EP = sd(uptake) / sqrt(n()),
+    .groups = "drop")
+
+medias_grupo
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de interação
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+interacao1 <- ggplot(medias_grupo, aes(x = Type, y = Media, 
+                         color = Treatment, 
+                         group = Treatment)) +
+  geom_line(linewidth = 1.5) +
+  geom_point(size = 4) +
+  geom_errorbar(aes(ymin = Media - EP, ymax = Media + EP),
+                width = 0.1, linewidth = 1) +
+  scale_color_manual(values = c("#224573", "#6B4F4F"),
+                     labels = c("Não resfriada", "Resfriada")) +
+  labs(title = "Gráfico de interação: Type × Treatment",
+       subtitle = "Barras de erro representam erro padrão da média",
+       x = "Origem da planta",
+       y = "Absorção média de CO2 (μmol/m²s)",
+       color = "Tratamento") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de interação(cont)
+
+```{r}
+interacao1
+```
+
+------------------------------------------------------------------------
+
+## Testes post-hoc: Tukey HSD
+
+**Quando usar:**
+
+Após ANOVA significativa, para identificar quais grupos diferem entre
+si.
+
+```{r}
+# Teste de Tukey
+tukey_resultado <- TukeyHSD(anova_completa)
+```
+
+------------------------------------------------------------------------
+
+## Testes post-hoc: Tukey HSD(cont)
+
+```{r}
+tukey_resultado
+```
+
+------------------------------------------------------------------------
+
+## Visualização dos testes post-hoc
+
+```{r}
+#| fig-width: 10
+#| fig-height: 7
+
+# Criar dataframe dos resultados
+tukey_df <- as.data.frame(tukey_resultado$`Type:Treatment`)
+tukey_df$Comparacao <- rownames(tukey_df)
+
+teste <- ggplot(tukey_df, aes(x = Comparacao, y = diff)) +
+  geom_point(size = 3, color = "#224573") +
+  geom_errorbar(aes(ymin = lwr, ymax = upr),
+                width = 0.2, 
+                color = "#4A6FA5",
+                linewidth = 1) +
+  geom_hline(yintercept = 0, 
+             linetype = "dashed", 
+             color = "#6B4F4F") +
+  coord_flip() +
+  labs(title = "Teste de Tukey HSD",
+       subtitle = "Intervalos de confiança de 95% para diferenças",
+       x = "Comparação",
+       y = "Diferença entre médias") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"))
+```
+
+------------------------------------------------------------------------
+
+## Visualização dos testes post-hoc(cont)
+
+```{r}
+teste
+```
+
+------------------------------------------------------------------------
+
+## ANOVA com concentração como fator
+
+```{r}
+# Converter concentração em fator
+CO2$conc_factor <- as.factor(CO2$conc)
+
+# ANOVA: efeito da concentração
+anova_conc <- aov(uptake ~ conc_factor, data = CO2)
+summary(anova_conc)
+```
+
+------------------------------------------------------------------------
+
+## Post-hoc para concentração
+
+```{r}
+# Teste post-hoc
+TukeyHSD(anova_conc)
+```
+
+------------------------------------------------------------------------
+
+## Análise de regressão linear
+
+**Alternativa:** tratar concentração como variável contínua
+
+```{r}
+# Modelo de regressão linear
+modelo_linear <- lm(uptake ~ conc, data = CO2)
+summary(modelo_linear)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico com linha de regressão
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+reg1 <- ggplot(CO2, aes(x = conc, y = uptake)) +
+  geom_point(aes(color = Type), 
+             size = 2.5, 
+             alpha = 0.6) +
+  geom_smooth(method = "lm", 
+              color = "#224573",
+              linewidth = 1.2,
+              se = TRUE,
+              fill = "#E5D3B3") +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  labs(title = "Regressão linear: concentração x absorção",
+       x = "Concentração de CO2 (mL/L)",
+       y = "Absorção de CO2 (μmol/m²s)",
+       color = "Origem") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico com linha de regressão(cont)
+
+```{r}
+reg1
+```
+
+------------------------------------------------------------------------
+
+## Diagnóstico do modelo linear
+
+```{r}
+# Extrair resíduos e valores ajustados
+residuos_lm <- residuals(modelo_linear)
+ajustados_lm <- fitted(modelo_linear)
+```
+
+------------------------------------------------------------------------
+
+## Diagnóstico do modelo linear(cont)
+
+```{r}
+# Criar dataframe para diagnóstico
+diag_df <- data.frame(
+  residuos = residuos_lm,
+  ajustados = ajustados_lm,
+  padronizados = rstandard(modelo_linear))
+
+head(diag_df)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de resíduos do modelo linear
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+mod_linear <- ggplot(diag_df, aes(x = ajustados, y = residuos)) +
+  geom_point(color = "#4A6FA5", size = 2, alpha = 0.6) +
+  geom_hline(yintercept = 0, 
+             color = "#224573", 
+             linetype = "dashed",
+             linewidth = 1) +
+  geom_smooth(se = FALSE, 
+              color = "#6B4F4F",
+              linewidth = 1) +
+  labs(title = "Diagnóstico de resíduos: modelo linear",
+       x = "Valores ajustados",
+       y = "Resíduos") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de resíduos do modelo linear(cont)
+
+```{r}
+mod_linear
+```
+
+------------------------------------------------------------------------
+
+## Modelo não-linear: polinomial
+
+```{r}
+# Ajustar modelo polinomial de grau 2
+modelo_poly <- lm(uptake ~ poly(conc, 2), data = CO2)
+summary(modelo_poly)
+```
+
+------------------------------------------------------------------------
+
+## Comparação de modelos
+
+```{r}
+# Comparar modelos
+anova(modelo_linear, modelo_poly)
+```
+
+------------------------------------------------------------------------
+
+## Preparando predições para visualização
+
+```{r}
+# Criar predições para visualização
+pred_df <- data.frame(
+  conc = seq(min(CO2$conc), max(CO2$conc), length.out = 100))
+pred_df$pred_linear <- predict(modelo_linear, pred_df)
+pred_df$pred_poly <- predict(modelo_poly, pred_df)
+```
+
+------------------------------------------------------------------------
+
+## Preparando predições para visualização(cont)
+
+```{r}
+head(pred_df)
+```
+
+------------------------------------------------------------------------
+
+## Visualização: comparação de modelos
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+comparacao_modelos <- ggplot(CO2, aes(x = conc, y = uptake)) +
+  geom_point(color = "#4A6FA5", size = 2, alpha = 0.5) +
+  geom_line(data = pred_df, 
+            aes(y = pred_linear, color = "Linear"),
+            linewidth = 1.2) +
+  geom_line(data = pred_df, 
+            aes(y = pred_poly, color = "Polinomial"),
+            linewidth = 1.2) +
+  scale_color_manual(values = c("Linear" = "#224573", 
+                                 "Polinomial" = "#6B4F4F")) +
+  labs(title = "Comparação de modelos de regressão",
+       x = "Concentração de CO2 (mL/L)",
+       y = "Absorção de CO2 (μmol/m²s)",
+       color = "Modelo") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Visualização: comparação de modelos(cont)
+
+```{r}
+comparacao_modelos
+```
+
+------------------------------------------------------------------------
+
+# 4. Análise multivariada {background-color="#224573"}
+
+------------------------------------------------------------------------
+
+## ANOVA de medidas repetidas
+
+**Contexto:** cada planta foi medida em 7 concentrações diferentes
+
+**Estrutura dos dados:**
+
+-   Medidas repetidas no mesmo sujeito (planta)
+-   Violação da independência
+-   Necessidade de ANOVA de medidas repetidas
+
+------------------------------------------------------------------------
+
+## Modelo misto
+
+```{r message=FALSE, warning=FALSE}
+# Preparar dados para análise
+library(nlme)
+
+# Modelo misto com planta como efeito aleatório
+modelo_misto <- lme(uptake ~ Type * Treatment * conc,
+                    random = ~1|Plant,
+                    data = CO2)
+```
+
+------------------------------------------------------------------------
+
+## Modelo misto(cont)
+
+```{r}
+summary(modelo_misto)
+```
+
+------------------------------------------------------------------------
+
+## ANOVA do modelo misto
+
+```{r}
+# ANOVA do modelo misto
+anova(modelo_misto)
+```
+
+------------------------------------------------------------------------
+
+## Intervalos de confiança
+
+```{r}
+# Intervalos de confiança
+intervals(modelo_misto)
+```
+
+------------------------------------------------------------------------
+
+## Correlação intra-planta
+
+```{r}
+# Verificar correlação intra-planta
+VarCorr(modelo_misto)
+```
+
+------------------------------------------------------------------------
+
+## Correlação entre variáveis
+
+```{r}
+# Matriz de correlação
+cor_matrix <- cor(CO2[, c("conc", "uptake")])
+cor_matrix
+```
+
+------------------------------------------------------------------------
+
+## Correlação entre variáveis(cont)
+
+```{r}
+# Teste de correlação
+cor.test(CO2$conc, CO2$uptake)
+```
+
+------------------------------------------------------------------------
+
+## Visualização da correlação
+
+```{r message=FALSE, warning=FALSE}
+#| fig-width: 8
+#| fig-height: 8
+
+library(corrplot)
+corrplot(cor_matrix, 
+         method = "color",
+         col = colorRampPalette(c("#E5D3B3", "#4A6FA5", "#224573"))(100),
+         addCoef.col = "black",
+         tl.col = "#224573",
+         tl.srt = 45)
+```
+
+------------------------------------------------------------------------
+
+## Calculando coeficientes de correlação
+
+```{r}
+# Calcular coeficiente de correlação
+r_value <- cor(CO2$conc, CO2$uptake)
+r_squared <- r_value^2
+
+data.frame(
+  r = r_value,
+  r_squared = r_squared)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de dispersão com correlação
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+disp_cor <- ggplot(CO2, aes(x = conc, y = uptake)) +
+  geom_point(aes(color = Type, shape = Treatment),
+             size = 3, alpha = 0.7) +
+  geom_smooth(method = "lm", 
+              color = "#224573",
+              fill = "#E5D3B3") +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  annotate("text", 
+           x = max(CO2$conc) * 0.7, 
+           y = min(CO2$uptake) * 1.2,
+           label = paste("r =", round(r_value, 3), 
+                        "\nR² =", round(r_squared, 3)),
+           color = "#224573", 
+           size = 5) +
+  labs(title = "Correlação: concentração x absorção",
+       x = "Concentração de CO2 (mL/L)",
+       y = "Absorção de CO2 (μmol/m²s)",
+       color = "Origem",
+       shape = "Tratamento") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    legend.position = "right")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de dispersão com correlação(cont)
+
+```{r}
+disp_cor
+```
+
+------------------------------------------------------------------------
+
+## Análise de clusters
+
+```{r}
+# Preparar dados para clustering
+dados_cluster <- CO2 %>%
+  select(conc, uptake) %>%
+  scale()
+
+# K-means clustering
+set.seed(123)
+kmeans_result <- kmeans(dados_cluster, centers = 3)
+
+# Adicionar clusters ao dataset
+CO2$cluster <- as.factor(kmeans_result$cluster)
+
+# Ver centros dos clusters
+kmeans_result$centers
+```
+
+------------------------------------------------------------------------
+
+## Visualização de clusters
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+cluster <- ggplot(CO2, aes(x = conc, y = uptake, color = cluster)) +
+  geom_point(size = 3, alpha = 0.7) +
+  scale_color_manual(values = c("#224573", "#6B4F4F", "#4A6FA5")) +
+  labs(title = "Análise de clusters K-means",
+       subtitle = "Agrupamento baseado em concentração e absorção",
+       x = "Concentração de CO2 (mL/L)",
+       y = "Absorção de CO2 (μmol/m²s)",
+       color = "Cluster") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Visualização de clusters(cont)
+
+```{r}
+cluster
+```
+
+------------------------------------------------------------------------
+
+# 5. Visualizações avançadas {background-color="#224573"}
+
+------------------------------------------------------------------------
+
+## Gráfico de perfis individuais
+
+```{r}
+#| fig-width: 12
+#| fig-height: 6
+
+perfis <- ggplot(CO2, aes(x = conc, y = uptake, group = Plant)) +
+  geom_line(aes(color = Type), alpha = 0.5, linewidth = 0.8) +
+  geom_point(aes(color = Type), size = 1.5, alpha = 0.6) +
+  facet_wrap(~Treatment, labeller = labeller(
+    Treatment = c("nonchilled" = "Não resfriada",
+                  "chilled" = "Resfriada"))) +
+  scale_color_manual(values = c("#224573", "#6B4F4F"),
+                     labels = c("Quebec", "Mississippi")) +
+  labs(title = "Perfis de absorção por planta individual",
+       x = "Concentração de CO2 (mL/L)",
+       y = "Absorção de CO2 (μmol/m²s)",
+       color = "Origem") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    strip.background = element_rect(fill = "#E5D3B3", color = NA),
+    strip.text = element_text(color = "#224573", face = "bold"),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de perfis individuais(cont)
+
+```{r}
+perfis
+```
+
+------------------------------------------------------------------------
+
+## Preparando dados para heatmap
+
+```{r}
+# Calcular médias por grupo
+heatmap_data <- CO2 %>%
+  group_by(Type, Treatment, conc) %>%
+  summarise(Media_uptake = mean(uptake), .groups = "drop")
+
+head(heatmap_data)
+```
+
+------------------------------------------------------------------------
+
+## Heatmap de médias
+
+```{r}
+#| fig-width: 12
+#| fig-height: 6
+
+heatmap_media <- ggplot(heatmap_data, aes(x = factor(conc), y = interaction(Type, Treatment),
+                         fill = Media_uptake)) +
+  geom_tile(color = "white", linewidth = 1) +
+  scale_fill_gradient2(low = "#E5D3B3", 
+                       mid = "#4A6FA5", 
+                       high = "#224573",
+                       midpoint = median(heatmap_data$Media_uptake)) +
+  geom_text(aes(label = round(Media_uptake, 1)), 
+            color = "white", 
+            size = 3,
+            fontface = "bold") +
+  labs(title = "Heatmap: absorção média de CO2",
+       x = "Concentração de CO2 (mL/L)",
+       y = "Grupo (Origem.Tratamento)",
+       fill = "Absorção\nmédia") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+------------------------------------------------------------------------
+
+## Heatmap de médias(cont)
+
+```{r}
+heatmap_media
+```
+
+------------------------------------------------------------------------
+
+## Preparando estatísticas para gráfico de barras
+
+```{r}
+# Calcular estatísticas
+stats_plot <- CO2 %>%
+  group_by(Type, Treatment) %>%
+  summarise(
+    Media = mean(uptake),
+    EP = sd(uptake) / sqrt(n()),
+    .groups = "drop")
+
+stats_plot
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de barras com erro padrão
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+barras <- ggplot(stats_plot, aes(x = Type, y = Media, fill = Treatment)) +
+  geom_col(position = position_dodge(width = 0.8),
+           alpha = 0.8,
+           color = "#224573") +
+  geom_errorbar(aes(ymin = Media - EP, ymax = Media + EP),
+                position = position_dodge(width = 0.8),
+                width = 0.25,
+                linewidth = 1) +
+  scale_fill_manual(values = c("#4A6FA5", "#E5D3B3"),
+                    labels = c("Não resfriada", "Resfriada")) +
+  labs(title = "Absorção média por origem e tratamento",
+       subtitle = "Barras de erro: erro padrão da média",
+       x = "Origem da planta",
+       y = "Absorção média de CO2 (μmol/m²s)",
+       fill = "Tratamento") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de barras com erro padrão(cont)
+
+```{r}
+barras
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de densidade por grupo
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+densidade <- ggplot(CO2, aes(x = uptake, fill = interaction(Type, Treatment))) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c("#224573", "#4A6FA5", "#6B4F4F", "#E5D3B3"),
+                    labels = c("Quebec.Não resfriada",
+                              "Quebec.Resfriada",
+                              "Mississippi.Não resfriada",
+                              "Mississippi.Resfriada")) +
+  labs(title = "Distribuição de densidade por grupo",
+       x = "Absorção de CO2 (μmol/m²s)",
+       y = "Densidade",
+       fill = "Grupo") +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(color = "#224573", face = "bold"),
+    legend.position = "bottom",
+    legend.text = element_text(size = 10))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de densidade por grupo(cont)
+
+```{r}
+densidade
+```
+
+------------------------------------------------------------------------
+
+## Painel de diagnóstico completo
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+
+par(mfrow = c(2, 2))
+plot(anova_completa, col = "#4A6FA5", pch = 19)
+par(mfrow = c(1, 1))
+```
+
+------------------------------------------------------------------------
+
+# 6. Relatório de resultados {background-color="#224573"}
+
+------------------------------------------------------------------------
+
+## Estrutura de um relatório estatístico
+
+**Componentes essenciais:**
+
+1.  **Introdução**
+    -   Contexto do estudo
+    -   Objetivos
+    -   Hipóteses
+2.  **Métodos**
+    -   Descrição dos dados
+    -   Análises estatísticas aplicadas
+    -   Software utilizado
+
+------------------------------------------------------------------------
+
+## Estrutura de um relatório estatístico(cont)
+
+3.  **Resultados**
+    -   Estatísticas descritivas
+    -   Testes estatísticos
+    -   Tabelas e gráficos
+4.  **Discussão e conclusões**
+
+------------------------------------------------------------------------
+
+## Criando tabela de estatísticas descritivas
+
+```{r}
+library(knitr)
+
+# Criar tabela formatada
+tabela_descritiva <- CO2 %>%
+  group_by(Type, Treatment) %>%
+  summarise(
+    n = n(),
+    Media = mean(uptake),
+    DP = sd(uptake),
+    Mediana = median(uptake),
+    Min = min(uptake),
+    Max = max(uptake),
+    .groups = "drop")
+```
+
+------------------------------------------------------------------------
+
+## Criando tabela de estatísticas descritivas(cont)
+
+```{r}
+kable(tabela_descritiva, 
+      digits = 2,
+      caption = "Estatísticas descritivas da absorção de CO2",
+      col.names = c("Origem", "Tratamento", "n", 
+                    "Média", "DP", "Mediana", "Mín", "Máx"))
+```
+
+------------------------------------------------------------------------
+
+## Tabela de resultados ANOVA
+
+```{r}
+# Extrair resultados ANOVA
+anova_table <- as.data.frame(summary(anova_completa)[[1]])
+anova_table$Fator <- rownames(anova_table)
+```
+
+------------------------------------------------------------------------
+
+## Tabela de resultados ANOVA(cont)
+
+```{r}
+# Formatar tabela
+kable(anova_table[, c("Fator", "Df", "Sum Sq", "Mean Sq", 
+                      "F value", "Pr(>F)")],
+      digits = c(0, 0, 2, 2, 2, 4),
+      caption = "Tabela ANOVA: efeitos de origem e tratamento",
+      col.names = c("Fator", "GL", "SQ", "QM", "F", "p-valor"))
+```
+
+------------------------------------------------------------------------
+
+## Interpretação dos resultados
+
+**Principais achados:**
+
+1.  **Efeito da origem (Type):**
+    -   F(1,80) = 48.98, p \< 0.001
+    -   Plantas de Quebec apresentam absorção significativamente maior
+        que plantas de Mississippi
+2.  **Efeito do tratamento:**
+    -   F(1,80) = 14.38, p \< 0.001
+    -   Tratamento de resfriamento reduz significativamente a absorção
+
+------------------------------------------------------------------------
+
+## Interpretação dos resultados(cont)
+
+3.  **Interação:**
+    -   F(1,80) = 3.29, p = 0.073
+    -   Interação marginalmente não significativa
+
+------------------------------------------------------------------------
+
+## Exemplo de redação de resultados
+
+"Foi realizada uma ANOVA two-way para avaliar os efeitos da origem
+(Quebec vs. Mississippi) e tratamento (resfriado vs. não resfriado) na
+absorção de CO2. Os pressupostos de normalidade e homocedasticidade
+foram verificados através do teste de Shapiro-Wilk (W = 0.98, p = 0.23)
+e teste de Levene (F = 1.85, p = 0.14), respectivamente.
+
+------------------------------------------------------------------------
+
+## Exemplo de redação de resultados(cont)
+
+Os resultados indicaram efeito principal significativo da origem
+(F(1,80) = 48.98, p \< 0.001, η² = 0.38) e do tratamento (F(1,80) =
+14.38, p \< 0.001, η² = 0.15). Plantas de Quebec apresentaram absorção
+média de 33.5 μmol/m²s, significativamente superior às plantas de
+Mississippi (20.9 μmol/m²s). O resfriamento reduziu a absorção média em
+aproximadamente 7.2 μmol/m²s."
+
+------------------------------------------------------------------------
+
+## Checklist para análise estatística
+
+**Antes de iniciar:**
+
+-   Dados importados corretamente
+-   Variáveis no formato adequado (fator/numérico)
+-   Valores ausentes identificados
+-   Outliers investigados
+
+------------------------------------------------------------------------
+
+## Checklist para análise estatística(continuação)
+
+**Durante a análise:**
+
+-   Estatísticas descritivas calculadas
+-   Pressupostos verificados
+-   Testes apropriados selecionados
+-   Resultados interpretados corretamente
+
+------------------------------------------------------------------------
+
+## Checklist (continuação)
+
+**Após a análise:**
+
+-   Gráficos informativos criados
+-   Resultados documentados
+-   Código reproduzível salvo
+
+------------------------------------------------------------------------
+
+## Boas práticas em análise estatística
+
+**1. Planejamento:**
+
+-   Defina hipóteses a priori
+-   Calcule tamanho amostral necessário
+-   Escolha testes apropriados antes de coletar dados
+
+**2. Exploração:**
+
+-   Sempre visualize os dados primeiro
+-   Identifique padrões e anomalias
+-   Documente decisões tomadas
+
+------------------------------------------------------------------------
+
+## Boas práticas em análise estatística(cont)
+
+**3. Análise:**
+
+-   Verifique pressupostos
+-   Reporte todos os testes realizados
+-   Não faça "p-hacking" (buscar significância)
+
+------------------------------------------------------------------------
+
+## Boas práticas(cont)
+
+**4. Interpretação:**
+
+-   Diferencie significância estatística de relevância prática
+-   Reporte tamanho de efeito, não apenas p-valor
+-   Considere intervalos de confiança
+
+**5. Comunicação:**
+
+-   Use visualizações claras
+-   Reporte métodos completos
+-   Disponibilize dados e código
+
+------------------------------------------------------------------------
+
+## Erros comuns a evitar
+
+**Conceituais:**
+
+-   Confundir correlação com causalidade
+-   Ignorar múltiplas comparações
+-   Usar testes inapropriados para os dados
+
+**Práticos:**
+
+-   Não verificar pressupostos
+-   Excluir outliers sem justificativa
+-   Reportar apenas resultados significativos
+
+------------------------------------------------------------------------
+
+## Erros comuns a evitar(cont)
+
+**Interpretação:**
+
+-   Concluir "não há diferença" quando p \> 0.05
+-   Ignorar magnitude do efeito
+-   Generalizar além dos dados
+
+------------------------------------------------------------------------
+
+## Exercícios propostos {background-color="#E5D3B3"}
+
+**1. Estatística descritiva:**
+
+Calcule média, mediana, desvio padrão e coeficiente de variação da
+absorção de CO2 para cada concentração.
+
+**2. Visualização:**
+
+Crie um gráfico boxplot mostrando a absorção por concentração, separado
+por origem e tratamento.
+
+------------------------------------------------------------------------
+
+## Exercícios propostos(cont) {background-color="#E5D3B3"}
+
+**3. ANOVA:**
+
+Teste se existe diferença significativa na absorção entre as diferentes
+concentrações de CO2.
+
+**4. Correlação:**
+
+Avalie a correlação entre concentração e absorção separadamente para
+cada combinação de origem e tratamento.
+
+------------------------------------------------------------------------
+
+## Exercícios propostos (cont)
+
+**5. Análise avançada:**
+
+Ajuste um modelo de regressão linear múltipla incluindo concentração,
+tipo e tratamento como preditores. Interprete os coeficientes.
+
+**6. Diagnóstico:**
+
+Verifique todos os pressupostos do modelo de regressão através de
+gráficos de diagnóstico.
+
+**7. Comparações:**
+
+Use testes post-hoc para identificar quais concentrações diferem
+significativamente entre si.
+
+------------------------------------------------------------------------
+
+## Resumo da aula {background-color="#E5D3B3"}
+
+**Conceitos abordados:**
+
+1.  **Estatística descritiva:** medidas de tendência central, dispersão
+    e posição
+
+2.  **Distribuições:** avaliação de normalidade através de testes e
+    gráficos
+
+3.  **ANOVA:** comparação de múltiplos grupos e análise de interações
+
+4.  **Visualização:** criação de gráficos informativos com ggplot2
+
+5.  **Interpretação:** como comunicar resultados estatísticos
+
+------------------------------------------------------------------------
+
+## Próximos passos {background-color="#E5D3B3"}
+
+**Para aprofundar seus conhecimentos:**
+
+1.  Pratique com outros datasets do R
+2.  Explore análises multivariadas (PCA, análise discriminante)
+3.  Aprenda modelagem estatística avançada (modelos mistos, GLM)
+4.  Estude machine learning e análise preditiva
+5.  Desenvolva habilidades em visualização de dados
+
+------------------------------------------------------------------------
+
+## Próximos passos {background-color="#E5D3B3"}
+
+**Lembre-se:**
+
+A estatística é uma ferramenta para responder perguntas científicas. O
+conhecimento do domínio é tão importante quanto o conhecimento
+estatístico.
+
+------------------------------------------------------------------------
+
+## Referências
+
+**Livros:**
+
+1.  Bussab, W. O., & Morettin, P. A. (2017). *Estatística básica*.
+    Saraiva.
+
+2.  Field, A., Miles, J., & Field, Z. (2012). *Discovering statistics
+    using R*. SAGE.
+
+3.  Wickham, H., & Grolemund, G. (2023). *R for data science* (2nd ed.).
+    O'Reilly.
+
+------------------------------------------------------------------------
+
+## Referências (continuação)
+
+**Documentação:**
+
+-   R Core Team. (2024). *R: A language and environment for statistical
+    computing*.
+
+-   Wickham, H. (2016). *ggplot2: elegant graphics for data analysis*.
+    Springer.
+
+**Datasets:**
+
+Potvin, C., Lechowicz, M. J., & Tardif, S. (1990). The statistical
+analysis of ecophysiological response curves obtained from experiments
+involving repeated measures. *Ecology*, 71(4), 1389-1400.
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![Imagem: Allison Horst.](imagens/comunidade.png){fig-align="center"
+width="449"}
+
+Continue praticando e explorando!
+
+*Esta apresentação é parte do projeto **`Café com R!`** É OPEN, USE,
+COMPARTILHE!*
+
+------------------------------------------------------------------------
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!

@@ -1,0 +1,668 @@
+---
+title: "2. Funções em R"
+subtitle: "O que realmente muda quando você aprende a criá-las?"
+categories: [Funções, R]
+image: imagens/funcoes.png
+description: "O que realmente muda quando você aprende a criá-las?É open use e compartilhe"
+format:
+  revealjs:
+    theme: simple
+    logo: "imagens/logo.png"
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes • Café com R"
+editor:
+  markdown:
+    wrap: 72
+---
+
+## Antes de começar {background-color="#E5D3B3"}
+
+Essa é a Meguy, minha gatinha! E no dia que eu estava construindo esse
+conteúdo, ela estava deitada na minha mesa, aí fui fazer uma foto e
+olhem o que deu:
+
+![**Uma piscadinha para vocês, agora todo mundo vai aprender tudo sobre
+funções, tenho
+certeza!**](imagens/meguy.jpg){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);"
+width="420"}
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}
+
+## O problema do código repetitivo {background-color="#E5D3B3"}
+
+**Você escreve isso toda semana?**
+
+``` r
+# Análise para variável 1
+summary(dados$idade)
+sd(dados$idade, na.rm = TRUE)
+quantile(dados$idade, probs = c(0.25, 0.5, 0.75))
+hist(dados$idade, main = "Idade", col = "lightblue")
+
+# Análise para variável 2
+summary(dados$salario)
+sd(dados$salario, na.rm = TRUE)
+quantile(dados$salario, probs = c(0.25, 0.5, 0.75))
+hist(dados$salario, main = "Salário", col = "lightblue")
+```
+
+------------------------------------------------------------------------
+
+## Por que isso é um problema?
+
+::: callout-caution
+## Atenção
+
+**Copiar e colar código cria riscos:**
+
+**Erros silenciosos** - Copiou mas esqueceu de mudar o nome da
+variável - O resultado está errado mas você não percebe
+
+**Manutenção difícil** - Precisa mudar a cor do gráfico? Edite em 20
+lugares - Risco de inconsistências
+
+**Código ilegível** - Difícil de revisar - Difícil de compartilhar com a
+equipe
+:::
+
+------------------------------------------------------------------------
+
+## A solução: Funções {background-color="#E5D3B3"}
+
+**Transforme código repetitivo em uma função:**
+
+``` r
+analisar_variavel <- function(dados, variavel) {
+  valores <- dados[[variavel]]
+  
+  cat("Resumo Estatístico:\n")
+  print(summary(valores))
+  
+  cat("\nDesvio Padrão:", sd(valores, na.rm = TRUE))
+  
+  cat("\nQuartis:\n")
+  print(quantile(valores, probs = c(0.25, 0.5, 0.75)))
+  
+  hist(valores, main = variavel, col = "lightblue")
+}
+```
+
+**Uso:**
+
+``` r
+analisar_variavel(dados, "idade")
+analisar_variavel(dados, "salario")
+```
+
+------------------------------------------------------------------------
+
+## Anatomia de uma função {.smaller}
+
+**Estrutura básica:**
+
+``` r
+nome_da_funcao <- function(argumentos) {
+  # Corpo da função
+  resultado <- processamento(argumentos)
+  return(resultado)
+}
+```
+
+**Componentes essenciais:**
+
+1.  **Nome:** Descreve o que a função faz
+2.  **Argumentos:** Entradas que a função recebe
+3.  **Corpo:** Lógica de processamento
+4.  **Retorno:** O que a função devolve
+
+------------------------------------------------------------------------
+
+## Componente 1: Nome da função {background-color="#E5D3B3"}
+
+**Boas práticas para nomear funções:**
+
+``` r
+# Use verbos descritivos
+calcular_media()
+processar_dados()
+gerar_relatorio()
+testar_normalidade()
+
+# Seja específico
+calcular_media_ponderada()
+testar_diferenca_grupos()
+plotar_dispersao()
+
+# Evite nomes genéricos
+fazer()          # O quê?
+processar()      # Processar como?
+analisar()       # Que tipo de análise?
+```
+
+**Convenção: use snake_case (palavras separadas por underscore)**
+
+------------------------------------------------------------------------
+
+## Componente 2: Argumentos {background-color="#E5D3B3"}
+
+**Argumentos são as entradas da função:**
+
+``` r
+# Argumentos obrigatórios
+calcular_media <- function(x) {
+  mean(x, na.rm = TRUE)
+}
+
+# Argumentos com valores padrão
+calcular_media <- function(x, remover_na = TRUE) {
+  mean(x, na.rm = remover_na)
+}
+
+# Múltiplos argumentos
+testar_diferenca <- function(grupo1, grupo2, tipo = "t.test") {
+  if (tipo == "t.test") {
+    t.test(grupo1, grupo2)
+  } else if (tipo == "wilcox") {
+    wilcox.test(grupo1, grupo2)
+  }
+}
+```
+
+------------------------------------------------------------------------
+
+## Componente 3: Corpo da função {background-color="#E5D3B3"}
+
+**O corpo contém a lógica:**
+
+``` r
+estatisticas_basicas <- function(x) {
+  # 1. Validação de entrada
+  if (!is.numeric(x)) {
+    stop("x deve ser numérico")
+  }
+  
+  # 2. Processamento
+  n <- length(x)
+  media <- mean(x, na.rm = TRUE)
+  mediana <- median(x, na.rm = TRUE)
+  dp <- sd(x, na.rm = TRUE)
+  
+  # 3. Organização do resultado
+  resultado <- list(
+    n = n,
+    media = media,
+    mediana = mediana,
+    desvio_padrao = dp
+  )
+  
+  return(resultado)
+}
+```
+
+------------------------------------------------------------------------
+
+## Componente 4: Retorno {background-color="#E5D3B3"}
+
+**O que a função devolve:**
+
+``` r
+# Retorno explícito
+calcular_soma <- function(a, b) {
+  resultado <- a + b
+  return(resultado)
+}
+
+# Retorno implícito (última expressão)
+calcular_soma <- function(a, b) {
+  a + b
+}
+
+# Retornar múltiplos valores (lista)
+estatisticas <- function(x) {
+  list(
+    media = mean(x),
+    mediana = median(x),
+    dp = sd(x)
+  )
+}
+
+# Usar o retorno
+resultado <- estatisticas(dados$idade)
+resultado$media
+resultado$mediana
+```
+
+------------------------------------------------------------------------
+
+## Exemplo: Teste t {.smaller}
+
+``` r
+testar_grupos <- function(dados, variavel, grupo) {
+  # Extrair valores dos grupos
+  formula <- as.formula(paste(variavel, "~", grupo))
+  teste <- t.test(formula, data = dados)
+  
+  # Organizar resultado
+  resultado <- data.frame(
+    variavel = variavel,
+    estatistica_t = round(teste$statistic, 3),
+    p_valor = round(teste$p.value, 4),
+    ic_inferior = round(teste$conf.int[1], 2),
+    ic_superior = round(teste$conf.int[2], 2)
+  )
+  
+  return(resultado)
+}
+```
+
+**Uso:**
+
+``` r
+testar_grupos(dados, "idade", "sexo")
+testar_grupos(dados, "salario", "departamento")
+```
+
+------------------------------------------------------------------------
+
+## Funções com validação {background-color="#E5D3B3"}
+
+**Adicione verificações para evitar erros:**
+
+``` r
+calcular_correlacao <- function(x, y, metodo = "pearson") {
+  # Validação 1: Tipo de dados
+  if (!is.numeric(x) | !is.numeric(y)) {
+    stop("x e y devem ser numéricos")
+  }
+  
+  # Validação 2: Mesmo comprimento
+  if (length(x) != length(y)) {
+    stop("x e y devem ter o mesmo comprimento")
+  }
+  
+  # Validação 3: Método válido
+  metodos_validos <- c("pearson", "spearman", "kendall")
+  if (!metodo %in% metodos_validos) {
+    stop("Método deve ser: pearson, spearman ou kendall")
+  }
+  
+  # Cálculo
+  cor(x, y, method = metodo, use = "complete.obs")
+}
+```
+
+------------------------------------------------------------------------
+
+## Funções com mensagens {.smaller}
+
+**Comunique o que está acontecendo:**
+
+``` r
+processar_analise <- function(dados, variavel) {
+  # Mensagem informativa
+  message("Processando variável: ", variavel)
+  
+  # Aviso se houver NAs
+  n_na <- sum(is.na(dados[[variavel]]))
+  if (n_na > 0) {
+    warning("Encontrados ", n_na, " valores NA")
+  }
+  
+  # Processar
+  resultado <- summary(dados[[variavel]])
+  
+  # Mensagem de sucesso
+  message("Análise concluída!")
+  
+  return(resultado)
+}
+```
+
+**Tipos de mensagens:** - `message()` - Informações gerais -
+`warning()` - Avisos (não para a execução) - `stop()` - Erros críticos
+(para a execução)
+
+------------------------------------------------------------------------
+
+## Modularização: Dividir para conquistar {.smaller}
+
+**Em vez de uma função gigante:**
+
+``` r
+# Função grande e confusa
+analisar_tudo <- function(dados) {
+  # 100 linhas de código...
+}
+```
+
+**Crie funções pequenas e específicas:**
+
+``` r
+# Função 1: Limpar
+limpar_dados <- function(dados) {
+  dados[!is.na(dados$idade) & dados$idade > 0, ]
+}
+
+# Função 2: Calcular
+calcular_estatisticas <- function(dados) {
+  data.frame(
+    media = mean(dados$idade),
+    mediana = median(dados$idade)
+  )
+}
+
+# Função 3: Visualizar
+plotar_distribuicao <- function(dados) {
+  hist(dados$idade, main = "Distribuição")
+}
+```
+
+------------------------------------------------------------------------
+
+## Pipeline {.smaller}
+
+**Combine funções pequenas em um fluxo:**
+
+``` r
+# Cada função faz uma coisa
+dados_limpos <- limpar_dados(dados_brutos)
+estatisticas <- calcular_estatisticas(dados_limpos)
+graficos <- plotar_distribuicao(dados_limpos)
+relatorio <- gerar_relatorio(estatisticas)
+
+# Ou use pipe
+library(dplyr)
+dados_brutos %>%
+  limpar_dados() %>%
+  calcular_estatisticas() %>%
+  gerar_relatorio()
+```
+
+**Vantagens:** - Cada função é testável independentemente - Fácil de
+modificar uma etapa - Código legível e autodocumentado
+
+------------------------------------------------------------------------
+
+## Salvando funções: Opção 1 - Scripts {.smaller}
+
+**Crie um arquivo de funções:**
+
+**Estrutura do projeto:**
+
+```         
+meu_projeto/
+├── funcoes/
+│   ├── estatisticas.R
+│   ├── visualizacao.R
+│   └── limpeza.R
+├── analises/
+│   └── analise_principal.R
+└── dados/
+```
+
+**No arquivo `funcoes/estatisticas.R`:**
+
+``` r
+# Funções estatísticas
+
+calcular_media <- function(x) {
+  mean(x, na.rm = TRUE)
+}
+
+testar_normalidade <- function(x) {
+  shapiro.test(x)
+}
+```
+
+## Salvando funções: opção 1 - scripts {.smaller}
+
+**Carregar no script principal:**
+
+``` r
+source("funcoes/estatisticas.R")
+calcular_media(dados$idade)
+```
+
+------------------------------------------------------------------------
+
+## Salvando funções: opção 2 - snippets {.smaller}
+
+**RStudio Snippets: templates rápidos**
+
+**1. Acesse:** Tools \> Global Options \> Code \> Edit Snippets
+
+**2. Adicione seu snippet:**
+
+```         
+snippet fun_stat
+    ${1:nome_funcao} <- function(${2:x}) {
+      if (!is.numeric(${2:x})) {
+        stop("${2:x} deve ser numérico")
+      }
+      
+      resultado <- ${3:mean(${2:x}, na.rm = TRUE)}
+      return(resultado)
+    }
+```
+
+**3. Use:** Digite `fun_stat` + Tab
+
+**Snippets populares:** - Estrutura de função - Validações comuns -
+Cabeçalhos de documentação
+
+------------------------------------------------------------------------
+
+## Salvando funções: opção 3 - pacotes {.smaller}
+
+**Quando criar um pacote?**
+
+-   Você usa as mesmas funções em múltiplos projetos
+-   Quer compartilhar com a equipe
+-   Precisa de documentação profissional
+-   Quer testes automatizados
+
+**Vantagens:** Instalação fácil:
+
+-   `library(seupacote)`
+
+-   Help integrado: `?sua_funcao`
+
+-   Versionamento e manutenção
+
+-   Distribuição via GitHub ou CRAN
+
+------------------------------------------------------------------------
+
+## Criando seu primeiro pacote {background-color="#E5D3B3"}
+
+**Passos básicos:**
+
+``` r
+# 1. Criar estrutura
+usethis::create_package("estatR")
+
+# 2. Adicionar função
+usethis::use_r("descritivas")
+
+# No arquivo R/descritivas.R:
+#' Calcular estatísticas descritivas
+#'
+#' @param x Vetor numérico
+#' @return Lista com média, mediana e desvio padrão
+#' @export
+estatisticas <- function(x) {
+  list(
+    media = mean(x, na.rm = TRUE),
+    mediana = median(x, na.rm = TRUE),
+    dp = sd(x, na.rm = TRUE)
+  )
+}
+
+# 3. Documentar
+devtools::document()
+
+# 4. Instalar
+devtools::install()
+```
+
+------------------------------------------------------------------------
+
+## Estrutura de um pacote {.smaller}
+
+```         
+estatR/
+├── R/                      # Funções
+│   ├── descritivas.R
+│   ├── testes.R
+│   └── visualizacao.R
+├── man/                    # Documentação automática
+│   ├── estatisticas.Rd
+│   └── testar_grupos.Rd
+├── tests/                  # Testes unitários
+│   └── testthat/
+├── DESCRIPTION            # Metadados
+├── NAMESPACE              # Funções exportadas
+└── README.md              # Instruções
+```
+
+**Usar o pacote:**
+
+``` r
+library(estatR)
+resultado <- estatisticas(dados$idade)
+?estatisticas  # Ver documentação
+```
+
+------------------------------------------------------------------------
+
+## Documentação com roxygen2 {.smaller}
+
+**Documente suas funções:**
+
+``` r
+#' Testar diferença entre grupos
+#'
+#' Realiza teste t para comparar dois grupos
+#'
+#' @param dados Data frame com os dados
+#' @param variavel Nome da variável numérica a testar
+#' @param grupo Nome da variável categórica (2 níveis)
+#' @return Data frame com resultados do teste
+#' @examples
+#' testar_grupos(mtcars, "mpg", "am")
+#' @export
+testar_grupos <- function(dados, variavel, grupo) {
+  # código da função
+}
+```
+
+**Tags importantes:**
+
+-   `@param` Descreve argumentos
+-   `@return` - Descreve retorno
+-   `@examples` - Exemplos de uso
+-   `@export` - Torna função disponível
+
+------------------------------------------------------------------------
+
+## Recursos para funções {.smaller}
+
+**Organização:**
+
+-   Scripts: Para projetos individuais
+-   Snippets: Para templates rápidos
+-   Pacotes: Para reutilização e compartilhamento
+
+**Ferramentas:**
+
+-   `usethis` - Automação de setup
+
+-   `devtools` - Desenvolvimento de pacotes
+
+-   `testthat` - Testes automatizados
+
+-   `roxygen2` - Documentação
+
+------------------------------------------------------------------------
+
+## Resumo: O poder das funções {background-color="#E5D3B3"}
+
+**Próximos passos:**
+
+1.  Identifique código que você repete
+2.  Transforme em uma função simples
+3.  Adicione validações e documentação
+4.  Salve em scripts organizados
+5.  Considere criar um pacote pessoal
+
+------------------------------------------------------------------------
+
+## Referências {.smaller}
+
+**Livros e Tutoriais:**
+
+1.  Wickham, H. (2019). **Advanced R** (2nd ed.). CRC Press.\
+    <https://adv-r.hadley.nz/>
+
+2.  Wickham, H., & Bryan, J. (2023). **R Packages** (2nd ed.).\
+    <https://r-pkgs.org/>
+
+3.  Grolemund, G., & Wickham, H. (2023). **R for Data Science** (2nd
+    ed.).\
+    <https://r4ds.hadley.nz/>
+
+4.  HBC Training. **Function Writing Guide**.\
+    <https://hbctraining.github.io/Intro-to-R/lessons/03_introR-functions-and-arguments.html>
+
+**Slides criados com Quarto**
+
+<https://quarto.org/>
+
+<https://quarto.org/docs/presentations/revealjs/>
+
+## Com isso {background-color="#E5D3B3"}
+
+#### Criem funções, a meguy concorda ksksksksk!
+
+![](imagens/meguy.jpg){fig-align="center" width="361"}
+
+## Muito obrigada!
+
+Esta apresentação é parte do projeto **Café com R**
+
+**É OPEN, USE, COMPARTILHE!**
+
+Perguntas? Dúvidas? Sugestões?
+
+**Próximo passo**: Abra seu RStudio e comece a praticar!
+
+![](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/main/rstats-artwork/welcome_to_rstats_twitter.png){fig-align="center"
+width="40%"}
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}
+
+##  {background-color="#E5D3B3"}

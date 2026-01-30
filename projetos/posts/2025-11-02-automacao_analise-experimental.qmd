@@ -1,0 +1,195 @@
+---
+title: "Automatização para análise de um pipeline experimental"
+subtitle: "Pacote {targets}"
+description: ""
+author: "Jennifer Luz Lopes"
+date: "2025-10-26"
+categories: [Automação, pipeline, Experimentação, Estatística, Modelagem]
+
+# imagem usada na listagem/cartões
+image: ../imagens/pipeline.png
+image-alt: "Gráfico mostrando relatório automatizado"
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    number-sections: false
+    css: estilo_geral.scss
+---
+
+<!-- BOTÕES HORIZONTAIS -->
+
+::: listing-btn-group
+<a href="https://jenniferlopes.quarto.pub/automacao_experimental/"
+   class="btn btn-cafe"
+   target="_blank"> <i class="fa-solid fa-display"></i> **Relatório** HTML </a>
+
+<a href="https://github.com/JenniferLopes/experimentacao_agricola_pipeline_automatizado"
+   class="btn btn-cafe"
+   target="_blank"> <i class="fa-brands fa-github"></i> **Código - GitHub** </a>
+
+<a href="https://jenniferlopes.quarto.pub/portifolio/projetos/"
+   class="btn btn-cafe"
+   target="_blank"> <i class="fa-solid fa-circle-play"></i> **Site** </a>
+:::
+
+### **Como usar esse projeto?**
+
+**Para explorar este projeto, faça:**
+
+1.  Um fork ou clone do repositório em sua máquina local.
+
+2.  Em seguida, acesse o relatório completo com as explicações detalhadas de cada etapa da análise:
+
+[![Repositório](https://img.shields.io/badge/Repositório-Experimentacao_Agrícola_pipeline_automatizado-224573?logo=github&logoColor=white)](https://github.com/JenniferLopes/experimentacao_agricola_pipeline_automatizado) [![Relatório Explicações](https://img.shields.io/badge/Relatório_Explicações-automacao_experimental-6B4F4F?logo=quarto&logoColor=white)](https://jenniferlopes.quarto.pub/automacao_experimental/)
+
+### Objetivo
+
+Construir um pipeline reprodutível e automatizado para experimentos agrícolas, com foco em:
+
+-   Modelagem estatística (BLUE e BLUP);
+
+-   Estimativas de herdabilidade;
+
+-   Agrupamento genético (UPGMA);
+
+-   Visualizações e exportação automatizada.
+
+### Referências
+
+A explicação completa sobre a modelagem estatística utilizada neste pipeline incluindo o detalhamento dos modelos mistos (REML/BLUP), ajustes, validações e interpretações está disponível nos links abaixo:
+
+[![Repositório](https://img.shields.io/badge/GitHub-Repositório%20do%20Projeto-224573?logo=github&logoColor=white)](https://github.com/JenniferLopes/portfolio_experimentacao_agricola) [![Relatório do projeto anterior](https://img.shields.io/badge/Relatório%20HTML-Projeto%20anterior-6B4F4F?logo=quarto&logoColor=white)](https://jenniferlopes.quarto.pub/modelagem_experimental/)
+
+### Estrutura Geral do Projeto
+
+```         
+experimentacao_agricola_pipeline_automatizado/
+├── _targets.R              # Definição do pipeline principal
+├── _targets.yaml           # Configurações adicionais do {targets}
+├── rodar_pipeline.R        # Script para execução e monitoramento
+├── _targets/               # Banco interno de objetos, metadados e logs
+│   ├── meta/               # Metadados de execução
+│   └── objects/            # Objetos gerados em cada etapa
+├── meu_projeto/
+│   ├── dados/              # Dados experimentais (.xlsx)
+│   ├── funcoes/            # Funções personalizadas
+│   │   └── coleta_dados_github.R
+│   ├── scripts/            # Scripts auxiliares e de testes
+│   │   └── script_inicial.R
+│   ├── output/             # Resultados exportados (planilhas e gráficos)
+│   │   ├── grafico_comparacao_BLUE_BLUP.png
+│   │   └── resultados_experimentais.xlsx
+│   ├── figuras/            # Gráficos do pipeline ({targets})
+│   │   ├── tar_make.png
+│   │   ├── tar_manifest.png
+│   │   ├── tar_meta.png
+│   │   ├── tar_progress.png
+│   │   ├── tar_summary.png
+│   │   ├── tar_visnetwork.png
+│   │   └── _targets_finalizado.png
+│   ├── docs/               # Relatórios e apresentações
+│   └── README.md           # Descrição local do módulo
+```
+
+------------------------------------------------------------------------
+
+### Fluxo do Pipeline `{targets}`
+
+Cada etapa é reexecutada somente quando suas dependências mudam. Os nomes abaixo correspondem aos targets definidos em `_targets.R`.
+
+| Etapa | Nome do Target | Descrição |
+|:---|:---|:---|
+| 1 | `dados_brutos` | Coleta de dados experimentais via API GitHub |
+| 2 | `dados` | Ajuste de variáveis fatoriais e estrutura Alpha-Lattice |
+| 3 | `croqui_campo` | Visualização do layout experimental |
+| 4 | `analise_desc` | Estatísticas descritivas básicas |
+| 5 | `modelo_BLUE` / `modelo_BLUP` | Ajuste de modelos lineares mistos |
+| 6 | `comparacao_modelos` | Comparação dos modelos (AIC e LogLik) |
+| 7 | `estimativas` | Geração das estimativas BLUEs e BLUPs com intervalos de confiança |
+| 8 | `grafico_comparacao` | Comparação visual das estimativas |
+| 9 | `herdabilidade` | Cálculo da herdabilidade (H²) |
+| 10 | `agrupamento_UPGMA` | Agrupamento hierárquico de genótipos |
+| 11 | `exportar_outputs` | Exportação automática de planilhas e gráficos |
+
+### Como Executar
+
+1.  Instalar pacotes:
+
+    ``` r
+    install.packages(c(
+      "targets", "tarchetypes", "tidyverse", "lme4", "emmeans",
+      "broom.mixed", "metan", "ggpubr", "glue", "readxl",
+      "httr2", "base64enc", "writexl"
+    ))
+    ```
+
+2.  Rodar o pipeline completo:
+
+    ``` r
+    source("rodar_pipeline.R")
+    ```
+
+3.  Visualizar a rede de dependências:
+
+    ``` r
+    tar_visnetwork()
+    ```
+
+4.  Ler resultados diretamente:
+
+    ``` r
+    tar_read(estimativas)
+    tar_read(herdabilidade)
+    ```
+
+5.  Outputs finais:
+
+    -   `meu_projeto/output/resultados_experimentais.xlsx`
+    -   `meu_projeto/output/grafico_comparacao_BLUE_BLUP.png`
+    -   Visualizações do pipeline em `meu_projeto/figuras/`
+
+### Resultados e Interpretação
+
+-   **BLUE (Best Linear Unbiased Estimator):** média ajustada considerando genótipos como efeito fixo.\
+-   **BLUP (Best Linear Unbiased Predictor):** predição dos valores genéticos com genótipos como efeito aleatório.\
+-   **H² (Herdabilidade):** proporção da variância total atribuída à variância genética.\
+-   **UPGMA:** agrupamento hierárquico para avaliação de similaridade genética entre genótipos.
+
+O gráfico `grafico_comparacao_BLUE_BLUP.png` ilustra a correspondência entre as estimativas dos dois modelos, validando a consistência do ajuste.
+
+### Conceitos-Chave
+
+-   Reprodutibilidade científica com `{targets}`
+-   Modelos mistos e predição de valores genéticos (REML/BLUP)
+-   Automação de análises experimentais
+-   Gerenciamento de dependências e execução incremental
+
+### Monitoramento do Pipeline
+
+O script [`rodar_pipeline.R`](rodar_pipeline.R) auxilia no acompanhamento da execução:
+
+| Função                   | Objetivo                                |
+|:-------------------------|:----------------------------------------|
+| `tar_make()`             | Executa o pipeline completo             |
+| `tar_manifest()`         | Lista targets e comandos executados     |
+| `tar_visnetwork()`       | Mostra o grafo de dependências          |
+| `tar_meta()`             | Exibe metadados (tempo, status, avisos) |
+| `tar_progress()`         | Mostra andamento da execução            |
+| `tar_poll()`             | Atualiza o progresso em tempo real      |
+| `tar_progress_summary()` | Resumo final de execução                |
+
+### Licença
+
+Este projeto é distribuído sob a licença MIT.
+
+> Sinta-se à vontade para usar, adaptar e referenciar este conteúdo em trabalhos e cursos de experimentação agrícola.
+
+### Autoria
+
+Jennifer Luz Lopes\
+Engenheira Agrônoma \| Doutora em Melhoramento Genético de Plantas
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/jennifer-luz-lopes/) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/JenniferLopes) [![Site e Newsletter](https://img.shields.io/badge/Site%20e%20Newsletter-224573?style=for-the-badge&logo=quarto&logoColor=white)](https://jenniferlopes.quarto.pub/portifolio/)

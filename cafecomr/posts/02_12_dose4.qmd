@@ -1,0 +1,618 @@
+---
+title: "Café da Semana☕"
+subtitle: "Pacotes essenciais no R que transformam seu trabalho com dados"
+author: "Jennifer Luz Lopes"
+date: "2025-12-02"
+categories: [R, Pacotes, Tidyverse, Ferramentas]
+image: ../imagens/cafe4.png
+image-alt: "Ilustração de ferramentas do R"
+description: "Descubra os pacotes que vão elevar sua análise de dados a outro nível"
+css: estilo.css
+---
+
+## Esta é a quarta edição do **Café com R**
+
+::: {.callout-important style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;"}
+## Seja bem-vinda(o)!
+
+***Aqui é uma pausa para falar de dados.***
+
+Toda semana vamos nos encontrar por aqui para conversar sobre ciência de dados, estatística e muito mais de um jeito leve e prático.
+
+Toda semana, uma dose de código, reflexão e boas ideias com R, um café de aprendizagem por vez.
+:::
+
+<br>
+
+## Sobre a Newsletter de hoje
+
+> **Pessoal, trouxe pacotes variados que uso no dia a dia para diferentes etapas do trabalho com dados.**
+
+-   Preparei esta edição pensando em você que quer **conhecer as ferramentas certas** para cada etapa do seu trabalho com dados. Não adianta ter o melhor café se não temos os utensílios certos para prepará-lo, não é mesmo? Hoje vamos ***da semente à xícara*** para explorar o **ecossistema de pacotes do R** que realmente fazem diferença no dia a dia. Espero que seja útil para você ou para alguém que conheça!
+
+-   **Organizei os pacotes por área de aplicação:** desde a importação dos dados até a modelagem avançada, passando pela limpeza, transformação e visualização. Cada fpacote foi escolhido porque resolve problemas reais e torna o trabalho mais eficiente e reproduzível.
+
+-   Na ***Dose da Semana***, você vai encontrar exemplos práticos de cada pacote, com código funcional que você pode adaptar aos seus projetos.
+
+-   E no quadro ***Para Acompanhar o Café***, selecionei recursos e documentações que vão aprofundar seu conhecimento em cada área.
+
+> Ótima leitura!
+>
+> Ahhh pega seu café aí!
+
+![**Essa é a minha gatinha meguy, piscando para você!**](/cafecomr/imagens_gerais/meguy.jpg){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" fig-align="center" width="377"}
+
+<br>
+
+------------------------------------------------------------------------
+
+## Pacotes essenciais no R
+
+### **tidyr** : Organizando seus dados
+
+O **tidyr** é o pacote especialista em transformar dados "bagunçados" em formato *tidy* (organizado). Se você já recebeu planilhas com dados espalhados por várias colunas quando deveriam estar em linhas (ou vice-versa), este é o pacote que vai salvar seu dia.
+
+**Principais funções:**
+
+-   `pivot_longer()`: transforma dados de formato "wide" para "long"
+-   `pivot_wider()`: o inverso, de "long" para "wide"
+-   `separate()`: separa uma coluna em várias
+-   `unite()`: une várias colunas em uma
+-   `drop_na()`: remove linhas com valores faltantes
+
+**Exemplo:**
+
+```{r}
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+library(tidyr)
+library(dplyr)
+
+# Dados em formato "wide"
+dados_wide <- tibble(
+  planta = c("A", "B", "C"),
+  jan = c(12, 15, 14),
+  fev = c(13, 16, 15),
+  mar = c(14, 17, 16)
+)
+
+# Transformando para formato "long" (tidy)
+dados_long <- dados_wide |>
+  pivot_longer(
+    cols = jan:mar,
+    names_to = "mes",
+    values_to = "crescimento")
+
+print(dados_long)
+```
+
+**Quando usar:** Sempre que seus dados não estiverem no formato "uma observação por linha, uma variável por coluna". Fundamental antes de qualquer análise ou visualização.
+
+**Salve já essas funções se você ainda não usa!**
+
+------------------------------------------------------------------------
+
+### **readr**: Importação de dados
+
+O **readr** é o pacote do tidyverse para ler e escrever dados tabulares. Ele é muito mais rápido e consistente que as funções base do R, além de detectar automaticamente os tipos de dados.
+
+**Principais funções:**
+
+-   `read_csv()`: lê arquivos CSV
+-   `read_delim()`: lê arquivos com delimitadores customizados
+-   `read_tsv()`: lê arquivos separados por tabulação
+-   `write_csv()`: escreve arquivos CSV
+-   `read_rds()` / `write_rds()`: formato nativo do R
+
+**Exemplo:**
+
+```{r}
+#| echo: true
+#| eval: false
+
+library(readr)
+
+# Lendo um CSV
+dados <- read_csv("meus_dados.csv")
+
+# Especificando tipos de coluna
+dados <- read_csv(
+  "meus_dados.csv",
+  col_types = cols(
+    id = col_integer(),
+    nome = col_character(),
+    data = col_date(format = "%Y-%m-%d"),
+    valor = col_double()))
+
+# Salvando processamento
+write_csv(dados_processados, "dados_limpos.csv")
+
+# Salvando em formato R nativo (mais rápido)
+write_rds(dados_processados, "dados.rds")
+```
+
+**Quando usar:** Logo no início de qualquer projeto, na importação dos dados. Economiza tempo e evita problemas de encoding e tipos de dados.
+
+------------------------------------------------------------------------
+
+### **stringr** : Manipulação de textos
+
+O **stringr** torna a manipulação de strings no R muito mais intuitiva. Todas as funções começam com `str_` e trabalham de forma consistente, diferente das funções base do R.
+
+**Principais funções:**
+
+-   `str_detect()`: detecta padrões
+-   `str_extract()`: extrai padrões
+-   `str_replace()`: substitui texto
+-   `str_trim()`: remove espaços
+-   `str_to_lower()` / `str_to_upper()`: converte maiúsculas/minúsculas
+
+**Exemplo:**
+
+```{r}
+#| echo: true
+#| eval: true
+
+library(stringr)
+
+# Limpeza de nomes
+nomes <- c("  Maria Silva  ", "JOÃO SANTOS", "Ana_Paula")
+
+nomes_limpos <- nomes |>
+  str_trim() |>                    # Remove espaços
+  str_to_title() |>                # Padroniza capitalização
+  str_replace_all("_", " ")        # Substitui underscores
+
+print(nomes_limpos)
+
+# Extração de informações
+emails <- c("joao@gmail.com", "maria@hotmail.com", "invalido")
+
+dominios <- str_extract(emails, "(?<=@).*$")
+tem_email_valido <- str_detect(emails, "@.*\\.")
+
+print(dominios)
+print(tem_email_valido)
+```
+
+**Quando usar:** Sempre que trabalhar com dados textuais : limpeza de nomes, extração de informações, padronização, validação de formatos.
+
+------------------------------------------------------------------------
+
+### **lubridate** : Trabalhando com datas
+
+O **lubridate** simplifica completamente o trabalho com datas e horários no R. Parsing, manipulação, extração de componentes : tudo fica mais fácil.
+
+**Principais funções:**
+
+-   `ymd()`, `dmy()`, `mdy()`: parsing de datas
+-   `year()`, `month()`, `day()`: extração de componentes
+-   `floor_date()`, `ceiling_date()`: arredondamento
+-   Operações aritméticas com datas
+-   `interval()`, `duration()`, `period()`: intervalos de tempo
+
+**Exemplo:**
+
+```{r}
+#| echo: true
+#| eval: true
+#| message: false
+
+library(lubridate)
+
+# Parsing de datas em diferentes formatos
+data1 <- ymd("2025-11-29")
+data2 <- dmy("29/11/2025")
+data3 <- mdy("11-29-2025")
+
+print(paste("data1:", data1))
+print(paste("data2:", data2))
+print(paste("data3:", data3))
+
+# Extração de componentes
+hoje <- today()
+ano_atual <- year(hoje)
+mes_atual <- month(hoje, label = TRUE)
+dia_semana <- wday(hoje, label = TRUE)
+
+print(paste("Hoje:", hoje))
+print(paste("Dia da semana:", dia_semana))
+
+# Operações com datas
+inicio <- ymd("2025-01-01")
+fim <- ymd("2025-12-31")
+dias_decorridos <- as.numeric(fim - inicio)
+
+print(paste("Dias no ano:", dias_decorridos))
+```
+
+**Quando usar:** Séries temporais, análise de eventos, cálculos de prazos, agrupamentos temporais.
+
+------------------------------------------------------------------------
+
+### **ggplot2** : Visualização de dados
+
+O **ggplot2** é o padrão-ouro para visualização de dados no R. Baseado na "gramática de gráficos", permite criar visualizações sofisticadas de forma incremental e intuitiva.
+
+**Principais componentes:**
+
+-   `ggplot()`: inicializa o gráfico
+-   `aes()`: mapeamento estético (x, y, color, etc.)
+-   `geom_*()`: tipo de gráfico (point, line, bar, etc.)
+-   `facet_*()`: painéis múltiplos
+-   `theme_*()`: aparência geral
+-   `scale_*()`: controle de escalas
+
+**Exemplo:**
+
+```{r}
+#| echo: true
+#| eval: true
+#| fig-width: 9
+#| fig-height: 5
+#| message: false
+
+library(ggplot2)
+library(dplyr)
+
+# Usando dados CO2 do R
+data(CO2)
+
+# Gráfico de dispersão com linha de tendência
+ggplot(CO2, aes(x = conc, y = uptake, color = Type)) +
+  geom_point(alpha = 0.6, size = 2) +
+  geom_smooth(method = "loess", se = TRUE) +
+  facet_wrap(~Treatment) +
+  scale_color_manual(values = c("#224573", "#6B4F4F")) +
+  theme_classic() +
+  labs(
+    title = "Absorção de CO2 por concentração",
+    x = "Concentração de CO2 (mL/L)",
+    y = "Absorção de CO2",
+    color = "Tipo", 
+    caption = "Jennifer Lopes - Café com R.")
+```
+
+**Quando usar:** Sempre! Visualização é fundamental em todas as etapas: exploração, análise e comunicação de resultados.
+
+------------------------------------------------------------------------
+
+### **data.table** : Performance com grandes volumes
+
+Para quem trabalha com datasets grandes, o **data.table** é imbatível em velocidade. Sua sintaxe concisa pode parecer estranha no início, mas a performance compensa.
+
+**Principais características:**
+
+-   Extremamente rápido para filtros, agregações e joins
+-   Modifica dados *in-place* (economia de memória)
+-   Sintaxe: `DT[i, j, by]` onde i = linhas, j = colunas, by = agrupamento
+-   Compatível com dplyr via `dtplyr`
+
+**Exemplo:**
+
+```{r}
+#| echo: true
+#| eval: true
+#| message: false
+
+library(data.table)
+
+# Usando dados mtcars
+DT <- as.data.table(mtcars)
+
+# Filtrar e sumarizar
+resultado <- DT[mpg > 20, 
+                .(media_hp = mean(hp),
+                  total = .N), 
+                by = .(cyl, am)]
+
+print(resultado)
+
+# Criar nova coluna
+DT[, hp_por_cyl := hp / cyl]
+
+# Mostrar primeiras linhas
+head(DT[, .(mpg, cyl, hp, hp_por_cyl)])
+```
+
+**Quando usar:** Datasets com 1 milhão+ de linhas, operações repetitivas, quando performance é crítica.
+
+------------------------------------------------------------------------
+
+### **Quarto/RMarkdown** : Relatórios reproduzíveis
+
+**Quarto** é a nova geração de documentos dinâmicos (sucessor do RMarkdown). Permite criar relatórios, apresentações, websites e livros que misturam código, resultados e narrativa.
+
+**Principais recursos:**
+
+-   Múltiplos formatos de saída (HTML, PDF, Word, etc.)
+-   Execução de código R, Python, Julia
+-   Chunks de código configuráveis
+-   Sistema de citações e referências
+-   Temas e templates customizáveis
+
+**Exemplo:**
+
+```` markdown
+---
+title: "Relatório de Vendas"
+author: "Seu Nome"
+date: today
+format: 
+  html:
+    toc: true
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+---
+
+## Análise Mensal
+
+```{{r}}
+#| label: fig-vendas
+#| fig-cap: "Evolução das vendas mensais"
+
+library(ggplot2)
+data(CO2)
+ggplot(CO2, aes(x = conc, y = uptake)) +
+  geom_col(fill = "#224573") +
+  theme_minimal()
+```
+
+As vendas apresentaram crescimento consistente no período.
+````
+
+**Quando usar:** Relatórios que precisam ser atualizados regularmente, documentação de análises, compartilhamento de resultados.
+
+------------------------------------------------------------------------
+
+### **DBI + dbplyr** : Conexão com bancos de dados
+
+Trabalhar diretamente com bancos SQL sem sair do R. O **DBI** fornece a interface de conexão e o **dbplyr** traduz código dplyr para SQL.
+
+**Principais funções:**
+
+-   `dbConnect()`: conecta ao banco
+-   `tbl()`: referencia uma tabela
+-   `collect()`: traz dados para R
+-   `compute()`: cria tabela temporária
+-   Queries dplyr traduzidas automaticamente
+
+**Exemplo:**
+
+```{r}
+#| echo: true
+#| eval: false
+
+library(DBI)
+library(dbplyr)
+
+# Conectar ao PostgreSQL
+con <- dbConnect(
+  RPostgres::Postgres(),
+  dbname = "vendas",
+  host = "localhost",
+  user = "usuario",
+  password = "senha"
+)
+
+# Trabalhar com tabela remota
+vendas_db <- tbl(con, "vendas")
+
+# Usar dplyr normalmente - operações acontecem no banco
+resultado <- vendas_db |>
+  filter(ano == 2025) |>
+  group_by(produto) |>
+  summarise(total = sum(valor, na.rm = TRUE)) |>
+  collect()  # Traz para R apenas o resultado
+
+# Ver SQL gerado
+vendas_db |>
+  filter(ano == 2025) |>
+  show_query()
+
+# Sempre desconectar ao final
+dbDisconnect(con)
+```
+
+**Quando usar:** Dados armazenados em bancos SQL, datasets muito grandes para carregar na memória.
+
+------------------------------------------------------------------------
+
+### **DataExplorer** : Análise exploratória automática
+
+O **DataExplorer** automatiza a análise exploratória de dados (EDA), gerando relatórios completos com estatísticas descritivas, gráficos e diagnósticos.
+
+**Principais funções:**
+
+-   `create_report()`: relatório completo automático
+-   `plot_missing()`: visualiza dados faltantes
+-   `plot_histogram()`: histogramas de todas variáveis
+-   `plot_correlation()`: matriz de correlação
+-   `introduce()`: resumo geral do dataset
+
+**Exemplo:**
+
+```{r}
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5
+
+library(DataExplorer)
+
+# Usando dados iris
+data(iris)
+
+# Visão geral dos dados
+intro <- introduce(iris)
+print(intro)
+
+# Visualizar dados faltantes
+plot_missing(iris)
+
+# Visualizar distribuições
+plot_histogram(iris)
+```
+
+**Quando usar:** Início de projetos, primeiro contato com novos dados, relatórios rápidos para stakeholders.
+
+------------------------------------------------------------------------
+
+### **tidymodels** : Framework de Machine Learning
+
+O **tidymodels** é um conjunto de pacotes para modelagem preditiva que segue os princípios do tidyverse. Substitui o antigo **caret** com uma abordagem mais moderna.
+
+**Principais pacotes:**
+
+-   `rsample`: divisão de dados (treino/teste)
+-   `recipes`: pré-processamento de dados
+-   `parsnip`: interface unificada para modelos
+-   `workflows`: pipelines de modelagem
+-   `tune`: tuning de hiperparâmetros
+-   `yardstick`: métricas de avaliação
+
+**Exemplo:**
+
+```{r}
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+library(tidymodels)
+
+# Usando dados iris para classificação
+data(iris)
+
+# Dividir dados
+set.seed(123)
+split <- initial_split(iris, prop = 0.8, strata = Species)
+treino <- training(split)
+teste <- testing(split)
+
+# Especificar modelo
+modelo_lr <- logistic_reg() |>
+  set_engine("glm") |>
+  set_mode("classification")
+
+# Treinar modelo simples
+ajuste <- modelo_lr |>
+  fit(Species ~ Sepal.Length + Sepal.Width, data = treino)
+
+# Prever
+predicoes <- predict(ajuste, teste) |>
+  bind_cols(teste)
+
+# Avaliar acurácia
+acuracia <- predicoes |>
+  accuracy(truth = Species, estimate = .pred_class)
+
+print(acuracia)
+```
+
+**Quando usar:** Modelagem preditiva, machine learning, comparação de modelos, tuning automatizado.
+
+------------------------------------------------------------------------
+
+## Para Acompanhar o Café
+
+### Recursos recomendados
+
+**Livros:**
+
+<br>
+
+```{=html}
+<iframe src="https://r4ds.hadley.nz" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; 
+         box-shadow:0 0 12px rgba(34,69,115,0.3);">
+```
+
+</iframe>
+
+<br>
+
+```{=html}
+<iframe src="https://www.tmwr.org" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; 
+         box-shadow:0 0 12px rgba(34,69,115,0.3);">
+```
+
+</iframe>
+
+<br>
+
+```{=html}
+<iframe src="https://ggplot2-book.org" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; 
+         box-shadow:0 0 12px rgba(34,69,115,0.3);">
+```
+
+</iframe>
+
+<br>
+
+Sites
+
+<br>
+
+```{=html}
+<iframe src="https://www.tidyverse.org/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; 
+         box-shadow:0 0 12px rgba(34,69,115,0.3);">
+```
+
+</iframe>
+
+<br>
+
+```{=html}
+<iframe src="https://r-graph-gallery.com/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; 
+         box-shadow:0 0 12px rgba(34,69,115,0.3);">
+```
+
+</iframe>
+
+<br>
+
+```{=html}
+<iframe src="https://www.tidymodels.org/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; 
+         box-shadow:0 0 12px rgba(34,69,115,0.3);">
+```
+
+</iframe>
+
+<br>
+
+------------------------------------------------------------------------
+
+## Reflexão da Semana
+
+> "A melhor ferramenta é aquela que você domina. Não tente aprender tudo de uma vez, escolha os pacotes que resolvem seus problemas atuais e vá expandindo conforme a necessidade."
+
+Começar com o básico (readr, dplyr, ggplot2) já resolve 80% dos problemas do dia a dia. Os demais pacotes você vai incorporando naturalmente conforme seus projetos evoluem.
+
+------------------------------------------------------------------------
+
+## Considerações finais!
+
+Espero que este guia ajude você a escolher as ferramentas certas para cada etapa do seu trabalho com dados. Lembre-se: o importante não é conhecer todos os pacotes, mas usar bem aqueles que fazem sentido para seus projetos.
+
+**Compartilhe este conteúdo com quem está começando em R!**
+
+------------------------------------------------------------------------
+
+### ☕ Assine o Café com R
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+<iframe src="https://forms.gle/Q5SKuSK1ViTL6FAWA" width="100%" height="550" frameborder="0" marginheight="0" marginwidth="0" style="     border:3px solid #224573;     border-radius:12px;     box-shadow:0 0 12px rgba(34,69,115,0.3);   ">
+
+</iframe>

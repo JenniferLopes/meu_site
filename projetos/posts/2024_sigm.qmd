@@ -1,0 +1,21 @@
+---
+title: "Data Analysis Using R Software: Essential Approaches for Breeders"
+description: "Workshop ministrado para: GenMelhor UFV Viçosa"
+author: "Jennifer Luz Lopes"
+date: 2024-11-11
+categories: [Evento, Melhoramento Genético, R]
+
+# ✅ thumbnail do post (usado na listagem)
+image: ../imagens/sigm.png
+image-alt: ""
+---
+
+# Data Analysis Using R Software: Essential Approaches for Breeders
+
+O minicurso Análises de dados usando o software R: Abordagens essenciais para melhoristas proporcionará uma introdução prática ao uso do R para conduzir análises estatísticas em experimentos de melhoramento genético. O conteúdo abordará desde a manipulação e limpeza de dados, análise exploratória, até a aplicação de técnicas avançadas, como a modelagem e análise de experimentos e métodos multivariados. O curso também incluirá visualizações gráficas treinando os participantes com as habilidades necessárias para otimizar o processamento e a interpretação de dados em programas de melhoramento.
+
+**Acesse os materiais:**
+
+[![SIGM](https://img.shields.io/badge/XV%20SIGM-Website-224573?style=for-the-badge)](https://jenniferlopes.quarto.pub/xv-sigm/) [![SIGM Repo](https://img.shields.io/badge/GitHub-Repositório-6B4F4F?style=for-the-badge&logo=github)](https://github.com/JenniferLopes/SIGM)
+
+![](/projetos/imagens/sigm.png){fig-align="center" width="567"}

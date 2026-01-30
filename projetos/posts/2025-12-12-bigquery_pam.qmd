@@ -1,0 +1,125 @@
+---
+title: "Projeto - Análise da Produção de Grãos no Brasil"
+description: "Ingestão via BigQuery, transformação em arquitetura Medallion e consumo de dados do BigQuery com R/dbplyr."
+author: "Jennifer Luz Lopes"
+date: 2025-12-12
+categories: [BigQuery, bigdata, google_cloud, data_engineering, medallion_architecture, agriculture, IBGE]
+image: ../imagens/bigquery.png
+image-alt: ""
+---
+
+# Análise da Produção de Grãos no Brasil
+
+## Ingestão via BigQuery, transformação em arquitetura Medallion e consumo de dados do BigQuery com R/dbplyr
+
+Este projeto implementa um pipeline completo em arquitetura Medallion (Bronze, Silver e Gold) para análise de lavouras temporárias no Brasil (soja, milho e arroz), utilizando dados oficiais do IBGE PAM, ingestão via BigQuery, processamento em R e consumo de dados do BigQuery com o pacote **`dbplyr`**.
+
+**Objetivos:**
+
+-   organização de dados em camadas;
+
+-   eficiência no uso de memória local;
+
+-   integração R \<\> BigQuery;
+
+-   boas práticas de processamento e consumo de dados em ambiente cloud.
+
+## Repositório no GitHub
+
+Acesse [**`aqui`**](https://github.com/JenniferLopes/bigquery_pam/tree/master/script).
+
+## Relatório
+
+Após a execução do script, há um **relatório em Quarto** que demonstra o consumo da **camada Gold diretamente no BigQuery**, utilizando **`dbplyr`** e coletando dados apenas no final.
+
+Acesse o relatório no [**`link`**](https://jenniferlopes.quarto.pub/bigquery-pam/) configurado no projeto.
+
+## Visão geral da arquitetura
+
+**O pipeline é dividido em três camadas bem definidas:**
+
+-   **Bronze:** ingestão e padronização mínima dos dados brutos;
+-   **Silver:** limpeza, enriquecimento, classificação e agregações intermediárias;
+-   **Gold:** métricas analíticas consolidadas para consumo e visualização.
+
+**Cada camada gera arquivos locais organizados por diretório e possui um dataset próprio no BigQuery.**
+
+## Estrutura do Repositório
+
+```         
+├── bronze
+│   └── bronze_lavouras_raw.csv
+├── silver
+│   ├── silver_lavouras_arroz.csv
+│   ├── silver_lavouras_milho.csv
+│   ├── silver_lavouras_soja.csv
+│   ├── silver_municipio_arroz.csv
+│   ├── silver_municipio_milho.csv
+│   ├── silver_municipio_soja.csv
+│   ├── silver_uf_arroz.csv
+│   ├── silver_uf_milho.csv
+│   └── silver_uf_soja.csv
+├── gold
+│   ├── gold_evolucao_temporal.csv
+│   ├── gold_indicadores_sustentabilidade.csv
+│   ├── gold_indice_concentracao.csv
+│   ├── gold_municipios_emergentes.csv
+│   ├── gold_perfil_regional.csv
+│   ├── gold_ranking_estados.csv
+│   └── gold_shift_share_analysis.csv
+├── relatorio
+│   ├── estilo.css
+│   └── relatorio_medallion_bigquery_final.qmd
+├── script
+│   └── pipeline_pam_final.R
+└── README.md
+```
+
+## Fonte dos dados
+
+**IBGE – Pesquisa Agrícola Municipal (PAM)**, acessada via Base dos Dados. São analisadas as culturas de **soja, milho e arroz**.
+
+## Requisitos para execução
+
+**Para rodar este projeto, é necessário:**
+
+1.  Um projeto ativo no Google Cloud Platform (GCP) Qualquer projeto válido funciona (não precisa ser o mesmo do autor).
+
+2.  BigQuery habilitado no projeto.
+
+3.  Credenciais de acesso configuradas Recomenda-se o uso de uma service account com permissões:
+
+4.  Variáveis de ambiente configuradas:
+
+```         
+GOOGLE_APPLICATION_CREDENTIALS="/caminho/para/sua-chave.json"
+GCP_PROJECT_ID="seu-projeto-gcp"
+BQ_DATASET_ID="analise_lavouras"
+BD_BILLING_ID="seu-projeto-gcp"
+```
+
+> **Essas variáveis permitem que o mesmo código seja executado em diferentes ambientes sem alterações no script.**
+
+## Execução
+
+Execute o script principal:
+
+``` r
+source("script/pipeline_pam_final.R")
+```
+
+**O pipeline irá:**
+
+1.  Ingerir dados do IBGE PAM via BigQuery (Bronze);
+
+2.  Processar e gerar tabelas enriquecidas e agregadas (Silver);
+
+3.  Calcular métricas analíticas consolidadas (Gold);
+
+4.  Salvar os resultados localmente por camada;
+
+5.  Criar datasets separados no BigQuery e exportar todas as tabelas.
+
+## Licença
+
+MIT.

@@ -1,0 +1,274 @@
+---
+title: "Café da Semana☕ "
+subtitle: "Resenha: The Book of Why, de Judea Pearl"
+author: "Jennifer Luz Lopes"
+date: "2025-11-18"
+categories: [Resenha, Livro, Estatística]
+image: ../imagens/cafe2.png
+image-alt: ""
+description: "Quando a ciência finalmente aprende a perguntar."
+---
+
+## Esta é a segunda edição do **Café com R**
+
+::::: grid
+::: g-col-6
+![](/cafecomr/imagens/cafe2.png)
+:::
+
+::: g-col-6
+Seja bem-vinda(o)!
+
+**`Aqui é uma pausa para falar de dados.`**
+
+Toda semana vamos nos encontrar por aqui para conversar sobre ciência de dados, estatística e muito mais de um jeito leve e prático.
+:::
+:::::
+
+<br>
+
+## **The Book of Why: Quando a ciência finalmente aprende a perguntar**
+
+Existe um momento na vida em que você percebe que passou anos inteiros confundindo duas coisas completamente diferentes. Comigo, aconteceu ao ler "**The Book of Why**", de **Judea Pearl**.
+
+[![](/cafecomr/imagens_gerais/livro_resenha.JPG){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" fig-align="center"}](https://www.amazon.com.br/Book-Why-Science-Cause-Effect/dp/1541698967/ref=sr_1_1?adgrpid=126456897803&dib=eyJ2IjoiMSJ9.77Kcrbw5e-DGGNNcwPR_y_7cv6iF2gyXhlgd60YaRYwfgbvLsex_CctuPRJ034f6qlUfg2pLh0P5ri-XwQfba3oYAxyy_2y0pC8U2dm5PkrCs55JG0HmcxLgQOZSLjC44rkzVg1VpXhMdpmDx4jj27Opac_sAlvNlqtEjxP5a_MSfXYbb64YCbl-mroXAjQb6E33iN043xqg5rSFyB_3RUkjp4wMl6_O-pKiw1DpSNF4M1TbbKgQmmDSHnZrclAKkw4AyOUh8K7s1Dii4INQ_QplOD-TpohwbBZw-eEL06o.4pKF7OCwUmTrRFqdBY4xnOUUxdp0Bnr9BDq6O3iCyCw&dib_tag=se&hvadid=543845286867&hvdev=c&hvlocphy=9074180&hvnetw=g&hvqmt=e&hvrand=11248837548026591618&hvtargid=kwd-300942500351&hydadcr=14662_10954484&keywords=the+book+of+why&mcid=8028456292c1353ab874d4867e649d93&qid=1763426067&sr=8-1&ufe=app_do%3Aamzn1.fos.6d798eae-cadf-45de-946a-f477d47705b9)
+
+> Eu achava que entendia a diferença entre correlação e causalidade. Achava mesmo! Até descobrir que não fazia ideia do abismo que separa essas duas formas de pensar.
+
+Pearl não é apenas um estatístico brilhante. Ele é um revolucionário silencioso, daqueles que reescrevem as regras do jogo enquanto todo mundo ainda está jogando pelas antigas. E o jogo aqui é nada menos que a forma como entendemos o mundo, como fazemos ciência e como construímos inteligências artificiais.
+
+<br>
+
+::: {.callout-important style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;"}
+### Sobre a minha leitura
+
+Pessoal, li esse livro em poucos dias. Fui anotando, refletindo e percebendo que era exatamente o tipo de leitura que eu buscava. Algo que me tirasse do automático, que me fizesse pensar fora da caixa e explorar novas perspectivas. Eu queria uma experiência diferente, um aprendizado que realmente mexesse comigo.
+
+Foram **3 recomendações** na mesma semana, então pensei:
+
+> **É UM SINAL.**
+
+Não teria como trazer mais tópicos pois a resenha ficaria muito extensa, quero deixar vocês com gostinho de quero mais!
+:::
+
+<br>
+
+### **A escada que muda tudo**
+
+O conceito central do livro é a **Escada da Causalidade**, e se você ainda não ouviu falar dela, prepare-se para repensar muita coisa. Pearl divide o raciocínio causal em três degraus:
+
+1.  associação
+2.  intervenção e
+3.  contrafactual
+
+![**Fonte: Judea Pearl.**](/cafecomr/imagens_gerais/escada.JPG){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" fig-align="center"}
+
+**No primeiro degrau**, a gente apenas observa.
+
+-   Vemos que pessoas com guarda-chuva costumam estar molhadas.
+
+-   Reconhecemos padrões, correlações, regularidades.
+
+-   É aqui que vivem as máquinas de hoje, os algoritmos de deep learning, toda a pompa do big data. Eles são mestres em perceber que A e B acontecem juntos, mas param por aí.
+
+**O segundo degrau** exige mais, a capacidade de agir e prever consequências.
+
+> **O que acontece se eu abrir o guarda-chuva?**
+
+Aqui não basta ver, é preciso fazer. É o território dos experimentos, das intervenções deliberadas, do teste de hipóteses.
+
+E então vem o **terceiro degrau**, o mais fascinante de todos, o contrafactual. A capacidade de imaginar o que teria acontecido se as coisas fossem diferentes. E se eu não tivesse aberto o guarda-chuva, estaria molhado agora? Esse tipo de pensamento é exclusivamente humano. Pelo menos por enquanto kskskksksksks.
+
+::: {.callout-note style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;"}
+> Pearl argumenta que toda a inteligência moderna das máquinas está presa no primeiro degrau. Elas preveem, reconhecem, classificam, mas não entendem. Não sabem o porquê.
+:::
+
+<br>
+
+### **A guerra silenciosa da estatística**
+
+Uma das partes mais interessantes do livro é a história que Pearl conta sobre como a estatística moderna, paradoxalmente, abandonou a causalidade. **Francis Galton**, **Karl Pearson** e toda uma geração de estatísticos construíram um império de correlações, mas ao preço de renunciar à pergunta mais importante: **`por quê?`**
+
+-   **`Galton`** observou que filhos de pais muito altos tendem a ser mais baixos, cunhando o termo **"regressão à média"**.
+
+-   **`Pearson`** transformou isso em dogma, a ciência deveria descrever, não explicar. A causalidade foi tratada como especulação filosófica, algo subjetivo demais para ser científico.
+
+![**Fonte: Judea Pearl. Você reconhece essas figuras?**](/cafecomr/imagens_gerais/estatisticos.JPG){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" fig-align="center"}
+
+-   E então aparece **`Sewall Wright`**, um geneticista estudando porquinhos da índia, que ousou desenhar diagramas mostrando relações de causa e efeito. Ele foi massacrado pela academia. Disseram que seus métodos eram subjetivos, não rigorosos, anticientíficos. **`Wright`** estava décadas à frente do seu tempo, e pagou o preço.
+
+Pearl resgata essa história para mostrar que não estamos diante de uma simples disputa técnica. Estamos diante de uma mudança de paradigma, do tipo que **`Thomas Kuhn`** descreveu:
+
+> **A comunidade científica resistindo até que as evidências se tornam inegáveis.**
+
+<br>
+
+### **Paradoxos que revelam**
+
+O livro dedica um capítulo inteiro aos paradoxos, e com razão. Eles são janelas para entender onde a intuição humana, naturalmente causal, entra em conflito com a lógica puramente estatística.
+
+**O Paradoxo de Simpson me deixou INQUIETA.**
+
+![**O Homer é para descontrair, no gráfico vocês prestem atenção! Paradoxo de Simpson: uma tendência positiva aparece para dois grupos separados, enquanto uma tendência negativa (pontilhada) aparece quando os grupos são combinados.**](/cafecomr/imagens_gerais/simps_paradox.png){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" fig-align="center" width="428"}
+
+::: {.callout-warning style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;"}
+### O que é o paradoxo?
+
+O paradoxo de Simpson ocorre quando a tendência observada em grupos separados se inverte ao combinar esses grupos em um único conjunto de dados. Ele expõe uma armadilha estatística, em que as relações aparentes podem mudar completamente quando variáveis ocultas, como tamanho dos grupos, diferentes distribuições ou fatores de confusão, são ignoradas.
+
+-   Simplificando, cada subgrupo pode apresentar uma relação positiva entre duas variáveis, mas quando os dados são agregados, a relação global torna-se negativa (ou vice-versa), porque a composição dos grupos influencia o resultado mais do que os valores individuais.
+
+-   Esse paradoxo mostra que interpretar correlações, médias ou regressões sem considerar a estratificação adequada pode levar a conclusões totalmente equivocadas e decisões erradas, mesmo quando todos os cálculos estão estatisticamente corretos.
+
+**Gente, agora que sabemos mais sobre isso, estamos com a RESPONSA!**
+:::
+
+#### **O livro traz um exemplo, vejamos:**
+
+Imagine que um tratamento funciona melhor para homens e para mulheres quando analisados separadamente, mas parece pior quando os dados são combinados.
+
+**Como isso é possível?**
+
+A resposta está em entender a estrutura causal subjacente, em saber se existe uma variável de confusão afetando ambos os grupos.
+
+Sem um diagrama causal, você pode olhar para os mesmos dados e tirar conclusões opostas. E ambas estarão **"corretas"** do ponto de vista estatístico. Mas apenas uma será verdadeira do ponto de vista causal.
+
+Pearl mostra que todos esses paradoxos, do Monty Hall ao de Berkson, são resolvidos quando entendemos como os dados são gerados.
+
+::: {.callout-warning style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;"}
+### Mensagens de impacto para vocês
+
+**A probabilidade descreve o que vemos.**
+
+**A causalidade explica por que vemos.**
+:::
+
+<br>
+
+### **O operador `do()` e a virada conceitual na forma de pensar causalidade**
+
+Para mim, o ponto mais transformador do livro é a introdução do operador **do()**, que finalmente traduz em matemática algo que sempre sentimos falta na estatística tradicional, a possibilidade de representar explicitamente *intervenção*.
+
+**Aqui, gostaria que vocês ficassem atentos(as) para essa diferença:**
+
+-   Quando escrevemos **P(Y \| do(X))**, não estamos mais interpretando o comportamento natural dos dados, estamos perguntando como o sistema *se comporta quando mexemos nele de propósito*. Essa distinção parece pequena à primeira vista, mas muda tudo. É o salto entre observar correlação e entender mecanismo, entre descrever o que acontece e prever o que acontecerá quando agirmos.
+
+-   O contraste com **P(Y \| X)**, nos diz que, condicionar em X apenas retrata padrões existentes, sem romper as dependências que o sistema carrega. Já o **do(X)** corta essas setas causais, redesenha o cenário, força X a assumir um valor e observa como o resto reage.
+
+> **Foi aqui que percebi o tamanho da lacuna que existe entre análise estatística convencional e raciocínio causal. O livro deixa claro que, sem intervenção, real ou simulada, continuamos presos ao nível descritivo, mesmo usando técnicas avançadas.**
+
+**Sem floreios, como dizemos lá no Sul:**
+
+-   P(Y \| X) responde **o que eu vejo?**
+
+-   P(Y \| do(X)) responde **o que acontece se eu agir?**.
+
+#### Ainda sobre **do-calculus**
+
+E é nesse ponto que o **do-calculus** se torna revolucionário. Pearl formalizou um conjunto de regras que permite manipular expressões causais com a mesma precisão com que calculamos derivadas na física. Essa comparação não é exagero, é exatamente o que senti ao ver como diagramas causais e essas regras permitem responder perguntas que, até então, pareciam impossíveis sem experimentos controlados.
+
+Ele mostra que causalidade não é intuição solta, não é achismo, é uma estrutura matemática capaz de recuperar efeitos causais mesmo em cenários complexos, desde que o modelo causal esteja bem definido. Esse ponto é importante, pessoal!
+
+> O impacto disso é enorme. Como leitora, percebi que essa abordagem desmonta uma parte importante da cultura estatística tradicional, que insiste em tratar causalidade como tabu ou como algo exclusivamente experimental.
+
+Pearl mostra que é possível raciocinar causalmente de forma rigorosa, transparente e defensável e isso muda a forma como vemos análise de dados, ciência aplicada e, principalmente, tomada de decisão. O operador **do()** não é apenas uma notação, é um novo jeito de pensar.
+
+<br>
+
+### **Contrafactuais: O ápice da inteligência**
+
+O capítulo sobre raciocínio contrafactual é onde Pearl mostra toda a profundidade filosófica do seu trabalho. Contrafactuais não são apenas ferramentas técnicas. São a essência do que nos torna humanos.
+
+> Quando você se **arrepende de uma decisão**, está pensando contrafactualmente.
+
+::: {.callout-important style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;"}
+### Exemplo
+
+Quando um tribunal avalia responsabilidade, a pergunta central é essencialmente causal.
+
+*o dano teria acontecido se o réu não tivesse tomado aquela ação?*
+
+É um teste contrafactual. Compara-se o que ocorreu no mundo real com o que teria ocorrido em um mundo alternativo no qual a ação do réu foi removida.
+
+> Da mesma forma, quando aprendemos com erros, estamos fazendo exatamente esse tipo de raciocínio.
+
+Confrontamos o fato com os mundos possíveis, *o que teria acontecido se eu tivesse decidido diferente?*
+
+**Esse contraste entre o real e o contrafactual é o núcleo de todo aprendizado, seja na justiça, na ciência ou na vida prática.**
+
+Que incrível!
+:::
+
+Pearl argumenta que esse é o nível mais alto da inteligência, e que nenhuma máquina atual consegue raciocinar assim. Elas preveem futuros, mas não imaginam passados alternativos. Não compreendem arrependimento, responsabilidade ou lição aprendida.E isso tem consequências enormes. Sem raciocínio contrafactual, a inteligência artificial permanecerá cega, incapaz de explicar suas decisões ou entender suas consequências.
+
+<br>
+
+### **O Futuro da inteligência artificial**
+
+O último capítulo é uma visão para o futuro. Pearl acredita que a próxima revolução da IA depende de incorporar causalidade. As redes neurais atuais são poderosas, mas operam como caixas pretas estatísticas.
+
+> Elas reconhecem padrões, mas não entendem mecanismos.
+
+::: callout-note
+Para Pearl, uma IA verdadeiramente inteligente precisa subir toda a Escada da Causalidade.
+
+-   Precisa observar, intervir e imaginar.
+
+-   Precisa responder não apenas "o que vai acontecer", mas "por que aconteceu" e "o que teria acontecido se fosse diferente".
+:::
+
+Isso não é apenas uma questão técnica. É ético, filosófico e prático. Carros autônomos precisam entender relações causais para navegar com segurança. Sistemas de recomendação médica precisam prever efeitos individuais de tratamentos. Políticas públicas precisam ser simuladas antes de implementadas.
+
+**E tudo isso exige causalidade, não apenas dados.**
+
+<br>
+
+### **Por que você deve ler este livro?**
+
+Para mim, o **The Book of Why** não foi uma leitura leve. Pearl mistura filosofia, história, matemática e ciência cognitiva de um jeito que ora exige fôlego, ora abre janelas novas de compreensão. Em alguns trechos ele repete ideias para reforçar o ponto, e em outros a linguagem técnica pesa. Só que nada disso diminui o impacto da tese central, que é simplesmente incrível!
+
+O que Pearl mostra é que a humanidade avançou porque insistiu em perguntar **por quê**. E a ciência só conseguiu se desenvolver quando passou a transformar essa pergunta em modelos que explicam, testam e revelam mecanismos.
+
+> Percebi ali o quanto a estatística, por quase um século, tratou essa pergunta como algo secundário, reduzindo a análise a padrões e correlações.
+>
+> Pearl expõe essa limitação e oferece um caminho mais profundo, mais honesto e mais próximo de como o mundo realmente funciona.
+>
+> Se você trabalha com dados, pesquisa ou inteligência artificial, esse livro muda a forma de pensar.
+>
+> Se você busca ampliar sua visão de mundo, ele fornece ferramentas mentais que te acompanham depois da leitura.
+>
+> Eu senti isso na prática, entender causalidade reorganiza a maneira como interpretamos decisões, sistemas, falhas e avanços.
+
+::: callout-note
+### Mensagem final
+
+No fundo, compreender é sempre sobre causas. E causas são sempre sobre o porquê. Pearl encerra o livro lembrando que:
+
+> ***Os dados nos dizem o que aconteceu, causalidade nos diz o que poderia acontec***er.
+>
+> E essa diferença, percebida ao longo da leitura, muda absolutamente tudo.
+:::
+
+<br>
+
+Espero que vocês tenham gostado. Escrevi essa resenha com muito carinho e com uma vontade genuína de compartilhar o que aprendi com um livro que, de verdade, me impactou.
+
+![**Café, meu grande companheiro para leitura e escrita.**](/cafecomr/imagens_gerais/CAFE.jpg){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" fig-align="center" width="262"}
+
+### ☕ Assine o Café com R
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+```{=html}
+<iframe src="https://forms.gle/Q5SKuSK1ViTL6FAWA" width="100%" height="550" frameborder="0" marginheight="0" marginwidth="0" style="
+    border:3px solid #224573;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(34,69,115,0.3);
+  ">
+```
+
+</iframe>

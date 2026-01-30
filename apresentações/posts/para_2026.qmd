@@ -1,0 +1,223 @@
+---
+title: "1. 2026"
+subtitle: "Abrindo um novo script."
+description: "Abrindo um novo script."
+categories: ["Ano NOVO"]
+image: "imagens/comunidade_capa.png"
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    logo: "imagens/logo.png"
+    preview-links: auto
+    css: "estilo_jeni.css"
+    footer: "Jennifer Lopes • Café com R"
+editor:
+  markdown:
+    wrap: 72
+---
+
+## Para 2026, comece limpando o ambiente
+
+``` r
+rm(list = ls())
+gc()
+```
+
+-   Nem tudo precisa **`seguir`** com você.
+
+-   **`Abra espaço`**.
+
+-   Leve só o que faz **`sentido`**.
+
+------------------------------------------------------------------------
+
+## Para 2026, faça um **`select()`** consciente
+
+``` r
+vida_2026 <- select(
+  amor,
+  felicidade,
+  prosperidade,
+  união,
+  esperança,
+  novos_começos,
+  oportunidades)
+```
+
+-   Escolher é um ato de **`coragem`**.
+
+-   Você não precisa carregar **`tudo`**.
+
+-   Só o **`essencial`**.
+
+------------------------------------------------------------------------
+
+## Para 2026, `filtre()` sem culpa
+
+``` r
+vida_2026 <- vida_2026 |>
+  filter(
+    valores %in% c("sonhos", "desejos", "amor", "paz", "verdade"))
+```
+
+-   O que não soma, **`sai`**.
+
+-   O que pesa, fica para **`trás`**.
+
+-   Você não deve **`explicações`** ao que não te respeita.
+
+------------------------------------------------------------------------
+
+## Para 2026, trate exceções com carinho
+
+``` r
+vida_2026 <- tryCatch(
+  vida_2026,
+  error = function(e) "aprendizado",
+  warning = function(w) "ajuste de rota")
+```
+
+-   Nem todo erro é `falha`.
+
+-   Alguns são apenas dados dizendo:
+
+-   ***tente diferente*****.**
+
+------------------------------------------------------------------------
+
+## Para 2026, faça um `group_by()` do que importa
+
+``` r
+vida_2026 <- vida_2026 |>
+  group_by(
+    quem_voce_ama,
+    amigos_de_verdade,
+    familia,
+    sua_propria_companhia)
+```
+
+-   Ninguém cresce **`sozinho`**.
+
+-   Mas crescer com quem vibra por você:
+
+-   **muda tudo**.
+
+------------------------------------------------------------------------
+
+## Para 2026, `summarize()` sua trajetória
+
+``` r
+resumo_vida <- vida_2026 |>
+  summarise(
+    conquistas = sum(vitorias),
+    coragem = mean(lutas),
+    identidade = first(quem_voce_e))
+```
+
+-   **`Você não é só resultado`**.
+
+-   É **`processo`**.
+
+-   É **`consistência`** em dias difíceis.
+
+------------------------------------------------------------------------
+
+## Para 2026, aceite dados imperfeitos
+
+``` r
+vida_2026 <- vida_2026 |>
+  mutate(
+    dias_ruins = replace_na(dias_ruins, 0),
+    esperança = if_else(
+      dias_ruins > 0, 
+      esperança + 1, 
+      esperança))
+```
+
+-   Dias ruins existem.
+
+-   Eles não anulam quem você é.
+
+-   Eles treinam sua versão mais forte e resiliente.
+
+------------------------------------------------------------------------
+
+## Para 2026, documente sua história
+
+``` r
+write_lines(
+  "Estou construindo uma vida que faz sentido para mim.",
+  "README.md")
+```
+
+Que fique claro para:
+
+1.  Você.
+2.  Outros.
+3.  Futuro.
+
+------------------------------------------------------------------------
+
+## Para 2026, rode o script com confiança
+
+``` r
+run(vida_2026)
+```
+
+-   Você não precisa saber **`tudo agora`**.
+
+-   Só precisa **`começar`**.
+
+------------------------------------------------------------------------
+
+## Para 2026, versionamento é essencial
+
+``` r
+git commit -m "Novo ano. Novas escolhas. Mesma essência."
+```
+
+1.  Errou? Ajusta.
+
+2.  Aprendeu? Evolua com isso!
+
+3.  Seguiu? Sinta muito orgulho.
+
+------------------------------------------------------------------------
+
+## Para 2026, celebre pequenas entregas
+
+``` r
+print("Uma xícara de café por cada passo dado")
+```
+
+-   Consistência vence **`pressa`**.
+
+-   Presença vence **`perfeição`**.
+
+-   ::: callout-warning
+    “Mude, mas comece devagar, porque a direção é mais importante que a
+    velocidade.”
+
+    ***Clarisse Lispector***
+    :::
+
+------------------------------------------------------------------------
+
+## Para 2026 {background-color="#24573"}
+
+-   Código com propósito claro.
+
+-   Vida com intenção.
+
+-   E cafézinho para acompanhar o processo.
+
+-   **Bem-vindo ao novo ciclo.**
+
+-   *O script é seu.*
+
+# Seja feliz, ame muito, viva muito, não aceite menos do que você merece!
+
+# Grande abraço, Jenni!

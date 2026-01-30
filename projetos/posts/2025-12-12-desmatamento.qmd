@@ -1,0 +1,278 @@
+---
+title: "Projeto - Análise de Desmatamento e Produção Agrícola no Brasil"
+description: "Integrando dados do IBGE e INPE via BigQuery."
+author: "Jennifer Luz Lopes"
+date: 2025-12-11
+categories: [BigQuery, bigdata, google_cloud, data_engineering, agriculture, IBGE, INPE, ML, sf/geobr]
+image: ../imagens/desmatamento.png
+image-alt: ""
+---
+
+# Análise de Desmatamento e Produção Agrícola no Brasil (2015-2021)
+
+## Contextualização
+
+**Obs: Desenvolvi esse trabalho em 2024, mas não havia publicado para rede. Pretendo ampliar as análises, culturas e anos.**
+
+Este projeto analisa a relação entre produção agrícola das principais culturas brasileiras (soja, milho e arroz) e o desmatamento em municípios do país. A análise integra dados oficiais do IBGE e INPE para identificar padrões espaciais e temporais, classificar municípios por risco ambiental e desenvolver modelos preditivos.
+
+## Objetivos
+
+-   Mapear espacialmente municípios com maior desmatamento e produção agrícola
+-   Classificar municípios por nível de risco ambiental (baixo, médio, alto)
+-   Analisar séries temporais para identificar tendências de desmatamento e produção
+-   Desenvolver modelo preditivo usando Random Forest para estimar desmatamento
+-   Identificar variáveis-chave que mais contribuem para o desmatamento
+
+## Relatório com os principais resultados
+
+Pessoal, sempre gosto de construir os **scripts.R** e um **relatório.qmd** nos meus projetos.
+
+1.  Vocês podem acessar o relatório em HTML [**`aqui`**](https://jenniferlopes.quarto.pub/analisedesmatamento/).
+
+2.  Repositório completo no [**`GitHub`**](https://github.com/JenniferLopes/risco_desmatamento).
+
+## Fontes de dados
+
+**Produção Agrícola Municipal (PAM) - IBGE:**
+
+-   Produção total (toneladas)
+
+-   Área colhida (hectares)
+
+-   Valor da produção
+
+-   Culturas: soja, milho e arroz em grão
+
+**Programa de Monitoramento do Desmatamento (PRODES) - INPE:**
+
+-   Desmatamento anual (hectares)
+
+-   Área total municipal
+
+-   Cobertura vegetal natural
+
+Ambas as fontes foram acessadas via Base dos Dados (BigQuery), cobrindo o período de 2015 a 2021.
+
+## Metodologia
+
+### 1. Extração e integração de dados
+
+-   Conexão ao BigQuery para extração de dados PAM e PRODES
+-   Integração das bases por município e ano
+-   Validação e limpeza de dados inconsistentes
+
+### 2. Features
+
+**Criação de variáveis derivadas para análise:**
+
+-   **Temporais:** lags de desmatamento, médias móveis, crescimento de produção
+
+-   **Eficiência:** produtividade (ton/ha), risco por tonelada (ha/ton)
+
+-   **Pressão ambiental:** relação entre área cultivada e vegetação natural
+
+-   **Classificação:** classes de risco baseadas em percentis
+
+### 3. Modelagem preditiva
+
+-   **Divisão temporal:** treino (2015-2019), validação (2020), teste
+    (2021) 
+-   **Algoritmo:** Random Forest com 300 árvores
+-   **Features:** 9 variáveis selecionadas (produção, área, produtividade, histórico de desmatamento, etc.)
+-   **Avaliação:** MAE, RMSE, R², MAPE
+
+### 4. Análise Exploratória
+
+-   Estatísticas descritivas por classe de risco
+-   Análise temporal agregada
+-   Distribuição espacial do desmatamento
+
+### 5. Visualizações
+
+-   Gráficos de importância de variáveis
+-   Scatter plots de produção vs desmatamento
+-   Mapas interativos (Leaflet)
+
+## Estrutura do Projeto
+
+```         
+risco_desmatamento/
+├── .gitignore
+├── .Rprofile
+├── renv/
+├── renv.lock
+├── risco_desmatamento.Rproj
+├── README.md
+├── scripts/
+│   └── risco_desmatamento.R
+├── outputs/
+│   ├── figures/
+│   ├── tables/
+│   │   ├── analise_descritiva_por_risco.csv
+│   │   ├── analise_descritiva_temporal.csv
+│   │   ├── dataset_integrado.csv
+│   │   ├── metricas_modelo.csv
+│   │   ├── predicoes_teste.csv
+│   │   ├── relatorio_execucao.csv
+│   │   └── top50_municipios_2021.csv
+│   └── maps/
+│       ├── mapa_1_top_risco.html
+│       ├── mapa_1_top_risco_files/
+│       ├── mapa_2_intensidade.html
+│       ├── mapa_2_intensidade_files/
+│       ├── mapa_3_eficiencia.html
+│       ├── mapa_3_eficiencia_files/
+│       ├── mapa_4_estados.html
+│       └── mapa_4_estados_files/
+```
+
+## Resultados principais
+
+### Classificação de risco
+
+**Municípios classificados em três categorias baseadas na relação desmatamento/produção:**
+
+-   **Baixo risco:** Alta produção com baixo desmatamento relativo
+
+-   **Médio risco:** Equilíbrio intermediário
+
+-   **Alto risco:** Desmatamento desproporcional à produção
+
+### Modelo preditivo
+
+O Random Forest demonstrou capacidade de estimar desmatamento com base em variáveis agrícolas e históricas. As variáveis mais importantes incluem:
+
+-   Histórico de desmatamento (lags 1 e 2)
+
+-   Área colhida total
+
+-   Pressão sobre vegetação natural
+
+-   Produção total
+
+### Padrões identificados
+
+-   Forte concentração de desmatamento em estados da fronteira agrícola
+-   Correlação espacial entre municípios vizinhos
+-   Inércia no processo de desmatamento (municípios com histórico elevado mantêm padrão)
+-   Relação não-linear entre produção e desmatamento
+
+## Como usar
+
+### Requisitos
+
+``` r
+# Instalar pacotes necessários
+install.packages("pacman")
+library(pacman)
+
+pacman::p_load(
+  dplyr,
+  tidyr,
+  ggplot2,
+  scales,
+  zoo,
+  DBI,
+  bigrquery,
+  sf,
+  geobr,
+  leaflet,
+  randomForest,
+  skimr,
+  rsample,
+  yardstick,
+  tibble,
+  stringr,
+  readr,
+  htmltools,
+  htmlwidgets)
+```
+
+### Executar Análise Completa
+
+``` r
+source("risco_desmatamento.R")
+```
+
+1.  Este script executa todo o pipeline:
+
+2.  Extração de dados do BigQuery
+
+3.  Processamento e engenharia de features
+
+4.  Análise exploratória
+
+5.  Modelagem preditiva
+
+6.  Geração de visualizações
+
+7.  Exportação de resultados
+
+### Acessar resultados
+
+**Tabelas (CSV):**
+
+1.  `dataset_integrado.csv`: Base completa processada
+
+2.  `top50_municipios_2021.csv`: Municípios com maior desmatamento
+
+3.  `predicoes_teste.csv`: Previsões do modelo
+
+4.  `metricas_modelo.csv`: Métricas de avaliação
+
+5.  `analise_descritiva_*.csv`: Estatísticas
+
+**Visualizações:**
+
+1.  `figures/`: Gráficos
+
+2.  `maps/`: Mapas interativos HTML (abrir no navegador)
+
+**Modelo:**
+
+-   `models/modelo_rf.rds`: Modelo Random Forest
+
+## Aplicações
+
+-   Identificação de municípios prioritários para fiscalização
+-   Monitoramento de áreas de alto risco
+-   Avaliação de efetividade de políticas ambientais
+
+### Setor Produtivo
+
+-   Benchmarking de eficiência produtiva
+-   Planejamento de expansão sustentável
+-   Subsídio para certificações ambientais
+
+## Limitações
+
+-   Período de 7 anos pode não capturar ciclos longos
+-   Foco limitado a três culturas principais
+-   Variáveis omitidas (preços, políticas, infraestrutura)
+
+## Próximos passos
+
+-   Incorporar variáveis socioeconômicas
+-   Expandir análise para outras culturas
+-   Integrar dados de fiscalização ambiental
+-   Desenvolver modelos de previsão de longo prazo
+-   Analisar efeitos de políticas específicas
+
+## Autoria
+
+**Jennifer Luz Lopes**
+
+-   **Portfólio:** <https://jenniferlopes.quarto.pub/portifolio/>
+
+-   **GitHub:** <https://github.com/JenniferLopes>
+
+## Licença
+
+MIT.
+
+## Referências
+
+-   IBGE - Produção Agrícola Municipal (PAM)
+-   INPE - Programa de Monitoramento do Desmatamento (PRODES)
+-   Base dos Dados - <https://basedosdados.org/>

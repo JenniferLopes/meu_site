@@ -1,0 +1,125 @@
+---
+title: "5.1. SQL x R (dbplyr)"
+subtitle: "cheat sheet - Com as funções"
+categories: [SQL, R, Web, dbplyr]
+image: imagens/sql.png
+description: " cheat sheet - Com as funções.
+É open use e compartilhe."
+format:
+  revealjs:
+    theme: simple
+    logo: "imagens/logo.png"
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes • Café com R"
+editor:
+  markdown:
+    wrap: 72
+---
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+[![](imagens/qrcode.jpg){fig-align="center"
+width="236"}](https://forms.gle/Q5SKuSK1ViTL6FAWA)
+
+## SQL x R (dbplyr) - Parte 1 {.smaller}
+
+| Tarefa | SQL | R (dbplyr) |
+|------------------------|------------------------|------------------------|
+| **Conectar ao Banco** | `-- Conexão gerenciada pelo cliente SQL` | `con <- dbConnect(RSQLite::SQLite(), "banco.db")` |
+| **Referenciar Tabela** | `SELECT * FROM vendas;` | `vendas <- tbl(con, "vendas")` |
+
+------------------------------------------------------------------------
+
+## SQL x R (dbplyr) - Parte 2 {.smaller}
+
+| Tarefa | SQL | R (dbplyr) |
+|------------------------|------------------------|------------------------|
+| **Filtrar com Múltiplas Condições** | `SELECT * FROM clientes WHERE idade >= 18 AND cidade = 'SP';` | `clientes %>% filter(idade >= 18, cidade == "SP")` |
+| **Selecionar e Renomear** | `SELECT nome AS cliente, valor AS preco FROM pedidos;` | `pedidos %>% select(cliente = nome, preco = valor)` |
+
+------------------------------------------------------------------------
+
+## SQL x R (dbplyr) - Parte 3 {.smaller}
+
+| Tarefa | SQL | R (dbplyr) |
+|------------------------|------------------------|------------------------|
+| **Top N Registros** | `SELECT * FROM produtos ORDER BY preco DESC LIMIT 5;` | `produtos %>% arrange(desc(preco)) %>% head(5)` |
+| **Agrupar e Calcular Múltiplas Métricas** | `SELECT categoria, COUNT(*) as qtd, AVG(preco) as media FROM produtos GROUP BY categoria;` | `produtos %>% group_by(categoria) %>% summarise(qtd = n(), media = mean(preco))` |
+
+------------------------------------------------------------------------
+
+## SQL x R (dbplyr) - Parte 4 {.smaller}
+
+| Tarefa | SQL | R (dbplyr) |
+|------------------------|------------------------|------------------------|
+| **Filtrar Grupos (HAVING)** | `SELECT cidade, COUNT(*) FROM clientes GROUP BY cidade HAVING COUNT(*) > 10;` | `clientes %>% group_by(cidade) %>% summarise(n = n()) %>% filter(n > 10)` |
+| **LEFT JOIN** | `SELECT * FROM pedidos p LEFT JOIN clientes c ON p.cliente_id = c.id;` | `pedidos %>% left_join(clientes, by = c("cliente_id" = "id"))` |
+
+------------------------------------------------------------------------
+
+## SQL x R (dbplyr) - Parte 5 {.smaller}
+
+| Tarefa | SQL | R (dbplyr) |
+|------------------------|------------------------|------------------------|
+| **CASE WHEN** | `SELECT nome, CASE WHEN idade < 18 THEN 'Menor' ELSE 'Adulto' END AS faixa FROM clientes;` | `clientes %>% mutate(faixa = case_when(idade < 18 ~ "Menor", TRUE ~ "Adulto"))` |
+| **Subconsulta** | `SELECT * FROM produtos WHERE preco > (SELECT AVG(preco) FROM produtos);` | `media_preco <- produtos %>% summarise(m = mean(preco)) %>% pull(m); produtos %>% filter(preco > media_preco)` |
+
+------------------------------------------------------------------------
+
+## SQL x R (dbplyr) - Parte 6 {.smaller}
+
+| Tarefa | SQL | R (dbplyr) |
+|------------------------|------------------------|------------------------|
+| **Operações com Strings** | `SELECT UPPER(nome), LENGTH(descricao) FROM produtos WHERE nome LIKE '%Café%';` | `produtos %>% filter(str_detect(nome, "Café")) %>% mutate(nome_upper = str_to_upper(nome), tam_desc = str_length(descricao))` |
+| **UNION** | `SELECT nome FROM clientes_sp UNION SELECT nome FROM clientes_rj;` | `union_all(clientes_sp, clientes_rj) %>% distinct(nome)` |
+
+------------------------------------------------------------------------
+
+## SQL x R (dbplyr) - Parte 7 {.smaller}
+
+| Tarefa | SQL | R (dbplyr) |
+|------------------------|------------------------|------------------------|
+| **Window Functions** | `SELECT nome, salario, RANK() OVER (ORDER BY salario DESC) FROM funcionarios;` | `funcionarios %>% mutate(rank = min_rank(desc(salario)))` |
+| **Executar Query e Coletar Dados** | `-- Execução automática ao rodar SELECT` | `resultado <- vendas %>% filter(valor > 100) %>% collect()` |
+
+------------------------------------------------------------------------
+
+## SQL x R (dbplyr) - Parte 8 {.smaller}
+
+| Tarefa | SQL | R (dbplyr) |
+|------------------------|------------------------|------------------------|
+| **Ver SQL Traduzido** | `-- SQL é a linguagem original` | `vendas %>% filter(valor > 100) %>% show_query()` |
+
+## Obrigada!
+
+![Imagem: Allison Horst.](imagens/comunidade.png){fig-align="center"
+width="449"}
+
+Continue praticando e explorando!
+
+*Esta apresentação é parte do projeto **`Café com R!`**É OPEN, USE,
+COMPARTILHE!*
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}

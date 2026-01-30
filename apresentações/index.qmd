@@ -1,0 +1,33 @@
+---
+title: "Aqui você encontra conteúdos e publicações sobre Ciência de Dados"
+subtitle: É uma extensão do café com R - Para divulgar e ensinar programação em R.
+listing:
+  contents: posts
+  type: default
+  image-align: left
+  categories: true
+  fields:
+    - image
+    - title
+    - description
+    - date
+    - author
+    - categories
+page-size: 5
+---
+
+:::: {style="margin-bottom: 40px;"}
+::: texto-justificado
+### Como salvar essa apresentação em PDF
+
+Você também pode salvar esta apresentação diretamente em PDF usando o modo PDF Export Mode do próprio visualizador do Quarto (**`menu lateral > Tools > PDF Export Mode`**). Isso ajusta automaticamente os slides para um formato adequado de impressão.
+
+Além disso, esta apresentação ficará disponível online no meu site, permitindo que você acesse quando quiser.
+
+### No GitHub em breve - até final de janeiro.
+
+Em breve, todo o material, incluindo o arquivo .qmd, o tema visual e os códigos utilizados estará no meu GitHub, para que você possa reproduzir, adaptar ou integrar às suas próprias aulas e projetos com total liberdade.
+
+<br>
+:::
+::::

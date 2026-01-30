@@ -1,10 +1,9 @@
 ---
 title: "Jennifer Lopes"
-toc: true # Adiciona um índice no relatório
 format: 
     html: 
-      css: ["styles.css"] # Customização com css
-      toc: true
+      css: ["estilo_geral.scss"] # Customização com css
+      toc: false
       embed-resources: true
       code-fold: false # code-fold: true para "ocultar" o bloco de códigos
       code-tools: true  #code-tools: true para ativar ferramentas de interação com os códigos
@@ -13,10 +12,48 @@ format:
 code-annotations: hover # Para anotações em códigos
 ---
 
-This is a Quarto website.
+:::: {style="margin-bottom: 40px;"}
+::: texto-justificado
+### Bem-vinda(o) ao meu espaço de dados e ideias
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+***Obrigada por passar por aqui, fico feliz que você tenha chegado!***
 
-```{r}
-1 + 1
+Sou Jennifer Luz Lopes, Gaúcha, Engenheira Agrônoma e Doutora em Melhoramento Genético de Plantas, hoje atuando como Consultora e Instrutora de Ciência de dados com R, unindo estatística, experimentação e análise de dados. Minha trajetória vem do campo, mas meu propósito está na ciência de dados aplicada à agricultura.
+
+Quatro valores que guiam tudo o que faço: clareza, aprendizado contínuo, colaboração e propósito. 🤎
+
+**Aqui você vai encontrar:**
+
+-   Projetos de experimentação agrícola, análises estatísticas em R
+
+-   Dashboards e automações com Quarto, Shiny e APIs
+
+-   Reflexões sobre comunidade, aprendizado e dados abertos
+
+Fora do trabalho, adoro meditar, fazer Yoga, tomar café e chimarrão e pensar em como o R pode simplificar mais um processo da vida.
+
+Ahh, amo ficar agarradinha nas minhas pets, Luna e Meguy!
+
+Este espaço é meu laboratório de aprendizado feito pra compartilhar, errar, corrigir, crescer e inspirar.
+:::
+::::
+
+### ☕ Assine o Café com R
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+```{=html}
+<iframe src="https://forms.gle/Q5SKuSK1ViTL6FAWA" width="100%" height="550" frameborder="0" marginheight="0" marginwidth="0" style="
+    border:3px solid #224573;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(34,69,115,0.3);
+  ">
 ```
+
+Carregando…
+
+</iframe>

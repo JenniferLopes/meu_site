@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jennifer Luz Lopes">
+<meta name="dcterms.date" content="2025-11-25">
+<meta name="description" content="Desmistificando o valor P e outras recomendações do universo R e da estatística">
+
+<title>Café da Semana☕ – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-c3d78e0acc6dfb713c283a79e1519c76.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+<link rel="stylesheet" href="estilo.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../projetos/index.html"> 
+<span class="menu-text">Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../agenda_2026/index.qmd"> 
+<span class="menu-text">Agenda 2026</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#esta-é-a-terceira-edição-do-café-com-r" id="toc-esta-é-a-terceira-edição-do-café-com-r" class="nav-link active" data-scroll-target="#esta-é-a-terceira-edição-do-café-com-r">Esta é a terceira edição do <strong>Café com R</strong></a></li>
+  <li><a href="#sobre-a-newsletter-de-hoje" id="toc-sobre-a-newsletter-de-hoje" class="nav-link" data-scroll-target="#sobre-a-newsletter-de-hoje">Sobre a Newsletter de hoje</a></li>
+  <li><a href="#da-semente-à-xícara" id="toc-da-semente-à-xícara" class="nav-link" data-scroll-target="#da-semente-à-xícara">Da semente à xícara</a>
+  <ul class="collapse">
+  <li><a href="#a-importância-do-questionamento" id="toc-a-importância-do-questionamento" class="nav-link" data-scroll-target="#a-importância-do-questionamento">A importância do questionamento</a></li>
+  <li><a href="#o-que-o-valor-p-realmente-significa" id="toc-o-que-o-valor-p-realmente-significa" class="nav-link" data-scroll-target="#o-que-o-valor-p-realmente-significa">O que o valor <em>p</em> realmente significa</a></li>
+  <li><a href="#ele-não-diz" id="toc-ele-não-diz" class="nav-link" data-scroll-target="#ele-não-diz">Ele não diz:</a></li>
+  <li><a href="#a-distinção-é" id="toc-a-distinção-é" class="nav-link" data-scroll-target="#a-distinção-é">A distinção é</a></li>
+  <li><a href="#os-mitos-mais-comuns-e-por-que-eles-precisam-ser-abandonados" id="toc-os-mitos-mais-comuns-e-por-que-eles-precisam-ser-abandonados" class="nav-link" data-scroll-target="#os-mitos-mais-comuns-e-por-que-eles-precisam-ser-abandonados">Os mitos mais comuns e por que eles precisam ser abandonados</a></li>
+  <li><a href="#o-impacto-do-tamanho-da-amostra" id="toc-o-impacto-do-tamanho-da-amostra" class="nav-link" data-scroll-target="#o-impacto-do-tamanho-da-amostra">O impacto do tamanho da amostra</a></li>
+  <li><a href="#tamanho-de-efeito-e-intervalos-de-confiança" id="toc-tamanho-de-efeito-e-intervalos-de-confiança" class="nav-link" data-scroll-target="#tamanho-de-efeito-e-intervalos-de-confiança">Tamanho de efeito e intervalos de confiança</a></li>
+  <li><a href="#por-que-a-dicotomia-significativo-não-significativo-é-inadequada" id="toc-por-que-a-dicotomia-significativo-não-significativo-é-inadequada" class="nav-link" data-scroll-target="#por-que-a-dicotomia-significativo-não-significativo-é-inadequada">Por que a dicotomia significativo / não significativo é inadequada</a></li>
+  <li><a href="#a-orientação-combinada-para-uma-melhor-avaliação" id="toc-a-orientação-combinada-para-uma-melhor-avaliação" class="nav-link" data-scroll-target="#a-orientação-combinada-para-uma-melhor-avaliação">A orientação combinada para uma melhor avaliação:</a></li>
+  <li><a href="#considerações-finais" id="toc-considerações-finais" class="nav-link" data-scroll-target="#considerações-finais">Considerações finais</a></li>
+  <li><a href="#referências-com-links" id="toc-referências-com-links" class="nav-link" data-scroll-target="#referências-com-links">Referências com links</a></li>
+  </ul></li>
+  <li><a href="#dose-da-semana" id="toc-dose-da-semana" class="nav-link" data-scroll-target="#dose-da-semana">Dose da semana</a></li>
+  <li><a href="#para-acompanhar-o-café" id="toc-para-acompanhar-o-café" class="nav-link" data-scroll-target="#para-acompanhar-o-café">Para Acompanhar o Café</a>
+  <ul class="collapse">
+  <li><a href="#statistical-inference-via-data-science-a-moderndive-into-r-and-the-tidyverse" id="toc-statistical-inference-via-data-science-a-moderndive-into-r-and-the-tidyverse" class="nav-link" data-scroll-target="#statistical-inference-via-data-science-a-moderndive-into-r-and-the-tidyverse">1. Statistical Inference via Data Science: <em>A ModernDive into R and the Tidyverse</em></a></li>
+  <li><a href="#modern-statistics-with-r-from-wrangling-and-exploring-data-to-inference-and-predictive-modelling" id="toc-modern-statistics-with-r-from-wrangling-and-exploring-data-to-inference-and-predictive-modelling" class="nav-link" data-scroll-target="#modern-statistics-with-r-from-wrangling-and-exploring-data-to-inference-and-predictive-modelling">2. Modern Statistics with R: <em>From wrangling and exploring data to inference and predictive modelling</em></a></li>
+  <li><a href="#an-introduction-to-statistical-learning" id="toc-an-introduction-to-statistical-learning" class="nav-link" data-scroll-target="#an-introduction-to-statistical-learning">3. <strong>An Introduction to Statistical Learning</strong></a></li>
+  <li><a href="#considerações-finais-1" id="toc-considerações-finais-1" class="nav-link" data-scroll-target="#considerações-finais-1">Considerações finais</a></li>
+  <li><a href="#assine-o-café-com-r" id="toc-assine-o-café-com-r" class="nav-link" data-scroll-target="#assine-o-café-com-r">☕ Assine o Café com R</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Café da Semana☕</h1>
+<p class="subtitle lead">Desmistificando o valor P e outras recomendações do universo R e da estatística</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Estatística</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Desmistificando o valor P e outras recomendações do universo R e da estatística
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jennifer Luz Lopes </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 25, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="esta-é-a-terceira-edição-do-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="esta-é-a-terceira-edição-do-café-com-r">Esta é a terceira edição do <strong>Café com R</strong></h2>
+<div class="grid">
+<div class="g-col-6">
+<p>Seja bem-vinda(o)!</p>
+<p><strong><code>Aqui é uma pausa para falar de dados.</code></strong></p>
+<p>Toda semana vamos nos encontrar por aqui para conversar sobre ciência de dados, estatística e muito mais de um jeito leve e prático.</p>
+<p>Toda semana, uma dose de código, reflexão e boas ideias com R, um café de aprendizagem por vez.</p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="sobre-a-newsletter-de-hoje" class="level2">
+<h2 class="anchored" data-anchor-id="sobre-a-newsletter-de-hoje">Sobre a Newsletter de hoje</h2>
+<ul>
+<li><p>Escrevi esta edição com carinho porque o tema merece calma e clareza. Hoje vamos <strong><code>da semente à xícara</code></strong> para falar sobre um assunto que muita gente usa, <strong><em><code>o valor p</code></em></strong>. Quis trazer uma explicação honesta do que ele significa, por que tantas interpretações saem do trilho e quais práticas modernas ajudam a substituir aquele velho hábito do “<em>p</em> &lt; 0.05 e pronto”. A ideia é deixar você mais seguro ao interpretar resultados e mais confiante nas decisões que toma a partir deles.</p></li>
+<li><p>Na <strong><code>Dose da Semana</code></strong>, selecionei alguns pacotes do R que realmente fazem diferença no dia a dia de quem modela, testa hipóteses e precisa extrair evidências com consistência. É aquele conjunto de ferramentas que eu mesma uso e que recomendo de olhos fechados.</p></li>
+<li><p>E, no quadro <strong><code>Para Acompanhar o Café</code></strong>, escolhi três livros que conversam diretamente com o tema de hoje. São leituras que ajudam a ampliar a visão sobre inferência, modelos e interpretação de resultados. Separei com cuidado para quem quiser seguir além do básico, no seu próprio ritmo.</p></li>
+</ul>
+<blockquote class="blockquote">
+<p>Ótima leitura!</p>
+<p>Ahhh pega seu café aí!</p>
+</blockquote>
+<p><br></p>
+</section>
+<section id="da-semente-à-xícara" class="level2">
+<h2 class="anchored" data-anchor-id="da-semente-à-xícara">Da semente à xícara</h2>
+<p><strong>Antes de iniciar, você já passou por isso? Reflita durante a leitura!</strong></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-4104204437.png" class="img-fluid figure-img" width="284"></p>
+<figcaption><strong>Eu já, kkkk e confesso que sempre que estudo, aprendo algo novo!</strong></figcaption>
+</figure>
+</div>
+<section id="a-importância-do-questionamento" class="level3">
+<h3 class="anchored" data-anchor-id="a-importância-do-questionamento">A importância do questionamento</h3>
+<div class="quarto-figure quarto-figure-center" style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);">
+<figure class="figure">
+<p><img src="../..\cafecomr/imagens_gerais/valorp1.JPG" class="img-fluid figure-img"></p>
+<figcaption>Wasserstein, R. L.; Lazar, N. A. (2016). The ASA Statement on p-Values: Context, Process, and Purpose. <strong>The American Statistician,</strong> 70(2), 129–133.</figcaption>
+</figure>
+</div>
+<p>O valor <em>p</em> é um dos conceitos mais usados e, ao mesmo tempo, mais mal compreendidos na estatística inferencial. A comunidade estatística vem alertando há anos que interpretações inadequadas desse número têm levado a conclusões distorcidas em múltiplos campos (Wasserstein, Schirm; Lazar, 2019; Amrhein, Greenland; McShane, 2019). Entender o que o valor <em>p</em> mede e o que ele não mede é fundamental para qualquer análise confiável.</p>
+<section id="sobre-a-asa-american-statistical-association-ou-associação-americana-de-estatística." class="level4">
+<h4 class="anchored" data-anchor-id="sobre-a-asa-american-statistical-association-ou-associação-americana-de-estatística.">Sobre a <strong>ASA</strong>: <strong>American Statistical Association</strong> ou <strong>Associação Americana de Estatística</strong>.</h4>
+<p>É a maior e mais antiga organização profissional de estatísticos do mundo, fundada em <strong>1839</strong>. A ASA reúne pesquisadoras(es), cientistas de dados, estatísticos aplicados, acadêmicos e profissionais de diversas áreas que usam ou desenvolvem métodos estatísticos.</p>
+</section>
+</section>
+<section id="o-que-o-valor-p-realmente-significa" class="level3">
+<h3 class="anchored" data-anchor-id="o-que-o-valor-p-realmente-significa">O que o valor <em>p</em> realmente significa</h3>
+<div class="callout callout-style-default callout-warning callout-titled" style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O valor <em>p</em> é a <strong>probabilidade de observar um resultado tão extremo quanto o obtido, assumindo que a hipótese nula é verdadeira</strong>.</p>
+<p>Ele descreve o grau de <strong>compatibilidade entre os dados e um modelo teórico específico</strong>, conceito reforçado pela própria ASA em seus posicionamentos oficiais (Wasserstein;Lazar, 2016).</p>
+</div>
+</div>
+</section>
+<section id="ele-não-diz" class="level3">
+<h3 class="anchored" data-anchor-id="ele-não-diz">Ele não diz:</h3>
+<ul>
+<li><p>a probabilidade de a hipótese nula ser verdadeira</p></li>
+<li><p>a probabilidade de a hipótese alternativa ser verdadeira</p></li>
+<li><p>a magnitude do efeito</p></li>
+<li><p>a importância prática de uma diferença</p></li>
+<li><p>a força causal de um fenômeno</p></li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled" style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p>O valor p responde apenas a uma pergunta: <em>quão surpreendentes são os dados sob a hipótese nula?</em></p>
+</blockquote>
+</div>
+</div>
+</section>
+<section id="a-distinção-é" class="level3">
+<h3 class="anchored" data-anchor-id="a-distinção-é">A distinção é</h3>
+<ul>
+<li><p>o valor <em>p</em> calcula <strong>P(Dados | H0)</strong></p></li>
+<li><p>mas muitos interpretam como <strong>P(H0 | Dados)</strong>, o que é incorreto</p></li>
+</ul>
+<blockquote class="blockquote">
+<p>A distinção entre essas duas probabilidades é fundamental e, ao mesmo tempo, a origem de grande parte das interpretações equivocadas sobre o valor <em>p</em>.</p>
+<p>Quando calculamos um valor <em>p</em>, estamos medindo <strong>P(Dados | H0)</strong>, ou seja, a probabilidade de observarmos resultados tão extremos quanto os obtidos <strong>assumindo que a hipótese nula é verdadeira</strong>.</p>
+<p>Isso não tem relação direta com <strong>P(H0 | Dados)</strong>, que seria a probabilidade de a hipótese nula ser verdadeira <strong>dado o que observamos</strong>.</p>
+</blockquote>
+<div class="callout callout-style-default callout-note callout-titled" style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A confusão entre o valor <em>p</em> e a probabilidade da hipótese nula é chamada de <strong>falácia da probabilidade inversa</strong> (Greenland et al., 2016).</p>
+</div>
+</div>
+</section>
+<section id="os-mitos-mais-comuns-e-por-que-eles-precisam-ser-abandonados" class="level3">
+<h3 class="anchored" data-anchor-id="os-mitos-mais-comuns-e-por-que-eles-precisam-ser-abandonados">Os mitos mais comuns e por que eles precisam ser abandonados</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Mito</th>
+<th>Realidade</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>O valor <em>p</em> diz a probabilidade de <em>H0</em> ser verdadeira</td>
+<td>O p-valor é condicionado à hipótese nula. Ele não estima a probabilidade da hipótese.</td>
+</tr>
+<tr class="even">
+<td><em>p</em> &lt; 0.05 indica efeito grande</td>
+<td>Significância estatística não tem relação direta com magnitude.</td>
+</tr>
+<tr class="odd">
+<td><em>p</em> &lt; 0.05 confirma a hipótese alternativa</td>
+<td>Apenas indica baixa compatibilidade entre os dados e <em>H0</em>. Não “prova” <em>H1</em>.</td>
+</tr>
+<tr class="even">
+<td><em>p</em> &gt; 0.05 significa ausência de efeito</td>
+<td>Um <em>p</em> alto indica falta de evidência para rejeitar <em>H0</em>, não que <em>H0</em> é verdadeira.</td>
+</tr>
+<tr class="odd">
+<td>O p-valor é igual ao erro tipo I</td>
+<td>O erro tipo I é um parâmetro pré-definido. O p-valor é uma estatística pós-experimento.</td>
+</tr>
+<tr class="even">
+<td>O p-valor sozinho encerra a análise</td>
+<td>Inferência confiável exige considerar tamanho de efeito, intervalos de confiança e plausibilidade teórica.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="o-impacto-do-tamanho-da-amostra" class="level3">
+<h3 class="anchored" data-anchor-id="o-impacto-do-tamanho-da-amostra">O impacto do tamanho da amostra</h3>
+<p><strong>O valor <em>p</em> é altamente sensível ao tamanho da amostra:</strong></p>
+<ul>
+<li><p>amostras grandes tendem a produzir valores p pequenos mesmo quando a diferença é mínima</p></li>
+<li><p>amostras pequenas podem gerar valores <em>p</em> altos mesmo quando há diferença real</p></li>
+<li><p>Isso significa que a interpretação do valor <em>p</em> nunca deve ser dissociada do desenho amostral.</p></li>
+</ul>
+</section>
+<section id="tamanho-de-efeito-e-intervalos-de-confiança" class="level3">
+<h3 class="anchored" data-anchor-id="tamanho-de-efeito-e-intervalos-de-confiança">Tamanho de efeito e intervalos de confiança</h3>
+<p><strong>O valor <em>p</em> não informa magnitude, precisão ou importância prática. Por isso, ele sempre deve ser acompanhado por:</strong></p>
+<ol type="1">
+<li><strong>Tamanho de efeito</strong></li>
+</ol>
+<ul>
+<li>Quantifica a magnitude da diferença ou da associação. É a medida que realmente comunica quanto um fenômeno é relevante.</li>
+</ul>
+<ol start="2" type="1">
+<li><strong>Intervalos de confiança</strong></li>
+</ol>
+<ul>
+<li>Mostram a faixa de valores plausíveis para o efeito. Um intervalo estreito indica maior precisão. Um intervalo amplo indica incerteza elevada.</li>
+</ul>
+<ol start="3" type="1">
+<li><strong>Poder estatístico</strong></li>
+</ol>
+<ul>
+<li>Ajuda a entender a capacidade do estudo de detectar diferenças reais. Baixo poder aumenta o risco de resultados inconclusivos.</li>
+</ul>
+</section>
+<section id="por-que-a-dicotomia-significativo-não-significativo-é-inadequada" class="level3">
+<h3 class="anchored" data-anchor-id="por-que-a-dicotomia-significativo-não-significativo-é-inadequada">Por que a dicotomia significativo / não significativo é inadequada</h3>
+<p><strong>A própria ASA (Wasserstein;Lazar, 2016) e vários autores influentes (Amrhein, Greenland;McShane, 2019) recomendam abandonar a interpretação rígida baseada em p &lt; 0.05. Entre os motivos:</strong></p>
+<ul>
+<li><p>decisões baseadas em um único número ignoram magnitude, precisão e contexto</p></li>
+<li><p>valores muito próximos do limiar podem ser praticamente indistinguíveis</p></li>
+<li><p>incentiva a falsa impressão de preto-e-branco em um processo que é, por natureza, contínuo</p></li>
+</ul>
+</section>
+<section id="a-orientação-combinada-para-uma-melhor-avaliação" class="level3">
+<h3 class="anchored" data-anchor-id="a-orientação-combinada-para-uma-melhor-avaliação">A orientação combinada para uma melhor avaliação:</h3>
+<ul>
+<li><p>valor <em>p</em> exato</p></li>
+<li><p>tamanho de efeito</p></li>
+<li><p>intervalo de confiança</p></li>
+<li><p>teoria e plausibilidade</p></li>
+<li><p>poder e desenho amostral</p></li>
+</ul>
+</section>
+<section id="considerações-finais" class="level3">
+<h3 class="anchored" data-anchor-id="considerações-finais">Considerações finais</h3>
+<p>O valor <em>p</em> continua sendo essencial dentro da estatística inferencial, mas seu papel precisa ser entendido com maturidade.</p>
+<ul>
+<li><p>Ele não decide experimentos, não define relevância e não substitui o julgamento técnico embasado.</p></li>
+<li><p>A interpretação recomendada nos últimos anos exige <strong>combinar</strong> múltiplas peças de informação, olhar para a magnitude dos efeitos, considerar a precisão das estimativas e avaliar a plausibilidade teórica do fenômeno estudado.</p></li>
+<li><p><strong>Abandonar o uso ritualístico de p &lt; 0.05 é um passo importante para fortalecer a qualidade das análises e aproximar nossas conclusões daquilo que realmente importa, compreender os dados com profundidade e tomar decisões sustentadas por evidência, não por um número isolado.</strong></p></li>
+</ul>
+</section>
+<section id="referências-com-links" class="level3">
+<h3 class="anchored" data-anchor-id="referências-com-links">Referências com links</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>N°</th>
+<th>Referência</th>
+<th>Link</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1</strong></td>
+<td><strong>Wasserstein, Schirm ;Lazar (2019)</strong>. <em>Moving to a World Beyond “p &lt; 0.05”</em>. The American Statistician.</td>
+<td><a href="https://doi.org/10.1080/00031305.2019.1583913" class="uri">https://doi.org/10.1080/00031305.2019.1583913</a></td>
+<td>Artigo mais influente da última década sobre p-valor. Marco da ASA pedindo o abandono do uso dicotômico de significância.</td>
+</tr>
+<tr class="even">
+<td><strong>2</strong></td>
+<td><strong>Amrhein, Greenland ;McShane (2019)</strong>. <em>Scientists rise up against statistical significance</em>. Nature.</td>
+<td><a href="https://doi.org/10.1038/d41586-019-00857-9" class="uri">https://doi.org/10.1038/d41586-019-00857-9</a></td>
+<td>Publicação de fortíssimo impacto. Nature explicitamente crítica à significância arbitrária. Mudou práticas editoriais.</td>
+</tr>
+<tr class="odd">
+<td><strong>3</strong></td>
+<td><strong>Greenland et al.&nbsp;(2016)</strong>. <em>Statistical tests, P values, confidence intervals, and power: guide to misinterpretations</em>. The American Statistician.</td>
+<td><a href="https://doi.org/10.1080/00031305.2016.1154108" class="uri">https://doi.org/10.1080/00031305.2016.1154108</a></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>4</strong></td>
+<td><strong>Wasserstein ;Lazar (2016)</strong>. <em>The ASA’s Statement on p-Values</em>. The American Statistician.</td>
+<td><a href="https://doi.org/10.1080/00031305.2016.1154108" class="uri">https://doi.org/10.1080/00031305.2016.1154108</a></td>
+<td>Primeira declaração formal da ASA. Documento histórico que redefiniu o debate global.</td>
+</tr>
+<tr class="odd">
+<td><strong>5</strong></td>
+<td><strong>Cumming (2014)</strong>. <em>The New Statistics: estimation, open science, beyond</em>. Psychological Science.</td>
+<td><a href="https://doi.org/10.1177/0956797613504966" class="uri">https://doi.org/10.1177/0956797613504966</a></td>
+<td>Introduz a perspectiva da “Nova Estatística”: foco em tamanho de efeito, IC e meta-analítica. Influenciou áreas experimentais.</td>
+</tr>
+<tr class="even">
+<td><strong>6</strong></td>
+<td><strong>Nakagawa ;Cuthill (2007)</strong>. <em>Effect size, confidence interval and power in biological research</em>. Biological Reviews.</td>
+<td><a href="https://doi.org/10.1111/j.1469-185X.2007.00027.x" class="uri">https://doi.org/10.1111/j.1469-185X.2007.00027.x</a></td>
+<td>Texto clássico sobre tamanho de efeito e poder. Muito citado em biológicas, psicometria e estatística aplicada.</td>
+</tr>
+<tr class="odd">
+<td><strong>7</strong></td>
+<td><strong>Hurlbert ;Lombardi (2009)</strong>. <em>Final collapse… rise of the neoFisherian</em>. Annales Zoologici Fennici.</td>
+<td><a href="https://doi.org/10.5735/086.046.0501" class="uri">https://doi.org/10.5735/086.046.0501</a></td>
+<td>Crítica filosófica profunda de Neyman–Pearson. Influente em discussões epistemológicas.</td>
+</tr>
+<tr class="even">
+<td><strong>8</strong></td>
+<td><strong>Perezgonzalez (2015)</strong>. <em>Fisher, Neyman-Pearson or NHST? Tutorial</em>. Frontiers in Psychology.</td>
+<td><a href="https://www.frontiersin.org/articles/10.3389/fpsyg.2015.00223/full" class="uri">https://www.frontiersin.org/articles/10.3389/fpsyg.2015.00223/full</a></td>
+<td>Excelente tutorial comparando abordagens históricas. Didático, ótimo para formação conceitual sólida.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="dose-da-semana" class="level2">
+<h2 class="anchored" data-anchor-id="dose-da-semana">Dose da semana</h2>
+<p>Nesta <strong><code>Dose da Semana</code></strong>, selecionei pacotes essenciais para quem trabalha com testes de hipóteses, inferência estatística e modelagem moderna em R. São pacotes que facilitam desde análises clássicas até ajustes mais complexos, permitindo extrair valores <em>p</em>, estimar tamanhos de efeito, avaliar pressupostos e interpretar modelos com mais segurança. É aquela curadoria prática e objetiva para você fortalecer seu fluxo de análise sem complicação.</p>
+<p><strong>Espero que vocês gostem!</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Nº</th>
+<th>Pacote</th>
+<th>Para que serve</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1</strong></td>
+<td><strong>stats</strong> (base R)</td>
+<td>Testes clássicos, t-test, ANOVA, chi-square, correlações e regressão linear.</td>
+<td><a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html" class="uri">https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html</a></td>
+</tr>
+<tr class="even">
+<td><strong>2</strong></td>
+<td><strong>car</strong></td>
+<td>ANOVA avançada, testes tipo II/III, contrastes e diagnósticos.</td>
+<td><a href="https://cran.r-project.org/package=car" class="uri">https://cran.r-project.org/package=car</a></td>
+</tr>
+<tr class="odd">
+<td><strong>3</strong></td>
+<td><strong>lmtest</strong></td>
+<td>Testes para modelos lineares, heterocedasticidade, autocorrelação e especificação.</td>
+<td><a href="https://cran.r-project.org/package=lmtest" class="uri">https://cran.r-project.org/package=lmtest</a></td>
+</tr>
+<tr class="even">
+<td><strong>4</strong></td>
+<td><strong>multcomp</strong></td>
+<td>Comparações múltiplas, contrastes, Tukey, Dunnett, etc.</td>
+<td><a href="https://cran.r-project.org/package=multcomp" class="uri">https://cran.r-project.org/package=multcomp</a></td>
+</tr>
+<tr class="odd">
+<td><strong>5</strong></td>
+<td><strong>emmeans</strong></td>
+<td>Médias marginais estimadas, contrastes e comparações múltiplas modernas.</td>
+<td><a href="https://cran.r-project.org/package=emmeans" class="uri">https://cran.r-project.org/package=emmeans</a></td>
+</tr>
+<tr class="even">
+<td><strong>6</strong></td>
+<td><strong>parameters</strong></td>
+<td>Extrai estatísticas, valores <em>p</em>, intervalos de confiança, tamanhos de efeito e medidas de modelo.</td>
+<td><a href="https://cran.r-project.org/package=parameters" class="uri">https://cran.r-project.org/package=parameters</a></td>
+</tr>
+<tr class="odd">
+<td><strong>7</strong></td>
+<td><strong>performance</strong></td>
+<td>Diagnóstico de modelos, qualidade de ajuste, checagem de pressupostos e métricas globais.</td>
+<td><a href="https://cran.r-project.org/package=performance" class="uri">https://cran.r-project.org/package=performance</a></td>
+</tr>
+<tr class="even">
+<td><strong>8</strong></td>
+<td><strong>lme4</strong></td>
+<td>Modelagem estatística moderna, modelos lineares mistos por máxima verossimilhança/REML.</td>
+<td><a href="https://cran.r-project.org/package=lme4" class="uri">https://cran.r-project.org/package=lme4</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="para-acompanhar-o-café" class="level2">
+<h2 class="anchored" data-anchor-id="para-acompanhar-o-café">Para Acompanhar o Café</h2>
+<p>Separei três livros que traduzem exatamente o tipo de estatística que eu acredito e que sempre trago aqui na Café com R, acessível. São materiais que ajudam a enxergar a inferência por outros ângulos, indo além do <em>p-valor</em> e mostrando como pensar em evidência, variabilidade, modelos e tomada de decisão com mais segurança. Cada um deles conversa diretamente com o assunto desta edição e complementa o que discutimos sobre significância, tamanho de efeito e leitura crítica de resultados. Deixo aqui como sugestão para você explorar no seu ritmo, com aquela curiosidade que sempre move a nossa comunidade.</p>
+<blockquote class="blockquote">
+<p>Lembrem-se temos a lista de artigos já citados para complementar.</p>
+</blockquote>
+<p><br></p>
+<section id="statistical-inference-via-data-science-a-moderndive-into-r-and-the-tidyverse" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-inference-via-data-science-a-moderndive-into-r-and-the-tidyverse">1. Statistical Inference via Data Science: <em>A ModernDive into R and the Tidyverse</em></h3>
+<iframe src="https://moderndive.com/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+</iframe>
+<p><br></p>
+</section>
+<section id="modern-statistics-with-r-from-wrangling-and-exploring-data-to-inference-and-predictive-modelling" class="level3">
+<h3 class="anchored" data-anchor-id="modern-statistics-with-r-from-wrangling-and-exploring-data-to-inference-and-predictive-modelling">2. Modern Statistics with R: <em>From wrangling and exploring data to inference and predictive modelling</em></h3>
+<iframe src="https://modernstatisticswithr.com/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+</iframe>
+<p><br></p>
+</section>
+<section id="an-introduction-to-statistical-learning" class="level3">
+<h3 class="anchored" data-anchor-id="an-introduction-to-statistical-learning">3. <strong>An Introduction to Statistical Learning</strong></h3>
+<iframe src="https://www.statlearning.com/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+</iframe>
+<p><br></p>
+</section>
+<section id="considerações-finais-1" class="level3">
+<h3 class="anchored" data-anchor-id="considerações-finais-1">Considerações finais</h3>
+<p>E assim fechamos mais uma xícara bem servida do Café com R. Meu objetivo com esta edição foi justamente trazer mais clareza para um tema que costuma gerar insegurança e interpretações apressadas. Se o texto de hoje ajudou você a enxergar o valor p com mais calma, intenção e profundidade, missão cumprida. Continue explorando, questionando e fortalecendo seu repertório estatístico é esse movimento contínuo que transforma nossa prática. Obrigada por estar aqui mais uma vez, por caminhar comigo e por fazer parte dessa comunidade que cresce aprendendo junto. Nos vemos na próxima edição.</p>
+</section>
+<section id="assine-o-café-com-r" class="level3">
+<h3 class="anchored" data-anchor-id="assine-o-café-com-r">☕ Assine o Café com R</h3>
+<blockquote class="blockquote">
+<p>Que cada <strong>gole</strong> desperte uma nova ideia.</p>
+<p>Que cada <strong>script</strong> abra uma nova conversa.</p>
+<p>Que o <strong>Café com R</strong>, se torne um ponto de encontro nosso!</p>
+</blockquote>
+<iframe src="https://forms.gle/Q5SKuSK1ViTL6FAWA" width="100%" height="550" frameborder="0" marginheight="0" marginwidth="0" style="
+    border:3px solid #224573;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(34,69,115,0.3);
+  ">
+</iframe>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniferlopes\.quarto\.pub\/portifolio");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2025 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

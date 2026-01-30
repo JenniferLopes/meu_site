@@ -1,0 +1,250 @@
+---
+title: "Café da Semana☕ "
+subtitle: "Desmistificando o valor P e outras recomendações do universo R e da estatística"
+author: "Jennifer Luz Lopes"
+date: "2025-11-25"
+categories: [Estatística]
+image: ../imagens/cafe3.png
+image-alt: ""
+description: "Desmistificando o valor P e outras recomendações do universo R e da estatística"
+css: estilo.css
+---
+
+## Esta é a terceira edição do **Café com R**
+
+:::: grid
+::: g-col-6
+Seja bem-vinda(o)!
+
+**`Aqui é uma pausa para falar de dados.`**
+
+Toda semana vamos nos encontrar por aqui para conversar sobre ciência de dados, estatística e muito mais de um jeito leve e prático.
+
+Toda semana, uma dose de código, reflexão e boas ideias com R, um café de aprendizagem por vez.
+:::
+::::
+
+<br>
+
+## Sobre a Newsletter de hoje
+
+-   Escrevi esta edição com carinho porque o tema merece calma e clareza. Hoje vamos **`da semente à xícara`** para falar sobre um assunto que muita gente usa, ***`o valor p`***. Quis trazer uma explicação honesta do que ele significa, por que tantas interpretações saem do trilho e quais práticas modernas ajudam a substituir aquele velho hábito do “*p* \< 0.05 e pronto”. A ideia é deixar você mais seguro ao interpretar resultados e mais confiante nas decisões que toma a partir deles.
+
+-   Na **`Dose da Semana`**, selecionei alguns pacotes do R que realmente fazem diferença no dia a dia de quem modela, testa hipóteses e precisa extrair evidências com consistência. É aquele conjunto de ferramentas que eu mesma uso e que recomendo de olhos fechados.
+
+-   E, no quadro **`Para Acompanhar o Café`**, escolhi três livros que conversam diretamente com o tema de hoje. São leituras que ajudam a ampliar a visão sobre inferência, modelos e interpretação de resultados. Separei com cuidado para quem quiser seguir além do básico, no seu próprio ritmo.
+
+> Ótima leitura!
+>
+> Ahhh pega seu café aí!
+
+<br>
+
+## Da semente à xícara
+
+**Antes de iniciar, você já passou por isso? Reflita durante a leitura!**
+
+![**Eu já, kkkk e confesso que sempre que estudo, aprendo algo novo!**](images/clipboard-4104204437.png){fig-align="center" width="284"}
+
+### A importância do questionamento
+
+![Wasserstein, R. L.; Lazar, N. A. (2016). The ASA Statement on p-Values: Context, Process, and Purpose. **The American Statistician,** 70(2), 129–133.](/cafecomr/imagens_gerais/valorp1.JPG){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" fig-align="center"}
+
+O valor *p* é um dos conceitos mais usados e, ao mesmo tempo, mais mal compreendidos na estatística inferencial. A comunidade estatística vem alertando há anos que interpretações inadequadas desse número têm levado a conclusões distorcidas em múltiplos campos (Wasserstein, Schirm; Lazar, 2019; Amrhein, Greenland; McShane, 2019). Entender o que o valor *p* mede e o que ele não mede é fundamental para qualquer análise confiável.
+
+#### Sobre a **ASA**: **American Statistical Association** ou **Associação Americana de Estatística**.
+
+É a maior e mais antiga organização profissional de estatísticos do mundo, fundada em **1839**. A ASA reúne pesquisadoras(es), cientistas de dados, estatísticos aplicados, acadêmicos e profissionais de diversas áreas que usam ou desenvolvem métodos estatísticos.
+
+### O que o valor *p* realmente significa
+
+::: {.callout-warning style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;"}
+O valor *p* é a **probabilidade de observar um resultado tão extremo quanto o obtido, assumindo que a hipótese nula é verdadeira**.
+
+Ele descreve o grau de **compatibilidade entre os dados e um modelo teórico específico**, conceito reforçado pela própria ASA em seus posicionamentos oficiais (Wasserstein;Lazar, 2016).
+:::
+
+### Ele não diz:
+
+-   a probabilidade de a hipótese nula ser verdadeira
+
+-   a probabilidade de a hipótese alternativa ser verdadeira
+
+-   a magnitude do efeito
+
+-   a importância prática de uma diferença
+
+-   a força causal de um fenômeno
+
+::: {.callout-note style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;"}
+> O valor p responde apenas a uma pergunta: *quão surpreendentes são os dados sob a hipótese nula?*
+:::
+
+### A distinção é
+
+-   o valor *p* calcula **P(Dados \| H0)**
+
+-   mas muitos interpretam como **P(H0 \| Dados)**, o que é incorreto
+
+> A distinção entre essas duas probabilidades é fundamental e, ao mesmo tempo, a origem de grande parte das interpretações equivocadas sobre o valor *p*.
+>
+> Quando calculamos um valor *p*, estamos medindo **P(Dados \| H0)**, ou seja, a probabilidade de observarmos resultados tão extremos quanto os obtidos **assumindo que a hipótese nula é verdadeira**.
+>
+> Isso não tem relação direta com **P(H0 \| Dados)**, que seria a probabilidade de a hipótese nula ser verdadeira **dado o que observamos**.
+
+::: {.callout-note style="border-left:6px solid #224573; background-color:#F7F2EE; box-shadow:0 2px 6px rgba(34,69,115,0.15); border-radius:10px; padding:1.2em 1.5em;"}
+A confusão entre o valor *p* e a probabilidade da hipótese nula é chamada de **falácia da probabilidade inversa** (Greenland et al., 2016).
+:::
+
+### Os mitos mais comuns e por que eles precisam ser abandonados
+
+| Mito | Realidade |
+|----|----|
+| O valor *p* diz a probabilidade de *H0* ser verdadeira | O p-valor é condicionado à hipótese nula. Ele não estima a probabilidade da hipótese. |
+| *p* \< 0.05 indica efeito grande | Significância estatística não tem relação direta com magnitude. |
+| *p* \< 0.05 confirma a hipótese alternativa | Apenas indica baixa compatibilidade entre os dados e *H0*. Não “prova” *H1*. |
+| *p* \> 0.05 significa ausência de efeito | Um *p* alto indica falta de evidência para rejeitar *H0*, não que *H0* é verdadeira. |
+| O p-valor é igual ao erro tipo I | O erro tipo I é um parâmetro pré-definido. O p-valor é uma estatística pós-experimento. |
+| O p-valor sozinho encerra a análise | Inferência confiável exige considerar tamanho de efeito, intervalos de confiança e plausibilidade teórica. |
+
+### O impacto do tamanho da amostra
+
+**O valor *p* é altamente sensível ao tamanho da amostra:**
+
+-   amostras grandes tendem a produzir valores p pequenos mesmo quando a diferença é mínima
+
+-   amostras pequenas podem gerar valores *p* altos mesmo quando há diferença real
+
+-   Isso significa que a interpretação do valor *p* nunca deve ser dissociada do desenho amostral.
+
+### Tamanho de efeito e intervalos de confiança
+
+**O valor *p* não informa magnitude, precisão ou importância prática. Por isso, ele sempre deve ser acompanhado por:**
+
+1.  **Tamanho de efeito**
+
+-   Quantifica a magnitude da diferença ou da associação. É a medida que realmente comunica quanto um fenômeno é relevante.
+
+2.  **Intervalos de confiança**
+
+-   Mostram a faixa de valores plausíveis para o efeito. Um intervalo estreito indica maior precisão. Um intervalo amplo indica incerteza elevada.
+
+3.  **Poder estatístico**
+
+-   Ajuda a entender a capacidade do estudo de detectar diferenças reais. Baixo poder aumenta o risco de resultados inconclusivos.
+
+### Por que a dicotomia significativo / não significativo é inadequada
+
+**A própria ASA (Wasserstein;Lazar, 2016) e vários autores influentes (Amrhein, Greenland;McShane, 2019) recomendam abandonar a interpretação rígida baseada em p \< 0.05. Entre os motivos:**
+
+-   decisões baseadas em um único número ignoram magnitude, precisão e contexto
+
+-   valores muito próximos do limiar podem ser praticamente indistinguíveis
+
+-   incentiva a falsa impressão de preto-e-branco em um processo que é, por natureza, contínuo
+
+### A orientação combinada para uma melhor avaliação:
+
+-   valor *p* exato
+
+-   tamanho de efeito
+
+-   intervalo de confiança
+
+-   teoria e plausibilidade
+
+-   poder e desenho amostral
+
+### Considerações finais
+
+O valor *p* continua sendo essencial dentro da estatística inferencial, mas seu papel precisa ser entendido com maturidade.
+
+-   Ele não decide experimentos, não define relevância e não substitui o julgamento técnico embasado.
+
+-   A interpretação recomendada nos últimos anos exige **combinar** múltiplas peças de informação, olhar para a magnitude dos efeitos, considerar a precisão das estimativas e avaliar a plausibilidade teórica do fenômeno estudado.
+
+-   **Abandonar o uso ritualístico de p \< 0.05 é um passo importante para fortalecer a qualidade das análises e aproximar nossas conclusões daquilo que realmente importa, compreender os dados com profundidade e tomar decisões sustentadas por evidência, não por um número isolado.**
+
+### Referências com links
+
+| N° | Referência | Link | Descrição |
+|----|----|----|----|
+| **1** | **Wasserstein, Schirm ;Lazar (2019)**. *Moving to a World Beyond “p \< 0.05”*. The American Statistician. | <https://doi.org/10.1080/00031305.2019.1583913> | Artigo mais influente da última década sobre p-valor. Marco da ASA pedindo o abandono do uso dicotômico de significância. |
+| **2** | **Amrhein, Greenland ;McShane (2019)**. *Scientists rise up against statistical significance*. Nature. | <https://doi.org/10.1038/d41586-019-00857-9> | Publicação de fortíssimo impacto. Nature explicitamente crítica à significância arbitrária. Mudou práticas editoriais. |
+| **3** | **Greenland et al. (2016)**. *Statistical tests, P values, confidence intervals, and power: guide to misinterpretations*. The American Statistician. | <https://doi.org/10.1080/00031305.2016.1154108> |  |
+| **4** | **Wasserstein ;Lazar (2016)**. *The ASA's Statement on p-Values*. The American Statistician. | <https://doi.org/10.1080/00031305.2016.1154108> | Primeira declaração formal da ASA. Documento histórico que redefiniu o debate global. |
+| **5** | **Cumming (2014)**. *The New Statistics: estimation, open science, beyond*. Psychological Science. | <https://doi.org/10.1177/0956797613504966> | Introduz a perspectiva da “Nova Estatística”: foco em tamanho de efeito, IC e meta-analítica. Influenciou áreas experimentais. |
+| **6** | **Nakagawa ;Cuthill (2007)**. *Effect size, confidence interval and power in biological research*. Biological Reviews. | <https://doi.org/10.1111/j.1469-185X.2007.00027.x> | Texto clássico sobre tamanho de efeito e poder. Muito citado em biológicas, psicometria e estatística aplicada. |
+| **7** | **Hurlbert ;Lombardi (2009)**. *Final collapse… rise of the neoFisherian*. Annales Zoologici Fennici. | <https://doi.org/10.5735/086.046.0501> | Crítica filosófica profunda de Neyman–Pearson. Influente em discussões epistemológicas. |
+| **8** | **Perezgonzalez (2015)**. *Fisher, Neyman-Pearson or NHST? Tutorial*. Frontiers in Psychology. | <https://www.frontiersin.org/articles/10.3389/fpsyg.2015.00223/full> | Excelente tutorial comparando abordagens históricas. Didático, ótimo para formação conceitual sólida. |
+
+## Dose da semana
+
+Nesta **`Dose da Semana`**, selecionei pacotes essenciais para quem trabalha com testes de hipóteses, inferência estatística e modelagem moderna em R. São pacotes que facilitam desde análises clássicas até ajustes mais complexos, permitindo extrair valores *p*, estimar tamanhos de efeito, avaliar pressupostos e interpretar modelos com mais segurança. É aquela curadoria prática e objetiva para você fortalecer seu fluxo de análise sem complicação.
+
+**Espero que vocês gostem!**
+
+| Nº | Pacote | Para que serve | Link |
+|----|----|----|----|
+| **1** | **stats** (base R) | Testes clássicos, t-test, ANOVA, chi-square, correlações e regressão linear. | <https://stat.ethz.ch/R-manual/R-devel/library/stats/html/00Index.html> |
+| **2** | **car** | ANOVA avançada, testes tipo II/III, contrastes e diagnósticos. | <https://cran.r-project.org/package=car> |
+| **3** | **lmtest** | Testes para modelos lineares, heterocedasticidade, autocorrelação e especificação. | <https://cran.r-project.org/package=lmtest> |
+| **4** | **multcomp** | Comparações múltiplas, contrastes, Tukey, Dunnett, etc. | <https://cran.r-project.org/package=multcomp> |
+| **5** | **emmeans** | Médias marginais estimadas, contrastes e comparações múltiplas modernas. | <https://cran.r-project.org/package=emmeans> |
+| **6** | **parameters** | Extrai estatísticas, valores *p*, intervalos de confiança, tamanhos de efeito e medidas de modelo. | <https://cran.r-project.org/package=parameters> |
+| **7** | **performance** | Diagnóstico de modelos, qualidade de ajuste, checagem de pressupostos e métricas globais. | <https://cran.r-project.org/package=performance> |
+| **8** | **lme4** | Modelagem estatística moderna, modelos lineares mistos por máxima verossimilhança/REML. | <https://cran.r-project.org/package=lme4> |
+
+## Para Acompanhar o Café
+
+Separei três livros que traduzem exatamente o tipo de estatística que eu acredito e que sempre trago aqui na Café com R, acessível. São materiais que ajudam a enxergar a inferência por outros ângulos, indo além do *p-valor* e mostrando como pensar em evidência, variabilidade, modelos e tomada de decisão com mais segurança. Cada um deles conversa diretamente com o assunto desta edição e complementa o que discutimos sobre significância, tamanho de efeito e leitura crítica de resultados. Deixo aqui como sugestão para você explorar no seu ritmo, com aquela curiosidade que sempre move a nossa comunidade.
+
+> Lembrem-se temos a lista de artigos já citados para complementar.
+
+<br>
+
+### 1. Statistical Inference via Data Science: *A ModernDive into R and the Tidyverse*
+
+<iframe src="https://moderndive.com/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+
+</iframe>
+
+<br>
+
+### 2. Modern Statistics with R: *From wrangling and exploring data to inference and predictive modelling*
+
+<iframe src="https://modernstatisticswithr.com/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+
+</iframe>
+
+<br>
+
+### 3. **An Introduction to Statistical Learning**
+
+<iframe src="https://www.statlearning.com/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+
+</iframe>
+
+<br>
+
+### Considerações finais
+
+E assim fechamos mais uma xícara bem servida do Café com R. Meu objetivo com esta edição foi justamente trazer mais clareza para um tema que costuma gerar insegurança e interpretações apressadas. Se o texto de hoje ajudou você a enxergar o valor p com mais calma, intenção e profundidade, missão cumprida. Continue explorando, questionando e fortalecendo seu repertório estatístico é esse movimento contínuo que transforma nossa prática. Obrigada por estar aqui mais uma vez, por caminhar comigo e por fazer parte dessa comunidade que cresce aprendendo junto. Nos vemos na próxima edição.
+
+### ☕ Assine o Café com R
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+```{=html}
+<iframe src="https://forms.gle/Q5SKuSK1ViTL6FAWA" width="100%" height="550" frameborder="0" marginheight="0" marginwidth="0" style="
+    border:3px solid #224573;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(34,69,115,0.3);
+  ">
+```
+
+</iframe>

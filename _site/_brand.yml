@@ -1,0 +1,41 @@
+# _brand.yml — Identidade Visual Jennifer Luz Lopes / Café com R (versão compatível)
+
+meta:
+  name: "Café com R | Comunidade de Estatística"
+  link:
+    home: https://jenniferlopes.quarto.pub/portifolio/
+
+logo:
+  images:
+    icon:
+      path: imagens/cafe1.png
+      alt: "Logo Café com R"
+  small: imagens/cafe1.png
+
+color:
+  palette:
+    azul-comunidade: "#224573"
+    marrom-cafe: "#6B4F4F"
+    bege-suave: "#F7F5F2"
+    cinza-texto: "#555555"
+    destaque: "#C2956B"
+
+  background: "#FFFFFF"
+  foreground: "#333333"
+
+typography:
+  fonts:
+    - family: Poppins
+      source: google
+      weight: [400, 600, 700]
+    - family: Open Sans
+      source: google
+      weight: [400, 600]
+
+  base:
+    family: "Open Sans"
+    weight: 400
+
+  headings:
+    family: "Poppins"
+    weight: 600

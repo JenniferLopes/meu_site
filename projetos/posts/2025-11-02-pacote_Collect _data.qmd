@@ -1,0 +1,54 @@
+---
+title: "Desenvolvimento de Pacote"
+description: "collectHub"
+author: "Jennifer Luz Lopes"
+date: 2025-10-10
+categories: [Desenvolvimento, Pacote]
+
+# ✅ thumbnail do post (usado na listagem)
+image: ../imagens/pacote.png
+image-alt: ""
+---
+
+# Pacote collectHub
+
+## Olá, pessoal!
+
+Quem trabalha com ciência de dados sabe bem aquele momento em que a gente quer apenas *analisar*, mas se vê preso tentando entender *como coletar os dados*.\
+API daqui, token dali, endpoint que muda, autenticação que falha e no fim, mais tempo é gasto configurando do que interpretando.
+
+> Foi nesse cenário que nasceu a ideia do **collectHub**.
+
+Ultimamente tenho explorado mais dados públicos e repositórios abertos, especialmente do GitHub. O problema é que, quanto mais eu usava APIs, mais percebia o quanto o processo podia ser confuso para quem está começando: documentações extensas, parâmetros obscuros, kskskskks e aquele medo de errar o token e travar tudo.
+
+**Eu queria simplificar isso.**
+
+O **`collectHub`** começou como um pequeno script para automatizar a coleta de arquivos diretamente de repositórios GitHub, sem precisar passar por todas as etapas manuais. Aos poucos, esse script foi ganhando corpo virou função, e vai virar um pacote.
+
+::: callout-tip
+## Ideia simples
+
+O pacote vai pegar qualquer arquivo hospedado em um repositório GitHub e trazê-lo para o R em uma única linha de código.
+:::
+
+-   Você informa o nome do repositório e o caminho do arquivo, e o **`collectHub`** faz o resto conecta-se via API, autentica (se necessário), baixa o conteúdo e já o entrega limpo, pronto para análise.
+
+**Mas o collectHub é mais do que isso.**
+
+-   Ele representa uma filosofia: a de tornar o acesso aos dados mais fluido, transparente e reprodutível.
+
+-   Porque ciência boa é ciência acessível e se os dados estão abertos, eles precisam estar também *ao nosso alcance*.
+
+-   Ainda estou desenvolvendo as funções e testando os fluxos. Não é uma tarefa simples, envolve lidar com tokens, requisições, formatações e erros de rede.
+
+-   Mas tem sido uma experiência incrível. A cada teste bem-sucedido, vejo o pacote se aproximando do que imaginei: um elo entre quem pesquisa e as informações que impulsionam descobertas.
+
+> Logo, o collectHub vai integrar uma série de recursos adicionais leitura direta de `.csv`, `.xlsx`, `.json`, verificação automática de estrutura e até logs para rastrear a coleta. Mas tenhamos calma!
+
+Essa é mais uma etapa da minha jornada: unir estatística, programação e reprodutibilidade de forma prática e acessível.
+
+Obrigada por fazer parte desta jornada.
+
+**EM BREVE, MAIS ATUALIZAÇÕES .......**
+
+Um grande abraço,

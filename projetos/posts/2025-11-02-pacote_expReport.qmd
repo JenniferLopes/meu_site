@@ -1,0 +1,45 @@
+---
+title: "Desenvolvimento de Pacote"
+description: "expReport"
+author: "Jennifer Luz Lopes"
+date: 2025-10-10
+categories: [Desenvolvimento, Pacote, Estatística Experimental]
+
+# ✅ thumbnail do post (usado na listagem)
+image: ../imagens/pacote.png
+image-alt: ""
+---
+
+# Pacote expReport
+
+Olá, pessoal!
+
+Se você já passou horas, talvez dias, debruçado sobre os dados de um experimento, sabe exatamente do que estou falando. Aquele ciclo interminável: limpar os dados, checar se o delineamento está correto, rodar a análise de variância, verificar os pressupostos, fazer os testes de médias, gerar gráficos... e quando você finalmente termina, percebe que precisa mudar um pequeno detalhe e recomeçar tudo.
+
+Foi exatamente nesse ciclo que a semente do **`expReport`** foi plantada.
+
+Sou um apaixonada por dados e pela ciência que eles nos permitem descobrir, não acho fácil, tenho minhas dificuldades. Com isso, ao longo da minha jornada, percebi que uma quantidade enorme do nosso tempo e energia mental não era gasta na interpretação dos resultados, mas sim no processo mecânico e repetitivo da análise.
+
+Eu me perguntava: "E se pudéssemos automatizar isso? E se existisse uma forma de ir dos dados brutos a um relatório completo e profissional com... uma única linha de código?"
+
+Essa pergunta se tornou uma missão pessoal. Comecei a rascunhar o que seria a ferramenta dos meus sonhos.
+
+-   Ela precisaria ser **inteligente**, limpando nomes de colunas bagunçados automaticamente, porque todos nós já perdemos tempo com um erro de digitação.
+
+-   Ela precisaria ser uma **guardiã**, diagnosticando a estrutura do experimento logo no início, me alertando sobre dados faltantes ou um delineamento desbalanceado.
+
+-   Ela precisaria ser **visual**, me mostrando o croqui do meu experimento no campo, para que eu pudesse ver o que os números sozinhos não mostram.
+
+-   Ela precisaria ser **educacional**, apresentando não apenas o resultado, mas também o modelo matemático por trás da análise, de forma clara e bonita.
+
+-   E, acima de tudo, ela precisaria ser **flexível**, capaz de lidar com delineamentos fatoriais, blocos incompletos e os mais variados testes de comparação de médias que usamos no dia a dia.
+
+Hoje, o **`expReport`** é a ferramenta que eu gostaria de ter tido quando comecei. Ele encapsula horas de trabalho em uma única função, **`criar_relatorio_exp()`**, liberando nosso tempo para o que realmente importa: pensar, interpretar, questionar e descobrir.
+
+> Calma, estou desenvolvendo as funções, não é uma tarefa simples, mas está sendo incrível. E vou mostrando tudo para vocês.
+
+Obrigada por fazer parte desta jornada.
+
+**EM BREVE, MAIS ATUALIZAÇÕES .......**
+
+Um grande abraço,

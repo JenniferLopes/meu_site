@@ -1,0 +1,257 @@
+---
+title: "Curso de Introdução a Programação com R para Ciência de Dados"
+description: "Curso construído para Comunidade de Estatística Thiago Marques."
+author: "Jennifer Luz Lopes"
+date: 2025-10-28
+categories: [cursos]
+image: ../imagens/capa_comunidade.png
+image-alt: "Gráfico mostrando relatório automatizado"
+---
+
+## Conheça o Curso - Grade
+
+## Módulo 1: Fundamentos de R e Ambiente de Desenvolvimento
+
+Neste módulo você aprenderá do zero a dominar o ambiente R e RStudio, compreendendo desde o contexto histórico e instalação até a criação de scripts, manipulação de estruturas de dados e instalação de pacotes.\
+
+|  |  |  |
+|----|----|----|
+| **Tema** | **Tópicos Principais** | **Objetivo de Aprendizagem** |
+| **1. Introdução ao R** | Histórico da linguagem S e surgimento do R • Desenvolvimento pela comunidade (R Core Team) • Filosofia de programação interativa • Licença GNU e software livre | Compreender a origem, a filosofia e o contexto histórico do R. |
+| **2. Aplicações da linguagem R** | Estatística, Ciência de Dados, Bioinformática, Finanças, Ciências Sociais, Geociências e Agricultura • Visualização (ggplot2, plotly, shiny) • Relatórios (Quarto/RMarkdown) | Identificar as áreas de aplicação e o potencial de uso do R em diferentes contextos. |
+| **3. Vantagens e ecossistema do R** | Código aberto e comunidade ativa • Extensibilidade via pacotes (CRAN, GitHub) • Integração com Python, C++, DBI e APIs • Reprodutibilidade e portabilidade | Reconhecer os diferenciais técnicos e colaborativos da linguagem. |
+| **4. Instalação e configuração** | Instalação do R no Windows/Linux/macOS via CRAN • Instalação do RStudio (Posit) – IDE principal • Conceito de CRAN e repositórios | Instalar e configurar corretamente o R e o RStudio no ambiente local. |
+| **5. Interface do RStudio** | Painéis: Editor, Console, Environment e Output • Personalização de layout • Navegação entre scripts e objetos | Navegar de forma produtiva na interface do RStudio. |
+| **6. Criando scripts no R** | Diferença entre arquivos .R e .qmd • Criação e salvamento de scripts • Boas práticas de nomenclatura • Comentários com \# | Criar, salvar e documentar scripts de forma organizada e reprodutível. |
+| **7. Execução de comandos básicos** | Operações aritméticas (+ − \* / \^ %% %/%) • Funções sqrt, abs, log, exp • Uso do console interativo | Dominar a execução de expressões e funções simples no R. |
+| **8. Objetos e variáveis** | Atribuição com \<- • Regras de nomeação • Boas práticas e exemplos • Evitar sobrescrita de funções | Criar e manipular variáveis seguindo convenções de clareza e segurança. |
+| **9. Tipos de dados (classes atômicas)** | character • numeric • integer • complex • logical | Identificar e aplicar corretamente os tipos de dados básicos do R. |
+| **10. Operadores no R** | Aritméticos • Relacionais • Lógicos (&, | , !, &&, |
+| **11. Estruturas de dados** | Vetores • Matrizes • Listas • Data Frames – definição e criação | Compreender e manipular as estruturas de dados fundamentais. |
+| **12. Vetores em R** | Criação (c) • Tipos (numéricos, caracteres, lógicos) • Coerção • Indexação • Sequências (seq, sample) • Funções (length, sort, rev, order, cumsum, is.na, paste) | Construir e explorar vetores, dominando indexação e funções associadas. |
+| **13. Matrizes** | Criação (matrix, byrow) • Conversão (dim) • rbind/cbind • Indexação \[linha, coluna\] | Criar e manipular matrizes bidimensionais para cálculos estruturados. |
+| **14. Listas** | Criação (list) • Acesso \[\[ \]\] / \$ • Sublistas \[ \] • Combinação de tipos | Entender a flexibilidade das listas e como armazenar múltiplos tipos de dados. |
+| **15. Data Frames** | Criação (data.frame) • Inspeção (str, summary, head, dim, names) • Indexação • Adição e remoção de linhas/colunas • Filtros condicionais | Manipular tabelas de dados estruturadas com diferentes tipos de variáveis. |
+| **16. Pacotes e gerenciamento** | Conceito de pacote • Repositórios (CRAN, GitHub, .zip) • Instalação (install.packages, devtools) • Carregamento (library) • Pacman (p_load) • Listagem (search) • Citação (citation) • Ajuda (help) | Instalar, carregar e gerenciar pacotes com eficiência e reprodutibilidade. |
+
+### Check list do aprendizado
+
+-   [ ] Instalar e configurar R e RStudio corretamente.
+-   [ ] Criar, salvar e executar scripts reprodutíveis.
+-   [ ] Manipular variáveis, vetores, matrizes, listas e data frames.
+-   [ ] Executar cálculos e operações lógicas básicas.
+-   [ ] Gerenciar pacotes e dependências.
+-   [ ] Entender a base da filosofia de reprodutibilidade no R.
+
+## Módulo 2: Controle de Fluxo e Estruturas de Dados
+
+Neste módulo, você aprenderá a controlar o fluxo lógico e estruturar análises automatizadas em R. A transição é clara: sai da manipulação básica do Módulo 1 e entra na programação funcional e reprodutível. O foco é transformar código estático em código inteligente, reutilizável e orientado a decisão, base para automação, pipelines e dashboards.
+
+| **Tema** | **Tópicos Principais** | **Objetivo de Aprendizagem** |
+|----|----|----|
+| **1. Estruturas condicionais** | `if`, `else`, `else if`, `ifelse()` • Sintaxe, aninhamento e vetorização • Boas práticas de legibilidade • Exercícios resolvidos | Desenvolver scripts que tomam decisões automáticas com base em condições lógicas. |
+| **2. Vetorização com `ifelse()`** | Aplicação em vetores e colunas de data frames • Substituição de valores ausentes (NA) • Condições múltiplas (ifelse aninhado) | Aprender a aplicar lógicas condicionais sobre conjuntos de dados inteiros, sem loops. |
+| **3. Laços de repetição** | Estruturas `for`, `while`, `repeat` • Condições de parada • Uso de `break` e `next` • Exercícios de automação | Automatizar repetições de comandos e compreender os três tipos principais de loops. |
+| **4. Funções básicas** | Revisão das funções integradas (`mean`, `sum`, `sd`, `unique`, `table`) | Dominar as funções essenciais da base R para análise e resumo de dados. |
+| **5. Criação de funções** | Sintaxe (`function()`) • Argumentos, `return()` e modularização • Funções personalizadas e reutilizáveis | Escrever funções próprias para estruturar e automatizar tarefas de análise. |
+| **6. Snippets no RStudio** | O que são snippets • Como criar e editar snippets personalizados (`usethis::edit_rstudio_snippets()`) • Automatização de blocos de código | Acelerar a codificação e padronizar funções próprias dentro do RStudio. |
+| **7. Família Apply** | `apply`, `lapply`, `sapply`, `tapply`, `mapply` • Diferenças, entradas e saídas • Aplicações em vetores, listas e data frames | Substituir loops por operações vetorizadas mais rápidas e elegantes. |
+| **8. `apply()`** | Aplicação em linhas e colunas de matrizes/data frames • Cálculos agregados (soma, média, desvio) | Praticar o uso de `apply()` para resumir dados de forma estruturada. |
+| **9. `lapply()` e `sapply()`** | Operações sobre listas • Retorno em lista vs vetor simplificado | Automatizar cálculos sobre listas e data frames com retorno flexível. |
+| **10. `tapply()`** | Aplicação de funções por grupo (tratamentos, categorias) | Calcular médias, variâncias e resumos condicionados a fatores. |
+| **11. `mapply()`** | Iterações paralelas sobre múltiplos vetores • Funções multivariadas | Aplicar funções simultaneamente sobre múltiplos argumentos vetoriais. |
+| **12. Exercícios práticos – Apply Family** | Criação de matriz 3×4, listas, data frames e matrizes 3×3 • Uso das funções `apply`, `sapply`, `tapply`, `mapply` | Consolidar a compreensão da família apply por meio de desafios progressivos. |
+| **13. Mini-projeto 1 – Pipeline com `mtcars`** | Engenharia de variáveis (for, ifelse, mapply) • Funções personalizadas e estatísticas descritivas • Aplicação de `tapply` e padronização (z-score) • Análise por grupos (cilindros, peso) | Integrar controle de fluxo, funções e família apply em uma análise realista de dados. |
+| **14. Interpretação e storytelling analítico** | Responder perguntas de negócio com R • Relacionar peso, potência e eficiência • Uso de código reprodutível e modular | Traduzir resultados analíticos em insights de negócio claros e interpretáveis. |
+
+### **Check list do aprendizado**
+
+-   [ ] Dominar estruturas condicionais e loops.
+
+-   [ ] Criar funções e modularizar código.
+
+-   [ ] Automatizar rotinas com `apply`, `lapply`, `sapply`, `tapply`, `mapply`.
+
+-   [ ] Usar snippets para padronização de código.
+
+-   [ ] Integrar múltiplas técnicas em um mini-projeto prático (mtcars).
+
+-   [ ] Pensar como analista: transformar perguntas de negócio em lógica computacional.
+
+## Módulo 3: Estruturando Projetos, Scripts e Fluxos de Trabalho em R
+
+Este módulo consolida as práticas de **organização, automação e versionamento**, o tripé de qualquer projeto profissional em R. Você aprenderá a criar pipelines completos, reprodutíveis e colaborativos, utilizando as melhores práticas de engenharia de software aplicadas à ciência de dados.
+
+| **Tema** | **Tópicos Principais** | **Objetivo de Aprendizagem** |
+|----|----|----|
+| **1. Introdução à organização profissional em R** | Conceito de projeto no RStudio • Diferença entre amadorismo e reprodutibilidade • Importância da estrutura de diretórios | Entender o impacto da organização na produtividade e reprodutibilidade das análises. |
+| **2. Por que evitar `setwd()` e caminhos absolutos** | Problemas de portabilidade, manutenção e escalabilidade • Caminhos relativos e boas práticas | Compreender por que `setwd()` é uma armadilha e adotar caminhos relativos corretamente. |
+| **3. Criando projetos no RStudio** | Criação manual e automática (`File > New Project`) • Estrutura `.Rproj` • Opção “Create a Git repository” | Criar e gerenciar projetos no RStudio de forma profissional e reprodutível. |
+| **4. Estrutura mínima recomendada de pastas** | `dados/`, `scripts/`, `output/`, `figuras/`, `docs/`, `funcoes/`, `README.md` | Planejar e aplicar uma arquitetura de diretórios organizada e padronizada. |
+| **5. Automação da estrutura de projetos com R** | Pacote `{fs}` e função `dir_create()` • Criação automática de pastas e arquivos | Automatizar a criação da estrutura mínima de projetos via script em R. |
+| **6. Arquivo `README.md` e boas práticas de documentação** | Estrutura do README • Objetivo, dados, execução e dependências | Criar documentação clara e profissional para qualquer projeto. |
+| **7. Verificação e inspeção da estrutura criada** | Funções `here::here()` e `fs::dir_tree()` | Validar caminhos relativos e visualizar a hierarquia de diretórios. |
+| **8. Criação e padronização de scripts** | Arquivos numerados (`01-importacao.R`, `02-tratamento.R`, `03-analise.R`) • Cabeçalho automatizado | Garantir modularização, clareza e sequência lógica no pipeline de scripts. |
+| **9. Simulação e exportação de dados e gráficos** | Geração de `data.frame` e exportação `.csv` com `write.csv()` • Salvando gráficos com `png()` e `dev.off()` | Simular dados, salvar resultados e garantir armazenamento automatizado em pastas corretas. |
+| **10. Importação de dados com `{readr}` e `{readxl}`** | Funções `read_csv()`, `read_csv2()`, `read_delim()`, `read_xlsx()` • Argumentos (`col_names`, `col_types`, `locale`, `skip`, `na`) | Ler e tratar corretamente dados de diferentes formatos e fontes (local e online). |
+| **11. Introdução ao versionamento com Git e GitHub** | Conceitos de repositório, commit, push, pull, staging e branch | Compreender os fundamentos do controle de versão e sua importância na ciência de dados. |
+| **12. Instalação e configuração do Git e GitHub** | Instalação do Git • Criação de conta GitHub • Configuração com `{usethis}` (`use_git_config()`, `create_github_token()`) | Integrar o RStudio com Git e GitHub para rastrear e versionar projetos. |
+| **13. Métodos de integração com GitHub** | Criar repositório online • Clonar projeto existente • Criar repositório direto do RStudio | Sincronizar projetos locais com repositórios remotos de forma segura e automatizada. |
+| **14. Interface Git no RStudio** | Aba Git: status de arquivos (A, M, D, R, ?) • Stage, Commit, Push e Pull | Executar operações de versionamento direto no RStudio, sem precisar do terminal. |
+| **15. Conceitos avançados de versionamento** | Branches, merge, histórico de commits • Colaboração e rastreabilidade | Trabalhar de forma colaborativa e segura com múltiplas versões de um mesmo projeto. |
+| **16. Projeto prático - Pipeline Automatizado em R** | Criação de projeto completo e automatizado • Estrutura de pastas com `{fs}` e `{here}` • Dados simulados, gráficos, README e integração com GitHub | Construir um pipeline completo e reprodutível, do zero até o versionamento remoto. |
+| **`17- Aula extra - GitHub desktop`** | Como realizar o login, fazer o download e usar o GitHub para Desktop | Aprender a utilizar essa ferramenta de diferentes maneiras para vercionamento de código. |
+
+### Check list do aprendizado
+
+-   [ ] Estruturar projetos profissionais com pastas, scripts e documentação padronizados.
+
+-   [ ] Usar `{fs}` e `{here}` para automação e caminhos relativos.
+
+-   [ ] Importar dados corretamente com `{readr}` e `{readxl}`.
+
+-   [ ] Versionar e colaborar usando Git e GitHub diretamente no RStudio.
+
+-   [ ] Compreender a importância da reprodutibilidade e da rastreabilidade em projetos de dados.
+
+-   [ ] Criar pipelines reutilizáveis, documentados e prontos para publicação.
+
+## Módulo 4: Manipulação Avançada de Arquivos e Automação
+
+Este módulo transforma você em usuário avançado do R, capaz de criar análises completas e automatizadas. Com **`tidyverse`**, você será capaz de dominar manipulação e visualização; com **`{targets}`**, aprende automação e reprodutibilidade, o coração da engenharia de dados em R.
+
+| **Tema** | **Tópicos Principais** | **Objetivo de Aprendizagem** |
+|----|----|----|
+| **1. Introdução e objetivos do módulo** | Revisão dos módulos anteriores • Integração dos pilares: manipulação, visualização e automação • Escalabilidade de análises | Compreender como unir manipulação de dados, visualização e automação num fluxo contínuo. |
+| **2. Pacotes do Tidyverse** | Conceito e filosofia • Pacotes principais (`dplyr`, `tidyr`, `readr`, `stringr`, `lubridate`, `ggplot2`, `purrr`) | Entender a estrutura unificada do tidyverse e sua importância em ciência de dados. |
+| **3. Operador Pipe `%>%`** | Conceito e funcionamento • Encadeamento de funções • Legibilidade e fluidez do código | Usar o operador pipe para criar fluxos de código claros e expressivos. |
+| **4. Manipulação de dados com `dplyr`** | Verbos principais: `filter`, `select`, `arrange`, `mutate`, `summarise`, `group_by` | Dominar as operações centrais do `dplyr` para transformar dados de forma reprodutível. |
+| **5. Casos práticos – base Coffee Quality Institute** | Importação via URL • Renomeação de variáveis • Inspeção (`glimpse`) | Aplicar o aprendizado em um dataset real e compreender sua estrutura. |
+| **6. Funções complementares de manipulação** | `count`, `case_when`, `transmute`, funções auxiliares em `select` | Executar transformações condicionais e sumarizações avançadas. |
+|  |  |  |
+| **7. Estatística descritiva com `{metan}`** | `desc_stat()` • Visualização de estatísticas com `datatable` | Calcular e apresentar estatísticas descritivas completas de forma automatizada. |
+| **8. União e relacionamento de bases (`joins`)** | `left_join`, `right_join`, `inner_join`, `full_join`, `anti_join` • Chaves primárias | Combinar e integrar múltiplas fontes de dados mantendo consistência e rastreabilidade. |
+| **9. Visualização com `ggplot2`** | Gramática dos gráficos • Estrutura `ggplot()` + `aes()` + `geom_` + `theme()` | Compor visualizações estatísticas elegantes e reprodutíveis com `ggplot2`. |
+| **10. Elementos da gramática gráfica** | Aesthetics (`x`, `y`, `color`, `fill`, `alpha`, `shape`, `size`) | Mapear variáveis para atributos visuais e criar representações expressivas. |
+| **11. Geometrias e exemplos práticos** | `geom_point`, `geom_col`, `geom_boxplot`, `geom_histogram`, `geom_density`, `geom_smooth` | Criar diferentes tipos de gráficos e interpretar padrões visuais. |
+| **12. Personalização e temas** | `labs`, `theme_classic`, `theme_bw`, paletas `{viridis}`, `scale_*` | Ajustar legendas, escalas, cores e estilos com consistência visual. |
+| **13. Combinação e exportação de gráficos** | `patchwork` para unir gráficos • `cowplot` para inserir logotipos | Gerar painéis e dashboards gráficos dentro de scripts automatizados. |
+| **14. Gráficos interativos e mapas** | `{plotly}`, `{rnaturalearth}` • Mapas de calor e choropleths | Criar visualizações dinâmicas e geográficas integradas a pipelines. |
+| **15. Gráficos avançados** | `facet_wrap`, `facet_grid`, `stat_summary`, `radarchart` | Aplicar visualizações comparativas e sumarizações visuais complexas. |
+| **16. Pipeline de automação com `{targets}`** | Conceito de alvos (`tar_target`) • Grafo de dependências (DAG) • Execução com `tar_make()` | Automatizar pipelines completos e reprodutíveis de leitura, análise e exportação. |
+| **17. Estrutura `_targets.R` e scripts auxiliares** | Definição dos alvos, dependências e exportações • Visualização do pipeline com `tar_visnetwork()` | Estruturar projetos reprodutíveis integrando código, dados e relatórios. |
+| **18. Integração de relatórios Quarto/RMarkdown ao pipeline** | `quarto::quarto_render()` • Exportação automática de resultados | Automatizar geração de relatórios e documentos a partir do pipeline. |
+
+### Check list do aprendizado
+
+-   [ ] Manipular e transformar dados em escala com `{dplyr}`.
+
+-   [ ] Produzir gráficos estáticos, dinâmicos e geográficos com `{ggplot2}`, `{plotly}` e `{rnaturalearth}`.
+
+-   [ ] Calcular estatísticas descritivas automatizadas.
+
+-   [ ] Unir múltiplas bases com operações relacionais.
+
+-   [ ] Automatizar todo o fluxo analítico com `{targets}`.
+
+-   [ ] Integrar relatórios e visualizações em pipelines reprodutíveis.
+
+-   [ ] Pensar e estruturar projetos de forma profissional, modular e escalável.
+
+## Módulo 5: Integração com Sistemas Externos e APIs
+
+Você aprenderá a dominar a integração do R com bancos de dados, APIs e outras linguagens, consolidando o controle total sobre entrada, processamento e saída de dados.Este módulo representa o passo para autonomia profissional: análise conectada, reprodutível e escalável.
+
+| **Unidade / Seção** | **Tópicos Principais** | **Objetivo de Aprendizagem** |
+|----|----|----|
+| **1. Introdução: Conexão e Integração de Sistemas** | Importância das conexões externas • Conceito de automação entre sistemas • Cenários reais de integração (bancos, APIs, Python) | Compreender como o R se conecta a sistemas externos e o papel dessas integrações na ciência de dados. |
+| **2. Integração com Bancos de Dados via `{DBI}`** | Conceito de banco relacional (PostgreSQL, MySQL, SQL Server) • Interface DBI e drivers (RPostgres, RMariaDB, RSQLite) | Aprender a estabelecer conexões profissionais com bancos relacionais no R. |
+| **3. Fundamentos do `{DBI}`** | Funções principais: `dbConnect()`, `dbDisconnect()`, `dbReadTable()`, `dbGetQuery()`, `dbExecute()` • Transações (`dbBegin`, `dbCommit`, `dbRollback`) | Manipular dados diretamente no banco usando o R, com segurança e autonomia. |
+| **4. Introdução ao `{dbplyr}`** | Tradução automática de `dplyr` para SQL • `tbl()`, `filter()`, `select()`, `summarise()`, `collect()` | Executar consultas SQL complexas usando a gramática tidyverse, sem sair do R. |
+| **5. Conexão Prática – Banco Sakila (MariaDB)** | Autenticação com `RMariaDB` • Listagem de tabelas (`dbListTables`, `dbListFields`) • Leitura e filtros SQL | Praticar a conexão e manipulação real de dados em um banco remoto. |
+| **6. Consultas SQL e dplyr/dbplyr Integrados** | Filtros condicionais (`WHERE`, `AND`, `OR`) • Joins (`inner_join`) • Agrupamentos e sumarizações (`group_by`, `summarise`) | Unir SQL e tidyverse para análises diretas em bases grandes e relacionais. |
+| **7. Exportação e Encerramento da Conexão** | `dbWriteTable()` e `dbDisconnect()` | Gerenciar ciclo completo da conexão: consulta, exportação e fechamento seguro. |
+| **8. Conexão com Bases Públicas – `{basedosdados}`** | Introdução à ONG Base dos Dados • Datalake no BigQuery (Google Cloud) | Acessar dados públicos organizados em um ambiente de nuvem gratuito. |
+| **9. Autenticação e Projeto no Google Cloud** | Criação de projeto • Billing ID • Funções `set_billing_id()` e `get_billing_id()` | Autenticar e gerenciar acesso ao BigQuery de forma gratuita e segura. |
+| **10. Consulta SQL com `read_sql()` e `download()`** | Sintaxe de query SQL • Exemplo com PIB municipal (IBGE) • Join de tabelas públicas | Acessar e combinar bases públicas diretamente do BigQuery via R. |
+| **11. Manipulação e Visualização de Dados Públicos** | `dplyr` para agregações e somatórios • `ggplot2` para séries temporais | Integrar dados do BigQuery em análises e gráficos automatizados. |
+| **12. Introdução às APIs RESTful** | Conceito de API • Estrutura (endpoint, método, query string) • Métodos HTTP (GET, POST, PUT, DELETE) • Códigos de status (200, 404, 500) | Entender o funcionamento das APIs web e seu papel na automação e troca de dados. |
+| **13. Pacote `{httr2}` – Consumo de APIs no R** | Funções principais: `request()`, `req_headers()`, `req_perform()`, `resp_body_json()` | Aprender a consumir APIs modernas e seguras usando o pacote {httr2}. |
+| **14. Exemplo Prático – API do GitHub** | Autenticação via token pessoal • Consulta de repositórios e issues • Conversão JSON → tibble • Visualização com `ggplot2` | Integrar dados reais da API do GitHub e transformá-los em análises e gráficos automatizados. |
+| **15. APIs de Dados e Entretenimento – `{spotifyr}`** | Autenticação com Client ID/Secret • Funções principais (`get_artist()`, `get_artist_audio_features()`) | Conectar o R à API do Spotify e extrair dados sobre artistas, músicas e álbuns. |
+| **16. Publicando suas próprias APIs – `{plumber}`** | Criação de endpoints (#\* \@get, \@param) • Estrutura de arquivos (`api.R`, `run_api.R`) • Retorno JSON | Construir e executar uma API RESTful no R, expondo funções como serviços web. |
+| **17. Teste e Execução Local com Swagger** | Interface de documentação automática • Teste de endpoints e visualização de respostas JSON | Validar e explorar APIs diretamente no navegador de forma interativa. |
+| **18. Integração com Python via `{reticulate}`** | Conceito e arquitetura da ponte R–Python • Conversão automática de tipos • Funções principais (`py_run_string`, `py$`, `import`) | Rodar código Python dentro do R e integrar bibliotecas como pandas e numpy. |
+| **19. Análise Híbrida – Python + R** | Importação de dados com pandas (Python) • Manipulação e visualização com ggplot2 (R) • Transferência bidirecional de objetos | Construir pipelines híbridos com manipulação em Python e visualização em R. |
+| **20. Dicionário R × Python** | Equivalência de comandos (importar, filtrar, agrupar, visualizar) | Compreender as similaridades sintáticas e conceituais entre R e Python. |
+| **21. Boas Práticas e Referências** | Reprodutibilidade, autenticação segura, versionamento, documentação | Consolidar práticas de integração profissional com sistemas externos. |
+
+### Check list do aprendizado
+
+-   [ ] Conectar o R a bancos de dados relacionais via DBI e dbplyr.
+
+-   [ ] Consultar e manipular bases públicas com `{basedosdados}`.
+
+-   [ ] Consumir APIs RESTful (GitHub, Spotify) com `{httr2}` e `{spotifyr}`.
+
+-   [ ] Criar APIs próprias com `{plumber}`.
+
+-   [ ] Integrar Python ao R com `{reticulate}` para análises híbridas.
+
+-   [ ] Automatizar fluxos entre sistemas e gerar relatórios dinâmicos.
+
+-   [ ] Gerenciar autenticação, tokens e ambientes de forma segura e reprodutível.
+
+## Módulo 6: Relatórios Dinâmicos, Dashboards em Shiny e Envio de Relatórios Automatizados
+
+Este módulo consolida o pilar da **comunicação em ciência de dados**. Você irá dominar **Quarto**, **Shiny** e **Blastula**, criando um ecossistema integrado que gera, publica e distribui análises automaticamente, com estética, interatividade e reprodutibilidade.
+
+| **Unidade / Seção** | **Tópicos Principais** | **Objetivo de Aprendizagem** |
+|----|----|----|
+| **1. Introdução: Comunicação é o produto final** | Importância da comunicação em projetos de dados • Do código ao resultado interpretável • Inteligência visual e automação de entrega | Entender que o valor da análise está na clareza e automação da comunicação dos resultados. |
+| **2. Conceito e filosofia do Quarto** | O que é Quarto • Relação com R Markdown • Estrutura YAML + Markdown + Chunks | Conhecer a arquitetura do Quarto e suas vantagens em reprodutibilidade e automação. |
+| **3. Por que usar o Quarto** | Reprodutibilidade, automação, consistência visual, integração com pipelines e GitHub | Compreender os diferenciais do Quarto como plataforma moderna de publicação técnica. |
+| **4. Instalação e integração com RStudio** | Instalar Quarto CLI • Configuração no RStudio (versão mínima 2022.07) • Verificação do ambiente | Configurar o ambiente corretamente para criação e renderização de relatórios dinâmicos. |
+| **5. Criando o primeiro documento `.qmd`** | Estrutura YAML • Texto em Markdown • Chunks de código executável | Criar um relatório completo integrando narrativa e execução de código. |
+| **6. Apresentações interativas com Reveal.js** | Criação de slides `.qmd` • Formatação, transições e layouts | Desenvolver apresentações dinâmicas diretamente a partir de análises no R. |
+| **7. Tutorial prático: Relatório do Café Especial** | Importação e limpeza de dados • Estatística descritiva com `{metan}` • Gráficos com `ggplot2` e `plotly` | Produzir um relatório reprodutível com texto dinâmico, gráficos e tabelas interativas. |
+| **8. Publicação online com Quarto Pub** | Criação de conta e autenticação • Publicar relatórios, dashboards e sites • Atualização e republicação | Hospedar relatórios gratuitamente e de forma profissional via Quarto Pub. |
+| **9. Introdução ao Shiny** | Conceito de reatividade • Estrutura UI + Server + shinyApp() | Entender a lógica básica de reatividade e construção de apps no R. |
+| **10. Estrutura básica de um app Shiny** | Interface (UI) • Lógica (Server) • Execução (`shinyApp(ui, server)`) | Construir um app simples e compreender sua estrutura interna. |
+| **11. Construindo o primeiro dashboard interativo** | Importação de dados (café) • Navbar com abas (navbarPage) • Painel KPI e gráficos interativos | Criar um dashboard completo e interativo em R. |
+| **12. Aba 1 – Resumo Geral dos Cafés (KPIs)** | `value_box`, `plotlyOutput`, `DTOutput`, `withSpinner` | Exibir indicadores principais e visualizações interativas com feedback instantâneo. |
+| **13. Aba 2 – Top Fazendas (Ranking Sensorial)** | `radioButtons`, `sliderInput`, `plotlyOutput` | Exibir e comparar produtores com melhores notas médias e totais. |
+| **14. Aba 3 – Correlação entre Atributos** | `metan::corr_coef()`, `plotOutput`, `withSpinner` | Visualizar correlações de Pearson entre variáveis sensoriais. |
+| **15. Aba 4 – Radar Sensorial** | `radarchart()` (pacote `{fmsb}`) • Comparação país × espécie | Analisar perfis multivariados de sabor, aroma, acidez e equilíbrio. |
+| **16. Aba 5 – Altitude × Qualidade** | Regressões e heatmaps (`ggplotly`, `geom_smooth`) | Relacionar altitude média e notas sensoriais, explorando padrões ambientais. |
+| **17. Aba 6 – Exportação de Dados** | `downloadButton()` e `downloadHandler()` | Permitir exportar dados tratados e relatórios diretamente do painel. |
+| **18. Bloco Server: lógica e reatividade** | `reactive()`, `observe()`, `renderText()`, `renderPlotly()` | Implementar lógica de atualização automática e cálculos dinâmicos no app. |
+| **19. Publicação (Deploy) no ShinyApps.io** | Criação de conta, `rsconnect::setAccountInfo()`, `deployApp()` | Publicar dashboards interativos na web com link público. |
+| **20. Alternativas de Deploy Profissional** | RStudio Connect, Shiny Server, Docker | Conhecer opções de deploy corporativo e local. |
+| **21. Introdução ao `{blastula}` – E-mails automatizados** | Estrutura do pacote (`compose_email`, `smtp_send`, `create_smtp_creds_file`) | Compreender como gerar e enviar e-mails automatizados via R. |
+| **22. Criando o corpo do e-mail (`email.qmd`)** | YAML para formato email • `compose_email()` • Inclusão de anexos com `add_attachment()` | Construir templates dinâmicos de e-mail com corpo HTML e anexos automáticos. |
+| **23. Autenticação segura no Gmail** | Criação de senha de app • `create_smtp_creds_file()` • `creds_file()` | Configurar autenticação criptografada e persistente para envios automáticos. |
+| **24. Script de envio (`enviar_email.R`)** | `smtp_send()` com credenciais salvas • Personalização de assunto e destinatário | Automatizar o envio de relatórios e anexos por e-mail direto do R. |
+| **25. Integração Quarto + Blastula + Pipeline** | Renderização automática + envio periódico | Criar fluxos que geram e distribuem relatórios completos de forma 100% automatizada. |
+
+### Check list do aprendizado
+
+-   [ ] Criar relatórios dinâmicos com Quarto (.qmd) e integrá-los a pipelines.
+
+-   [ ] Desenvolver dashboards interativos com Shiny.
+
+-   [ ] Publicar dashboards e relatórios online (Quarto Pub e ShinyApps.io).
+
+-   [ ] Automatizar envios de e-mails profissionais com `{blastula}`.
+
+-   [ ] Incorporar estética, responsividade e identidade visual corporativa em relatórios.
+
+-   [ ] Integrar R a fluxos de comunicação e tomada de decisão empresarial.
+
+<!-- BOTÕES HORIZONTAIS -->
+
+::: listing-btn-group
+<a href="https://introducaor-r3rgja9.gamma.site/"
+     class="btn btn-cafe"
+     target="_blank"> <i class="fa-solid fa-display"></i> Acesse o curso </a>
+:::

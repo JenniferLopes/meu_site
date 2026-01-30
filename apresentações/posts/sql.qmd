@@ -1,0 +1,1132 @@
+---
+title: "5. Do SQL para o R com dbplyr"
+subtitle: "Traduza suas queries SQL para o universo tidyverse"
+categories: [SQL, R, Web, dbplyr]
+image: imagens/sql.png
+description: " Traduza suas queries SQL para o universo tidyverse.
+É open use e compartilhe."
+format:
+  revealjs:
+    theme: simple
+    logo: "imagens/logo.png"
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes • Café com R"
+editor:
+  markdown:
+    wrap: 72
+---
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}
+
+## Bem-vindo ao mundo do dbplyr! {background-color="#E5D3B3"}
+
+Se você já sabe SQL e está começando com R, esta apresentação é para
+você!
+
+![](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/main/rstats-artwork/dplyr_wrangling.png){fig-align="center"
+width="50%"}
+
+::: notes
+Allison Horst
+:::
+
+------------------------------------------------------------------------
+
+## O que você vai aprender hoje {background-color="#E5D3B3"}
+
+-   O que é dbplyr e por que ele é incrível
+-   Como conectar R a bancos de dados
+-   Traduzir SELECT, WHERE, JOIN e muito mais
+-   Trabalhar com dados sem carregar tudo na memória
+-   Exemplos práticos que você pode testar agora
+
+**Spoiler**: Você vai escrever código R que gera SQL automaticamente! 🎉
+
+------------------------------------------------------------------------
+
+## O que é dbplyr? {background-color="#E5D3B3"}
+
+::: {style="color: #6B4F4F;"}
+**`dbplyr`** é um pacote que traduz código dplyr (R) para SQL.
+
+**Por que isso é fantástico:**
+
+-   Escreva em R, execute em SQL
+-   Trabalhe com milhões de linhas sem travamentos
+-   Use a sintaxe tidyverse que você ama
+-   Funciona com vários bancos de dados (PostgreSQL, MySQL, SQLite, etc)
+-   O R só traz para memória o que você realmente precisa
+:::
+
+------------------------------------------------------------------------
+
+## Dica inicial
+
+> **“Pense em R, execute em SQL, aprenda os dois!”**
+>
+> A cada query você escreve, está praticando DUAS linguagens ao mesmo
+> tempo!
+
+![**Imagem: Allison Horst.**](imagens/tidyverse.png){fig-align="center"
+width="313"}
+
+## SQL x dplyr: A grande comparação {background-color="#E5D3B3"}
+
+``` sql
+-- Em SQL
+SELECT nome, idade 
+FROM clientes 
+WHERE idade > 18;
+```
+
+```{r}
+#| eval: false
+# Em dplyr (R)
+clientes |>
+  filter(idade > 18) |>
+  select(nome, idade)
+```
+
+**Mesma lógica, sintaxe diferente!**
+
+------------------------------------------------------------------------
+
+## Instalando o que você precisa {background-color="#E5D3B3"}
+
+::: {style="color: #6B4F4F;"}
+Primeiro, instale os pacotes necessários:
+
+```{r}
+#| eval: false
+# Instalar pacotes (faz UMA vez)
+install.packages("DBI")
+install.packages("RSQLite")  
+install.packages("dbplyr")
+install.packages("dplyr")
+```
+
+-   **`DBI`**: Interface com bancos de dados
+-   **`RSQLite`**: Para trabalhar com SQLite
+-   **`dbplyr`**: O tradutor SQL `↔` R
+-   **`dplyr`**: Manipulação de dados
+:::
+
+------------------------------------------------------------------------
+
+## Carregando os pacotes {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+#| message: false
+# Carregar pacotes (faz TODA vez)
+library(DBI)
+library(dplyr)
+library(dbplyr)
+```
+
+**Lembre-se**: Instalar é como baixar o app, carregar é como abrir o
+app!
+
+------------------------------------------------------------------------
+
+## Criando um banco de dados de exemplo {background-color="#E5D3B3"}
+
+Vamos criar um banco SQLite em memória para praticar:
+
+```{r}
+#| echo: true
+# Criar conexão com banco em memória
+con <- dbConnect(RSQLite::SQLite(), ":memory:")
+
+# Criar tabela de clientes
+dbWriteTable(con, "clientes", data.frame(
+  id = 1:5,
+  nome = c("Ana", "Jennifer", "Carla", "Daniel", "Elena"),
+  idade = c(25, 33, 22, 35, 28),
+  cidade = c("RJ", "SP", "SP", "MG", "RJ")))
+```
+
+**Pronto!** Agora temos um banco de dados para trabalhar.
+
+------------------------------------------------------------------------
+
+## Conectando ao banco
+
+Para usar dbplyr, conecte-se à tabela:
+
+```{r}
+#| echo: true
+# Criar referência à tabela
+clientes_db <- tbl(con, "clientes")
+
+# Ver os dados
+clientes_db
+```
+
+**Importante**: Os dados ainda estão no banco, não na memória do R!
+
+------------------------------------------------------------------------
+
+## SELECT: Selecionando colunas {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT nome, idade FROM clientes;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+clientes_db |>
+  select(nome, idade)
+```
+
+------------------------------------------------------------------------
+
+## WHERE: Filtrando linhas {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT * FROM clientes WHERE idade > 25;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+clientes_db |>
+  filter(idade > 25)
+```
+
+------------------------------------------------------------------------
+
+## Operadores de comparação
+
+| SQL          | R (dplyr) | Significado    |
+|--------------|-----------|----------------|
+| `=`          | `==`      | Igual          |
+| `<>` ou `!=` | `!=`      | Diferente      |
+| `>`          | `>`       | Maior que      |
+| `<`          | `<`       | Menor que      |
+| `>=`         | `>=`      | Maior ou igual |
+| `<=`         | `<=`      | Menor ou igual |
+
+**Atenção**: Em R use `==` para comparação, não `=`
+
+------------------------------------------------------------------------
+
+## Combinando filtros com AND {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT * FROM clientes 
+WHERE idade > 25 AND cidade = 'SP';
+```
+
+**dbplyr (R):**Use `&` para AND (E)
+
+```{r}
+#| echo: true
+clientes_db |>
+  filter(idade > 25 & cidade == "SP")
+```
+
+------------------------------------------------------------------------
+
+## Combinando filtros com OR {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT * FROM clientes 
+WHERE cidade = 'SP' OR cidade = 'RJ';
+```
+
+**dbplyr (R):** Use `|` para OR (OU)
+
+```{r}
+#| echo: true
+clientes_db |>
+  filter(cidade == "SP" | cidade == "RJ")
+```
+
+------------------------------------------------------------------------
+
+## IN: Valores em uma lista {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT * FROM clientes 
+WHERE cidade IN ('SP', 'RJ');
+```
+
+**dbplyr (R):**`%in%` verifica se o valor está no vetor
+
+```{r}
+#| echo: true
+clientes_db |>
+  filter(cidade %in% c("SP", "RJ"))
+```
+
+------------------------------------------------------------------------
+
+## ORDER BY: Ordenando resultados {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT * FROM clientes ORDER BY idade DESC;
+```
+
+**dbplyr (R):** Use `arrange()` para ordenar, `desc()` para decrescente
+
+```{r}
+#| echo: true
+clientes_db |>
+  arrange(desc(idade))
+```
+
+------------------------------------------------------------------------
+
+## LIMIT: Limitando resultados {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT * FROM clientes LIMIT 3;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+clientes_db |>
+  head(3)
+```
+
+------------------------------------------------------------------------
+
+## COUNT: Contando registros {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT COUNT(*) FROM clientes;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+clientes_db |>
+  summarise(total = n())
+```
+
+`n()` conta o número de linhas
+
+------------------------------------------------------------------------
+
+## GROUP BY: Agrupando dados {background-color="#E5D3B3"}
+
+Vamos criar uma tabela de vendas para exemplos mais interessantes:
+
+```{r}
+#| echo: true
+dbWriteTable(con, "vendas", data.frame(
+  id = 1:8,
+  cliente_id = c(1, 2, 1, 3, 2, 1, 4, 5),
+  produto = c("A", "B", "A", "C", "B", "C", "A", "B"),
+  valor = c(100, 150, 200, 80, 120, 90, 110, 160),
+  quantidade = c(2, 1, 3, 1, 2, 1, 2, 1)), overwrite = TRUE)
+
+vendas_db <- tbl(con, "vendas")
+```
+
+------------------------------------------------------------------------
+
+## GROUP BY com COUNT {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT produto, COUNT(*) as total_vendas
+FROM vendas
+GROUP BY produto;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+vendas_db |>
+  group_by(produto) |>
+  summarise(total_vendas = n())
+```
+
+------------------------------------------------------------------------
+
+## GROUP BY com SUM {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT produto, SUM(valor) as receita_total
+FROM vendas
+GROUP BY produto;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+vendas_db |>
+  group_by(produto) |>
+  summarise(receita_total = sum(valor, na.rm = TRUE))
+```
+
+------------------------------------------------------------------------
+
+## Múltiplas agregações {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT produto, 
+       COUNT(*) as vendas,
+       SUM(valor) as receita,
+       AVG(valor) as ticket_medio
+FROM vendas
+GROUP BY produto;
+```
+
+## Múltiplas agregações {background-color="#E5D3B3"}
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+vendas_db |>
+  group_by(produto) |>
+  summarise(
+    vendas = n(),
+    receita = sum(valor, na.rm = TRUE),
+    ticket_medio = mean(valor, na.rm = TRUE))
+```
+
+------------------------------------------------------------------------
+
+## Funções de agregação
+
+| SQL        | R (dplyr) | Função         |
+|------------|-----------|----------------|
+| `COUNT(*)` | `n()`     | Contar linhas  |
+| `SUM()`    | `sum()`   | Somar valores  |
+| `AVG()`    | `mean()`  | Calcular média |
+| `MIN()`    | `min()`   | Valor mínimo   |
+| `MAX()`    | `max()`   | Valor máximo   |
+
+**Dica**: Sempre use `na.rm = TRUE` em R para ignorar valores NA
+
+------------------------------------------------------------------------
+
+## HAVING: Filtrando grupos {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT produto, SUM(valor) as receita
+FROM vendas
+GROUP BY produto
+HAVING SUM(valor) > 200;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+vendas_db |>
+  group_by(produto) |>
+  summarise(receita = sum(valor, na.rm = TRUE)) |>
+  filter(receita > 200)
+```
+
+------------------------------------------------------------------------
+
+## INNER JOIN: Juntando tabelas {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT c.nome, v.produto, v.valor
+FROM clientes c
+INNER JOIN vendas v ON c.id = v.cliente_id;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+clientes_db |>
+  inner_join(vendas_db, by = c("id" = "cliente_id")) |>
+  select(nome, produto, valor)
+```
+
+------------------------------------------------------------------------
+
+## LEFT JOIN {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT c.nome, v.produto
+FROM clientes c
+LEFT JOIN vendas v ON c.id = v.cliente_id;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+clientes_db |>
+  left_join(vendas_db, by = c("id" = "cliente_id")) |>
+  select(nome, produto)
+```
+
+------------------------------------------------------------------------
+
+## Tipos de JOIN
+
+| SQL          | R (dplyr)      | O que faz                       |
+|--------------|----------------|---------------------------------|
+| `INNER JOIN` | `inner_join()` | Apenas registros que combinam   |
+| `LEFT JOIN`  | `left_join()`  | Todos da esquerda + combinações |
+| `RIGHT JOIN` | `right_join()` | Todos da direita + combinações  |
+| `FULL JOIN`  | `full_join()`  | Todos os registros              |
+
+**Memória**: O nome indica qual tabela mantém todos os registros
+
+------------------------------------------------------------------------
+
+## CASE WHEN: Criando categorias {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT nome, idade,
+  CASE 
+    WHEN idade < 25 THEN 'Jovem'
+    WHEN idade < 30 THEN 'Adulto'
+    ELSE 'Experiente'
+  END as faixa_etaria
+FROM clientes;
+```
+
+------------------------------------------------------------------------
+
+## CASE WHEN em R {background-color="#E5D3B3"}
+
+**dbplyr (R):** Use `TRUE` como "ELSE"
+
+```{r}
+#| echo: true
+clientes_db |>
+  mutate(
+    faixa_etaria = case_when(
+      idade < 25 ~ "Jovem",
+      idade < 30 ~ "Adulto",
+      TRUE ~ "Experiente")) |>
+  select(nome, idade, faixa_etaria)
+```
+
+------------------------------------------------------------------------
+
+## Criando novas colunas {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT *, valor * quantidade as total
+FROM vendas;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+vendas_db |>
+  mutate(total = valor * quantidade)
+```
+
+`mutate()` cria ou modifica colunas
+
+------------------------------------------------------------------------
+
+## DISTINCT: Valores únicos {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT DISTINCT cidade FROM clientes;
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+clientes_db |>
+  distinct(cidade)
+```
+
+------------------------------------------------------------------------
+
+## Subconsultas (Subqueries) {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT * FROM vendas
+WHERE valor > (SELECT AVG(valor) FROM vendas);
+```
+
+**dbplyr (R):**
+
+```{r}
+#| echo: true
+# Calcular a média
+valor_medio <- vendas_db |>
+  summarise(media = mean(valor, na.rm = TRUE)) |>
+  pull(media)
+
+# Filtrar
+vendas_db |>
+  filter(valor > valor_medio)
+```
+
+------------------------------------------------------------------------
+
+## LIKE: Buscas com padrões {background-color="#E5D3B3"}
+
+**SQL:**
+
+``` sql
+SELECT * FROM clientes 
+WHERE nome LIKE 'A%';
+```
+
+## **dbplyr (R):**
+
+```{r}
+#| echo: true 
+# clientes_db |> 
+# filter(str_detect(nome, "^A"))
+```
+
+Use `str_detect()` do pacote `stringr` (parte do tidyverse)
+
+------------------------------------------------------------------------
+
+## Vendo o SQL gerado
+
+Quer ver qual SQL o dbplyr está gerando? Use `show_query()`:
+
+```{r}
+#| echo: true
+clientes_db |>
+  filter(idade > 25) |>
+  select(nome, cidade) |>
+  show_query()
+```
+
+**Perfeito para aprender!** Compare seu código R com o SQL gerado.
+
+------------------------------------------------------------------------
+
+## Executando e coletando dados {background-color="#E5D3B3"}
+
+O dbplyr é "lazy" (preguiçoso) - só executa quando necessário.
+
+```{r}
+#| echo: true
+# Isso NÃO executa ainda, só prepara a query
+query <- clientes_db |>
+  filter(idade > 25)
+
+# Isso executa e traz para o R
+resultado <- query |> collect()
+
+# Agora é um data.frame normal no R
+class(resultado)
+```
+
+------------------------------------------------------------------------
+
+## Por que usar collect()? {background-color="#E5D3B3"}
+
+::: {style="color: #6B4F4F;"}
+**Sem `collect():`**
+
+-   Dados ficam no banco
+
+-   Operações rápidas (SQL é otimizado)
+
+-   Economiza memória
+:::
+
+## Por que usar collect()? {background-color="#E5D3B3"}
+
+::: {style="color: #6B4F4F;"}
+**Com `collect()`:**
+
+-   Dados vêm para o R
+
+-   Use quando precisar processar no R
+
+-   Use depois de filtrar para trazer menos dados
+
+**Dica**: Filtre e agregue NO BANCO, só depois traga para o R!
+:::
+
+------------------------------------------------------------------------
+
+## Exemplo: Análise {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+# 1. Fazer query complexa no banco
+relatorio <- clientes_db |>
+  left_join(vendas_db, by = c("id" = "cliente_id")) |>
+  filter(!is.na(valor)) |>
+  group_by(nome, cidade) |>
+  summarise(
+    total_compras = n(),
+    valor_total = sum(valor, na.rm = TRUE),
+    ticket_medio = mean(valor, na.rm = TRUE)) |>
+  arrange(desc(valor_total))
+```
+
+## Exemplo: Análise - Resultado SQL {background-color="#E5D3B3"}
+
+```{r}
+# 2. Ver o SQL que será executado
+show_query(relatorio)
+```
+
+------------------------------------------------------------------------
+
+## Coletando o resultado {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+# 3. Executar e trazer para o R
+resultado_final <- relatorio |> collect()
+
+# 4. Agora você pode usar ggplot2, etc
+print(resultado_final)
+```
+
+**Perfeito!** Processamos tudo no banco e só trouxemos o resultado
+final.
+
+------------------------------------------------------------------------
+
+## Conectando a bancos reais
+
+**PostgreSQL:**
+
+```{r}
+#| eval: false
+#| echo: true
+library(RPostgres)
+con <- dbConnect(
+  RPostgres::Postgres(),
+  dbname = "seu_banco",
+  host = "localhost",
+  port = 5432,
+  user = "seu_usuario",
+  password = "sua_senha")
+```
+
+------------------------------------------------------------------------
+
+## Conectando a bancos reais (cont.)
+
+**MySQL:**
+
+```{r}
+#| eval: false
+#| echo: true
+library(RMariaDB)
+con <- dbConnect(
+  RMariaDB::MariaDB(),
+  dbname = "seu_banco",
+  host = "localhost",
+  user = "seu_usuario",
+  password = "sua_senha")
+```
+
+------------------------------------------------------------------------
+
+## Boas práticas com bancos {background-color="#E5D3B3"}
+
+**1. Sempre feche a conexão:**
+
+```{r}
+#| eval: false
+#| echo: true
+dbDisconnect(con)
+```
+
+**2. Filtre ANTES de collect():**
+
+```{r}
+#| eval: false
+#| echo: true
+# ✅ Bom - filtra no banco
+dados |> filter(ano == 2024) |> collect()
+
+# ❌ Ruim - traz tudo para depois filtrar
+dados |> collect() |> filter(ano == 2024)
+```
+
+------------------------------------------------------------------------
+
+## Boas práticas (cont.) {background-color="#E5D3B3"}
+
+**3. Use índices no banco de dados:**
+
+```{r}
+#| eval: false
+#| echo: true
+# Criar índice (SQL)
+dbExecute(con, "CREATE INDEX idx_cliente ON vendas(cliente_id)")
+```
+
+**4. Teste com LIMIT primeiro:**
+
+```{r}
+#| eval: false
+#| echo: true
+# Ver amostra antes de processar tudo
+minha_tabela |> head(100) |> collect()
+```
+
+------------------------------------------------------------------------
+
+## Tabela de tradução SQL \> dplyr
+
+| SQL                     | dplyr                         | Função           |
+|-------------------------|-------------------------------|------------------|
+| `SELECT`                | `select()`                    | Escolher colunas |
+| `WHERE`                 | `filter()`                    | Filtrar linhas   |
+| `ORDER BY`              | `arrange()`                   | Ordenar          |
+| `GROUP BY`              | `group_by()`                  | Agrupar          |
+| Agregações + `GROUP BY` | `summarise()`                 | Resumir          |
+| `HAVING`                | `filter()` após `summarise()` | Filtrar grupos   |
+
+------------------------------------------------------------------------
+
+## Tabela de tradução SQL \> dplyr (cont.)
+
+| SQL          | dplyr          | Função                |
+|--------------|----------------|-----------------------|
+| `LIMIT`      | `head()`       | Limitar resultados    |
+| `DISTINCT`   | `distinct()`   | Valores únicos        |
+| `INNER JOIN` | `inner_join()` | Interseção            |
+| `LEFT JOIN`  | `left_join()`  | Esquerda + combinação |
+| `RIGHT JOIN` | `right_join()` | Direita + combinação  |
+| `FULL JOIN`  | `full_join()`  | União completa        |
+| `CASE WHEN`  | `case_when()`  | Condicionais          |
+| Criar coluna | `mutate()`     | Nova variável         |
+
+------------------------------------------------------------------------
+
+## Exercício 1
+
+Desafio: Traduza este SQL para dplyr:
+
+``` sql
+SELECT cidade, COUNT(*) as total
+FROM clientes
+WHERE idade >= 25
+GROUP BY cidade
+HAVING COUNT(*) > 1
+ORDER BY total DESC;
+```
+
+Tente fazer sozinho antes de ver a resposta!
+
+------------------------------------------------------------------------
+
+## Solução do exercício 1 {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+#| eval: false
+clientes_db |>
+  filter(idade >= 25) |>
+  group_by(cidade) |>
+  summarise(total = n()) |>
+  filter(total > 1) |>
+  arrange(desc(total))
+```
+
+**Leia em voz alta**: "Pegue clientes, filtre idade \>= 25, agrupe por
+cidade, conte quantos em cada, filtre grupos com mais de 1, ordene por
+total decrescente"
+
+------------------------------------------------------------------------
+
+## Exercício 2
+
+**Desafio: Crie uma query que:**
+
+1.  Una clientes e vendas
+2.  Calcule o valor total por cliente
+3.  Mostre apenas clientes com total \> 200
+4.  Ordene do maior para o menor
+
+**Tente fazer sozinho!**
+
+------------------------------------------------------------------------
+
+## Solução do exercício 2 {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+clientes_db |>
+  inner_join(vendas_db, by = c("id" = "cliente_id")) |>
+  group_by(nome) |>
+  summarise(valor_total = sum(valor, na.rm = TRUE)) |>
+  filter(valor_total > 200) |>
+  arrange(desc(valor_total))
+```
+
+------------------------------------------------------------------------
+
+## Dicas de performance
+
+**1. Projete (select) cedo:**
+
+```{r}
+#| eval: false
+#| echo: true
+# ✅ Melhor - seleciona só o necessário
+tabela |> select(col1, col2) |> filter(...)
+
+# ❌ Pior - carrega todas as colunas
+tabela |> filter(...) |> select(col1, col2)
+```
+
+**2. Filtre no banco, não no R**
+
+**3. Use índices nas colunas de JOIN e WHERE**
+
+------------------------------------------------------------------------
+
+## Debugando problemas comuns {background-color="#E5D3B3"}
+
+**Erro: "no applicable method"** -Você tentou usar uma função que não
+funciona com banco
+
+-   Solução: Use `collect()` antes OU use função equivalente do SQL
+
+## Debugando problemas comuns {background-color="#E5D3B3"}
+
+**Dados não aparecem:** Lembre-se: dbplyr é lazy!
+
+-   Solução: Use `collect()` ou apenas visualize com `print()`
+
+## Debugando problemas comuns {background-color="#E5D3B3"}
+
+**Query muito lenta:** Está trazendo dados demais?
+
+-   Solução: Filtre e agregue ANTES de `collect()`
+
+------------------------------------------------------------------------
+
+## Quando NÃO usar dbplyr
+
+**Não use dbplyr quando:**
+
+-   Precisar de operações muito específicas do R (como modelos
+    complexos)
+-   Os dados são pequenos (\< 100MB) - só use `read_csv()`
+-   Precisar de loops ou operações iterativas
+-   A query SQL já está pronta e otimizada
+
+## Use dbplyr quando
+
+-   Dados não cabem na memória
+-   Quer sintaxe R mas poder do banco
+-   Está explorando dados grandes
+-   Precisa combinar várias fontes
+
+## Recursos para continuar {background-color="#E5D3B3"}
+
+**Documentação:**
+
+-   [dbplyr.tidyverse.org](https://dbplyr.tidyverse.org/)
+-   [Database using R](https://solutions.posit.co/connections/db/)
+
+**Livros gratuitos:**
+
+-   [R for Data Science - Cap. Databases](https://r4ds.hadley.nz/)
+
+**Prática:**
+
+-   Use seus próprios bancos!
+-   Comece com SQLite para aprender
+-   Depois migre para PostgreSQL/MySQL
+
+------------------------------------------------------------------------
+
+## Projeto prático sugerido
+
+**Mini projeto para praticar:**
+
+1.  Crie um banco SQLite com 2-3 tabelas relacionadas
+2.  Escreva 5 queries SQL que você já conhece
+3.  Traduza todas para dbplyr
+4.  Compare os resultados
+5.  Use `show_query()` para ver o SQL gerado
+6.  Identifique padrões de tradução
+
+**Isso vai consolidar seu aprendizado!**
+
+------------------------------------------------------------------------
+
+## Cheat sheet rápido {background-color="#E5D3B3"}
+
+```{r}
+#| eval: false
+#| echo: true
+# Conectar
+con <- dbConnect(RSQLite::SQLite(), "banco.db")
+tabela <- tbl(con, "nome_tabela")
+
+# Operações básicas
+tabela |> filter(col > 10)        # WHERE
+tabela |> select(col1, col2)      # SELECT
+tabela |> arrange(col)            # ORDER BY
+tabela |> distinct(col)           # DISTINCT
+
+# Agregações
+tabela |> group_by(col) |>
+  summarise(total = n())          # COUNT
+
+# Joins
+left_join(tab1, tab2, by = "id")  # LEFT JOIN
+
+# Executar
+tabela |> collect()               # Trazer para R
+tabela |> show_query()            # Ver SQL
+```
+
+------------------------------------------------------------------------
+
+## Recapitulando {background-color="#E5D3B3"}
+
+**Você aprendeu:**
+
+-   O que é **`dbplyr`** e como funciona
+-   Conectar R a bancos de dados
+-   Traduzir SELECT, WHERE, JOIN, GROUP BY
+-   Usar `collect()` e `show_query()`
+-   Boas práticas de performance
+-   Quando usar (e não usar) dbplyr
+
+**O melhor**: Você pode escrever R e deixar o banco fazer o trabalho
+pesado!
+
+------------------------------------------------------------------------
+
+## Dica final
+
+**Fluxo ideal:**
+
+1.  Escreva a query em dplyr
+2.  Use `show_query()` para ver o SQL
+3.  Aprenda com a tradução
+4.  Otimize se necessário
+5.  Use `collect()` só no final
+
+**"Pense em R, execute em SQL, aprenda os dois!"**
+
+A cada query você escreve, está praticando DUAS linguagens ao mesmo
+tempo!
+
+------------------------------------------------------------------------
+
+## Mensagem final {background-color="#E5D3B3"}
+
+**SQL + R = 💪**
+
+Você não precisa escolher entre SQL e R.
+
+Com dbplyr, você tem o melhor dos dois mundos:
+
+-   A elegância do tidyverse
+-   O poder e performance do SQL
+-   A flexibilidade de escolher quando usar cada um
+
+Continue praticando e explorando!
+
+------------------------------------------------------------------------
+
+## Muito obrigada!
+
+Esta apresentação é parte do projeto **Café com R**
+
+**É OPEN, USE, COMPARTILHE!**
+
+Perguntas? Dúvidas? Sugestões?
+
+**Próximo passo**: Abra seu RStudio e comece a praticar!
+
+![](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/main/rstats-artwork/welcome_to_rstats_twitter.png){fig-align="center"
+width="40%"}
+
+------------------------------------------------------------------------
+
+## Limpando o ambiente {background-color="#E5D3B3"}
+
+Não esqueça de fechar a conexão ao terminar:
+
+```{r}
+#| echo: true
+# Fechar conexão
+dbDisconnect(con)
+```
+
+**Boa prática**: Sempre feche conexões para liberar recursos!
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}

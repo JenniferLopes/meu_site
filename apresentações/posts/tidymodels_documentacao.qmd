@@ -1,0 +1,2187 @@
+---
+title: "7.1. Documentação: Tidymodels para Regressão em R"
+subtitle: ""
+date: ""
+categories: ["R", "Machine Learning", "Regressão", "Tidymodels"]
+image: imagens/models_image.png
+image-alt: ""
+description: "Guia completo para análise de regressão usando o pacote Tidymodels"
+css: estilo_jeni.css
+---
+
+# Documentação Completa: Tidymodels para Regressão em R
+
+## Sumário
+
+1.  [Introdução ao Tidymodels](#introducao)
+2.  [Pacotes Principais](#pacotes)
+3.  [Funções de Divisão de Dados](#divisao)
+4.  [Recipes - Pré-processamento](#recipes)
+5.  [Parsnip - Especificação de Modelos](#parsnip)
+6.  [Workflows - Pipelines](#workflows)
+7.  [Métricas de Avaliação](#metricas)
+8.  [Validação Cruzada](#validacao)
+9.  [Modelos Avançados](#avancados)
+
+------------------------------------------------------------------------
+
+## 1. Introdução ao Tidymodels {#introducao}
+
+O **tidymodels** é um meta-pacote (coleção de pacotes) que fornece uma interface unificada para modelagem estatística e machine learning em R, seguindo os princípios do tidyverse.
+
+### Instalação
+
+```{r}
+#| eval: false
+install.packages("tidymodels")
+library(tidymodels)
+```
+
+**Carrega automaticamente**:
+
+-   `rsample` - divisão de dados
+-   `recipes` - pré-processamento
+-   `parsnip` - especificação de modelos
+-   `workflows` - combinação de receitas e modelos
+-   `yardstick` - métricas de avaliação
+-   `tune` - ajuste de hiperparâmetros
+-   `dials` - parâmetros de ajuste
+-   `broom` - organização de resultados
+
+------------------------------------------------------------------------
+
+## 2. Pacotes Principais {#pacotes}
+
+### 2.1 rsample - Divisão de Dados
+
+#### `initial_split()`
+
+**Pacote**: `rsample`\
+**Função**: Divide os dados em conjuntos de treino e teste
+
+```{r}
+#| eval: false
+ames_split <- initial_split(ames, prop = 0.75)
+```
+
+**Parâmetros**:
+
+-   `data`: dataset a ser dividido
+-   `prop`: proporção para treino (padrão: 0.75 = 75%)
+-   `strata`: variável para estratificação (mantém distribuição)
+
+**Retorna**: objeto `rsplit` com informações sobre a divisão
+
+**Exemplo estratificado**:
+
+```{r}
+#| eval: false
+# Mantém distribuição da variável resposta
+ames_split <- initial_split(ames, prop = 0.75, strata = Sale_Price)
+```
+
+#### `training()` e `testing()`
+
+**Função**: Extrai os conjuntos de treino e teste
+
+```{r}
+#| eval: false
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+```
+
+**Retorna**: tibble/data.frame com os dados correspondentes
+
+**Notas importantes**:
+
+-   A função `initial_split()` usa amostragem aleatória simples ou estratificada
+-   O objeto `rsplit` armazena apenas índices, não duplica os dados
+-   Sempre use `set.seed()` antes para reprodutibilidade
+
+------------------------------------------------------------------------
+
+### 2.2 vfold_cv() - Validação Cruzada
+
+**Pacote**: `rsample`\
+**Função**: Cria folds para validação cruzada k-fold
+
+```{r}
+#| eval: false
+ames_folds <- vfold_cv(ames_train, v = 10)
+```
+
+**Parâmetros**:
+
+-   `data`: dados de treino
+-   `v`: número de folds (padrão: 10)
+-   `strata`: variável para estratificação
+-   `repeats`: número de repetições
+
+**Como funciona**:
+
+-   Divide os dados em `v` partes aproximadamente iguais
+-   Cada fold serve como teste uma vez
+-   Os outros `v-1` folds servem como treino
+-   Reduz viés da divisão única treino/teste
+
+**Interpretação**:
+
+-   Com v=10: 90% treino, 10% teste em cada iteração
+-   Mais folds = mais computação, menos variância
+-   v=5 ou v=10 são escolhas comuns
+-   v = n (Leave-One-Out) é computacionalmente caro
+
+**Outras funções de reamostragem**:
+
+```{r}
+#| eval: false
+# Bootstrap
+bootstraps(ames_train, times = 25)
+
+# Monte Carlo (divisões aleatórias)
+mc_cv(ames_train, prop = 0.75, times = 20)
+
+# Validação cruzada repetida
+vfold_cv(ames_train, v = 10, repeats = 5)
+```
+
+------------------------------------------------------------------------
+
+## 3. Recipes - Pré-processamento {#recipes}
+
+### 3.1 recipe()
+
+**Pacote**: `recipes`\
+**Função**: Cria uma "receita" de pré-processamento
+
+```{r}
+#| eval: false
+ames_recipe <- recipe(Sale_Price ~ Gr_Liv_Area + Year_Built, 
+                      data = ames_train)
+```
+
+**Parâmetros**:
+
+-   `formula`: fórmula modelo (resposta \~ preditoras)
+-   `data`: dados de referência (apenas estrutura)
+-   Usa `.` para incluir todas as variáveis: `Sale_Price ~ .`
+
+**Importante**: A recipe apenas DEFINE os passos, não os executa
+
+**Fluxo de trabalho com recipes**:
+
+1.  `recipe()` - define a receita
+2.  `step_*()` - adiciona passos de transformação
+3.  `prep()` - prepara a receita (calcula parâmetros nos dados de treino)
+4.  `bake()` - aplica a receita preparada a novos dados
+
+Quando usado dentro de um workflow, `prep()` e `bake()` são chamados automaticamente.
+
+------------------------------------------------------------------------
+
+### 3.2 Steps - Passos de Pré-processamento
+
+#### `step_normalize()`
+
+**Função**: Padroniza variáveis (z-score: média=0, desvio=1)
+
+```{r}
+#| eval: false
+recipe(...) %>%
+  step_normalize(all_numeric_predictors())
+```
+
+**Fórmula**: `(x - média) / desvio_padrão`
+
+**Quando usar**:
+
+-   Modelos sensíveis a escala (regressão regularizada, SVM, KNN)
+-   Variáveis em escalas muito diferentes
+-   Melhora convergência de algoritmos
+-   Facilita interpretação de coeficientes em modelos regularizados
+
+**Seletores disponíveis**:
+
+-   `all_numeric_predictors()`: todas numéricas preditoras
+-   `all_nominal_predictors()`: todas categóricas
+-   `all_predictors()`: todas as preditoras
+-   `all_outcomes()`: variável resposta
+-   Ou especificar variáveis: `step_normalize(Gr_Liv_Area, Lot_Area)`
+
+**Alternativa - `step_range()`**:
+
+```{r}
+#| eval: false
+# Normalização min-max (escala 0-1)
+recipe(...) %>%
+  step_range(all_numeric_predictors(), min = 0, max = 1)
+```
+
+#### `step_dummy()`
+
+**Função**: Cria variáveis dummy para categóricas
+
+```{r}
+#| eval: false
+recipe(...) %>%
+  step_dummy(all_nominal_predictors())
+```
+
+**Como funciona**:
+
+-   Converte categoria em variáveis binárias (0/1)
+-   Para k categorias, cria k-1 variáveis (evita multicolinearidade)
+-   Exemplo: Bldg_Type com 5 níveis gera 4 variáveis dummy
+-   A categoria de referência é implícita (todas dummies = 0)
+
+**Parâmetros**:
+
+-   `one_hot`: TRUE para criar k variáveis (ao invés de k-1)
+-   `naming`: função para nomear as novas variáveis
+
+**Importante**: Sempre aplique após transformações numéricas e antes de interações
+
+#### `step_log()`
+
+**Função**: Aplica transformação logarítmica
+
+```{r}
+#| eval: false
+recipe(...) %>%
+  step_log(Sale_Price, base = 10)
+```
+
+**Quando usar**:
+
+-   Dados com distribuição assimétrica positiva (cauda à direita)
+-   Presença de outliers
+-   Relações exponenciais entre variáveis
+-   Reduzir heteroscedasticidade
+-   Base 10 ou base e (natural) - log natural é padrão
+
+**Cuidado**:
+
+-   Não aceita valores \<= 0
+-   Use `offset` para lidar com zeros: `step_log(var, offset = 1)`
+-   Lembre-se de reverter a transformação ao interpretar predições
+
+**Alternativas**:
+
+```{r}
+#| eval: false
+# Transformação Box-Cox (escolhe melhor lambda)
+recipe(...) %>%
+  step_BoxCox(all_numeric_predictors())
+
+# Raiz quadrada
+recipe(...) %>%
+  step_sqrt(all_numeric_predictors())
+```
+
+#### `step_impute_mean()` / `step_impute_median()`
+
+**Função**: Imputa valores faltantes (NA)
+
+```{r}
+#| eval: false
+recipe(...) %>%
+  step_impute_mean(all_numeric_predictors()) %>%
+  step_impute_mode(all_nominal_predictors())
+```
+
+**Tipos de imputação**:
+
+-   `step_impute_mean()`: média (sensível a outliers)
+-   `step_impute_median()`: mediana (robusta a outliers)
+-   `step_impute_mode()`: moda (para categóricas)
+-   `step_impute_knn()`: k vizinhos mais próximos (preserva relações)
+-   `step_impute_linear()`: regressão linear
+-   `step_impute_bag()`: bagged trees
+
+**Exemplo KNN**:
+
+```{r}
+#| eval: false
+recipe(...) %>%
+  step_impute_knn(all_predictors(), neighbors = 5)
+```
+
+**Considerações**:
+
+-   Imputação deve ser feita antes da normalização
+-   Para grandes quantidades de NAs, considere criar indicador de missing
+-   `step_indicate_na()` cria variável binária indicando se havia NA
+
+#### `step_pca()`
+
+**Função**: Análise de Componentes Principais
+
+```{r}
+#| eval: false
+recipe(...) %>%
+  step_pca(all_numeric_predictors(), num_comp = 5)
+```
+
+**Quando usar**:
+
+-   Redução de dimensionalidade
+-   Multicolinearidade severa
+-   Muitas variáveis correlacionadas
+-   Visualização de dados de alta dimensão
+
+**Parâmetros**:
+
+-   `num_comp`: número de componentes a manter
+-   `threshold`: variância explicada mínima acumulada
+-   `options`: lista com opções adicionais
+
+**Importante**:
+
+-   PCA é sensível à escala - sempre normalize antes
+-   Componentes são combinações lineares das variáveis originais
+-   Perda de interpretabilidade
+
+```{r}
+#| eval: false
+# Exemplo mantendo 95% da variância
+recipe(...) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_pca(all_numeric_predictors(), threshold = 0.95)
+```
+
+#### Outros Steps Úteis
+
+**Tratamento de outliers**:
+
+```{r}
+#| eval: false
+# Remove observações com valores extremos
+recipe(...) %>%
+  step_filter_missing(all_predictors(), threshold = 0.5) %>%
+  step_nzv(all_predictors())  # Remove variáveis com variância próxima a zero
+```
+
+**Interações**:
+
+```{r}
+#| eval: false
+recipe(...) %>%
+  step_interact(terms = ~ Gr_Liv_Area:Year_Built)
+```
+
+**Polinômios**:
+
+```{r}
+#| eval: false
+recipe(...) %>%
+  step_poly(Gr_Liv_Area, degree = 2)  # Adiciona termo quadrático
+```
+
+**Binning**:
+
+```{r}
+#| eval: false
+# Discretiza variável contínua
+recipe(...) %>%
+  step_cut(Year_Built, breaks = c(1950, 1980, 2000))
+```
+
+------------------------------------------------------------------------
+
+## 4. Parsnip - Especificação de Modelos {#parsnip}
+
+### 4.1 linear_reg()
+
+**Pacote**: `parsnip`\
+**Função**: Especifica modelo de regressão linear
+
+```{r}
+#| eval: false
+lm_model <- linear_reg() %>%
+  set_engine("lm") %>%
+  set_mode("regression")
+```
+
+**Componentes**:
+
+#### `set_engine()`
+
+Define o pacote/função R que executará o modelo
+
+**Engines disponíveis para linear_reg()**:
+
+-   `"lm"`: regressão linear padrão (stats::lm)
+-   `"glmnet"`: Ridge, Lasso, Elastic Net
+-   `"stan"`: abordagem Bayesiana
+-   `"keras"`: redes neurais
+-   `"spark"`: para processamento distribuído
+
+**Argumentos específicos do engine**:
+
+```{r}
+#| eval: false
+linear_reg() %>%
+  set_engine("glmnet", lambda = 0.01)
+```
+
+#### `set_mode()`
+
+Define o tipo de problema
+
+-   `"regression"`: para variável resposta contínua
+-   `"classification"`: para variável resposta categórica
+
+**Nota**: Para `linear_reg()`, o modo é sempre "regression"
+
+**Parâmetros de regularização**:
+
+```{r}
+#| eval: false
+linear_reg(penalty = 0.01, mixture = 0) # Ridge
+linear_reg(penalty = 0.01, mixture = 1) # Lasso
+linear_reg(penalty = 0.01, mixture = 0.5) # Elastic Net
+```
+
+**Parâmetros**:
+
+-   `penalty`: força da regularização (lambda)
+    -   0 = sem regularização (OLS padrão)
+    -   Valores maiores = mais regularização
+    -   Típico: 0.001 a 1.0
+-   `mixture`: tipo de penalização
+    -   0 = Ridge (L2): reduz coeficientes, nunca zera
+    -   1 = Lasso (L1): pode zerar coeficientes
+    -   0-1 = Elastic Net: combinação de ambos
+
+**Interpretação**:
+
+-   **Ridge (L2)**: útil quando todas variáveis são relevantes, reduz coeficientes proporcionalmente
+-   **Lasso (L1)**: útil para seleção de variáveis, pode eliminar preditores irrelevantes
+-   **Elastic Net**: combina vantagens de ambos, ideal quando há grupos de variáveis correlacionadas
+
+**Comparação Ridge vs Lasso**:
+
+| Aspecto | Ridge | Lasso |
+|----------------------------|----------------------|----------------------|
+| Penalização | L2 (soma dos quadrados) | L1 (soma dos valores absolutos) |
+| Seleção de variáveis | Não | Sim |
+| Coeficientes | Reduz, nunca zera | Pode zerar |
+| Multicolinearidade | Lida bem | Seleciona uma variável do grupo |
+| Interpretabilidade | Menos | Mais (modelo esparso) |
+
+------------------------------------------------------------------------
+
+### 4.2 rand_forest()
+
+**Pacote**: `parsnip`\
+**Função**: Especifica modelo Random Forest
+
+```{r}
+#| eval: false
+rf_model <- rand_forest(trees = 500) %>%
+  set_engine("ranger") %>%
+  set_mode("regression")
+```
+
+**Parâmetros principais**:
+
+-   `trees`: número de árvores (padrão: 500)
+    -   Mais árvores = mais estável, mas mais lento
+    -   Típico: 500 a 2000
+-   `mtry`: variáveis consideradas em cada divisão
+    -   Padrão: sqrt(p) para classificação, p/3 para regressão
+    -   Controla correlação entre árvores
+-   `min_n`: observações mínimas por nó terminal
+    -   Padrão: varia por engine
+    -   Maior = menos complexidade, menos overfitting
+
+**Engines disponíveis**:
+
+-   `"ranger"`: rápido e eficiente (recomendado)
+-   `"randomForest"`: implementação clássica
+-   `"spark"`: para big data
+
+**Exemplo com todos os parâmetros**:
+
+```{r}
+#| eval: false
+rf_spec <- rand_forest(
+  trees = 1000,
+  mtry = 5,
+  min_n = 10
+) %>%
+  set_engine("ranger", importance = "impurity") %>%
+  set_mode("regression")
+```
+
+**Como funciona**:
+
+1.  Cria múltiplas árvores de decisão
+2.  Cada árvore usa amostra bootstrap dos dados (com reposição)
+3.  Cada divisão considera subconjunto aleatório de variáveis (mtry)
+4.  Predição = média das predições de todas árvores (regressão)
+5.  Out-of-bag (OOB) error é calculado automaticamente
+
+**Vantagens**:
+
+-   Não requer normalização de variáveis
+-   Lida bem com não-linearidades e interações
+-   Robusto a outliers
+-   Fornece importância de variáveis
+-   Baixo risco de overfitting (com árvores suficientes)
+
+**Desvantagens**:
+
+-   Menos interpretável que modelos lineares
+-   Mais lento que regressão linear
+-   Pode ter dificuldade com extrapolação
+-   Requer mais memória
+
+**Configurações específicas do ranger**:
+
+```{r}
+#| eval: false
+rf_spec <- rand_forest(trees = 1000) %>%
+  set_engine(
+    "ranger",
+    importance = "impurity",  # ou "permutation"
+    num.threads = 4,          # paralelização
+    verbose = FALSE,
+    seed = 123
+  ) %>%
+  set_mode("regression")
+```
+
+------------------------------------------------------------------------
+
+### 4.3 Outros Modelos Úteis
+
+#### boost_tree() - Gradient Boosting
+
+```{r}
+#| eval: false
+boost_spec <- boost_tree(
+  trees = 1000,
+  tree_depth = 6,
+  learn_rate = 0.01
+) %>%
+  set_engine("xgboost") %>%
+  set_mode("regression")
+```
+
+**Quando usar**: Geralmente superior em competições, excelente performance
+
+#### decision_tree() - Árvore de Decisão Única
+
+```{r}
+#| eval: false
+tree_spec <- decision_tree(
+  cost_complexity = 0.01,
+  tree_depth = 10,
+  min_n = 20
+) %>%
+  set_engine("rpart") %>%
+  set_mode("regression")
+```
+
+**Quando usar**: Interpretabilidade máxima, baseline simples
+
+#### svm_rbf() - Support Vector Machine
+
+```{r}
+#| eval: false
+svm_spec <- svm_rbf(
+  cost = 1,
+  rbf_sigma = 0.1
+) %>%
+  set_engine("kernlab") %>%
+  set_mode("regression")
+```
+
+**Quando usar**: Dados não-lineares, dimensionalidade média
+
+#### mlp() - Multi-Layer Perceptron
+
+```{r}
+#| eval: false
+nn_spec <- mlp(
+  hidden_units = 10,
+  penalty = 0.01,
+  epochs = 100
+) %>%
+  set_engine("nnet") %>%
+  set_mode("regression")
+```
+
+**Quando usar**: Padrões complexos, muitos dados disponíveis
+
+------------------------------------------------------------------------
+
+## 5. Workflows - Pipelines {#workflows}
+
+### 5.1 workflow()
+
+**Pacote**: `workflows`\
+**Função**: Combina recipe e modelo em pipeline único
+
+```{r}
+#| eval: false
+ames_workflow <- workflow() %>%
+  add_recipe(ames_recipe) %>%
+  add_model(lm_model)
+```
+
+**Vantagens**:
+
+-   Garante que pré-processamento seja aplicado consistentemente
+-   Facilita experimentação com diferentes combinações
+-   Reduz erros (evita vazamento de dados - data leakage)
+-   Código mais limpo e organizado
+-   Simplifica deploy do modelo
+
+**Fluxo de trabalho**:
+
+1.  Crie recipe e modelo separadamente
+2.  Combine em workflow
+3.  Ajuste o workflow (não componentes individuais)
+4.  Use o workflow ajustado para predições
+
+**Componentes**:
+
+#### `add_recipe()`
+
+Adiciona recipe de pré-processamento
+
+```{r}
+#| eval: false
+workflow() %>%
+  add_recipe(my_recipe)
+```
+
+#### `add_model()`
+
+Adiciona especificação do modelo
+
+```{r}
+#| eval: false
+workflow() %>%
+  add_model(my_model)
+```
+
+#### `add_formula()`
+
+Alternativa a recipe para casos simples (sem pré-processamento complexo)
+
+```{r}
+#| eval: false
+workflow() %>%
+  add_formula(Sale_Price ~ Gr_Liv_Area + Year_Built) %>%
+  add_model(lm_model)
+```
+
+**Quando usar formula vs recipe**:
+
+-   **Formula**: casos simples, sem transformações
+-   **Recipe**: pré-processamento complexo, padronização, imputação, etc.
+
+#### `add_variables()`
+
+Alternativa mais flexível
+
+```{r}
+#| eval: false
+workflow() %>%
+  add_variables(
+    outcomes = Sale_Price,
+    predictors = c(Gr_Liv_Area, Year_Built)
+  ) %>%
+  add_model(lm_model)
+```
+
+**Inspecionando workflows**:
+
+```{r}
+#| eval: false
+# Ver estrutura
+ames_workflow
+
+# Extrair componentes
+extract_spec_parsnip(ames_workflow)
+extract_recipe(ames_workflow)
+```
+
+------------------------------------------------------------------------
+
+### 5.2 fit()
+
+**Função**: Treina o workflow nos dados
+
+```{r}
+#| eval: false
+ames_fit <- ames_workflow %>%
+  fit(data = ames_train)
+```
+
+**O que acontece**:
+
+1.  Prepara a recipe nos dados de treino (calcula médias, desvios, etc.)
+2.  Aplica transformações aos dados de treino
+3.  Treina o modelo com dados transformados
+4.  Armazena recipe preparada e modelo treinado
+
+**Retorna**: workflow treinado (fitted workflow)
+
+**Importante**:
+
+-   `fit()` sempre usa os dados fornecidos para preparar a recipe
+-   A recipe preparada será aplicada automaticamente a novos dados
+-   Nunca faça `fit()` nos dados de teste
+
+**Verificando o ajuste**:
+
+```{r}
+#| eval: false
+# Ver sumário
+ames_fit
+
+# Extrair modelo ajustado
+ames_fit %>%
+  extract_fit_parsnip()
+
+# Ver coeficientes
+ames_fit %>%
+  extract_fit_parsnip() %>%
+  tidy()
+```
+
+------------------------------------------------------------------------
+
+### 5.3 fit_resamples()
+
+**Função**: Treina o workflow com validação cruzada
+
+```{r}
+#| eval: false
+cv_results <- ames_workflow %>%
+  fit_resamples(ames_folds)
+```
+
+**Parâmetros**:
+
+-   `resamples`: objeto vfold_cv ou outro tipo de reamostragem
+-   `metrics`: métricas a calcular (padrão: rmse e rsq)
+-   `control`: controles adicionais
+
+**Controles úteis**:
+
+```{r}
+#| eval: false
+cv_results <- ames_workflow %>%
+  fit_resamples(
+    resamples = ames_folds,
+    metrics = metric_set(rmse, rsq, mae),
+    control = control_resamples(
+      save_pred = TRUE,      # Salvar predições
+      verbose = TRUE,        # Mostrar progresso
+      allow_par = TRUE       # Permitir paralelização
+    )
+  )
+```
+
+**Retorna**: objeto com resultados de todos os folds
+
+**Para coletar resultados**:
+
+```{r}
+#| eval: false
+# Métricas agregadas
+collect_metrics(cv_results)
+
+# Métricas por fold
+collect_metrics(cv_results, summarize = FALSE)
+
+# Predições de cada fold
+collect_predictions(cv_results)
+
+# Notas sobre folds
+collect_notes(cv_results)
+```
+
+**Interpretação dos resultados**:
+
+```{r}
+#| eval: false
+# Exemplo de output
+# # A tibble: 2 × 6
+#   .metric .estimator  mean     n std_err .config             
+#   <chr>   <chr>      <dbl> <int>   <dbl> <chr>               
+# 1 rmse    standard   30456    10    1234 Preprocessor1_Model1
+# 2 rsq     standard    0.81    10    0.02 Preprocessor1_Model1
+```
+
+-   `mean`: performance média nos 10 folds
+-   `n`: número de folds
+-   `std_err`: erro padrão (variabilidade entre folds)
+
+**Vantagens do fit_resamples()**:
+
+-   Estimativa mais confiável da performance
+-   Detecta overfitting antes do teste final
+-   Permite comparar modelos de forma justa
+-   Não "gasta" os dados de teste
+
+------------------------------------------------------------------------
+
+### 5.4 predict()
+
+**Função**: Faz predições com modelo treinado
+
+```{r}
+#| eval: false
+ames_pred <- predict(ames_fit, ames_test)
+```
+
+**Retorna**: tibble com coluna `.pred`
+
+**Tipos de predição**:
+
+```{r}
+#| eval: false
+# Predições pontuais (padrão)
+predict(ames_fit, new_data, type = "numeric")
+
+# Intervalo de confiança
+predict(ames_fit, new_data, type = "conf_int", level = 0.95)
+
+# Intervalo de predição (quando disponível)
+predict(ames_fit, new_data, type = "pred_int", level = 0.95)
+```
+
+**Exemplo completo com teste**:
+
+```{r}
+#| eval: false
+# Predições
+test_pred <- predict(ames_fit, ames_test)
+
+# Adicionar aos dados originais
+test_results <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(test_pred)
+
+# Com intervalos
+test_pred_int <- predict(ames_fit, ames_test, type = "conf_int")
+
+test_results_full <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(test_pred) %>%
+  bind_cols(test_pred_int)
+```
+
+**Predições em novos dados**:
+
+```{r}
+#| eval: false
+# Criar novo dado
+nova_casa <- tibble(
+  Gr_Liv_Area = 2000,
+  Year_Built = 2010,
+  Garage_Area = 500,
+  Total_Bsmt_SF = 1200
+)
+
+# Predição
+predict(ames_fit, nova_casa)
+```
+
+**Importante**:
+
+-   Novos dados devem ter mesmas colunas usadas no treino
+-   A recipe preparada será aplicada automaticamente
+-   Transformações são consistentes com o treino
+
+------------------------------------------------------------------------
+
+### 5.5 Funções de Extração
+
+#### `extract_fit_parsnip()`
+
+Extrai o modelo parsnip do workflow
+
+```{r}
+#| eval: false
+modelo_parsnip <- ames_fit %>%
+  extract_fit_parsnip()
+```
+
+**Uso**: Acessar modelo para inspeção, importância de variáveis, etc.
+
+#### `extract_fit_engine()`
+
+Extrai o modelo do engine original (ex: objeto lm)
+
+```{r}
+#| eval: false
+modelo_lm <- ames_fit %>%
+  extract_fit_engine()
+
+# Acessa métodos específicos do lm
+summary(modelo_lm)
+plot(modelo_lm)
+```
+
+#### `extract_recipe()`
+
+Extrai a recipe preparada
+
+```{r}
+#| eval: false
+recipe_preparada <- ames_fit %>%
+  extract_recipe()
+
+# Inspecionar passos
+recipe_preparada %>%
+  tidy()
+```
+
+#### `extract_preprocessor()`
+
+Extrai o pré-processador (recipe ou formula)
+
+```{r}
+#| eval: false
+preprocessor <- ames_fit %>%
+  extract_preprocessor()
+```
+
+#### `tidy()`
+
+**Pacote**: `broom`\
+**Função**: Organiza coeficientes em tibble
+
+```{r}
+#| eval: false
+ames_fit %>%
+  extract_fit_parsnip() %>%
+  tidy()
+```
+
+**Retorna**: tibble com:
+
+-   `term`: nome da variável
+-   `estimate`: coeficiente estimado
+-   `std.error`: erro padrão
+-   `statistic`: estatística t
+-   `p.value`: p-valor
+
+**Também funciona com recipes**:
+
+```{r}
+#| eval: false
+# Ver transformações aplicadas
+ames_fit %>%
+  extract_recipe() %>%
+  tidy()
+
+# Ver transformações de um step específico
+ames_fit %>%
+  extract_recipe() %>%
+  tidy(number = 1)  # Primeiro step
+```
+
+#### `glance()`
+
+Sumário do modelo em uma linha
+
+```{r}
+#| eval: false
+ames_fit %>%
+  extract_fit_parsnip() %>%
+  glance()
+```
+
+**Retorna**: R², AIC, BIC, sigma, etc. (dependendo do modelo)
+
+#### `augment()`
+
+Adiciona predições e resíduos aos dados
+
+```{r}
+#| eval: false
+ames_fit %>%
+  extract_fit_engine() %>%
+  augment()
+```
+
+**Retorna**: dados originais com `.fitted`, `.resid`, etc.
+
+------------------------------------------------------------------------
+
+## 6. Métricas de Avaliação {#metricas}
+
+### 6.1 metrics()
+
+**Pacote**: `yardstick`\
+**Função**: Calcula métricas de performance
+
+```{r}
+#| eval: false
+ames_results %>%
+  metrics(truth = Sale_Price, estimate = .pred)
+```
+
+**Parâmetros**:
+
+-   `truth`: valores reais (observados)
+-   `estimate`: valores preditos
+
+**Retorna (regressão)**:
+
+-   `rmse`: Root Mean Squared Error
+-   `rsq`: R-squared
+-   `mae`: Mean Absolute Error
+
+**Exemplo completo**:
+
+```{r}
+#| eval: false
+# Criar resultados
+test_results <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(predict(ames_fit, ames_test))
+
+# Calcular métricas
+test_results %>%
+  metrics(truth = Sale_Price, estimate = .pred)
+```
+
+------------------------------------------------------------------------
+
+### 6.2 Entendendo as Métricas
+
+#### RMSE (Root Mean Squared Error)
+
+**Fórmula**: √(Σ(real - predito)² / n)
+
+**Interpretação**:
+
+-   Erro médio em unidades originais da variável resposta
+-   Penaliza erros grandes mais fortemente devido ao quadrado
+-   Exemplo: RMSE = \$30,000 significa erro médio de \$30k
+-   Mais sensível a outliers que MAE
+
+**Quando menor, melhor**
+
+**Propriedades**:
+
+-   Sempre não-negativo
+-   Mesmo erro em qualquer direção (sub ou superestimação)
+-   Útil quando erros grandes são particularmente indesejáveis
+
+#### R² (R-squared / Coeficiente de Determinação)
+
+**Fórmula**: 1 - (SS_res / SS_tot)
+
+Onde:
+
+-   SS_res = Σ(real - predito)² (soma dos quadrados dos resíduos)
+-   SS_tot = Σ(real - média)² (soma total dos quadrados)
+
+**Interpretação**:
+
+-   Proporção da variância explicada pelo modelo
+-   Varia de 0 a 1 (0% a 100%)
+-   R² = 0.8 significa que o modelo explica 80% da variabilidade dos dados
+
+**Valores típicos**:
+
+-   \< 0.3: fraco
+
+-   0.3-0.5: moderado
+
+-   0.5-0.7: bom
+
+-   0.7-0.9: muito bom
+
+-   
+
+    > 0.9: excelente (cuidado com overfitting)
+
+**Limitações**:
+
+-   Pode ser enganoso com dados não-lineares
+-   Não indica se o modelo está enviesado
+-   R² ajustado penaliza complexidade excessiva
+
+#### MAE (Mean Absolute Error)
+
+**Fórmula**: Σ\|real - predito\| / n
+
+**Interpretação**:
+
+-   Erro médio absoluto
+-   Mais robusto a outliers que RMSE
+-   Mesmo que RMSE, em unidades originais da resposta
+-   Todos os erros têm peso igual
+
+**Quando usar**:
+
+-   Quando outliers não devem dominar a métrica
+-   Para comunicação mais intuitiva com não-técnicos
+-   Quando erros grandes e pequenos são igualmente importantes
+
+**Comparação RMSE vs MAE**:
+
+-   Se RMSE \>\> MAE: muitos outliers ou erros grandes
+-   Se RMSE ≈ MAE: erros bem distribuídos
+-   RMSE sempre \>= MAE
+
+#### MAPE (Mean Absolute Percentage Error)
+
+**Fórmula**: (100/n) × Σ\|real - predito\| / \|real\|
+
+**Interpretação**:
+
+-   Erro percentual médio
+-   Independente da escala
+-   Útil para comparar modelos em diferentes contextos
+
+**Limitações**:
+
+-   Indefinido quando valores reais são zero
+-   Assimétrico: penaliza mais sub-predições que sobre-predições
+-   Sensível a valores reais pequenos
+
+------------------------------------------------------------------------
+
+### 6.3 Métricas Personalizadas
+
+#### Métricas individuais
+
+```{r}
+#| eval: false
+# RMSE
+ames_results %>% 
+  rmse(truth = Sale_Price, estimate = .pred)
+
+# R²
+ames_results %>% 
+  rsq(truth = Sale_Price, estimate = .pred)
+
+# MAE
+ames_results %>% 
+  mae(truth = Sale_Price, estimate = .pred)
+
+# MAPE
+ames_results %>% 
+  mape(truth = Sale_Price, estimate = .pred)
+```
+
+#### `metric_set()` - Conjunto customizado
+
+```{r}
+#| eval: false
+# Definir conjunto de métricas
+my_metrics <- metric_set(rmse, rsq, mae, mape)
+
+# Aplicar
+ames_results %>%
+  my_metrics(truth = Sale_Price, estimate = .pred)
+```
+
+**Vantagem**: Calcular todas de uma vez, consistente em todo o código
+
+**Outras métricas úteis para regressão**:
+
+```{r}
+#| eval: false
+# MASE - Mean Absolute Scaled Error
+ames_results %>%
+  mase(truth = Sale_Price, estimate = .pred)
+
+# CCC - Concordance Correlation Coefficient
+ames_results %>%
+  ccc(truth = Sale_Price, estimate = .pred)
+
+# SMAPE - Symmetric MAPE
+ames_results %>%
+  smape(truth = Sale_Price, estimate = .pred)
+
+# Huber Loss (robusto a outliers)
+ames_results %>%
+  huber_loss(truth = Sale_Price, estimate = .pred)
+```
+
+**Criando métricas customizadas**:
+
+```{r}
+#| eval: false
+# Exemplo: erro percentual médio
+mpe <- function(data, truth, estimate) {
+  metric_summarizer(
+    metric_nm = "mpe",
+    metric_fn = function(truth, estimate) {
+      mean((truth - estimate) / truth) * 100
+    },
+    data = data,
+    truth = !! enquo(truth),
+    estimate = !! enquo(estimate)
+  )
+}
+```
+
+------------------------------------------------------------------------
+
+## 7. Validação Cruzada {#validacao}
+
+### 7.1 Interpretando Resultados de CV
+
+```{r}
+#| eval: false
+cv_results <- ames_workflow %>%
+  fit_resamples(ames_folds)
+
+collect_metrics(cv_results)
+```
+
+**Colunas retornadas**:
+
+-   `.metric`: nome da métrica
+-   `mean`: média entre folds
+-   `n`: número de folds
+-   `std_err`: erro padrão da média
+-   `.config`: configuração do modelo
+
+**Interpretação**:
+
+-   `mean`: performance esperada em novos dados
+-   `std_err`: variabilidade entre folds
+    -   Baixo = modelo estável
+    -   Alto = modelo sensível aos dados específicos
+
+**Exemplo de output**:
+
+```         
+# A tibble: 2 × 6
+  .metric .estimator  mean     n std_err .config             
+  <chr>   <chr>      <dbl> <int>   <dbl> <chr>               
+1 rmse    standard   30456    10    1234 Preprocessor1_Model1
+2 rsq     standard    0.81    10    0.02 Preprocessor1_Model1
+```
+
+**Leitura**:
+
+-   RMSE médio de \$30,456 com variação de \$1,234 entre folds
+-   R² médio de 0.81 (81% da variância explicada)
+-   Baixo std_err indica consistência do modelo
+
+### 7.2 Análise Detalhada por Fold
+
+```{r}
+#| eval: false
+# Métricas por fold individual
+cv_results %>%
+  collect_metrics(summarize = FALSE)
+
+# Predições por fold
+cv_results %>%
+  collect_predictions()
+
+# Visualizar variabilidade
+cv_results %>%
+  collect_metrics(summarize = FALSE) %>%
+  ggplot(aes(x = id, y = .estimate)) +
+  geom_point() +
+  facet_wrap(~ .metric, scales = "free_y") +
+  labs(x = "Fold", y = "Valor da Métrica")
+```
+
+### 7.3 Tipos de Reamostragem
+
+#### Validação Cruzada Repetida
+
+```{r}
+#| eval: false
+# 10-fold CV repetido 5 vezes
+ames_folds_rep <- vfold_cv(ames_train, v = 10, repeats = 5)
+
+cv_results_rep <- ames_workflow %>%
+  fit_resamples(ames_folds_rep)
+```
+
+**Vantagem**: Estimativa ainda mais estável, reduz viés da divisão específica
+
+#### Bootstrap
+
+```{r}
+#| eval: false
+# 25 amostras bootstrap
+ames_boots <- bootstraps(ames_train, times = 25)
+
+boot_results <- ames_workflow %>%
+  fit_resamples(ames_boots)
+```
+
+**Quando usar**:
+
+-   Datasets pequenos
+-   Estimativa de variância dos coeficientes
+-   Intervalos de confiança
+
+#### Monte Carlo Cross-Validation
+
+```{r}
+#| eval: false
+# 20 divisões aleatórias 75/25
+ames_mc <- mc_cv(ames_train, prop = 0.75, times = 20)
+
+mc_results <- ames_workflow %>%
+  fit_resamples(ames_mc)
+```
+
+**Quando usar**: Alternativa ao k-fold quando divisões aleatórias são preferíveis
+
+#### Validação Temporal
+
+```{r}
+#| eval: false
+# Para dados temporais
+library(timetk)
+
+# Rolling window
+ames_rolls <- rolling_origin(
+  ames_train,
+  initial = 1000,
+  assess = 250,
+  cumulative = FALSE
+)
+```
+
+**Quando usar**: Dados de séries temporais, respeita ordem temporal
+
+### 7.4 Estratificação na Validação Cruzada
+
+```{r}
+#| eval: false
+# Estratifica por quantis da resposta
+ames_folds_strat <- vfold_cv(
+  ames_train, 
+  v = 10, 
+  strata = Sale_Price
+)
+```
+
+**Benefícios**:
+
+-   Mantém distribuição da variável resposta em todos os folds
+-   Especialmente importante com distribuições assimétricas
+-   Reduz variabilidade entre folds
+
+**Quando usar estratificação**:
+
+-   Variável resposta com distribuição não-uniforme
+-   Datasets pequenos
+-   Presença de valores raros ou extremos
+
+------------------------------------------------------------------------
+
+## 8. Modelos Avançados {#avancados}
+
+### 8.1 Importância de Variáveis
+
+#### `vip()` - Variable Importance Plot
+
+**Pacote**: `vip`\
+**Função**: Visualiza importância das variáveis
+
+```{r}
+#| eval: false
+library(vip)
+
+# Para modelos baseados em árvores
+rf_fit %>%
+  extract_fit_parsnip() %>%
+  vip(num_features = 10)
+
+# Para regressão linear
+lm_fit %>%
+  extract_fit_parsnip() %>%
+  vip(num_features = 10)
+```
+
+**Como funciona por tipo de modelo**:
+
+-   **Regressão Linear**: valor absoluto dos coeficientes padronizados
+-   **Random Forest**: redução média na impureza (MSE) ou permutação
+-   **Lasso**: valores absolutos dos coeficientes não-zero
+-   **Gradient Boosting**: ganho total ou frequência de uso
+
+**Tipos de importância**:
+
+```{r}
+#| eval: false
+# Importância por impureza (padrão para RF)
+rf_fit %>%
+  extract_fit_parsnip() %>%
+  vip(method = "model")
+
+# Importância por permutação (mais confiável, mais lento)
+rf_fit %>%
+  extract_fit_parsnip() %>%
+  vip(method = "permute", 
+      target = "Sale_Price", 
+      metric = "rmse",
+      pred_wrapper = predict)
+```
+
+**Interpretação**:
+
+-   Barras maiores = variáveis mais importantes para o modelo
+-   Importância relativa, não absoluta
+-   Útil para seleção de features
+-   Pode orientar engenharia de features
+
+**Customização do plot**:
+
+```{r}
+#| eval: false
+rf_fit %>%
+  extract_fit_parsnip() %>%
+  vip(
+    num_features = 15,
+    geom = "point",
+    aesthetics = list(color = "steelblue", size = 3)
+  ) +
+  labs(title = "Importância das Variáveis - Random Forest")
+```
+
+#### SHAP Values (SHapley Additive exPlanations)
+
+```{r}
+#| eval: false
+library(DALEXtra)
+
+# Criar explicador
+explainer <- explain_tidymodels(
+  rf_fit,
+  data = ames_train %>% select(-Sale_Price),
+  y = ames_train$Sale_Price,
+  label = "Random Forest"
+)
+
+# SHAP values
+shap_values <- predict_parts(
+  explainer,
+  new_observation = ames_test[1, ],
+  type = "shap"
+)
+
+plot(shap_values)
+```
+
+**Vantagem**: Explica contribuição de cada variável para predição individual
+
+------------------------------------------------------------------------
+
+### 8.2 Tuning de Hiperparâmetros
+
+#### `tune()` - Marcador para tuning
+
+```{r}
+#| eval: false
+# Marcar parâmetros para otimização
+rf_spec <- rand_forest(
+  trees = 1000,
+  mtry = tune(),
+  min_n = tune()
+) %>%
+  set_engine("ranger") %>%
+  set_mode("regression")
+```
+
+**Parâmetros que podem ser otimizados**:
+
+-   **Random Forest**: mtry, min_n, trees
+-   **Gradient Boosting**: trees, tree_depth, learn_rate, mtry
+-   **Regularização**: penalty, mixture
+-   **SVM**: cost, rbf_sigma
+-   **Neural Networks**: hidden_units, penalty, epochs
+
+#### `tune_grid()` - Grid search
+
+```{r}
+#| eval: false
+library(dials)
+
+# Definir grid de busca
+rf_grid <- grid_regular(
+  mtry(range = c(2, 10)),
+  min_n(range = c(5, 30)),
+  levels = 5  # 5 valores para cada parâmetro = 25 combinações
+)
+
+# Workflow com modelo a ser otimizado
+rf_workflow <- workflow() %>%
+  add_recipe(ames_recipe) %>%
+  add_model(rf_spec)
+
+# Tuning
+tune_results <- tune_grid(
+  rf_workflow,
+  resamples = ames_folds,
+  grid = rf_grid,
+  metrics = metric_set(rmse, rsq, mae),
+  control = control_grid(save_pred = TRUE, verbose = TRUE)
+)
+```
+
+**Tipos de grid**:
+
+```{r}
+#| eval: false
+# Grid regular (espaçamento uniforme)
+grid_regular(mtry(), min_n(), levels = 5)
+
+# Grid aleatório (mais pontos, menos estruturado)
+grid_random(mtry(), min_n(), size = 50)
+
+# Grid específico (manual)
+grid_manual <- tibble(
+  mtry = c(3, 5, 7),
+  min_n = c(10, 20, 30)
+)
+
+# Grid latino hipercubo (boa cobertura do espaço)
+grid_latin_hypercube(mtry(), min_n(), size = 30)
+```
+
+#### Analisando resultados do tuning
+
+```{r}
+#| eval: false
+# Ver todas as combinações
+collect_metrics(tune_results)
+
+# Melhores resultados
+show_best(tune_results, metric = "rmse", n = 10)
+
+# Visualizar
+autoplot(tune_results)
+
+# Plot customizado
+tune_results %>%
+  collect_metrics() %>%
+  filter(.metric == "rmse") %>%
+  ggplot(aes(x = mtry, y = mean, color = factor(min_n))) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Performance por Hiperparâmetro")
+```
+
+#### `select_best()` - Seleciona melhor combinação
+
+```{r}
+#| eval: false
+# Melhor por métrica
+best_params <- select_best(tune_results, metric = "rmse")
+
+# Alternativas
+select_by_pct_loss(tune_results, metric = "rmse", limit = 5)
+select_by_one_std_err(tune_results, metric = "rmse")
+```
+
+#### `finalize_workflow()` - Atualiza workflow
+
+```{r}
+#| eval: false
+# Finalizar com melhores parâmetros
+final_workflow <- finalize_workflow(rf_workflow, best_params)
+
+# Treinar modelo final
+final_fit <- final_workflow %>%
+  fit(ames_train)
+
+# Avaliar no teste
+final_results <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(predict(final_fit, ames_test))
+
+final_results %>%
+  metrics(truth = Sale_Price, estimate = .pred)
+```
+
+#### Tuning com Bayesian Optimization
+
+```{r}
+#| eval: false
+library(finetune)
+
+# Mais eficiente que grid search
+tune_bayes_results <- tune_bayes(
+  rf_workflow,
+  resamples = ames_folds,
+  initial = 10,  # Pontos iniciais
+  iter = 30,     # Iterações
+  metrics = metric_set(rmse, rsq),
+  control = control_bayes(verbose = TRUE)
+)
+```
+
+**Vantagem**: Explora espaço de hiperparâmetros de forma mais inteligente
+
+#### Racing (ANOVA Racing)
+
+```{r}
+#| eval: false
+# Elimina candidatos ruins rapidamente
+tune_race_results <- tune_race_anova(
+  rf_workflow,
+  resamples = ames_folds,
+  grid = 30,
+  metrics = metric_set(rmse),
+  control = control_race(verbose = TRUE)
+)
+```
+
+**Vantagem**: Economiza tempo descartando configurações ruins cedo
+
+------------------------------------------------------------------------
+
+### 8.3 Salvando e Carregando Modelos
+
+#### Formato RDS (padrão)
+
+```{r}
+#| eval: false
+# Salvar modelo completo
+saveRDS(ames_fit, "models/ames_model.rds")
+
+# Carregar
+loaded_model <- readRDS("models/ames_model.rds")
+
+# Usar imediatamente
+predictions <- predict(loaded_model, ames_test)
+```
+
+**Características do RDS**:
+
+-   Formato nativo do R
+-   Preserva toda estrutura do objeto
+-   Portável entre sistemas (mesmo OS/versão R)
+-   Compacto
+
+#### Bundle (para modelos complexos)
+
+```{r}
+#| eval: false
+library(bundle)
+
+# Para modelos que não serializam bem
+# (keras, xgboost, spark, etc.)
+bundled_model <- bundle(ames_fit)
+saveRDS(bundled_model, "models/model_bundled.rds")
+
+# Carregar e desempacotar
+loaded <- readRDS("models/model_bundled.rds")
+unbundled_model <- unbundle(loaded)
+
+# Usar
+predict(unbundled_model, new_data)
+```
+
+**Quando usar bundle**:
+
+-   Modelos com dependências externas (Keras, TensorFlow)
+-   Modelos Spark
+-   Modelos XGBoost
+-   Quando RDS padrão não funciona
+
+#### Vetiver (deploy em produção)
+
+```{r}
+#| eval: false
+library(vetiver)
+
+# Criar versão deployável
+v <- vetiver_model(ames_fit, "ames_price_model")
+
+# Salvar
+vetiver_pin_write(board, v)
+
+# Criar API
+pr <- pr() %>%
+  vetiver_api(v)
+
+# Rodar servidor
+pr_run(pr, port = 8080)
+```
+
+**Vantagem**: Framework completo para MLOps
+
+#### Salvando componentes separadamente
+
+```{r}
+#| eval: false
+# Recipe preparada
+recipe_prep <- extract_recipe(ames_fit)
+saveRDS(recipe_prep, "models/recipe.rds")
+
+# Modelo parsnip
+model_parsnip <- extract_fit_parsnip(ames_fit)
+saveRDS(model_parsnip, "models/model.rds")
+
+# Workflow
+saveRDS(ames_workflow, "models/workflow.rds")
+```
+
+------------------------------------------------------------------------
+
+### 8.4 Ensemble de Modelos
+
+#### Stacking
+
+```{r}
+#| eval: false
+library(stacks)
+
+# Definir modelos candidatos
+ctrl_grid <- control_stack_grid()
+
+# Tuning de múltiplos modelos
+rf_res <- tune_grid(rf_workflow, ames_folds, grid = 10, control = ctrl_grid)
+xgb_res <- tune_grid(xgb_workflow, ames_folds, grid = 10, control = ctrl_grid)
+lm_res <- fit_resamples(lm_workflow, ames_folds, control = ctrl_grid)
+
+# Criar stack
+model_stack <- stacks() %>%
+  add_candidates(rf_res) %>%
+  add_candidates(xgb_res) %>%
+  add_candidates(lm_res)
+
+# Treinar meta-modelo
+stack_fit <- model_stack %>%
+  blend_predictions() %>%
+  fit_members()
+
+# Predições
+predict(stack_fit, ames_test)
+```
+
+#### Weighted Average
+
+```{r}
+#| eval: false
+# Predições de múltiplos modelos
+pred_rf <- predict(rf_fit, ames_test)$.pred
+pred_xgb <- predict(xgb_fit, ames_test)$.pred
+pred_lm <- predict(lm_fit, ames_test)$.pred
+
+# Média ponderada
+ensemble_pred <- 0.5 * pred_rf + 0.3 * pred_xgb + 0.2 * pred_lm
+```
+
+------------------------------------------------------------------------
+
+## 9. Boas Práticas e Dicas
+
+### 9.1 Ordem de Operações
+
+**Sequência correta**:
+
+1.  Dividir dados em treino/teste ANTES de qualquer processamento
+2.  Explorar apenas dados de treino
+3.  Criar recipe baseada apenas em dados de treino
+4.  Recipe é preparada apenas com dados de treino
+5.  Validação cruzada DENTRO do conjunto de treino
+6.  Testar modelo APENAS UMA VEZ no final
+
+**Pipeline ideal**:
+
+```{r}
+#| eval: false
+# 1. Dividir
+split <- initial_split(dados, prop = 0.75, strata = resposta)
+treino <- training(split)
+teste <- testing(split)
+
+# 2. Explorar apenas treino
+summary(treino)
+ggplot(treino, aes(x = preditor, y = resposta)) + geom_point()
+
+# 3. Recipe baseada no treino
+recipe <- recipe(resposta ~ ., data = treino) %>%
+  step_normalize(all_numeric_predictors())
+
+# 4. Validação cruzada no treino
+folds <- vfold_cv(treino, v = 10)
+cv_results <- workflow() %>%
+  add_recipe(recipe) %>%
+  add_model(modelo) %>%
+  fit_resamples(folds)
+
+# 5. Avaliar CV
+collect_metrics(cv_results)
+
+# 6. Treinar modelo final
+fit_final <- workflow() %>%
+  add_recipe(recipe) %>%
+  add_model(modelo) %>%
+  fit(treino)
+
+# 7. Testar UMA VEZ
+teste_results <- teste %>%
+  select(resposta) %>%
+  bind_cols(predict(fit_final, teste))
+```
+
+------------------------------------------------------------------------
+
+### 9.2 Evitando Data Leakage
+
+**Data leakage** ocorre quando informação do teste "vaza" para o treino
+
+**Exemplos de leakage**:
+
+```{r}
+#| eval: false
+# ERRADO - Normaliza antes de dividir
+dados_norm <- dados %>%
+  mutate(across(where(is.numeric), scale))
+split <- initial_split(dados_norm)
+
+# CORRETO - Normaliza dentro da recipe
+split <- initial_split(dados)
+recipe <- recipe(resposta ~ ., training(split)) %>%
+  step_normalize(all_numeric_predictors())
+```
+
+```{r}
+#| eval: false
+# ERRADO - Remove outliers antes de dividir
+dados_sem_outliers <- dados %>%
+  filter(valor < quantile(valor, 0.95))
+split <- initial_split(dados_sem_outliers)
+
+# CORRETO - Remove dentro da recipe ou não remove
+split <- initial_split(dados)
+recipe <- recipe(resposta ~ ., training(split)) %>%
+  step_filter(valor < quantile(valor, 0.95))
+```
+
+```{r}
+#| eval: false
+# ERRADO - Seleção de variáveis em todos os dados
+modelo <- lm(resposta ~ var1 + var2, data = dados)  # baseado em todos
+split <- initial_split(dados %>% select(resposta, var1, var2))
+
+# CORRETO - Seleção dentro do treino
+split <- initial_split(dados)
+# Análise exploratória apenas no treino para escolher variáveis
+```
+
+**Prevenção**:
+
+-   SEMPRE dividir dados primeiro
+-   Usar recipes para transformações
+-   Validação cruzada apenas no treino
+-   Não usar teste para decisões de modelagem
+
+------------------------------------------------------------------------
+
+### 9.3 Estratificação
+
+```{r}
+#| eval: false
+# Para regressão: estratifica por quantis da resposta
+ames_split <- initial_split(ames, prop = 0.75, strata = Sale_Price)
+ames_folds <- vfold_cv(ames_train, v = 10, strata = Sale_Price)
+
+# Para classificação: estratifica por classe
+split <- initial_split(dados, strata = classe)
+```
+
+**Benefícios da estratificação**:
+
+-   Mantém distribuição da variável resposta
+-   Especialmente importante com:
+    -   Distribuições assimétricas
+    -   Datasets pequenos
+    -   Valores raros ou extremos
+    -   Classes desbalanceadas (classificação)
+
+**Número de estratos**:
+
+-   Padrão: 4 quantis para regressão
+-   Pode ajustar com `breaks` se necessário
+
+------------------------------------------------------------------------
+
+### 9.4 Diagnóstico de Modelos
+
+#### Análise de Resíduos
+
+```{r}
+#| eval: false
+# Criar resíduos
+resultados <- teste %>%
+  select(Sale_Price) %>%
+  bind_cols(predict(fit_final, teste)) %>%
+  mutate(
+    residuos = Sale_Price - .pred,
+    residuos_padrao = residuos / sd(residuos)
+  )
+
+# Sumário
+summary(resultados$residuos)
+```
+
+**Verificações importantes**:
+
+```{r}
+#| eval: false
+library(ggplot2)
+
+# 1. Normalidade dos resíduos
+ggplot(resultados, aes(sample = residuos)) +
+  stat_qq() + 
+  stat_qq_line() +
+  labs(title = "Q-Q Plot - Normalidade dos Resíduos")
+
+# Teste de Shapiro-Wilk
+shapiro.test(resultados$residuos)
+
+# 2. Homocedasticidade (variância constante)
+ggplot(resultados, aes(x = .pred, y = residuos)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  geom_smooth(se = FALSE) +
+  labs(
+    x = "Valores Preditos",
+    y = "Resíduos",
+    title = "Resíduos vs Predições"
+  )
+
+# 3. Distribuição dos resíduos
+ggplot(resultados, aes(x = residuos)) +
+  geom_histogram(bins = 30, fill = "steelblue", alpha = 0.7) +
+  labs(title = "Distribuição dos Resíduos")
+
+# 4. Resíduos vs variáveis preditoras
+ggplot(resultados %>% bind_cols(teste %>% select(Gr_Liv_Area)), 
+       aes(x = Gr_Liv_Area, y = residuos)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  geom_smooth(se = FALSE)
+
+# 5. Valores preditos vs reais
+ggplot(resultados, aes(x = Sale_Price, y = .pred)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  labs(
+    x = "Valores Reais",
+    y = "Valores Preditos",
+    title = "Predito vs Real"
+  )
+```
+
+**Padrões problemáticos**:
+
+-   **Funil**: heterocedasticidade (variância não constante)
+    -   Solução: transformação log, Box-Cox, ou usar modelos robustos
+-   **Curva**: relação não-linear não capturada
+    -   Solução: adicionar termos polinomiais, splines, ou usar modelos não-lineares
+-   **Outliers**: pontos influentes
+    -   Solução: investigar, possivelmente remover ou usar modelos robustos
+-   **Clusters**: variáveis omitidas ou interações não modeladas
+    -   Solução: incluir mais variáveis ou interações
+
+#### Identificando Outliers e Pontos Influentes
+
+```{r}
+#| eval: false
+# Outliers (resíduos padronizados > 3)
+outliers <- resultados %>%
+  filter(abs(residuos_padrao) > 3)
+
+# Visualizar
+ggplot(resultados, aes(x = seq_along(residuos), y = residuos_padrao)) +
+  geom_point() +
+  geom_hline(yintercept = c(-3, 3), color = "red", linetype = "dashed") +
+  labs(x = "Índice", y = "Resíduos Padronizados")
+
+# Para regressão linear: Distância de Cook
+modelo_lm <- extract_fit_engine(fit_final)
+cooks_d <- cooks.distance(modelo_lm)
+
+plot(cooks_d, type = "h")
+abline(h = 4/length(cooks_d), col = "red", lty = 2)
+```
+
+#### Multicolinearidade
+
+```{r}
+#| eval: false
+library(car)
+
+# VIF (Variance Inflation Factor)
+modelo_lm <- extract_fit_engine(fit_final)
+vif(modelo_lm)
+
+```
+
+## 10. Comparação de Modelos
+
+### Tabela Comparativa
+
+| Modelo | Uso Principal | Vantagens | Desvantagens |
+|------------------|------------------|------------------|------------------|
+| **Linear** | Baseline, interpretabilidade | Simples, rápido, interpretável | Assume linearidade |
+| **Ridge** | Multicolinearidade | Estabiliza coeficientes | Mantém todas variáveis |
+| **Lasso** | Seleção variáveis | Remove variáveis irrelevantes | Pode ser instável |
+| **Elastic Net** | Combinação | Equilibra Ridge e Lasso | Mais hiperparâmetros |
+| **Random Forest** | Relações complexas | Não-linear, robusto | Menos interpretável, lento |
+
+------------------------------------------------------------------------
+
+## 11. Exemplo Completo
+
+``` r
+# 1. PREPARAÇÃO DOS DADOS
+library(tidymodels)
+library(modeldata)
+
+data("ames")
+set.seed(123)
+
+# Divisão estratificada
+ames_split <- initial_split(ames, prop = 0.75, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test <- testing(ames_split)
+
+# 2. PRÉ-PROCESSAMENTO
+ames_recipe <- recipe(Sale_Price ~ Gr_Liv_Area + Year_Built + 
+                      Garage_Area + Total_Bsmt_SF, 
+                      data = ames_train) %>%
+  step_normalize(all_numeric_predictors()) %>%  # Padronização
+  step_impute_median(all_numeric_predictors())  # Imputa NAs
+
+# 3. ESPECIFICAÇÃO DO MODELO
+lm_spec <- linear_reg() %>%
+  set_engine("lm") %>%
+  set_mode("regression")
+
+# 4. WORKFLOW
+ames_wf <- workflow() %>%
+  add_recipe(ames_recipe) %>%
+  add_model(lm_spec)
+
+# 5. VALIDAÇÃO CRUZADA
+set.seed(456)
+ames_folds <- vfold_cv(ames_train, v = 10, strata = Sale_Price)
+
+cv_results <- ames_wf %>%
+  fit_resamples(
+    resamples = ames_folds,
+    control = control_resamples(save_pred = TRUE))
+
+# 6. AVALIAÇÃO CV
+collect_metrics(cv_results)
+
+# 7. TREINO FINAL
+final_fit <- ames_wf %>%
+  fit(ames_train)
+
+# 8. TESTE
+test_results <- ames_test %>%
+  select(Sale_Price) %>%
+  bind_cols(predict(final_fit, ames_test))
+
+# 9. MÉTRICAS FINAIS
+test_results %>%
+  metrics(truth = Sale_Price, estimate = .pred)
+
+# 10. ANÁLISE DE RESÍDUOS
+test_results <- test_results %>%
+  mutate(residuos = Sale_Price - .pred)
+
+summary(test_results$residuos)
+
+# 11. PREDIÇÃO NOVA
+nova_casa <- tibble(
+  Gr_Liv_Area = 2000,
+  Year_Built = 2010,
+  Garage_Area = 500,
+  Total_Bsmt_SF = 1200)
+
+predict(final_fit, nova_casa)
+```
+
+------------------------------------------------------------------------
+
+## 12. Troubleshooting Comum
+
+### Erro: "Can't subset columns that don't exist"
+
+**Causa**: Variável na fórmula não existe nos dados\
+**Solução**: Verificar nomes com `names(dados)`
+
+### Erro: "All models failed"
+
+**Causa**: Problema no pré-processamento ou dados\
+**Solução**: Verificar NAs, valores infinitos, variáveis constantes
+
+### Warning: "prediction from a rank-deficient fit"
+
+**Causa**: Multicolinearidade perfeita\
+**Solução**: Remover variáveis redundantes ou usar regularização
+
+### Erro no predict: "new data não tem as mesmas variáveis"
+
+**Causa**: Dados novos faltam variáveis usadas no treino\
+**Solução**: Garantir mesma estrutura nos novos dados
+
+------------------------------------------------------------------------
+
+## 13. Recursos
+
+### Documentação Oficial
+
+-   [Tidymodels Site](https://www.tidymodels.org/)
+-   [Guia Completo](https://www.tmwr.org/) - Tidy Modeling with R (livro online gratuito)
+-   [Cheatsheet](https://github.com/rstudio/cheatsheets)
+
+### Pacotes Complementares
+
+-   `themis`: balanceamento de classes
+-   `embed`: feature engineering avançado
+-   `textrecipes`: processamento de texto
+-   `usemodels`: gera código tidymodels automaticamente
+
+------------------------------------------------------------------------
+
+## Glossário
+
+**Artifact**: Visualização ou objeto criado no processo de análise\
+**Bootstrap**: Reamostragem com reposição\
+**Cross-validation**: Validação cruzada k-fold\
+**Feature engineering**: Criação/transformação de variáveis\
+**Holdout**: Conjunto de teste separado\
+**Hyperparameter**: Parâmetro definido antes do treino\
+**Leakage**: Vazamento de informação do teste para treino\
+**Overfitting**: Modelo muito ajustado aos dados de treino\
+**Pipeline**: Sequência automatizada de operações\
+**Resampling**: Técnicas de reamostragem (CV, bootstrap)\
+**Stratification**: Manter distribuição da resposta em divisões\
+**Tuning**: Otimização de hiperparâmetros
+
+## ☕ Assine o Café com R
+
+Que cada gole desperte uma nova ideia.
+
+Que cada script abra uma nova conversa.
+
+Que o Café com R, se torne um ponto de encontro nosso!
+
+<iframe src="https://forms.gle/Q5SKuSK1ViTL6FAWA" width="100%" height="550" frameborder="0" marginheight="0" marginwidth="0" style="     border:3px solid #224573;     border-radius:12px;     box-shadow:0 0 12px rgba(34,69,115,0.3);   ">
+
+</iframe>

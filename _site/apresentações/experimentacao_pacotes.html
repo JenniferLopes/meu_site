@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<link href="../imagens/cafe1.png" rel="icon" type="image/png">
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Jennifer Luz Lopes – Pacotes R para Experimentação Agrícola</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-18e07a0c81f49f8faf7052c2b881f862.css">
+  <link rel="stylesheet" href="estilo_jeni.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Pacotes R para Experimentação Agrícola</h1>
+  <p class="subtitle">Ferramentas Estatísticas para Análise de Experimentos</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section class="slide level2">
+
+<div style="color: #224573;">
+<p>Pacotes R especializados em análise de experimentos agrícolas e ensaios multi-ambientais.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/main/rstats-artwork/welcome_to_rstats_twitter.png" class="quarto-figure quarto-figure-center" style="width:50.0%"></p>
+</figure>
+</div>
+</div>
+</section>
+<section id="estrutura-da-apresentação" class="slide level2" data-background-color="#E5D3B3">
+<h2>Estrutura da Apresentação</h2>
+<div style="color: #224573;">
+<p><strong>9 pacotes organizados por função:</strong></p>
+<ul>
+<li>Planejamento de Experimentos: FielDHub</li>
+<li>Análise de Experimentos Clássicos: AgroR, ExpDes.pt</li>
+<li>Modelos Mistos: lme4, nlme</li>
+<li>Ensaios Multi-Ambientais: metan</li>
+<li>Comparações Múltiplas: multcomp</li>
+<li>Análises Avançadas: MASS, dsfair</li>
+</ul>
+<p>Cada pacote com aplicação prática.</p>
+</div>
+</section>
+<section id="categorias-funcionais" class="slide level2" data-background-color="#224573">
+<h2>Categorias Funcionais</h2>
+<div style="color: white;">
+<p><strong>Classificação por aplicação:</strong></p>
+<ol type="1">
+<li>Delineamento Experimental - FielDHub</li>
+<li>Análise de Experimentos - AgroR, ExpDes.pt, dsfair</li>
+<li>Modelos Lineares Mistos - lme4, nlme</li>
+<li>Ensaios Multi-Ambientais - metan</li>
+<li>Comparações e Testes - multcomp, MASS</li>
+</ol>
+</div>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="planejamento-de-experimentos" class="title-slide slide level1 center" data-background-color="#224573">
+<h1>Planejamento de Experimentos</h1>
+<div style="color: white; text-align: center;">
+<p><strong>Delineamentos Experimentais</strong></p>
+</div>
+</section>
+<section id="fieldhub" class="slide level2" data-background-color="#E5D3B3">
+<h2>FielDHub</h2>
+<div style="color: #224573;">
+<p><strong>Características:</strong></p>
+<ul>
+<li>Aplicativo Shiny interativo para delineamentos experimentais</li>
+<li>Suporte a delineamentos tradicionais (DBC, DIC, DQL)</li>
+<li>Delineamentos não-replicados (p-rep)</li>
+<li>Delineamentos aumentados</li>
+<li>Arranjos diagonais</li>
+<li>Visualização de layout de campo</li>
+</ul>
+</div>
+</section>
+<section id="fieldhub-interface-programática" class="slide level2" data-background-color="#E5D3B3">
+<h2>FielDHub: Interface Programática</h2>
+<div style="color: #224573;">
+
+</div>
+</section>
+<section id="fieldhub-implementação" class="slide level2" data-background-color="#E5D3B3">
+<h2>FielDHub: Implementação</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(FielDHub)</span>
+<span id="cb1-2"><a></a></span>
+<span id="cb1-3"><a></a><span class="co"># Criar DBC com 15 tratamentos e 4 repetições</span></span>
+<span id="cb1-4"><a></a>experimento <span class="ot">&lt;-</span> <span class="fu">RCBD</span>(</span>
+<span id="cb1-5"><a></a>  <span class="at">t =</span> <span class="dv">15</span>,</span>
+<span id="cb1-6"><a></a>  <span class="at">r =</span> <span class="dv">4</span>,</span>
+<span id="cb1-7"><a></a>  <span class="at">plotNumber =</span> <span class="dv">1</span>,</span>
+<span id="cb1-8"><a></a>  <span class="at">locationNames =</span> <span class="st">"Campo A"</span>,</span>
+<span id="cb1-9"><a></a>  <span class="at">seed =</span> <span class="dv">42</span></span>
+<span id="cb1-10"><a></a>)</span>
+<span id="cb1-11"><a></a></span>
+<span id="cb1-12"><a></a><span class="co"># Estrutura de dados</span></span>
+<span id="cb1-13"><a></a><span class="fu">head</span>(experimento<span class="sc">$</span>fieldBook)</span>
+<span id="cb1-14"><a></a></span>
+<span id="cb1-15"><a></a><span class="co"># Visualização</span></span>
+<span id="cb1-16"><a></a><span class="fu">plot</span>(experimento)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="fieldhub-saída" class="slide level2" data-background-color="#224573">
+<h2>FielDHub: Saída</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Componentes:</strong></p>
+<ul>
+<li><code>fieldBook</code>: estrutura completa do layout</li>
+<li><code>layoutRandom</code>: matriz de casualização</li>
+<li><code>plotNumber</code>: identificação de parcelas</li>
+<li>Visualizações gráficas</li>
+</ul>
+<p><strong>Vantagens:</strong></p>
+<ul>
+<li>Interface intuitiva</li>
+<li>Exportação para formatos Excel/CSV</li>
+<li>Visualização imediata do campo</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="análise-de-experimentos-clássicos" class="title-slide slide level1 center" data-background-color="#224573">
+<h1>Análise de Experimentos Clássicos</h1>
+<div style="color: white; text-align: center;">
+<p><strong>DIC, DBC, Fatorial, Parcelas Subdivididas</strong></p>
+</div>
+</section>
+<section id="agror" class="slide level2" data-background-color="#E5D3B3">
+<h2>AgroR</h2>
+<div style="color: #224573;">
+<p><strong>Funcionalidades:</strong></p>
+<ul>
+<li>Análise de DIC, DBC, DQL</li>
+<li>Experimentos fatoriais (2x2, 3x3, etc)</li>
+<li>Parcelas subdivididas</li>
+<li>Análise conjunta de experimentos</li>
+<li>Testes de comparação de médias</li>
+<li>Geração de gráficos para publicação</li>
+</ul>
+</div>
+</section>
+<section id="agror-funções-principais" class="slide level2" data-background-color="#E5D3B3">
+<h2>AgroR: Funções Principais</h2>
+<div style="color: #224573;">
+
+</div>
+</section>
+<section id="agror-aplicação" class="slide level2" data-background-color="#E5D3B3">
+<h2>AgroR: Aplicação</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(AgroR)</span>
+<span id="cb2-2"><a></a></span>
+<span id="cb2-3"><a></a><span class="co"># Dataset de produtividade de milho</span></span>
+<span id="cb2-4"><a></a><span class="fu">data</span>(corn)</span>
+<span id="cb2-5"><a></a></span>
+<span id="cb2-6"><a></a><span class="co"># Análise de DBC</span></span>
+<span id="cb2-7"><a></a>resultado <span class="ot">&lt;-</span> <span class="fu">with</span>(corn, </span>
+<span id="cb2-8"><a></a>  <span class="fu">DBC</span>(</span>
+<span id="cb2-9"><a></a>    <span class="at">trat =</span> varieties,</span>
+<span id="cb2-10"><a></a>    <span class="at">bloco =</span> block,</span>
+<span id="cb2-11"><a></a>    <span class="at">resp =</span> weight,</span>
+<span id="cb2-12"><a></a>    <span class="at">mcomp =</span> <span class="st">"tukey"</span>,</span>
+<span id="cb2-13"><a></a>    <span class="at">quali =</span> <span class="cn">TRUE</span></span>
+<span id="cb2-14"><a></a>  )</span>
+<span id="cb2-15"><a></a>)</span>
+<span id="cb2-16"><a></a></span>
+<span id="cb2-17"><a></a><span class="co"># Resultados</span></span>
+<span id="cb2-18"><a></a><span class="fu">print</span>(resultado)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="agror-output" class="slide level2" data-background-color="#224573">
+<h2>AgroR: Output</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Análises fornecidas:</strong></p>
+<ul>
+<li>ANOVA completa</li>
+<li>Teste de normalidade (Shapiro-Wilk)</li>
+<li>Teste de homogeneidade (Bartlett)</li>
+<li>Comparação de médias (Tukey, Duncan, Scott-Knott)</li>
+<li>Gráficos com agrupamentos</li>
+<li>CV%, QM, GL</li>
+</ul>
+<p>Processamento automático e integrado.</p>
+</div>
+</section>
+<section id="expdes.pt" class="slide level2" data-background-color="#E5D3B3">
+<h2>ExpDes.pt</h2>
+<div style="color: #224573;">
+<p><strong>Características:</strong></p>
+<ul>
+<li>Interface em português</li>
+<li>Análise de DIC, DBC, DQL</li>
+<li>Fatoriais com 2, 3, 4 fatores</li>
+<li>Parcelas subdivididas</li>
+<li>Experimentos em faixas</li>
+<li>Análise de grupos de experimentos</li>
+</ul>
+</div>
+</section>
+<section id="expdes.pt-sintaxe" class="slide level2" data-background-color="#E5D3B3">
+<h2>ExpDes.pt: Sintaxe</h2>
+<div style="color: #224573;">
+
+</div>
+</section>
+<section id="expdes.pt-exemplo-fatorial" class="slide level2" data-background-color="#E5D3B3">
+<h2>ExpDes.pt: Exemplo Fatorial</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">library</span>(ExpDes.pt)</span>
+<span id="cb3-2"><a></a></span>
+<span id="cb3-3"><a></a><span class="co"># Experimento fatorial 3x4 em DBC</span></span>
+<span id="cb3-4"><a></a><span class="co"># Fator A: 3 níveis de adubação</span></span>
+<span id="cb3-5"><a></a><span class="co"># Fator B: 4 variedades</span></span>
+<span id="cb3-6"><a></a><span class="co"># 4 blocos</span></span>
+<span id="cb3-7"><a></a></span>
+<span id="cb3-8"><a></a>adubo <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"A1"</span>, <span class="st">"A2"</span>, <span class="st">"A3"</span>), <span class="at">each =</span> <span class="dv">16</span>)</span>
+<span id="cb3-9"><a></a>variedade <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"V1"</span>, <span class="st">"V2"</span>, <span class="st">"V3"</span>, <span class="st">"V4"</span>), <span class="at">each =</span> <span class="dv">4</span>), <span class="dv">3</span>)</span>
+<span id="cb3-10"><a></a>bloco <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">12</span>)</span>
+<span id="cb3-11"><a></a>producao <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">45</span>, <span class="dv">48</span>, <span class="dv">50</span>, <span class="dv">47</span>, <span class="dv">52</span>, <span class="dv">55</span>, <span class="dv">53</span>, <span class="dv">54</span>, </span>
+<span id="cb3-12"><a></a>              <span class="dv">48</span>, <span class="dv">50</span>, <span class="dv">52</span>, <span class="dv">49</span>, <span class="dv">58</span>, <span class="dv">60</span>, <span class="dv">62</span>, <span class="dv">59</span>,</span>
+<span id="cb3-13"><a></a>              <span class="dv">50</span>, <span class="dv">53</span>, <span class="dv">55</span>, <span class="dv">52</span>, <span class="dv">60</span>, <span class="dv">63</span>, <span class="dv">65</span>, <span class="dv">62</span>,</span>
+<span id="cb3-14"><a></a>              <span class="dv">42</span>, <span class="dv">45</span>, <span class="dv">47</span>, <span class="dv">44</span>, <span class="dv">49</span>, <span class="dv">52</span>, <span class="dv">54</span>, <span class="dv">51</span>,</span>
+<span id="cb3-15"><a></a>              <span class="dv">46</span>, <span class="dv">48</span>, <span class="dv">50</span>, <span class="dv">47</span>, <span class="dv">55</span>, <span class="dv">58</span>, <span class="dv">60</span>, <span class="dv">57</span>,</span>
+<span id="cb3-16"><a></a>              <span class="dv">48</span>, <span class="dv">51</span>, <span class="dv">53</span>, <span class="dv">50</span>, <span class="dv">58</span>, <span class="dv">61</span>, <span class="dv">63</span>, <span class="dv">60</span>)</span>
+<span id="cb3-17"><a></a></span>
+<span id="cb3-18"><a></a><span class="co"># Análise</span></span>
+<span id="cb3-19"><a></a><span class="fu">fat2.dbc</span>(adubo, variedade, bloco, producao, </span>
+<span id="cb3-20"><a></a>         <span class="at">fac.names =</span> <span class="fu">c</span>(<span class="st">"Adubo"</span>, <span class="st">"Variedade"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="expdes.pt-output" class="slide level2" data-background-color="#224573">
+<h2>ExpDes.pt: Output</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Resultados:</strong></p>
+<ul>
+<li>Quadro da ANOVA</li>
+<li>Desdobramentos do fatorial</li>
+<li>Testes de médias</li>
+<li>Análise de regressão (fatores quantitativos)</li>
+<li>Gráficos de interação</li>
+</ul>
+<p>Interface completamente em português.</p>
+</div>
+</section>
+<section id="dsfair" class="slide level2" data-background-color="#E5D3B3">
+<h2>dsfair</h2>
+<div style="color: #224573;">
+<p><strong>Recurso educacional:</strong></p>
+<ul>
+<li>Tutoriais estruturados</li>
+<li>Análise de dados reais</li>
+<li>Práticas estatísticas rigorosas</li>
+<li>Código reproduzível</li>
+<li>Integração com lme4, emmeans, multcomp</li>
+</ul>
+<p><strong>Acesso:</strong> <a href="https://schmidtpaul.github.io/dsfair_quarto/">dsfair_quarto</a></p>
+</div>
+</section>
+<section id="dsfair-metodologia" class="slide level2" data-background-color="#E5D3B3">
+<h2>dsfair: Metodologia</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="co"># Abordagem baseada em tutoriais dsfair</span></span>
+<span id="cb4-2"><a></a><span class="fu">library</span>(lme4)</span>
+<span id="cb4-3"><a></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb4-4"><a></a></span>
+<span id="cb4-5"><a></a><span class="co"># Modelo misto para DBC</span></span>
+<span id="cb4-6"><a></a>modelo <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> treatment <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), </span>
+<span id="cb4-7"><a></a>               <span class="at">data =</span> dados)</span>
+<span id="cb4-8"><a></a></span>
+<span id="cb4-9"><a></a><span class="co"># Médias ajustadas</span></span>
+<span id="cb4-10"><a></a>medias <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(modelo, <span class="sc">~</span> treatment)</span>
+<span id="cb4-11"><a></a></span>
+<span id="cb4-12"><a></a><span class="co"># Comparações</span></span>
+<span id="cb4-13"><a></a><span class="fu">pairs</span>(medias, <span class="at">adjust =</span> <span class="st">"tukey"</span>)</span>
+<span id="cb4-14"><a></a></span>
+<span id="cb4-15"><a></a><span class="co"># Visualização</span></span>
+<span id="cb4-16"><a></a><span class="fu">plot</span>(medias) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="modelos-lineares-mistos" class="title-slide slide level1 center" data-background-color="#224573">
+<h1>Modelos Lineares Mistos</h1>
+<div style="color: white; text-align: center;">
+<p><strong>Efeitos Fixos e Aleatórios</strong></p>
+</div>
+</section>
+<section id="lme4" class="slide level2" data-background-color="#E5D3B3">
+<h2>lme4</h2>
+<div style="color: #224573;">
+<p><strong>Aplicações:</strong></p>
+<ul>
+<li>Modelos com efeitos fixos e aleatórios</li>
+<li>Estruturas de variância complexas</li>
+<li>Experimentos hierárquicos</li>
+<li>Medidas repetidas</li>
+<li>Análise de famílias/progênies</li>
+</ul>
+</div>
+</section>
+<section id="lme4-sintaxe" class="slide level2" data-background-color="#E5D3B3">
+<h2>lme4: Sintaxe</h2>
+<div style="color: #224573;">
+
+</div>
+</section>
+<section id="lme4-implementação" class="slide level2" data-background-color="#E5D3B3">
+<h2>lme4: Implementação</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">library</span>(lme4)</span>
+<span id="cb5-2"><a></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb5-3"><a></a></span>
+<span id="cb5-4"><a></a><span class="co"># Produtividade em múltiplos locais</span></span>
+<span id="cb5-5"><a></a><span class="co"># Genótipos (fixo), Local (aleatório)</span></span>
+<span id="cb5-6"><a></a></span>
+<span id="cb5-7"><a></a>modelo <span class="ot">&lt;-</span> <span class="fu">lmer</span>(</span>
+<span id="cb5-8"><a></a>  yield <span class="sc">~</span> genotype <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>location) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>location<span class="sc">:</span>rep),</span>
+<span id="cb5-9"><a></a>  <span class="at">data =</span> dados_multi_local</span>
+<span id="cb5-10"><a></a>)</span>
+<span id="cb5-11"><a></a></span>
+<span id="cb5-12"><a></a><span class="co"># Resultados</span></span>
+<span id="cb5-13"><a></a><span class="fu">summary</span>(modelo)</span>
+<span id="cb5-14"><a></a></span>
+<span id="cb5-15"><a></a><span class="co"># Médias dos genótipos</span></span>
+<span id="cb5-16"><a></a>medias <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(modelo, <span class="sc">~</span> genotype)</span>
+<span id="cb5-17"><a></a><span class="fu">print</span>(medias)</span>
+<span id="cb5-18"><a></a></span>
+<span id="cb5-19"><a></a><span class="co"># Comparações</span></span>
+<span id="cb5-20"><a></a><span class="fu">cld</span>(medias, <span class="at">Letters =</span> letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="lme4-indicações-de-uso" class="slide level2" data-background-color="#224573">
+<h2>lme4: Indicações de Uso</h2>
+<div style="color: white;">
+<p><strong>Aplicar quando:</strong></p>
+<ul>
+<li>Presença de efeitos aleatórios (blocos, locais, anos)</li>
+<li>Estrutura hierárquica (plantas &lt; parcelas &lt; blocos)</li>
+<li>Medidas repetidas no tempo</li>
+<li>Dados desbalanceados</li>
+<li>Necessidade de BLUPs (Best Linear Unbiased Predictors)</li>
+</ul>
+<p>Vantagem: flexibilidade e rigor estatístico</p>
+</div>
+</section>
+<section id="nlme" class="slide level2" data-background-color="#E5D3B3">
+<h2>nlme</h2>
+<div style="color: #224573;">
+<p><strong>Características:</strong></p>
+<ul>
+<li>Modelos lineares mistos</li>
+<li>Modelos não-lineares mistos</li>
+<li>Estruturas de correlação complexas</li>
+<li>Modelagem de heterocedasticidade</li>
+<li>Análise de crescimento/curvas</li>
+</ul>
+</div>
+</section>
+<section id="nlme-sintaxe" class="slide level2" data-background-color="#E5D3B3">
+<h2>nlme: Sintaxe</h2>
+<div style="color: #224573;">
+
+</div>
+</section>
+<section id="nlme-aplicação" class="slide level2" data-background-color="#E5D3B3">
+<h2>nlme: Aplicação</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">library</span>(nlme)</span>
+<span id="cb6-2"><a></a></span>
+<span id="cb6-3"><a></a><span class="co"># Dados de crescimento temporal</span></span>
+<span id="cb6-4"><a></a><span class="co"># Medidas repetidas em plantas</span></span>
+<span id="cb6-5"><a></a></span>
+<span id="cb6-6"><a></a>modelo <span class="ot">&lt;-</span> <span class="fu">lme</span>(</span>
+<span id="cb6-7"><a></a>  altura <span class="sc">~</span> dias <span class="sc">+</span> tratamento,</span>
+<span id="cb6-8"><a></a>  <span class="at">random =</span> <span class="sc">~</span>dias<span class="sc">|</span>planta,</span>
+<span id="cb6-9"><a></a>  <span class="at">data =</span> dados_crescimento</span>
+<span id="cb6-10"><a></a>)</span>
+<span id="cb6-11"><a></a></span>
+<span id="cb6-12"><a></a><span class="co"># Resultados</span></span>
+<span id="cb6-13"><a></a><span class="fu">summary</span>(modelo)</span>
+<span id="cb6-14"><a></a></span>
+<span id="cb6-15"><a></a><span class="co"># Efeitos aleatórios</span></span>
+<span id="cb6-16"><a></a><span class="fu">plot</span>(<span class="fu">ranef</span>(modelo))</span>
+<span id="cb6-17"><a></a></span>
+<span id="cb6-18"><a></a><span class="co"># Intervalos de confiança</span></span>
+<span id="cb6-19"><a></a><span class="fu">intervals</span>(modelo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="comparação-lme4-vs-nlme" class="slide level2" data-background-color="#224573">
+<h2>Comparação: lme4 vs nlme</h2>
+<div style="color: white; font-size: 0.85em;">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Aspecto</th>
+<th>lme4</th>
+<th>nlme</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Sintaxe</strong></td>
+<td>Moderna</td>
+<td>Tradicional</td>
+</tr>
+<tr class="even">
+<td><strong>GLMMs</strong></td>
+<td>Completo</td>
+<td>Limitado</td>
+</tr>
+<tr class="odd">
+<td><strong>Correlação</strong></td>
+<td>Não disponível</td>
+<td>Implementado</td>
+</tr>
+<tr class="even">
+<td><strong>Heterocedasticidade</strong></td>
+<td>Não disponível</td>
+<td>Implementado</td>
+</tr>
+<tr class="odd">
+<td><strong>Performance</strong></td>
+<td>Superior</td>
+<td>Inferior</td>
+</tr>
+<tr class="even">
+<td><strong>Uso</strong></td>
+<td>Mais difundido</td>
+<td>Casos específicos</td>
+</tr>
+</tbody>
+</table>
+<p>Recomendação: lme4 como padrão, nlme para requisitos especiais</p>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="ensaios-multi-ambientais" class="title-slide slide level1 center" data-background-color="#224573">
+<h1>Ensaios Multi-Ambientais</h1>
+<div style="color: white; text-align: center;">
+<p><strong>Estabilidade e Adaptabilidade</strong></p>
+</div>
+</section>
+<section id="metan" class="slide level2" data-background-color="#E5D3B3">
+<h2>metan</h2>
+<div style="color: #224573;">
+<p><strong>Funcionalidades:</strong></p>
+<ul>
+<li>Análise AMMI</li>
+<li>Análise GGE Biplot</li>
+<li>Índices de estabilidade (20+ métodos)</li>
+<li>Análise de mega-ambientes</li>
+<li>Seleção multi-trait</li>
+<li>Análise de correlações</li>
+</ul>
+</div>
+</section>
+<section id="metan-funções-principais" class="slide level2" data-background-color="#E5D3B3">
+<h2>metan: Funções Principais</h2>
+<div style="color: #224573;">
+
+</div>
+</section>
+<section id="metan-análise-ammi" class="slide level2" data-background-color="#E5D3B3">
+<h2>metan: Análise AMMI</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">library</span>(metan)</span>
+<span id="cb7-2"><a></a></span>
+<span id="cb7-3"><a></a><span class="co"># Genótipos testados em múltiplos ambientes</span></span>
+<span id="cb7-4"><a></a><span class="fu">data</span>(data_ge)</span>
+<span id="cb7-5"><a></a></span>
+<span id="cb7-6"><a></a><span class="co"># Análise inicial</span></span>
+<span id="cb7-7"><a></a><span class="fu">inspect</span>(data_ge)</span>
+<span id="cb7-8"><a></a></span>
+<span id="cb7-9"><a></a><span class="co"># Análise AMMI</span></span>
+<span id="cb7-10"><a></a>ammi_model <span class="ot">&lt;-</span> <span class="fu">performs_ammi</span>(</span>
+<span id="cb7-11"><a></a>  data_ge,</span>
+<span id="cb7-12"><a></a>  <span class="at">env =</span> ENV,</span>
+<span id="cb7-13"><a></a>  <span class="at">gen =</span> GEN,</span>
+<span id="cb7-14"><a></a>  <span class="at">rep =</span> REP,</span>
+<span id="cb7-15"><a></a>  <span class="at">resp =</span> GY</span>
+<span id="cb7-16"><a></a>)</span>
+<span id="cb7-17"><a></a></span>
+<span id="cb7-18"><a></a><span class="co"># Resultados</span></span>
+<span id="cb7-19"><a></a><span class="fu">print</span>(ammi_model)</span>
+<span id="cb7-20"><a></a></span>
+<span id="cb7-21"><a></a><span class="co"># Biplot AMMI1</span></span>
+<span id="cb7-22"><a></a><span class="fu">plot</span>(ammi_model, <span class="at">type =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="metan-índices-de-estabilidade" class="slide level2" data-background-color="#E5D3B3">
+<h2>metan: Índices de Estabilidade</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="co"># Múltiplos índices simultaneamente</span></span>
+<span id="cb8-2"><a></a>estabilidade <span class="ot">&lt;-</span> <span class="fu">ge_stats</span>(</span>
+<span id="cb8-3"><a></a>  data_ge,</span>
+<span id="cb8-4"><a></a>  <span class="at">env =</span> ENV,</span>
+<span id="cb8-5"><a></a>  <span class="at">gen =</span> GEN,</span>
+<span id="cb8-6"><a></a>  <span class="at">resp =</span> GY</span>
+<span id="cb8-7"><a></a>)</span>
+<span id="cb8-8"><a></a></span>
+<span id="cb8-9"><a></a><span class="co"># Índices calculados:</span></span>
+<span id="cb8-10"><a></a><span class="co"># - Ecovalence (Wricke)</span></span>
+<span id="cb8-11"><a></a><span class="co"># - Superiority index (Lin &amp; Binns)</span></span>
+<span id="cb8-12"><a></a><span class="co"># - Variance de estabilidade (Shukla)</span></span>
+<span id="cb8-13"><a></a><span class="co"># - Regression (Eberhart &amp; Russell)</span></span>
+<span id="cb8-14"><a></a></span>
+<span id="cb8-15"><a></a><span class="fu">print</span>(estabilidade)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="metan-gge-biplot" class="slide level2" data-background-color="#E5D3B3">
+<h2>metan: GGE Biplot</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="co"># GGE Biplot para mega-ambientes</span></span>
+<span id="cb9-2"><a></a>gge_model <span class="ot">&lt;-</span> <span class="fu">gge</span>(</span>
+<span id="cb9-3"><a></a>  data_ge,</span>
+<span id="cb9-4"><a></a>  <span class="at">env =</span> ENV,</span>
+<span id="cb9-5"><a></a>  <span class="at">gen =</span> GEN,</span>
+<span id="cb9-6"><a></a>  <span class="at">resp =</span> GY</span>
+<span id="cb9-7"><a></a>)</span>
+<span id="cb9-8"><a></a></span>
+<span id="cb9-9"><a></a><span class="co"># Diferentes visualizações</span></span>
+<span id="cb9-10"><a></a><span class="fu">plot</span>(gge_model, <span class="at">type =</span> <span class="dv">1</span>)  <span class="co"># Qual-ganhou-onde</span></span>
+<span id="cb9-11"><a></a><span class="fu">plot</span>(gge_model, <span class="at">type =</span> <span class="dv">2</span>)  <span class="co"># Média vs Estabilidade  </span></span>
+<span id="cb9-12"><a></a><span class="fu">plot</span>(gge_model, <span class="at">type =</span> <span class="dv">3</span>)  <span class="co"># Discriminação dos ambientes</span></span>
+<span id="cb9-13"><a></a><span class="fu">plot</span>(gge_model, <span class="at">type =</span> <span class="dv">4</span>)  <span class="co"># Exame dos genótipos</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="metan-vantagens" class="slide level2" data-background-color="#224573">
+<h2>metan: Vantagens</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Características:</strong></p>
+<ul>
+<li>Abrangência: 20+ métodos de estabilidade</li>
+<li>Integração com tidyverse</li>
+<li>Múltiplas variáveis-resposta</li>
+<li>Gráficos prontos para publicação</li>
+<li>Documentação extensiva</li>
+<li>Desenvolvimento ativo</li>
+</ul>
+<p>Ferramenta essencial para melhoramento genético.</p>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="comparações-múltiplas" class="title-slide slide level1 center" data-background-color="#224573">
+<h1>Comparações Múltiplas</h1>
+<div style="color: white; text-align: center;">
+<p><strong>Testes Post-hoc e Contrastes</strong></p>
+</div>
+</section>
+<section id="multcomp" class="slide level2" data-background-color="#E5D3B3">
+<h2>multcomp</h2>
+<div style="color: #224573;">
+<p><strong>Funcionalidades:</strong></p>
+<ul>
+<li>Comparações múltiplas após ANOVA</li>
+<li>Testes de Tukey, Dunnett</li>
+<li>Contrastes personalizados</li>
+<li>Intervalos de confiança ajustados</li>
+<li>Testes simultâneos</li>
+<li>Agrupamento de médias (com multcompView)</li>
+</ul>
+</div>
+</section>
+<section id="multcomp-sintaxe" class="slide level2" data-background-color="#E5D3B3">
+<h2>multcomp: Sintaxe</h2>
+<div style="color: #224573;">
+
+</div>
+</section>
+<section id="multcomp-implementação" class="slide level2" data-background-color="#E5D3B3">
+<h2>multcomp: Implementação</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">library</span>(multcomp)</span>
+<span id="cb10-2"><a></a><span class="fu">library</span>(multcompView)</span>
+<span id="cb10-3"><a></a></span>
+<span id="cb10-4"><a></a><span class="co"># Modelo</span></span>
+<span id="cb10-5"><a></a>modelo <span class="ot">&lt;-</span> <span class="fu">lm</span>(weight <span class="sc">~</span> Diet, <span class="at">data =</span> ChickWeight)</span>
+<span id="cb10-6"><a></a></span>
+<span id="cb10-7"><a></a><span class="co"># Comparações de Tukey</span></span>
+<span id="cb10-8"><a></a>tukey <span class="ot">&lt;-</span> <span class="fu">glht</span>(modelo, <span class="at">linfct =</span> <span class="fu">mcp</span>(<span class="at">Diet =</span> <span class="st">"Tukey"</span>))</span>
+<span id="cb10-9"><a></a></span>
+<span id="cb10-10"><a></a><span class="co"># Resultados</span></span>
+<span id="cb10-11"><a></a><span class="fu">summary</span>(tukey)</span>
+<span id="cb10-12"><a></a></span>
+<span id="cb10-13"><a></a><span class="co"># Agrupamento</span></span>
+<span id="cb10-14"><a></a>letras <span class="ot">&lt;-</span> <span class="fu">cld</span>(tukey, <span class="at">level =</span> <span class="fl">0.05</span>, <span class="at">Letters =</span> letters)</span>
+<span id="cb10-15"><a></a><span class="fu">print</span>(letras)</span>
+<span id="cb10-16"><a></a></span>
+<span id="cb10-17"><a></a><span class="co"># Visualização</span></span>
+<span id="cb10-18"><a></a><span class="fu">plot</span>(tukey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="multcomp-métodos-disponíveis" class="slide level2" data-background-color="#224573">
+<h2>multcomp: Métodos Disponíveis</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Testes:</strong></p>
+<ul>
+<li>Tukey: todas as comparações par a par</li>
+<li>Dunnett: comparação vs controle</li>
+<li>Sequen: comparações sequenciais</li>
+<li>Contrastes personalizados</li>
+</ul>
+<p><strong>Ajuste de p-valores:</strong></p>
+<ul>
+<li>Single-step</li>
+<li>Bonferroni</li>
+<li>Holm</li>
+<li>Hochberg</li>
+</ul>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="análises-avançadas" class="title-slide slide level1 center" data-background-color="#224573">
+<h1>Análises Avançadas</h1>
+<div style="color: white; text-align: center;">
+<p><strong>Ferramentas Estatísticas Gerais</strong></p>
+</div>
+</section>
+<section id="mass" class="slide level2" data-background-color="#E5D3B3">
+<h2>MASS</h2>
+<div style="color: #224573;">
+<p><strong>Funcionalidades:</strong></p>
+<ul>
+<li>Regressão robusta</li>
+<li>Análise discriminante (LDA, QDA)</li>
+<li>Seleção de modelos (stepAIC)</li>
+<li>Distribuições especiais</li>
+<li>Análise de correspondência</li>
+<li>Transformações Box-Cox</li>
+</ul>
+</div>
+</section>
+<section id="mass-sintaxe" class="slide level2" data-background-color="#E5D3B3">
+<h2>MASS: Sintaxe</h2>
+<div style="color: #224573;">
+
+</div>
+</section>
+<section id="mass-aplicação" class="slide level2" data-background-color="#E5D3B3">
+<h2>MASS: Aplicação</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">library</span>(MASS)</span>
+<span id="cb11-2"><a></a></span>
+<span id="cb11-3"><a></a><span class="co"># Seleção de modelo por AIC</span></span>
+<span id="cb11-4"><a></a>modelo_cheio <span class="ot">&lt;-</span> <span class="fu">lm</span>(yield <span class="sc">~</span> N <span class="sc">+</span> P <span class="sc">+</span> K <span class="sc">+</span> N<span class="sc">:</span>P <span class="sc">+</span> N<span class="sc">:</span>K <span class="sc">+</span> P<span class="sc">:</span>K, </span>
+<span id="cb11-5"><a></a>                   <span class="at">data =</span> fertilizer)</span>
+<span id="cb11-6"><a></a></span>
+<span id="cb11-7"><a></a><span class="co"># Seleção stepwise</span></span>
+<span id="cb11-8"><a></a>modelo_final <span class="ot">&lt;-</span> <span class="fu">stepAIC</span>(modelo_cheio, <span class="at">direction =</span> <span class="st">"both"</span>)</span>
+<span id="cb11-9"><a></a></span>
+<span id="cb11-10"><a></a><span class="co"># Modelo selecionado</span></span>
+<span id="cb11-11"><a></a><span class="fu">summary</span>(modelo_final)</span>
+<span id="cb11-12"><a></a></span>
+<span id="cb11-13"><a></a><span class="co"># Transformação Box-Cox</span></span>
+<span id="cb11-14"><a></a><span class="fu">boxcox</span>(modelo_final)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="mass-aplicações-em-experimentação" class="slide level2" data-background-color="#224573">
+<h2>MASS: Aplicações em Experimentação</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Uso em experimentação agrícola:</strong></p>
+<ul>
+<li>stepAIC: seleção de covariáveis</li>
+<li>boxcox: determinação de transformações</li>
+<li>rlm: regressão robusta a outliers</li>
+<li>glm.nb: dados de contagem com superdispersão</li>
+<li>polr: análise de dados ordinais</li>
+</ul>
+<p>Componente fundamental do R base.</p>
+</div>
+</section>
+<section id="fluxo-de-trabalho" class="slide level2" data-background-color="#E5D3B3">
+<h2>Fluxo de Trabalho</h2>
+<div style="color: #224573;">
+
+</div>
+</section>
+<section id="integração-de-pacotes" class="slide level2" data-background-color="#224573">
+<h2>Integração de Pacotes</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Pipeline completo:</strong></p>
+<ol type="1">
+<li>FielDHub - planejamento de campo</li>
+<li>lme4/nlme - ajuste de modelo misto</li>
+<li>emmeans - médias ajustadas</li>
+<li>multcomp - comparações múltiplas</li>
+<li>ggplot2 - visualização</li>
+</ol>
+<p><strong>Alternativas integradas:</strong></p>
+<ul>
+<li>AgroR - análise unificada</li>
+<li>metan - multi-ambientais completo</li>
+</ul>
+</div>
+</section>
+<section id="guia-de-seleção" class="slide level2" data-background-color="#E5D3B3">
+<h2>Guia de Seleção</h2>
+<div style="color: #6B4F4F; font-size: 0.7em;">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Pacote</th>
+<th>Função</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Planejar experimento</td>
+<td>FielDHub</td>
+<td><code>RCBD()</code>, <code>run_app()</code></td>
+</tr>
+<tr class="even">
+<td>DIC/DBC simples</td>
+<td>AgroR</td>
+<td><code>DIC()</code>, <code>DBC()</code></td>
+</tr>
+<tr class="odd">
+<td>Fatorial</td>
+<td>AgroR, ExpDes.pt</td>
+<td><code>FAT2DBC()</code></td>
+</tr>
+<tr class="even">
+<td>Efeitos aleatórios</td>
+<td>lme4</td>
+<td><code>lmer()</code></td>
+</tr>
+<tr class="odd">
+<td>Multi-ambientais</td>
+<td>metan</td>
+<td><code>performs_ammi()</code></td>
+</tr>
+<tr class="even">
+<td>Comparações</td>
+<td>multcomp</td>
+<td><code>glht()</code></td>
+</tr>
+<tr class="odd">
+<td>Seleção de modelo</td>
+<td>MASS</td>
+<td><code>stepAIC()</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="instalação" class="slide level2" data-background-color="#224573">
+<h2>Instalação</h2>
+<div style="color: white;">
+
+</div>
+</section>
+<section id="recursos" class="slide level2" data-background-color="#E5D3B3">
+<h2>Recursos</h2>
+<div style="color: #224573;">
+<p><strong>Documentação:</strong></p>
+<ul>
+<li><a href="https://didiermurillof.github.io/FielDHub/">FielDHub</a></li>
+<li><a href="https://agronomiar.github.io/AgroR_package/">AgroR</a></li>
+<li><a href="https://tiagoolivoto.github.io/metan/">metan</a></li>
+<li><a href="https://schmidtpaul.github.io/dsfair_quarto/">dsfair</a></li>
+</ul>
+<p><strong>Bibliografia:</strong></p>
+<ul>
+<li>Linear Mixed-Effects Models Using R (Gałecki &amp; Burzykowski)</li>
+<li>Design and Analysis of Experiments (Montgomery)</li>
+</ul>
+</div>
+</section>
+<section id="exemplo-integrado" class="slide level2" data-background-color="#224573">
+<h2>Exemplo Integrado</h2>
+<div style="color: white;">
+<p>Demonstração: pipeline completo de análise</p>
+</div>
+</section>
+<section id="passo-1-planejamento" class="slide level2" data-background-color="#E5D3B3">
+<h2>Passo 1: Planejamento</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">library</span>(FielDHub)</span>
+<span id="cb12-2"><a></a></span>
+<span id="cb12-3"><a></a><span class="co"># DBC com 8 variedades, 4 blocos</span></span>
+<span id="cb12-4"><a></a>plan <span class="ot">&lt;-</span> <span class="fu">RCBD</span>(<span class="at">t =</span> <span class="dv">8</span>, <span class="at">r =</span> <span class="dv">4</span>, <span class="at">plotNumber =</span> <span class="dv">1</span>, <span class="at">seed =</span> <span class="dv">123</span>)</span>
+<span id="cb12-5"><a></a>campo <span class="ot">&lt;-</span> plan<span class="sc">$</span>fieldBook</span>
+<span id="cb12-6"><a></a></span>
+<span id="cb12-7"><a></a><span class="fu">head</span>(campo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="passo-2-simulação-de-dados" class="slide level2" data-background-color="#E5D3B3">
+<h2>Passo 2: Simulação de Dados</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="co"># Simulação de produtividade</span></span>
+<span id="cb13-2"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb13-3"><a></a>campo<span class="sc">$</span>yield <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">32</span>, <span class="dv">0</span>, <span class="dv">5</span>) <span class="sc">+</span> </span>
+<span id="cb13-4"><a></a>  <span class="fu">ifelse</span>(campo<span class="sc">$</span>TREATMENT <span class="sc">==</span> <span class="st">"T1"</span>, <span class="dv">10</span>, <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb13-5"><a></a>  <span class="fu">ifelse</span>(campo<span class="sc">$</span>TREATMENT <span class="sc">==</span> <span class="st">"T2"</span>, <span class="dv">8</span>, <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a></a>  <span class="fu">ifelse</span>(campo<span class="sc">$</span>TREATMENT <span class="sc">==</span> <span class="st">"T3"</span>, <span class="dv">5</span>, <span class="dv">0</span>)</span>
+<span id="cb13-7"><a></a></span>
+<span id="cb13-8"><a></a><span class="fu">head</span>(campo[, <span class="fu">c</span>(<span class="st">"TREATMENT"</span>, <span class="st">"REP"</span>, <span class="st">"yield"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="passo-3-análise-com-agror" class="slide level2" data-background-color="#E5D3B3">
+<h2>Passo 3: Análise com AgroR</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">library</span>(AgroR)</span>
+<span id="cb14-2"><a></a></span>
+<span id="cb14-3"><a></a><span class="co"># Análise de DBC</span></span>
+<span id="cb14-4"><a></a>resultado <span class="ot">&lt;-</span> <span class="fu">with</span>(campo,</span>
+<span id="cb14-5"><a></a>  <span class="fu">DBC</span>(<span class="at">trat =</span> TREATMENT,</span>
+<span id="cb14-6"><a></a>      <span class="at">bloco =</span> REP,</span>
+<span id="cb14-7"><a></a>      <span class="at">resp =</span> yield,</span>
+<span id="cb14-8"><a></a>      <span class="at">mcomp =</span> <span class="st">"tukey"</span>)</span>
+<span id="cb14-9"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="passo-4-modelo-misto" class="slide level2" data-background-color="#E5D3B3">
+<h2>Passo 4: Modelo Misto</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">library</span>(lme4)</span>
+<span id="cb15-2"><a></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb15-3"><a></a></span>
+<span id="cb15-4"><a></a><span class="co"># Tratamento fixo, bloco aleatório</span></span>
+<span id="cb15-5"><a></a>modelo <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> TREATMENT <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>REP), </span>
+<span id="cb15-6"><a></a>               <span class="at">data =</span> campo)</span>
+<span id="cb15-7"><a></a></span>
+<span id="cb15-8"><a></a><span class="co"># Médias ajustadas</span></span>
+<span id="cb15-9"><a></a>medias <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(modelo, <span class="sc">~</span> TREATMENT)</span>
+<span id="cb15-10"><a></a></span>
+<span id="cb15-11"><a></a><span class="co"># Comparações</span></span>
+<span id="cb15-12"><a></a><span class="fu">pairs</span>(medias, <span class="at">adjust =</span> <span class="st">"tukey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="passo-5-comparações-com-multcomp" class="slide level2" data-background-color="#E5D3B3">
+<h2>Passo 5: Comparações com multcomp</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">library</span>(multcomp)</span>
+<span id="cb16-2"><a></a><span class="fu">library</span>(multcompView)</span>
+<span id="cb16-3"><a></a></span>
+<span id="cb16-4"><a></a><span class="co"># Modelo linear</span></span>
+<span id="cb16-5"><a></a>modelo_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(yield <span class="sc">~</span> TREATMENT <span class="sc">+</span> REP, <span class="at">data =</span> campo)</span>
+<span id="cb16-6"><a></a></span>
+<span id="cb16-7"><a></a><span class="co"># Teste de Tukey</span></span>
+<span id="cb16-8"><a></a>tukey <span class="ot">&lt;-</span> <span class="fu">glht</span>(modelo_lm, <span class="at">linfct =</span> <span class="fu">mcp</span>(<span class="at">TREATMENT =</span> <span class="st">"Tukey"</span>))</span>
+<span id="cb16-9"><a></a></span>
+<span id="cb16-10"><a></a><span class="co"># Agrupamento</span></span>
+<span id="cb16-11"><a></a><span class="fu">cld</span>(tukey, <span class="at">Letters =</span> letters)</span>
+<span id="cb16-12"><a></a></span>
+<span id="cb16-13"><a></a><span class="co"># Visualização</span></span>
+<span id="cb16-14"><a></a><span class="fu">plot</span>(tukey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="passo-6-visualização" class="slide level2" data-background-color="#E5D3B3">
+<h2>Passo 6: Visualização</h2>
+<div style="color: #224573;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb17-2"><a></a></span>
+<span id="cb17-3"><a></a><span class="fu">ggplot</span>(campo, <span class="fu">aes</span>(<span class="at">x =</span> TREATMENT, <span class="at">y =</span> yield)) <span class="sc">+</span></span>
+<span id="cb17-4"><a></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"#224573"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb17-5"><a></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#6B4F4F"</span>) <span class="sc">+</span></span>
+<span id="cb17-6"><a></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb17-7"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb17-8"><a></a>    <span class="at">title =</span> <span class="st">"Produtividade por Tratamento"</span>,</span>
+<span id="cb17-9"><a></a>    <span class="at">x =</span> <span class="st">"Tratamento"</span>,</span>
+<span id="cb17-10"><a></a>    <span class="at">y =</span> <span class="st">"Produtividade (kg/ha)"</span></span>
+<span id="cb17-11"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="recomendações" class="slide level2" data-background-color="#224573">
+<h2>Recomendações</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Iniciantes:</strong></p>
+<ol type="1">
+<li>AgroR ou ExpDes.pt - interface simplificada</li>
+<li>FielDHub - planejamento visual</li>
+<li>ggplot2 - visualização</li>
+</ol>
+<p><strong>Análises avançadas:</strong></p>
+<ol type="1">
+<li>lme4 - modelos complexos</li>
+<li>metan - multi-ambientais</li>
+<li>multcomp - comparações elaboradas</li>
+</ol>
+</div>
+</section>
+<section id="problemas-comuns" class="slide level2" data-background-color="#E5D3B3">
+<h2>Problemas Comuns</h2>
+<div style="color: #6B4F4F;">
+<p><strong>Erro 1</strong>: convergência no lme4</p>
+<ul>
+<li>Solução: reescalonamento de variáveis, aumento de iterações</li>
+</ul>
+<p><strong>Erro 2</strong>: incompatibilidade de idioma</p>
+<ul>
+<li>Solução: AgroR e ExpDes.pt (português), lme4 (inglês)</li>
+</ul>
+<p><strong>Erro 3</strong>: comparações não significativas</p>
+<ul>
+<li>Solução: verificar especificação de efeitos fixos/aleatórios</li>
+</ul>
+</div>
+</section>
+<section id="pressupostos-da-anova" class="slide level2" data-background-color="#224573">
+<h2>Pressupostos da ANOVA</h2>
+<div style="color: white;">
+<p><strong>Requisitos:</strong></p>
+<ol type="1">
+<li>Normalidade dos resíduos</li>
+<li>Homogeneidade de variâncias</li>
+<li>Independência das observações</li>
+<li>Aditividade dos efeitos</li>
+</ol>
+<p><strong>Verificação:</strong></p>
+</div>
+</section>
+<section id="transformações" class="slide level2" data-background-color="#E5D3B3">
+<h2>Transformações</h2>
+<div style="color: #224573;">
+<p><strong>Correção de pressupostos:</strong></p>
+</div>
+</section>
+<section id="dados-faltantes" class="slide level2" data-background-color="#224573">
+<h2>Dados Faltantes</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Tratamento:</strong></p>
+<p>Modelos mistos apresentam maior robustez.</p>
+</div>
+</section>
+<section id="checklist" class="slide level2" data-background-color="#E5D3B3">
+<h2>Checklist</h2>
+<div style="color: #6B4F4F; font-size: 0.8em;">
+<p><strong>Pré-análise:</strong></p>
+<ul>
+<li>Planejamento adequado</li>
+<li>Dados completos e organizados</li>
+<li>Variáveis corretamente identificadas</li>
+<li>Estrutura experimental clara</li>
+</ul>
+<p><strong>Durante análise:</strong></p>
+<ul>
+<li>Modelo apropriado</li>
+<li>Pressupostos verificados</li>
+<li>Efeitos fixos/aleatórios corretos</li>
+</ul>
+<p><strong>Pós-análise:</strong></p>
+<ul>
+<li>Resultados interpretáveis</li>
+<li>Visualizações claras</li>
+<li>Conclusões fundamentadas</li>
+</ul>
+</div>
+</section>
+<section id="critérios-de-seleção" class="slide level2" data-background-color="#224573">
+<h2>Critérios de Seleção</h2>
+<div style="color: white; font-size: 0.8em;">
+<p><strong>Iniciante em R</strong> - AgroR</p>
+<p><strong>Experimento simples (DIC/DBC)</strong> - AgroR ou ExpDes.pt</p>
+<p><strong>Estrutura hierárquica</strong> - lme4</p>
+<p><strong>Multi-ambientais</strong> - metan</p>
+<p><strong>Planejamento de campo</strong> - FielDHub</p>
+<p><strong>Testes post-hoc elaborados</strong> - multcomp</p>
+</div>
+</section>
+<section id="fluxograma-de-decisão" class="slide level2" data-background-color="#E5D3B3">
+<h2>Fluxograma de Decisão</h2>
+<div style="color: #6B4F4F;">
+<pre><code>Efeitos aleatórios presentes?
+|
+|- NÃO - Experimento simples?
+|        |- SIM - AgroR ou ExpDes.pt
+|        |- NÃO - Fatorial complexo?
+|                 |- SIM - ExpDes.pt
+|                 |- NÃO - lm() + multcomp
+|
+|- SIM - Multi-ambiental?
+         |- SIM - metan
+         |- NÃO - lme4 + emmeans</code></pre>
+</div>
+</section>
+<section id="exercício-prático" class="slide level2" data-background-color="#224573">
+<h2>Exercício Prático</h2>
+<div style="color: white;">
+<p><strong>Aplicação completa:</strong></p>
+<ol type="1">
+<li>FielDHub - planejar DBC (6 tratamentos)</li>
+<li>Simulação ou dados reais</li>
+<li>Análise com AgroR</li>
+<li>Re-análise com lme4</li>
+<li>Comparações com multcomp</li>
+<li>Comparação de resultados</li>
+<li>Visualização com ggplot2</li>
+</ol>
+</div>
+</section>
+<section id="recursos-online" class="slide level2" data-background-color="#E5D3B3">
+<h2>Recursos Online</h2>
+<div style="color: #224573;">
+<p><strong>Documentação:</strong></p>
+<p><strong>Comunidades:</strong></p>
+<ul>
+<li>R-br (Telegram)</li>
+<li>Stack Overflow</li>
+<li>R4DS Online Learning Community</li>
+</ul>
+</div>
+</section>
+<section id="bibliografia" class="slide level2" data-background-color="#224573">
+<h2>Bibliografia</h2>
+<div style="color: white; font-size: 0.85em;">
+<p><strong>Modelos Mistos:</strong></p>
+<ul>
+<li>Mixed Effects Models in S and S-PLUS (Pinheiro &amp; Bates)</li>
+<li>Data Analysis Using Regression and Multilevel Models (Gelman &amp; Hill)</li>
+</ul>
+<p><strong>Experimentação:</strong></p>
+<ul>
+<li>Experiments with Mixtures (Cornell)</li>
+<li>Design and Analysis of Experiments (Montgomery)</li>
+</ul>
+<p><strong>R para Agronomia:</strong></p>
+<ul>
+<li>Statistical Methods for Plant Biology (Hunt &amp; Parsons)</li>
+</ul>
+</div>
+</section>
+<section id="atualização" class="slide level2" data-background-color="#E5D3B3">
+<h2>Atualização</h2>
+<div style="color: #224573;">
+<p><strong>Manutenção de pacotes:</strong></p>
+</div>
+</section>
+<section id="resumo" class="slide level2" data-background-color="#E5D3B3">
+<h2>Resumo</h2>
+<div style="color: #224573;">
+<p><strong>Nove pacotes apresentados:</strong></p>
+<ol type="1">
+<li>FielDHub - planejamento visual</li>
+<li>AgroR - análises integradas</li>
+<li>ExpDes.pt - interface em português</li>
+<li>lme4 - modelos mistos modernos</li>
+<li>nlme - modelos com correlação</li>
+<li>metan - multi-ambientais</li>
+<li>multcomp - comparações múltiplas</li>
+<li>MASS - ferramentas gerais</li>
+<li>dsfair - tutoriais e práticas</li>
+</ol>
+</div>
+</section>
+<section id="ecossistema-r" class="slide level2" data-background-color="#224573">
+<h2>Ecossistema R</h2>
+<div style="color: white;">
+<p><strong>Vantagens para experimentação:</strong></p>
+<ul>
+<li>Pacotes especializados</li>
+<li>Modelos avançados</li>
+<li>Visualizações profissionais</li>
+<li>Reprodutibilidade</li>
+<li>Comunidade ativa</li>
+<li>Software livre</li>
+</ul>
+</div>
+</section>
+<section id="desenvolvimento-progressivo" class="slide level2" data-background-color="#E5D3B3">
+<h2>Desenvolvimento Progressivo</h2>
+<div style="color: #224573;">
+<p><strong>Trajetória de aprendizado:</strong></p>
+<ol type="1">
+<li>Prática com dados reais</li>
+<li>Teste individual de pacotes</li>
+<li>Comparação de resultados</li>
+<li>Leitura de vinhetas</li>
+<li>Participação em comunidades</li>
+<li>Compartilhamento de conhecimento</li>
+</ol>
+</div>
+</section>
+<section id="estratégia-de-aprendizado" class="slide level2" data-background-color="#224573">
+<h2>Estratégia de Aprendizado</h2>
+<div style="color: white;">
+<p><strong>Início:</strong></p>
+<ul>
+<li>AgroR para análises básicas</li>
+<li>FielDHub para planejamento</li>
+<li>ggplot2 para visualização</li>
+</ul>
+<p><strong>Avanço:</strong></p>
+<ul>
+<li>lme4 para modelos complexos</li>
+<li>metan para multi-ambientais</li>
+<li>multcomp para comparações elaboradas</li>
+</ul>
+</div>
+</section>
+<section id="considerações-finais" class="slide level2" data-background-color="#E5D3B3">
+<h2>Considerações Finais</h2>
+<div style="color: #6B4F4F;">
+<p>Arsenal completo para análise de experimentos em R apresentado.</p>
+<p><strong>Princípios:</strong></p>
+<ul>
+<li>Utilizar ferramenta mais simples adequada ao problema</li>
+<li>Avançar para ferramentas sofisticadas conforme necessidade</li>
+<li>Combinar pacotes para análises completas</li>
+</ul>
+</div>
+</section>
+<section id="agradecimentos" class="slide level2" data-background-color="#224573">
+<h2>Agradecimentos</h2>
+<div style="color: white;">
+<p>Café com R</p>
+<p>Licença: uso livre e compartilhamento aberto</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/main/rstats-artwork/r_first_then.png" class="quarto-figure quarto-figure-center" style="width:50.0%"></p>
+</figure>
+</div>
+</div>
+</section>
+<section id="referências" class="slide level2" data-background-color="#E5D3B3">
+<h2>Referências</h2>
+<div style="color: #6B4F4F; font-size: 0.75em;">
+<ul>
+<li>FielDHub: https://didiermurillof.github.io/FielDHub/</li>
+<li>AgroR: https://agronomiar.github.io/AgroR_package/</li>
+<li>metan: https://tiagoolivoto.github.io/metan/</li>
+<li>lme4: https://cran.r-project.org/package=lme4</li>
+<li>nlme: https://cran.r-project.org/package=nlme</li>
+<li>dsfair: https://schmidtpaul.github.io/dsfair_quarto/</li>
+<li>multcomp: https://cran.r-project.org/package=multcomp</li>
+<li>MASS: https://cran.r-project.org/package=MASS</li>
+<li>ExpDes.pt: https://cran.r-project.org/package=ExpDes.pt</li>
+</ul>
+</div>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="imagens/logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Jennifer Lopes • Café com R</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jenniferlopes\.quarto\.pub\/portifolio");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

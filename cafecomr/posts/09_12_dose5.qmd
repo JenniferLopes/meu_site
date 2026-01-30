@@ -1,0 +1,783 @@
+---
+title: "Café com R"
+subtitle: "Newsletter - Mais uma edição especial"
+description: "Análise de dados, uma conversa de cada vez"
+categories: ["R", "Newsletter", "Comunidade", "Eventos"]
+image: ../imagens/cafe5.png
+date: "2025-12-08"
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    logo: "images/logo.png"
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes • Café com R"
+editor:
+  markdown:
+    wrap: 72
+---
+
+------------------------------------------------------------------------
+
+## Bem-vindo ao nosso encontro!
+
+Olá, **`querida comunidade`**!
+
+> Que alegria ter você aqui para **mais um café**. Nesta edição
+> especial, preparei uma seleção cuidadosa de recursos, pacotes e
+> conexões que vão enriquecer sua jornada com R.
+
+**Pegue sua xícara favorita e vamos juntos explorar o que há de mais
+interessante no universo R!**
+
+------------------------------------------------------------------------
+
+## ☕ Assine o Café com R
+
+<div>
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+Que cada **`gole`** desperte uma nova ideia.
+
+Que cada **`script`** abra uma nova conversa.
+
+Que o **`Café com R`**, se torne um ponto de encontro nosso!
+
+</div>
+
+![](images/qrcode.jpg){fig-align="center" width="232"}
+
+::: {style="text-align: center; padding-top: 150px; color: white;"}
+# Dose da Semana
+
+### Prepare sua xícara
+
+Vamos explorar o que está acontecendo no universo **`R`**!
+:::
+
+------------------------------------------------------------------------
+
+## Eventos 2026: Marque sua agenda!
+
+A comunidade R está **`vibrante em 2026`**! Aqui estão os principais
+eventos para você participar, aprender e se conectar:
+
+**Por que participar de eventos?**
+
+-   Networking com profissionais da área
+-   Aprender com experts reconhecidos
+-   Conhecer as últimas tendências
+-   Fazer parte da comunidade global
+
+------------------------------------------------------------------------
+
+## Eventos 2026
+
+| Evento | Data | Formato | Link |
+|------------------|------------------|------------------|------------------|
+| **R!sk 2026** | 18-19 fevereiro | Online | [rconsortium.github.io/Risk_website](https://rconsortium.github.io/Risk_website/) |
+| **rainbowR Conference** | 25-26 fevereiro | Online | [conference.rainbowr.org](https://conference.rainbowr.org/) |
+| **R/Medicine 2026** | 4-8 maio | Online | [rconsortium.github.io/RMedicine_website](https://rconsortium.github.io/RMedicine_website/) |
+| **Posit::conf(2026)** | 14-16 setembro | Presencial (Houston, USA) | [posit.co](https://posit.co/conference/) |
+
+------------------------------------------------------------------------
+
+## R!sk 2026
+
+**18-19 de fevereiro \| Online**
+
+Participe do R!sk 2026, nossa conferência dedicada à comunidade de
+código aberto R e à análise de riscos.
+
+[![](images/risk-main-image.png){fig-align="center"
+width="377"}](https://rconsortium.github.io/Risk_website/)
+
+------------------------------------------------------------------------
+
+## rainbowR Conference
+
+**25-26 de fevereiro \| Online**
+
+Conferência dedicada a promover diversidade e inclusão na comunidade R,
+com foco especial em pessoas **`LGBTQ+`**.
+
+[![](images/conference-banner.png){fig-align="center"
+width="363"}](https://conference.rainbowr.org/)
+
+## rainbowR Conference
+
+**Destaques:**
+
+-   Palestras inspiradoras sobre diversidade em tech
+-   Workshops práticos de R
+-   Networking com a comunidade global
+-   Discussões sobre acessibilidade
+
+------------------------------------------------------------------------
+
+## R/Medicine 2026
+
+**4-8 de maio \| Online**
+
+**A principal conferência sobre o uso de R na área médica e de saúde
+pública.**
+
+[![](images/RMed26-main-website-image.png){fig-align="center"
+width="448"}](https://rconsortium.github.io/RMedicine_website/)
+
+------------------------------------------------------------------------
+
+## Posit::conf(2026)
+
+**14-16 de setembro \| Houston, Texas (Presencial)**
+
+O **maior evento do ecossistema `R` e `Python`, organizado pela Posit
+(antiga RStudio).**
+
+[![](images/posit.JPG){fig-align="center"
+width="526"}](https://posit.co/conference/)
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 200px; color: white;"}
+# Para Acompanhar o Café
+
+### O conhecimento cresce quando compartilhado
+
+Recursos essenciais para sua `biblioteca`
+:::
+
+------------------------------------------------------------------------
+
+## Livro Recomendado: Big Book of R
+
+<div>
+
+Uma curadoria impressionante de **mais de 400 livros gratuitos** sobre
+R!
+
+[![](images/bigbook.png){fig-align="center"
+width="250"}](https://www.bigbookofr.com/)
+
+[www.bigbookofr.com](https://www.bigbookofr.com/)
+
+</div>
+
+------------------------------------------------------------------------
+
+## Por que o Big Book of R?
+
+Este não é apenas um livro, é uma **biblioteca completa e gratuita**
+organizada por tópicos.
+
+**Categorias disponíveis e muito mais:**
+
+-   **Fundamentos de R:** Do básico ao avançado
+-   **Visualização de Dados:** ggplot2, plotly, shiny
+-   **Machine Learning:** tidymodels, caret, keras
+-   **Análise Espacial:** sf, spatial, mapas
+-   **Séries Temporais:** forecast, tsibble
+-   **Estatística:** Inferência, modelagem, Bayesiana
+-   **Big Data:** spark, data.table, databases
+
+------------------------------------------------------------------------
+
+## Como usar o Big Book of R
+
+**Estratégia de aprendizado:**
+
+1.  **Identifique seu objetivo:** Qual área você quer explorar?
+2.  **Escolha 1-2 livros:** Não tente ler tudo de uma vez
+3.  **Pratique enquanto lê:** Abra o RStudio e teste os exemplos
+4.  **Marque favoritos:** Guarde os livros mais úteis para referência
+
+## Como usar o Big Book of R
+
+> **Minha dica pessoal:** Comece com "R for Data Science" se você está
+> começando, ou "Advanced R" se já tem experiência e quer aprofundar.
+
+![**Dica da Meguy!**](images/meguy.jpg){fig-align="center" width="359"}
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 150px; color: white;"}
+# Dose da Semana
+
+### Pacotes amigos
+
+Eles vão facilitar sua vida no **`R`**!
+:::
+
+------------------------------------------------------------------------
+
+## Por que explorar novos pacotes?
+
+O ecossistema R tem mais de **19.000 pacotes** no CRAN. Descobrir as
+ferramentas certas pode:
+
+-   **Economizar horas** de trabalho manual
+-   **Melhorar a qualidade** das suas análises
+-   **Padronizar** seu fluxo de trabalho
+-   **Impressionar** sua equipe (e você mesmo!)
+
+> Hoje vou apresentar dois **pacotes essenciais** que uso em
+> praticamente todos os meus projetos.
+
+------------------------------------------------------------------------
+
+## Pacote 1: skimr
+
+### Resumos estatísticos que realmente informam
+
+O pacote `skimr` transforma a exploração inicial de dados em algo muito
+mais rico e visual.
+
+[![](images/skin.png){fig-align="center"
+width="248"}](https://docs.ropensci.org/skimr/index.html)
+
+[docs.ropensci.org/skimr](https://docs.ropensci.org/skimr/index.html)
+
+------------------------------------------------------------------------
+
+## skimr: Instalação e uso básico
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Instalação
+install.packages("skimr")
+library(skimr)
+
+# Uso mais simples
+skim(iris)
+```
+
+**O que você ganha:**
+
+-   Estatísticas descritivas completas
+-   Histogramas em miniatura (sparklines)
+-   Contagem de valores ausentes
+-   Separação automática por tipo de variável
+
+------------------------------------------------------------------------
+
+## skimr: Exemplo prático
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(skimr)
+library(dplyr)
+
+# Carregar dados
+data(starwars)
+
+# Resumo completo
+skim(starwars)
+
+# Resumo apenas de variáveis numéricas
+starwars %>% 
+  skim() %>% 
+  filter(skim_type == "numeric")
+
+# Resumo agrupado
+starwars %>% 
+  group_by(species) %>% 
+  skim()
+```
+
+------------------------------------------------------------------------
+
+## skimr x summary()
+
+**Com summary():**
+
+```         
+   Sepal.Length    Sepal.Width     Petal.Length  
+ Min.   :4.300   Min.   :2.000   Min.   :1.000  
+ 1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600  
+ Median :5.800   Median :3.000   Median :4.350  
+ Mean   :5.843   Mean   :3.057   Mean   :3.758  
+```
+
+**Com skim():**
+
+-   Todas as estatísticas acima +
+-   Histograma visual de distribuição
+-   Contagem de valores únicos e ausentes
+-   Desvio padrão e quartis
+-   Tudo organizado em uma tabela bonita
+
+------------------------------------------------------------------------
+
+## Quando usar skimr?
+
+**Cenários ideais:**
+
+1.  **Exploração inicial:** Primeiro contato com um dataset novo
+2.  **Relatórios automáticos:** Documentação rápida das variáveis
+3.  **Detecção de problemas:** Identificar missing values, outliers
+4.  **Apresentações:** Mostrar overview dos dados de forma profissional
+
+## Quando usar skimr?
+
+> **Dica:** Use **`skim()`** no começo de todo script de análise. Você
+> vai economizar tempo e evitar surpresas depois.
+
+------------------------------------------------------------------------
+
+## Pacote 2: janitor
+
+### Limpeza de dados sem dor de cabeça
+
+O pacote **`janitor`** é seu melhor amigo quando os dados estão
+bagunçados (e quase sempre estão!).
+
+[![](images/logo_small.png){fig-align="center"}](https://sfirke.github.io/janitor/)
+
+[sfirke.github.io/janitor](https://sfirke.github.io/janitor/)
+
+------------------------------------------------------------------------
+
+## janitor: Instalação e função principal
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Instalação
+# install.packages("janitor")
+library(janitor)
+library(tidyverse)
+
+# A função mais útil: clean_names()
+df <- data.frame(
+  "Nome Completo" = c("Ana Silva", "Bruno Costa"),
+  "Idade (anos)" = c(25, 30),
+  "Salário R$" = c(5000, 6000),
+  "Data Admissão" = c("2020-01-15", "2019-05-20"))
+
+```
+
+------------------------------------------------------------------------
+
+## janitor: Resultado
+
+```{r}
+#| eval: false
+#| echo: true
+# Antes
+names(df)
+# [1] "Nome.Completo"  "Idade..anos."   "Salário.R."     "Data.Admissão"
+
+# Depois
+df_limpo <- df %>% clean_names()
+names(df_limpo)
+# [1] "nome_completo"  "idade_anos"     "salario_r"      "data_admissao"
+```
+
+## janitor: Mais funcionalidades
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(janitor)
+library(dplyr)
+
+# Remover linhas e colunas completamente vazias
+df %>% 
+  remove_empty(c("rows", "cols"))
+
+# Remover linhas duplicadas
+df %>% 
+  get_dupes()
+
+# Criar tabelas de frequência
+df %>% 
+  tabyl(categoria) %>% 
+  adorn_totals("row") %>% 
+  adorn_percentages("col") %>% 
+  adorn_pct_formatting()
+
+# Arredondar todos os números de uma vez
+df %>% 
+  mutate(across(where(is.numeric), ~round(., 2)))
+```
+
+------------------------------------------------------------------------
+
+## Problema: dados de Excel bagunçados
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Você recebe isso:
+dados_excel <- read_excel("vendas_2024.xlsx")
+
+# Nomes horríveis
+names(dados_excel)
+# [1] "ID Cliente"  "Nome do Cliente"  "Valor (R$)"  
+# [4] "Data Compra"  "Categoria Produto"  "% Desconto"
+
+# Solução em uma linha
+dados_limpos <- dados_excel %>% 
+  clean_names() %>% 
+  remove_empty(c("rows", "cols"))
+
+# Agora você tem
+names(dados_limpos)
+# [1] "id_cliente"  "nome_do_cliente"  "valor_r"  
+# [4] "data_compra"  "categoria_produto"  "percent_desconto"
+```
+
+------------------------------------------------------------------------
+
+## janitor: Tabelas elegantes
+
+```{r}
+#| eval: false
+#| echo: true
+
+# Criar tabela de contingência profissional
+mtcars %>% 
+  tabyl(cyl, gear) %>% 
+  adorn_totals(c("row", "col")) %>% 
+  adorn_percentages("row") %>% 
+  adorn_pct_formatting(digits = 1) %>% 
+  adorn_ns() %>% 
+  adorn_title("combined")
+
+#  cyl/gear      3        4        5     Total
+#          4  6.7%    66.7%    26.7%  100.0% (15)
+#          6 28.6%    57.1%    14.3%  100.0% (7)
+#          8 85.7%     0.0%    14.3%  100.0% (14)
+#      Total 41.7%    33.3%    25.0%  100.0% (36)
+```
+
+Perfeito para **relatórios** e **apresentações**!
+
+------------------------------------------------------------------------
+
+## Fluxo de trabalho com janitor
+
+**Exemplo rotina, claro cada situação é uma, lembre-se:**
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(tidyverse)
+library(janitor)
+library(skimr)
+
+# 1. Importar
+dados <- read_csv("dados_novos.csv")
+
+# 2. Limpar nomes
+dados <- dados %>% clean_names()
+
+# 3. Remover vazios
+dados <- dados %>% remove_empty(c("rows", "cols"))
+
+# 4. Explorar
+skim(dados)
+
+# 5. Checar duplicados
+dados %>% get_dupes()
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 150px; color: white;"}
+# Nosso Blend
+
+### A mistura de sabores da comunidade
+
+**Descobrindo `vozes inspiradoras`**
+:::
+
+------------------------------------------------------------------------
+
+## A força da comunidade R
+
+Uma das coisas mais lindas do R é sua comunidade acolhedora e
+colaborativa.
+
+-   Pessoas ao redor do mundo compartilham conhecimento, criam
+    tutoriais, desenvolvem pacotes e ajudam umas às outras todos os
+    dias.
+
+> Nos próximos slides, vou apresentar criadores de conteúdo que admiro e
+> que podem enriquecer muito sua jornada com R.
+
+------------------------------------------------------------------------
+
+## Tutoriais: Bastián Olea Herrera
+
+<div>
+
+### Bastián Olea Herrera
+
+[**Sociólogo \| Chile**](bastianolea.rbind.io/categories/tutoriales)
+
+[![](images/bastian.JPG){fig-align="center"
+width="477"}](bastianolea.rbind.io/categories/tutoriales)
+
+</div>
+
+------------------------------------------------------------------------
+
+## Por que seguir Bastián?
+
+Bastián é sociólogo chileno que cria tutoriais excepcionais em R,
+especialmente focados em:
+
+**Áreas de destaque:**
+
+-   **Visualização de dados sociais**
+-   **Análise de dados públicos**
+-   **Shiny apps interativos**
+-   **Mapas e análise espacial**
+
+**O diferencial:** Tutoriais extremamente didáticos, em espanhol, com
+exemplos práticos usando dados reais latino-americanos.
+
+------------------------------------------------------------------------
+
+## Tutoriais recomendados de Bastián
+
+**Para começar:**
+
+1.  **Visualización de datos en R:** Do básico ao avançado com ggplot2
+2.  **Mapas interactivos en R:** Usando leaflet e sf
+3.  **Aplicaciones Shiny:** Como criar dashboards interativos
+4.  **Análisis de encuestas:** Trabalhando com dados de pesquisas
+
+> **Dica:** Mesmo que alguns tutoriais estejam em espanhol, o código é
+> universal. Vale muito a pena explorar!
+
+------------------------------------------------------------------------
+
+## Newsletter: David Keys
+
+<div>
+
+### David Keys
+
+**Fundador do [R for the Rest of Us](https://rfortherestofus.com/blog)**
+
+[![](images/david.JPG){fig-align="center"
+width="435"}](https://rfortherestofus.com/blog)
+
+</div>
+
+------------------------------------------------------------------------
+
+## What's New in R
+
+David Keys mantém uma das newsletters mais úteis sobre R: **What's New
+in R**.
+
+**O que você encontra:**
+
+-   Novidades de pacotes lançados recentemente
+-   Tutoriais práticos e diretos ao ponto
+-   Dicas de produtividade
+-   Recursos da comunidade
+-   Vagas de emprego em R
+
+## What's New in R
+
+**Frequência:** Semanal, com conteúdo sempre relevante e bem curado.
+
+**Por que assinar:** É a forma mais fácil de se manter atualizado sem se
+sentir sobrecarregado.
+
+[rfortherestofus.com/blog](https://rfortherestofus.com/blog)
+
+------------------------------------------------------------------------
+
+## R for the Rest of Us
+
+Além da newsletter, David criou uma plataforma completa de aprendizado:
+
+**Recursos disponíveis:**
+
+-   **Cursos online:** Do básico ao avançado
+-   **Templates prontos:** Relatórios e apresentações
+-   **Consultoria:** Para organizações que querem adotar R
+-   **Comunidade:** Fórum ativo de alunos
+
+**Filosofia:** "R para o resto de nós" — torna R acessível para quem não
+é programador de formação, como pesquisadores, analistas e profissionais
+de diversas áreas.
+
+------------------------------------------------------------------------
+
+## Blog: Posit
+
+<div>
+
+[![](images/PST-Blog-AI-Newsletter-v2.jpg){fig-align="center"
+width="434"}](https://posit.co/blog/)
+
+**O coração do ecossistema R**
+
+[posit.co/blog](https://posit.co/blog/)
+
+</div>
+
+------------------------------------------------------------------------
+
+## Por que acompanhar o Posit Blog?
+
+A Posit (antiga RStudio) é a empresa por trás das principais ferramentas
+do ecossistema R.
+
+**Conteúdo do blog:**
+
+-   **Lançamentos oficiais:** Novas versões do RStudio, Quarto, Shiny
+-   **Tutoriais técnicos:** Escritos por desenvolvedores dos pacotes
+-   **Casos de uso:** Como empresas usam R em produção
+-   **Webinars e eventos:** Anúncios e materiais
+-   **Boas práticas:** Padrões da indústria
+
+## Posit Cheatsheets
+
+<div>
+
+### Folhas de Dicas
+
+[![](images/cheets.JPG){fig-align="center"
+width="425"}](https://posit.co/resources/cheatsheets/)
+
+**Referência rápida para tudo**
+
+[posit.co/resources/cheatsheets](https://posit.co/resources/cheatsheets/)
+
+</div>
+
+------------------------------------------------------------------------
+
+## O que são as Cheatsheets?
+
+Cheatsheets (folhas de cola) são **guias visuais de 1-2 páginas** que
+resumem as funções e sintaxe dos principais pacotes do R.
+
+[![](images/plumber.JPG){fig-align="center"
+width="385"}](https://posit.co/resources/cheatsheets/)
+
+## O que são as Cheatsheets?
+
+**Disponíveis para:**
+
+-   **Básico:** Base R, RStudio IDE
+-   **Tidyverse:** dplyr, ggplot2, tidyr, purrr, stringr
+-   **Dados:** readr, lubridate, forcats
+-   **Modelagem:** caret, tidymodels
+-   **Visualização:** ggplot2, shiny, leaflet
+-   **Comunicação:** R Markdown, Quarto
+-   **E muito mais!**
+
+------------------------------------------------------------------------
+
+## Como usar as Cheatsheets efetivamente
+
+**Estratégias de uso:**
+
+1.  **Imprima as essenciais:** Deixe ao lado do computador
+2.  **Salve no computador:** Organize por pasta de projetos
+3.  **Consulte durante o código:** Tenha sempre abertas em outra tela
+4.  **Use para aprender:** Descubra funções que você não conhecia
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 150px; color: white;"}
+# Conversa de Café
+
+### Reflexões sobre nossa jornada
+:::
+
+------------------------------------------------------------------------
+
+## A jornada do aprendizado contínuo
+
+Chegamos ao final dessa edição, mas essa é apenas uma pausa no nosso
+café, não um adeus.
+
+**O que levamos daqui:**
+
+-   4 eventos imperdíveis para 2026
+-   400 + livros gratuitos para explorar
+-   2 pacotes que vão transformar seu fluxo de trabalho
+-   3 criadores de conteúdo incríveis para seguir
+-   Ferramentas de referência sempre à mão
+
+## A jornada do aprendizado contínuo
+
+**Mas mais importante que os recursos:** Levamos a certeza de que não
+estamos sozinhos nessa jornada. A comunidade R é global, acolhedora e
+está sempre crescendo.
+
+![**Allisson Horst.**](images/comunidade.png){fig-align="center"
+width="375"}
+
+------------------------------------------------------------------------
+
+## Seu próximo passo
+
+Não deixe esse conhecimento parado. Escolha **`APENAS UMA`** **`ação`**
+para esta semana:
+
+**Opções:**
+
+-   Instalar e testar o pacote `skimr` no seu próximo projeto
+-   Inscrever-se em um dos eventos de 2026
+-   Explorar um livro do Big Book of R
+-   Seguir um dos criadores recomendados
+-   Baixar 3 cheatsheets essenciais
+
+## Lembre-se
+
+> Progresso consistente vale mais que perfeição. **Um gole de cada
+> vez.**
+
+![**Criei esse espaço par isso! Respire, pare, pense, continue,
+respeite-se!**](images/logo.png){fig-align="center" width="276"}
+
+------------------------------------------------------------------------
+
+## Feedback
+
+**Seu feedback importa!**
+
+-   Tem sugestões de temas? Quer compartilhar seu projeto?
+
+-   Quer ver algum pacote específico na próxima edição?
+
+**Responda essa newsletter ou me envie uma mensagem (`LinkedIn`). Adoro
+ouvir de vocês!**
+
+------------------------------------------------------------------------
+
+## ☕ Assine o Café com R
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+Que cada **`gole`** desperte uma nova ideia.
+
+Que cada **`script`** abra uma nova conversa.
+
+Que o **`Café com R`**, se torne um ponto de encontro nosso!
+
+![](images/qrcode.jpg){fig-align="center" width="232"}
+
+**`Jenni`**

@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jennifer Luz Lopes">
+<meta name="dcterms.date" content="2025-10-28">
+<meta name="description" content="Curso construído para Comunidade de Estatística Thiago Marques.">
+
+<title>Curso de Introdução a Programação com R para Ciência de Dados – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../imagens/cafe1.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-8c83c138ba3d299c803f56eed10df0b1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d7640a370bb14233bf9fefb6bc24f80f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-8c83c138ba3d299c803f56eed10df0b1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../imagens/cafe1.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../projetos/index.html"> 
+<span class="menu-text">Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../agenda_2026/index.html"> 
+<span class="menu-text">Agenda 2026</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#conheça-o-curso---grade" id="toc-conheça-o-curso---grade" class="nav-link active" data-scroll-target="#conheça-o-curso---grade">Conheça o Curso - Grade</a></li>
+  <li><a href="#módulo-1-fundamentos-de-r-e-ambiente-de-desenvolvimento" id="toc-módulo-1-fundamentos-de-r-e-ambiente-de-desenvolvimento" class="nav-link" data-scroll-target="#módulo-1-fundamentos-de-r-e-ambiente-de-desenvolvimento">Módulo 1: Fundamentos de R e Ambiente de Desenvolvimento</a>
+  <ul class="collapse">
+  <li><a href="#check-list-do-aprendizado" id="toc-check-list-do-aprendizado" class="nav-link" data-scroll-target="#check-list-do-aprendizado">Check list do aprendizado</a></li>
+  </ul></li>
+  <li><a href="#módulo-2-controle-de-fluxo-e-estruturas-de-dados" id="toc-módulo-2-controle-de-fluxo-e-estruturas-de-dados" class="nav-link" data-scroll-target="#módulo-2-controle-de-fluxo-e-estruturas-de-dados">Módulo 2: Controle de Fluxo e Estruturas de Dados</a>
+  <ul class="collapse">
+  <li><a href="#check-list-do-aprendizado-1" id="toc-check-list-do-aprendizado-1" class="nav-link" data-scroll-target="#check-list-do-aprendizado-1"><strong>Check list do aprendizado</strong></a></li>
+  </ul></li>
+  <li><a href="#módulo-3-estruturando-projetos-scripts-e-fluxos-de-trabalho-em-r" id="toc-módulo-3-estruturando-projetos-scripts-e-fluxos-de-trabalho-em-r" class="nav-link" data-scroll-target="#módulo-3-estruturando-projetos-scripts-e-fluxos-de-trabalho-em-r">Módulo 3: Estruturando Projetos, Scripts e Fluxos de Trabalho em R</a>
+  <ul class="collapse">
+  <li><a href="#check-list-do-aprendizado-2" id="toc-check-list-do-aprendizado-2" class="nav-link" data-scroll-target="#check-list-do-aprendizado-2">Check list do aprendizado</a></li>
+  </ul></li>
+  <li><a href="#módulo-4-manipulação-avançada-de-arquivos-e-automação" id="toc-módulo-4-manipulação-avançada-de-arquivos-e-automação" class="nav-link" data-scroll-target="#módulo-4-manipulação-avançada-de-arquivos-e-automação">Módulo 4: Manipulação Avançada de Arquivos e Automação</a>
+  <ul class="collapse">
+  <li><a href="#check-list-do-aprendizado-3" id="toc-check-list-do-aprendizado-3" class="nav-link" data-scroll-target="#check-list-do-aprendizado-3">Check list do aprendizado</a></li>
+  </ul></li>
+  <li><a href="#módulo-5-integração-com-sistemas-externos-e-apis" id="toc-módulo-5-integração-com-sistemas-externos-e-apis" class="nav-link" data-scroll-target="#módulo-5-integração-com-sistemas-externos-e-apis">Módulo 5: Integração com Sistemas Externos e APIs</a>
+  <ul class="collapse">
+  <li><a href="#check-list-do-aprendizado-4" id="toc-check-list-do-aprendizado-4" class="nav-link" data-scroll-target="#check-list-do-aprendizado-4">Check list do aprendizado</a></li>
+  </ul></li>
+  <li><a href="#módulo-6-relatórios-dinâmicos-dashboards-em-shiny-e-envio-de-relatórios-automatizados" id="toc-módulo-6-relatórios-dinâmicos-dashboards-em-shiny-e-envio-de-relatórios-automatizados" class="nav-link" data-scroll-target="#módulo-6-relatórios-dinâmicos-dashboards-em-shiny-e-envio-de-relatórios-automatizados">Módulo 6: Relatórios Dinâmicos, Dashboards em Shiny e Envio de Relatórios Automatizados</a>
+  <ul class="collapse">
+  <li><a href="#check-list-do-aprendizado-5" id="toc-check-list-do-aprendizado-5" class="nav-link" data-scroll-target="#check-list-do-aprendizado-5">Check list do aprendizado</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Curso de Introdução a Programação com R para Ciência de Dados</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">cursos</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Curso construído para Comunidade de Estatística Thiago Marques.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jennifer Luz Lopes </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 28, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="conheça-o-curso---grade" class="level2">
+<h2 class="anchored" data-anchor-id="conheça-o-curso---grade">Conheça o Curso - Grade</h2>
+</section>
+<section id="módulo-1-fundamentos-de-r-e-ambiente-de-desenvolvimento" class="level2">
+<h2 class="anchored" data-anchor-id="módulo-1-fundamentos-de-r-e-ambiente-de-desenvolvimento">Módulo 1: Fundamentos de R e Ambiente de Desenvolvimento</h2>
+<p>Neste módulo você aprenderá do zero a dominar o ambiente R e RStudio, compreendendo desde o contexto histórico e instalação até a criação de scripts, manipulação de estruturas de dados e instalação de pacotes.<br>
+</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Tema</strong></td>
+<td><strong>Tópicos Principais</strong></td>
+<td><strong>Objetivo de Aprendizagem</strong></td>
+</tr>
+<tr class="even">
+<td><strong>1. Introdução ao R</strong></td>
+<td>Histórico da linguagem S e surgimento do R • Desenvolvimento pela comunidade (R Core Team) • Filosofia de programação interativa • Licença GNU e software livre</td>
+<td>Compreender a origem, a filosofia e o contexto histórico do R.</td>
+</tr>
+<tr class="odd">
+<td><strong>2. Aplicações da linguagem R</strong></td>
+<td>Estatística, Ciência de Dados, Bioinformática, Finanças, Ciências Sociais, Geociências e Agricultura • Visualização (ggplot2, plotly, shiny) • Relatórios (Quarto/RMarkdown)</td>
+<td>Identificar as áreas de aplicação e o potencial de uso do R em diferentes contextos.</td>
+</tr>
+<tr class="even">
+<td><strong>3. Vantagens e ecossistema do R</strong></td>
+<td>Código aberto e comunidade ativa • Extensibilidade via pacotes (CRAN, GitHub) • Integração com Python, C++, DBI e APIs • Reprodutibilidade e portabilidade</td>
+<td>Reconhecer os diferenciais técnicos e colaborativos da linguagem.</td>
+</tr>
+<tr class="odd">
+<td><strong>4. Instalação e configuração</strong></td>
+<td>Instalação do R no Windows/Linux/macOS via CRAN • Instalação do RStudio (Posit) – IDE principal • Conceito de CRAN e repositórios</td>
+<td>Instalar e configurar corretamente o R e o RStudio no ambiente local.</td>
+</tr>
+<tr class="even">
+<td><strong>5. Interface do RStudio</strong></td>
+<td>Painéis: Editor, Console, Environment e Output • Personalização de layout • Navegação entre scripts e objetos</td>
+<td>Navegar de forma produtiva na interface do RStudio.</td>
+</tr>
+<tr class="odd">
+<td><strong>6. Criando scripts no R</strong></td>
+<td>Diferença entre arquivos .R e .qmd • Criação e salvamento de scripts • Boas práticas de nomenclatura • Comentários com #</td>
+<td>Criar, salvar e documentar scripts de forma organizada e reprodutível.</td>
+</tr>
+<tr class="even">
+<td><strong>7. Execução de comandos básicos</strong></td>
+<td>Operações aritméticas (+ − * / ^ %% %/%) • Funções sqrt, abs, log, exp • Uso do console interativo</td>
+<td>Dominar a execução de expressões e funções simples no R.</td>
+</tr>
+<tr class="odd">
+<td><strong>8. Objetos e variáveis</strong></td>
+<td>Atribuição com &lt;- • Regras de nomeação • Boas práticas e exemplos • Evitar sobrescrita de funções</td>
+<td>Criar e manipular variáveis seguindo convenções de clareza e segurança.</td>
+</tr>
+<tr class="even">
+<td><strong>9. Tipos de dados (classes atômicas)</strong></td>
+<td>character • numeric • integer • complex • logical</td>
+<td>Identificar e aplicar corretamente os tipos de dados básicos do R.</td>
+</tr>
+<tr class="odd">
+<td><strong>10. Operadores no R</strong></td>
+<td>Aritméticos • Relacionais • Lógicos (&amp;,</td>
+<td>, !, &amp;&amp;,</td>
+</tr>
+<tr class="even">
+<td><strong>11. Estruturas de dados</strong></td>
+<td>Vetores • Matrizes • Listas • Data Frames – definição e criação</td>
+<td>Compreender e manipular as estruturas de dados fundamentais.</td>
+</tr>
+<tr class="odd">
+<td><strong>12. Vetores em R</strong></td>
+<td>Criação (c) • Tipos (numéricos, caracteres, lógicos) • Coerção • Indexação • Sequências (seq, sample) • Funções (length, sort, rev, order, cumsum, is.na, paste)</td>
+<td>Construir e explorar vetores, dominando indexação e funções associadas.</td>
+</tr>
+<tr class="even">
+<td><strong>13. Matrizes</strong></td>
+<td>Criação (matrix, byrow) • Conversão (dim) • rbind/cbind • Indexação [linha, coluna]</td>
+<td>Criar e manipular matrizes bidimensionais para cálculos estruturados.</td>
+</tr>
+<tr class="odd">
+<td><strong>14. Listas</strong></td>
+<td>Criação (list) • Acesso [[ ]] / $ • Sublistas [ ] • Combinação de tipos</td>
+<td>Entender a flexibilidade das listas e como armazenar múltiplos tipos de dados.</td>
+</tr>
+<tr class="even">
+<td><strong>15. Data Frames</strong></td>
+<td>Criação (data.frame) • Inspeção (str, summary, head, dim, names) • Indexação • Adição e remoção de linhas/colunas • Filtros condicionais</td>
+<td>Manipular tabelas de dados estruturadas com diferentes tipos de variáveis.</td>
+</tr>
+<tr class="odd">
+<td><strong>16. Pacotes e gerenciamento</strong></td>
+<td>Conceito de pacote • Repositórios (CRAN, GitHub, .zip) • Instalação (install.packages, devtools) • Carregamento (library) • Pacman (p_load) • Listagem (search) • Citação (citation) • Ajuda (help)</td>
+<td>Instalar, carregar e gerenciar pacotes com eficiência e reprodutibilidade.</td>
+</tr>
+</tbody>
+</table>
+<section id="check-list-do-aprendizado" class="level3">
+<h3 class="anchored" data-anchor-id="check-list-do-aprendizado">Check list do aprendizado</h3>
+<ul class="task-list">
+<li><label><input type="checkbox">Instalar e configurar R e RStudio corretamente.</label></li>
+<li><label><input type="checkbox">Criar, salvar e executar scripts reprodutíveis.</label></li>
+<li><label><input type="checkbox">Manipular variáveis, vetores, matrizes, listas e data frames.</label></li>
+<li><label><input type="checkbox">Executar cálculos e operações lógicas básicas.</label></li>
+<li><label><input type="checkbox">Gerenciar pacotes e dependências.</label></li>
+<li><label><input type="checkbox">Entender a base da filosofia de reprodutibilidade no R.</label></li>
+</ul>
+</section>
+</section>
+<section id="módulo-2-controle-de-fluxo-e-estruturas-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="módulo-2-controle-de-fluxo-e-estruturas-de-dados">Módulo 2: Controle de Fluxo e Estruturas de Dados</h2>
+<p>Neste módulo, você aprenderá a controlar o fluxo lógico e estruturar análises automatizadas em R. A transição é clara: sai da manipulação básica do Módulo 1 e entra na programação funcional e reprodutível. O foco é transformar código estático em código inteligente, reutilizável e orientado a decisão, base para automação, pipelines e dashboards.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Tema</strong></th>
+<th><strong>Tópicos Principais</strong></th>
+<th><strong>Objetivo de Aprendizagem</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1. Estruturas condicionais</strong></td>
+<td><code>if</code>, <code>else</code>, <code>else if</code>, <code>ifelse()</code> • Sintaxe, aninhamento e vetorização • Boas práticas de legibilidade • Exercícios resolvidos</td>
+<td>Desenvolver scripts que tomam decisões automáticas com base em condições lógicas.</td>
+</tr>
+<tr class="even">
+<td><strong>2. Vetorização com <code>ifelse()</code></strong></td>
+<td>Aplicação em vetores e colunas de data frames • Substituição de valores ausentes (NA) • Condições múltiplas (ifelse aninhado)</td>
+<td>Aprender a aplicar lógicas condicionais sobre conjuntos de dados inteiros, sem loops.</td>
+</tr>
+<tr class="odd">
+<td><strong>3. Laços de repetição</strong></td>
+<td>Estruturas <code>for</code>, <code>while</code>, <code>repeat</code> • Condições de parada • Uso de <code>break</code> e <code>next</code> • Exercícios de automação</td>
+<td>Automatizar repetições de comandos e compreender os três tipos principais de loops.</td>
+</tr>
+<tr class="even">
+<td><strong>4. Funções básicas</strong></td>
+<td>Revisão das funções integradas (<code>mean</code>, <code>sum</code>, <code>sd</code>, <code>unique</code>, <code>table</code>)</td>
+<td>Dominar as funções essenciais da base R para análise e resumo de dados.</td>
+</tr>
+<tr class="odd">
+<td><strong>5. Criação de funções</strong></td>
+<td>Sintaxe (<code>function()</code>) • Argumentos, <code>return()</code> e modularização • Funções personalizadas e reutilizáveis</td>
+<td>Escrever funções próprias para estruturar e automatizar tarefas de análise.</td>
+</tr>
+<tr class="even">
+<td><strong>6. Snippets no RStudio</strong></td>
+<td>O que são snippets • Como criar e editar snippets personalizados (<code>usethis::edit_rstudio_snippets()</code>) • Automatização de blocos de código</td>
+<td>Acelerar a codificação e padronizar funções próprias dentro do RStudio.</td>
+</tr>
+<tr class="odd">
+<td><strong>7. Família Apply</strong></td>
+<td><code>apply</code>, <code>lapply</code>, <code>sapply</code>, <code>tapply</code>, <code>mapply</code> • Diferenças, entradas e saídas • Aplicações em vetores, listas e data frames</td>
+<td>Substituir loops por operações vetorizadas mais rápidas e elegantes.</td>
+</tr>
+<tr class="even">
+<td><strong>8. <code>apply()</code></strong></td>
+<td>Aplicação em linhas e colunas de matrizes/data frames • Cálculos agregados (soma, média, desvio)</td>
+<td>Praticar o uso de <code>apply()</code> para resumir dados de forma estruturada.</td>
+</tr>
+<tr class="odd">
+<td><strong>9. <code>lapply()</code> e <code>sapply()</code></strong></td>
+<td>Operações sobre listas • Retorno em lista vs vetor simplificado</td>
+<td>Automatizar cálculos sobre listas e data frames com retorno flexível.</td>
+</tr>
+<tr class="even">
+<td><strong>10. <code>tapply()</code></strong></td>
+<td>Aplicação de funções por grupo (tratamentos, categorias)</td>
+<td>Calcular médias, variâncias e resumos condicionados a fatores.</td>
+</tr>
+<tr class="odd">
+<td><strong>11. <code>mapply()</code></strong></td>
+<td>Iterações paralelas sobre múltiplos vetores • Funções multivariadas</td>
+<td>Aplicar funções simultaneamente sobre múltiplos argumentos vetoriais.</td>
+</tr>
+<tr class="even">
+<td><strong>12. Exercícios práticos – Apply Family</strong></td>
+<td>Criação de matriz 3×4, listas, data frames e matrizes 3×3 • Uso das funções <code>apply</code>, <code>sapply</code>, <code>tapply</code>, <code>mapply</code></td>
+<td>Consolidar a compreensão da família apply por meio de desafios progressivos.</td>
+</tr>
+<tr class="odd">
+<td><strong>13. Mini-projeto 1 – Pipeline com <code>mtcars</code></strong></td>
+<td>Engenharia de variáveis (for, ifelse, mapply) • Funções personalizadas e estatísticas descritivas • Aplicação de <code>tapply</code> e padronização (z-score) • Análise por grupos (cilindros, peso)</td>
+<td>Integrar controle de fluxo, funções e família apply em uma análise realista de dados.</td>
+</tr>
+<tr class="even">
+<td><strong>14. Interpretação e storytelling analítico</strong></td>
+<td>Responder perguntas de negócio com R • Relacionar peso, potência e eficiência • Uso de código reprodutível e modular</td>
+<td>Traduzir resultados analíticos em insights de negócio claros e interpretáveis.</td>
+</tr>
+</tbody>
+</table>
+<section id="check-list-do-aprendizado-1" class="level3">
+<h3 class="anchored" data-anchor-id="check-list-do-aprendizado-1"><strong>Check list do aprendizado</strong></h3>
+<ul class="task-list">
+<li><p><label><input type="checkbox">Dominar estruturas condicionais e loops.</label></p></li>
+<li><p><label><input type="checkbox">Criar funções e modularizar código.</label></p></li>
+<li><p><label><input type="checkbox">Automatizar rotinas com <code>apply</code>, <code>lapply</code>, <code>sapply</code>, <code>tapply</code>, <code>mapply</code>.</label></p></li>
+<li><p><label><input type="checkbox">Usar snippets para padronização de código.</label></p></li>
+<li><p><label><input type="checkbox">Integrar múltiplas técnicas em um mini-projeto prático (mtcars).</label></p></li>
+<li><p><label><input type="checkbox">Pensar como analista: transformar perguntas de negócio em lógica computacional.</label></p></li>
+</ul>
+</section>
+</section>
+<section id="módulo-3-estruturando-projetos-scripts-e-fluxos-de-trabalho-em-r" class="level2">
+<h2 class="anchored" data-anchor-id="módulo-3-estruturando-projetos-scripts-e-fluxos-de-trabalho-em-r">Módulo 3: Estruturando Projetos, Scripts e Fluxos de Trabalho em R</h2>
+<p>Este módulo consolida as práticas de <strong>organização, automação e versionamento</strong>, o tripé de qualquer projeto profissional em R. Você aprenderá a criar pipelines completos, reprodutíveis e colaborativos, utilizando as melhores práticas de engenharia de software aplicadas à ciência de dados.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Tema</strong></th>
+<th><strong>Tópicos Principais</strong></th>
+<th><strong>Objetivo de Aprendizagem</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1. Introdução à organização profissional em R</strong></td>
+<td>Conceito de projeto no RStudio • Diferença entre amadorismo e reprodutibilidade • Importância da estrutura de diretórios</td>
+<td>Entender o impacto da organização na produtividade e reprodutibilidade das análises.</td>
+</tr>
+<tr class="even">
+<td><strong>2. Por que evitar <code>setwd()</code> e caminhos absolutos</strong></td>
+<td>Problemas de portabilidade, manutenção e escalabilidade • Caminhos relativos e boas práticas</td>
+<td>Compreender por que <code>setwd()</code> é uma armadilha e adotar caminhos relativos corretamente.</td>
+</tr>
+<tr class="odd">
+<td><strong>3. Criando projetos no RStudio</strong></td>
+<td>Criação manual e automática (<code>File &gt; New Project</code>) • Estrutura <code>.Rproj</code> • Opção “Create a Git repository”</td>
+<td>Criar e gerenciar projetos no RStudio de forma profissional e reprodutível.</td>
+</tr>
+<tr class="even">
+<td><strong>4. Estrutura mínima recomendada de pastas</strong></td>
+<td><code>dados/</code>, <code>scripts/</code>, <code>output/</code>, <code>figuras/</code>, <code>docs/</code>, <code>funcoes/</code>, <code>README.md</code></td>
+<td>Planejar e aplicar uma arquitetura de diretórios organizada e padronizada.</td>
+</tr>
+<tr class="odd">
+<td><strong>5. Automação da estrutura de projetos com R</strong></td>
+<td>Pacote <code>{fs}</code> e função <code>dir_create()</code> • Criação automática de pastas e arquivos</td>
+<td>Automatizar a criação da estrutura mínima de projetos via script em R.</td>
+</tr>
+<tr class="even">
+<td><strong>6. Arquivo <code>README.md</code> e boas práticas de documentação</strong></td>
+<td>Estrutura do README • Objetivo, dados, execução e dependências</td>
+<td>Criar documentação clara e profissional para qualquer projeto.</td>
+</tr>
+<tr class="odd">
+<td><strong>7. Verificação e inspeção da estrutura criada</strong></td>
+<td>Funções <code>here::here()</code> e <code>fs::dir_tree()</code></td>
+<td>Validar caminhos relativos e visualizar a hierarquia de diretórios.</td>
+</tr>
+<tr class="even">
+<td><strong>8. Criação e padronização de scripts</strong></td>
+<td>Arquivos numerados (<code>01-importacao.R</code>, <code>02-tratamento.R</code>, <code>03-analise.R</code>) • Cabeçalho automatizado</td>
+<td>Garantir modularização, clareza e sequência lógica no pipeline de scripts.</td>
+</tr>
+<tr class="odd">
+<td><strong>9. Simulação e exportação de dados e gráficos</strong></td>
+<td>Geração de <code>data.frame</code> e exportação <code>.csv</code> com <code>write.csv()</code> • Salvando gráficos com <code>png()</code> e <code>dev.off()</code></td>
+<td>Simular dados, salvar resultados e garantir armazenamento automatizado em pastas corretas.</td>
+</tr>
+<tr class="even">
+<td><strong>10. Importação de dados com <code>{readr}</code> e <code>{readxl}</code></strong></td>
+<td>Funções <code>read_csv()</code>, <code>read_csv2()</code>, <code>read_delim()</code>, <code>read_xlsx()</code> • Argumentos (<code>col_names</code>, <code>col_types</code>, <code>locale</code>, <code>skip</code>, <code>na</code>)</td>
+<td>Ler e tratar corretamente dados de diferentes formatos e fontes (local e online).</td>
+</tr>
+<tr class="odd">
+<td><strong>11. Introdução ao versionamento com Git e GitHub</strong></td>
+<td>Conceitos de repositório, commit, push, pull, staging e branch</td>
+<td>Compreender os fundamentos do controle de versão e sua importância na ciência de dados.</td>
+</tr>
+<tr class="even">
+<td><strong>12. Instalação e configuração do Git e GitHub</strong></td>
+<td>Instalação do Git • Criação de conta GitHub • Configuração com <code>{usethis}</code> (<code>use_git_config()</code>, <code>create_github_token()</code>)</td>
+<td>Integrar o RStudio com Git e GitHub para rastrear e versionar projetos.</td>
+</tr>
+<tr class="odd">
+<td><strong>13. Métodos de integração com GitHub</strong></td>
+<td>Criar repositório online • Clonar projeto existente • Criar repositório direto do RStudio</td>
+<td>Sincronizar projetos locais com repositórios remotos de forma segura e automatizada.</td>
+</tr>
+<tr class="even">
+<td><strong>14. Interface Git no RStudio</strong></td>
+<td>Aba Git: status de arquivos (A, M, D, R, ?) • Stage, Commit, Push e Pull</td>
+<td>Executar operações de versionamento direto no RStudio, sem precisar do terminal.</td>
+</tr>
+<tr class="odd">
+<td><strong>15. Conceitos avançados de versionamento</strong></td>
+<td>Branches, merge, histórico de commits • Colaboração e rastreabilidade</td>
+<td>Trabalhar de forma colaborativa e segura com múltiplas versões de um mesmo projeto.</td>
+</tr>
+<tr class="even">
+<td><strong>16. Projeto prático - Pipeline Automatizado em R</strong></td>
+<td>Criação de projeto completo e automatizado • Estrutura de pastas com <code>{fs}</code> e <code>{here}</code> • Dados simulados, gráficos, README e integração com GitHub</td>
+<td>Construir um pipeline completo e reprodutível, do zero até o versionamento remoto.</td>
+</tr>
+<tr class="odd">
+<td><strong><code>17- Aula extra - GitHub desktop</code></strong></td>
+<td>Como realizar o login, fazer o download e usar o GitHub para Desktop</td>
+<td>Aprender a utilizar essa ferramenta de diferentes maneiras para vercionamento de código.</td>
+</tr>
+</tbody>
+</table>
+<section id="check-list-do-aprendizado-2" class="level3">
+<h3 class="anchored" data-anchor-id="check-list-do-aprendizado-2">Check list do aprendizado</h3>
+<ul class="task-list">
+<li><p><label><input type="checkbox">Estruturar projetos profissionais com pastas, scripts e documentação padronizados.</label></p></li>
+<li><p><label><input type="checkbox">Usar <code>{fs}</code> e <code>{here}</code> para automação e caminhos relativos.</label></p></li>
+<li><p><label><input type="checkbox">Importar dados corretamente com <code>{readr}</code> e <code>{readxl}</code>.</label></p></li>
+<li><p><label><input type="checkbox">Versionar e colaborar usando Git e GitHub diretamente no RStudio.</label></p></li>
+<li><p><label><input type="checkbox">Compreender a importância da reprodutibilidade e da rastreabilidade em projetos de dados.</label></p></li>
+<li><p><label><input type="checkbox">Criar pipelines reutilizáveis, documentados e prontos para publicação.</label></p></li>
+</ul>
+</section>
+</section>
+<section id="módulo-4-manipulação-avançada-de-arquivos-e-automação" class="level2">
+<h2 class="anchored" data-anchor-id="módulo-4-manipulação-avançada-de-arquivos-e-automação">Módulo 4: Manipulação Avançada de Arquivos e Automação</h2>
+<p>Este módulo transforma você em usuário avançado do R, capaz de criar análises completas e automatizadas. Com <strong><code>tidyverse</code></strong>, você será capaz de dominar manipulação e visualização; com <strong><code>{targets}</code></strong>, aprende automação e reprodutibilidade, o coração da engenharia de dados em R.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Tema</strong></th>
+<th><strong>Tópicos Principais</strong></th>
+<th><strong>Objetivo de Aprendizagem</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1. Introdução e objetivos do módulo</strong></td>
+<td>Revisão dos módulos anteriores • Integração dos pilares: manipulação, visualização e automação • Escalabilidade de análises</td>
+<td>Compreender como unir manipulação de dados, visualização e automação num fluxo contínuo.</td>
+</tr>
+<tr class="even">
+<td><strong>2. Pacotes do Tidyverse</strong></td>
+<td>Conceito e filosofia • Pacotes principais (<code>dplyr</code>, <code>tidyr</code>, <code>readr</code>, <code>stringr</code>, <code>lubridate</code>, <code>ggplot2</code>, <code>purrr</code>)</td>
+<td>Entender a estrutura unificada do tidyverse e sua importância em ciência de dados.</td>
+</tr>
+<tr class="odd">
+<td><strong>3. Operador Pipe <code>%&gt;%</code></strong></td>
+<td>Conceito e funcionamento • Encadeamento de funções • Legibilidade e fluidez do código</td>
+<td>Usar o operador pipe para criar fluxos de código claros e expressivos.</td>
+</tr>
+<tr class="even">
+<td><strong>4. Manipulação de dados com <code>dplyr</code></strong></td>
+<td>Verbos principais: <code>filter</code>, <code>select</code>, <code>arrange</code>, <code>mutate</code>, <code>summarise</code>, <code>group_by</code></td>
+<td>Dominar as operações centrais do <code>dplyr</code> para transformar dados de forma reprodutível.</td>
+</tr>
+<tr class="odd">
+<td><strong>5. Casos práticos – base Coffee Quality Institute</strong></td>
+<td>Importação via URL • Renomeação de variáveis • Inspeção (<code>glimpse</code>)</td>
+<td>Aplicar o aprendizado em um dataset real e compreender sua estrutura.</td>
+</tr>
+<tr class="even">
+<td><strong>6. Funções complementares de manipulação</strong></td>
+<td><code>count</code>, <code>case_when</code>, <code>transmute</code>, funções auxiliares em <code>select</code></td>
+<td>Executar transformações condicionais e sumarizações avançadas.</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>7. Estatística descritiva com <code>{metan}</code></strong></td>
+<td><code>desc_stat()</code> • Visualização de estatísticas com <code>datatable</code></td>
+<td>Calcular e apresentar estatísticas descritivas completas de forma automatizada.</td>
+</tr>
+<tr class="odd">
+<td><strong>8. União e relacionamento de bases (<code>joins</code>)</strong></td>
+<td><code>left_join</code>, <code>right_join</code>, <code>inner_join</code>, <code>full_join</code>, <code>anti_join</code> • Chaves primárias</td>
+<td>Combinar e integrar múltiplas fontes de dados mantendo consistência e rastreabilidade.</td>
+</tr>
+<tr class="even">
+<td><strong>9. Visualização com <code>ggplot2</code></strong></td>
+<td>Gramática dos gráficos • Estrutura <code>ggplot()</code> + <code>aes()</code> + <code>geom_</code> + <code>theme()</code></td>
+<td>Compor visualizações estatísticas elegantes e reprodutíveis com <code>ggplot2</code>.</td>
+</tr>
+<tr class="odd">
+<td><strong>10. Elementos da gramática gráfica</strong></td>
+<td>Aesthetics (<code>x</code>, <code>y</code>, <code>color</code>, <code>fill</code>, <code>alpha</code>, <code>shape</code>, <code>size</code>)</td>
+<td>Mapear variáveis para atributos visuais e criar representações expressivas.</td>
+</tr>
+<tr class="even">
+<td><strong>11. Geometrias e exemplos práticos</strong></td>
+<td><code>geom_point</code>, <code>geom_col</code>, <code>geom_boxplot</code>, <code>geom_histogram</code>, <code>geom_density</code>, <code>geom_smooth</code></td>
+<td>Criar diferentes tipos de gráficos e interpretar padrões visuais.</td>
+</tr>
+<tr class="odd">
+<td><strong>12. Personalização e temas</strong></td>
+<td><code>labs</code>, <code>theme_classic</code>, <code>theme_bw</code>, paletas <code>{viridis}</code>, <code>scale_*</code></td>
+<td>Ajustar legendas, escalas, cores e estilos com consistência visual.</td>
+</tr>
+<tr class="even">
+<td><strong>13. Combinação e exportação de gráficos</strong></td>
+<td><code>patchwork</code> para unir gráficos • <code>cowplot</code> para inserir logotipos</td>
+<td>Gerar painéis e dashboards gráficos dentro de scripts automatizados.</td>
+</tr>
+<tr class="odd">
+<td><strong>14. Gráficos interativos e mapas</strong></td>
+<td><code>{plotly}</code>, <code>{rnaturalearth}</code> • Mapas de calor e choropleths</td>
+<td>Criar visualizações dinâmicas e geográficas integradas a pipelines.</td>
+</tr>
+<tr class="even">
+<td><strong>15. Gráficos avançados</strong></td>
+<td><code>facet_wrap</code>, <code>facet_grid</code>, <code>stat_summary</code>, <code>radarchart</code></td>
+<td>Aplicar visualizações comparativas e sumarizações visuais complexas.</td>
+</tr>
+<tr class="odd">
+<td><strong>16. Pipeline de automação com <code>{targets}</code></strong></td>
+<td>Conceito de alvos (<code>tar_target</code>) • Grafo de dependências (DAG) • Execução com <code>tar_make()</code></td>
+<td>Automatizar pipelines completos e reprodutíveis de leitura, análise e exportação.</td>
+</tr>
+<tr class="even">
+<td><strong>17. Estrutura <code>_targets.R</code> e scripts auxiliares</strong></td>
+<td>Definição dos alvos, dependências e exportações • Visualização do pipeline com <code>tar_visnetwork()</code></td>
+<td>Estruturar projetos reprodutíveis integrando código, dados e relatórios.</td>
+</tr>
+<tr class="odd">
+<td><strong>18. Integração de relatórios Quarto/RMarkdown ao pipeline</strong></td>
+<td><code>quarto::quarto_render()</code> • Exportação automática de resultados</td>
+<td>Automatizar geração de relatórios e documentos a partir do pipeline.</td>
+</tr>
+</tbody>
+</table>
+<section id="check-list-do-aprendizado-3" class="level3">
+<h3 class="anchored" data-anchor-id="check-list-do-aprendizado-3">Check list do aprendizado</h3>
+<ul class="task-list">
+<li><p><label><input type="checkbox">Manipular e transformar dados em escala com <code>{dplyr}</code>.</label></p></li>
+<li><p><label><input type="checkbox">Produzir gráficos estáticos, dinâmicos e geográficos com <code>{ggplot2}</code>, <code>{plotly}</code> e <code>{rnaturalearth}</code>.</label></p></li>
+<li><p><label><input type="checkbox">Calcular estatísticas descritivas automatizadas.</label></p></li>
+<li><p><label><input type="checkbox">Unir múltiplas bases com operações relacionais.</label></p></li>
+<li><p><label><input type="checkbox">Automatizar todo o fluxo analítico com <code>{targets}</code>.</label></p></li>
+<li><p><label><input type="checkbox">Integrar relatórios e visualizações em pipelines reprodutíveis.</label></p></li>
+<li><p><label><input type="checkbox">Pensar e estruturar projetos de forma profissional, modular e escalável.</label></p></li>
+</ul>
+</section>
+</section>
+<section id="módulo-5-integração-com-sistemas-externos-e-apis" class="level2">
+<h2 class="anchored" data-anchor-id="módulo-5-integração-com-sistemas-externos-e-apis">Módulo 5: Integração com Sistemas Externos e APIs</h2>
+<p>Você aprenderá a dominar a integração do R com bancos de dados, APIs e outras linguagens, consolidando o controle total sobre entrada, processamento e saída de dados.Este módulo representa o passo para autonomia profissional: análise conectada, reprodutível e escalável.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Unidade / Seção</strong></th>
+<th><strong>Tópicos Principais</strong></th>
+<th><strong>Objetivo de Aprendizagem</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1. Introdução: Conexão e Integração de Sistemas</strong></td>
+<td>Importância das conexões externas • Conceito de automação entre sistemas • Cenários reais de integração (bancos, APIs, Python)</td>
+<td>Compreender como o R se conecta a sistemas externos e o papel dessas integrações na ciência de dados.</td>
+</tr>
+<tr class="even">
+<td><strong>2. Integração com Bancos de Dados via <code>{DBI}</code></strong></td>
+<td>Conceito de banco relacional (PostgreSQL, MySQL, SQL Server) • Interface DBI e drivers (RPostgres, RMariaDB, RSQLite)</td>
+<td>Aprender a estabelecer conexões profissionais com bancos relacionais no R.</td>
+</tr>
+<tr class="odd">
+<td><strong>3. Fundamentos do <code>{DBI}</code></strong></td>
+<td>Funções principais: <code>dbConnect()</code>, <code>dbDisconnect()</code>, <code>dbReadTable()</code>, <code>dbGetQuery()</code>, <code>dbExecute()</code> • Transações (<code>dbBegin</code>, <code>dbCommit</code>, <code>dbRollback</code>)</td>
+<td>Manipular dados diretamente no banco usando o R, com segurança e autonomia.</td>
+</tr>
+<tr class="even">
+<td><strong>4. Introdução ao <code>{dbplyr}</code></strong></td>
+<td>Tradução automática de <code>dplyr</code> para SQL • <code>tbl()</code>, <code>filter()</code>, <code>select()</code>, <code>summarise()</code>, <code>collect()</code></td>
+<td>Executar consultas SQL complexas usando a gramática tidyverse, sem sair do R.</td>
+</tr>
+<tr class="odd">
+<td><strong>5. Conexão Prática – Banco Sakila (MariaDB)</strong></td>
+<td>Autenticação com <code>RMariaDB</code> • Listagem de tabelas (<code>dbListTables</code>, <code>dbListFields</code>) • Leitura e filtros SQL</td>
+<td>Praticar a conexão e manipulação real de dados em um banco remoto.</td>
+</tr>
+<tr class="even">
+<td><strong>6. Consultas SQL e dplyr/dbplyr Integrados</strong></td>
+<td>Filtros condicionais (<code>WHERE</code>, <code>AND</code>, <code>OR</code>) • Joins (<code>inner_join</code>) • Agrupamentos e sumarizações (<code>group_by</code>, <code>summarise</code>)</td>
+<td>Unir SQL e tidyverse para análises diretas em bases grandes e relacionais.</td>
+</tr>
+<tr class="odd">
+<td><strong>7. Exportação e Encerramento da Conexão</strong></td>
+<td><code>dbWriteTable()</code> e <code>dbDisconnect()</code></td>
+<td>Gerenciar ciclo completo da conexão: consulta, exportação e fechamento seguro.</td>
+</tr>
+<tr class="even">
+<td><strong>8. Conexão com Bases Públicas – <code>{basedosdados}</code></strong></td>
+<td>Introdução à ONG Base dos Dados • Datalake no BigQuery (Google Cloud)</td>
+<td>Acessar dados públicos organizados em um ambiente de nuvem gratuito.</td>
+</tr>
+<tr class="odd">
+<td><strong>9. Autenticação e Projeto no Google Cloud</strong></td>
+<td>Criação de projeto • Billing ID • Funções <code>set_billing_id()</code> e <code>get_billing_id()</code></td>
+<td>Autenticar e gerenciar acesso ao BigQuery de forma gratuita e segura.</td>
+</tr>
+<tr class="even">
+<td><strong>10. Consulta SQL com <code>read_sql()</code> e <code>download()</code></strong></td>
+<td>Sintaxe de query SQL • Exemplo com PIB municipal (IBGE) • Join de tabelas públicas</td>
+<td>Acessar e combinar bases públicas diretamente do BigQuery via R.</td>
+</tr>
+<tr class="odd">
+<td><strong>11. Manipulação e Visualização de Dados Públicos</strong></td>
+<td><code>dplyr</code> para agregações e somatórios • <code>ggplot2</code> para séries temporais</td>
+<td>Integrar dados do BigQuery em análises e gráficos automatizados.</td>
+</tr>
+<tr class="even">
+<td><strong>12. Introdução às APIs RESTful</strong></td>
+<td>Conceito de API • Estrutura (endpoint, método, query string) • Métodos HTTP (GET, POST, PUT, DELETE) • Códigos de status (200, 404, 500)</td>
+<td>Entender o funcionamento das APIs web e seu papel na automação e troca de dados.</td>
+</tr>
+<tr class="odd">
+<td><strong>13. Pacote <code>{httr2}</code> – Consumo de APIs no R</strong></td>
+<td>Funções principais: <code>request()</code>, <code>req_headers()</code>, <code>req_perform()</code>, <code>resp_body_json()</code></td>
+<td>Aprender a consumir APIs modernas e seguras usando o pacote {httr2}.</td>
+</tr>
+<tr class="even">
+<td><strong>14. Exemplo Prático – API do GitHub</strong></td>
+<td>Autenticação via token pessoal • Consulta de repositórios e issues • Conversão JSON → tibble • Visualização com <code>ggplot2</code></td>
+<td>Integrar dados reais da API do GitHub e transformá-los em análises e gráficos automatizados.</td>
+</tr>
+<tr class="odd">
+<td><strong>15. APIs de Dados e Entretenimento – <code>{spotifyr}</code></strong></td>
+<td>Autenticação com Client ID/Secret • Funções principais (<code>get_artist()</code>, <code>get_artist_audio_features()</code>)</td>
+<td>Conectar o R à API do Spotify e extrair dados sobre artistas, músicas e álbuns.</td>
+</tr>
+<tr class="even">
+<td><strong>16. Publicando suas próprias APIs – <code>{plumber}</code></strong></td>
+<td>Criação de endpoints (#* @get, @param) • Estrutura de arquivos (<code>api.R</code>, <code>run_api.R</code>) • Retorno JSON</td>
+<td>Construir e executar uma API RESTful no R, expondo funções como serviços web.</td>
+</tr>
+<tr class="odd">
+<td><strong>17. Teste e Execução Local com Swagger</strong></td>
+<td>Interface de documentação automática • Teste de endpoints e visualização de respostas JSON</td>
+<td>Validar e explorar APIs diretamente no navegador de forma interativa.</td>
+</tr>
+<tr class="even">
+<td><strong>18. Integração com Python via <code>{reticulate}</code></strong></td>
+<td>Conceito e arquitetura da ponte R–Python • Conversão automática de tipos • Funções principais (<code>py_run_string</code>, <code>py$</code>, <code>import</code>)</td>
+<td>Rodar código Python dentro do R e integrar bibliotecas como pandas e numpy.</td>
+</tr>
+<tr class="odd">
+<td><strong>19. Análise Híbrida – Python + R</strong></td>
+<td>Importação de dados com pandas (Python) • Manipulação e visualização com ggplot2 (R) • Transferência bidirecional de objetos</td>
+<td>Construir pipelines híbridos com manipulação em Python e visualização em R.</td>
+</tr>
+<tr class="even">
+<td><strong>20. Dicionário R × Python</strong></td>
+<td>Equivalência de comandos (importar, filtrar, agrupar, visualizar)</td>
+<td>Compreender as similaridades sintáticas e conceituais entre R e Python.</td>
+</tr>
+<tr class="odd">
+<td><strong>21. Boas Práticas e Referências</strong></td>
+<td>Reprodutibilidade, autenticação segura, versionamento, documentação</td>
+<td>Consolidar práticas de integração profissional com sistemas externos.</td>
+</tr>
+</tbody>
+</table>
+<section id="check-list-do-aprendizado-4" class="level3">
+<h3 class="anchored" data-anchor-id="check-list-do-aprendizado-4">Check list do aprendizado</h3>
+<ul class="task-list">
+<li><p><label><input type="checkbox">Conectar o R a bancos de dados relacionais via DBI e dbplyr.</label></p></li>
+<li><p><label><input type="checkbox">Consultar e manipular bases públicas com <code>{basedosdados}</code>.</label></p></li>
+<li><p><label><input type="checkbox">Consumir APIs RESTful (GitHub, Spotify) com <code>{httr2}</code> e <code>{spotifyr}</code>.</label></p></li>
+<li><p><label><input type="checkbox">Criar APIs próprias com <code>{plumber}</code>.</label></p></li>
+<li><p><label><input type="checkbox">Integrar Python ao R com <code>{reticulate}</code> para análises híbridas.</label></p></li>
+<li><p><label><input type="checkbox">Automatizar fluxos entre sistemas e gerar relatórios dinâmicos.</label></p></li>
+<li><p><label><input type="checkbox">Gerenciar autenticação, tokens e ambientes de forma segura e reprodutível.</label></p></li>
+</ul>
+</section>
+</section>
+<section id="módulo-6-relatórios-dinâmicos-dashboards-em-shiny-e-envio-de-relatórios-automatizados" class="level2">
+<h2 class="anchored" data-anchor-id="módulo-6-relatórios-dinâmicos-dashboards-em-shiny-e-envio-de-relatórios-automatizados">Módulo 6: Relatórios Dinâmicos, Dashboards em Shiny e Envio de Relatórios Automatizados</h2>
+<p>Este módulo consolida o pilar da <strong>comunicação em ciência de dados</strong>. Você irá dominar <strong>Quarto</strong>, <strong>Shiny</strong> e <strong>Blastula</strong>, criando um ecossistema integrado que gera, publica e distribui análises automaticamente, com estética, interatividade e reprodutibilidade.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Unidade / Seção</strong></th>
+<th><strong>Tópicos Principais</strong></th>
+<th><strong>Objetivo de Aprendizagem</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1. Introdução: Comunicação é o produto final</strong></td>
+<td>Importância da comunicação em projetos de dados • Do código ao resultado interpretável • Inteligência visual e automação de entrega</td>
+<td>Entender que o valor da análise está na clareza e automação da comunicação dos resultados.</td>
+</tr>
+<tr class="even">
+<td><strong>2. Conceito e filosofia do Quarto</strong></td>
+<td>O que é Quarto • Relação com R Markdown • Estrutura YAML + Markdown + Chunks</td>
+<td>Conhecer a arquitetura do Quarto e suas vantagens em reprodutibilidade e automação.</td>
+</tr>
+<tr class="odd">
+<td><strong>3. Por que usar o Quarto</strong></td>
+<td>Reprodutibilidade, automação, consistência visual, integração com pipelines e GitHub</td>
+<td>Compreender os diferenciais do Quarto como plataforma moderna de publicação técnica.</td>
+</tr>
+<tr class="even">
+<td><strong>4. Instalação e integração com RStudio</strong></td>
+<td>Instalar Quarto CLI • Configuração no RStudio (versão mínima 2022.07) • Verificação do ambiente</td>
+<td>Configurar o ambiente corretamente para criação e renderização de relatórios dinâmicos.</td>
+</tr>
+<tr class="odd">
+<td><strong>5. Criando o primeiro documento <code>.qmd</code></strong></td>
+<td>Estrutura YAML • Texto em Markdown • Chunks de código executável</td>
+<td>Criar um relatório completo integrando narrativa e execução de código.</td>
+</tr>
+<tr class="even">
+<td><strong>6. Apresentações interativas com Reveal.js</strong></td>
+<td>Criação de slides <code>.qmd</code> • Formatação, transições e layouts</td>
+<td>Desenvolver apresentações dinâmicas diretamente a partir de análises no R.</td>
+</tr>
+<tr class="odd">
+<td><strong>7. Tutorial prático: Relatório do Café Especial</strong></td>
+<td>Importação e limpeza de dados • Estatística descritiva com <code>{metan}</code> • Gráficos com <code>ggplot2</code> e <code>plotly</code></td>
+<td>Produzir um relatório reprodutível com texto dinâmico, gráficos e tabelas interativas.</td>
+</tr>
+<tr class="even">
+<td><strong>8. Publicação online com Quarto Pub</strong></td>
+<td>Criação de conta e autenticação • Publicar relatórios, dashboards e sites • Atualização e republicação</td>
+<td>Hospedar relatórios gratuitamente e de forma profissional via Quarto Pub.</td>
+</tr>
+<tr class="odd">
+<td><strong>9. Introdução ao Shiny</strong></td>
+<td>Conceito de reatividade • Estrutura UI + Server + shinyApp()</td>
+<td>Entender a lógica básica de reatividade e construção de apps no R.</td>
+</tr>
+<tr class="even">
+<td><strong>10. Estrutura básica de um app Shiny</strong></td>
+<td>Interface (UI) • Lógica (Server) • Execução (<code>shinyApp(ui, server)</code>)</td>
+<td>Construir um app simples e compreender sua estrutura interna.</td>
+</tr>
+<tr class="odd">
+<td><strong>11. Construindo o primeiro dashboard interativo</strong></td>
+<td>Importação de dados (café) • Navbar com abas (navbarPage) • Painel KPI e gráficos interativos</td>
+<td>Criar um dashboard completo e interativo em R.</td>
+</tr>
+<tr class="even">
+<td><strong>12. Aba 1 – Resumo Geral dos Cafés (KPIs)</strong></td>
+<td><code>value_box</code>, <code>plotlyOutput</code>, <code>DTOutput</code>, <code>withSpinner</code></td>
+<td>Exibir indicadores principais e visualizações interativas com feedback instantâneo.</td>
+</tr>
+<tr class="odd">
+<td><strong>13. Aba 2 – Top Fazendas (Ranking Sensorial)</strong></td>
+<td><code>radioButtons</code>, <code>sliderInput</code>, <code>plotlyOutput</code></td>
+<td>Exibir e comparar produtores com melhores notas médias e totais.</td>
+</tr>
+<tr class="even">
+<td><strong>14. Aba 3 – Correlação entre Atributos</strong></td>
+<td><code>metan::corr_coef()</code>, <code>plotOutput</code>, <code>withSpinner</code></td>
+<td>Visualizar correlações de Pearson entre variáveis sensoriais.</td>
+</tr>
+<tr class="odd">
+<td><strong>15. Aba 4 – Radar Sensorial</strong></td>
+<td><code>radarchart()</code> (pacote <code>{fmsb}</code>) • Comparação país × espécie</td>
+<td>Analisar perfis multivariados de sabor, aroma, acidez e equilíbrio.</td>
+</tr>
+<tr class="even">
+<td><strong>16. Aba 5 – Altitude × Qualidade</strong></td>
+<td>Regressões e heatmaps (<code>ggplotly</code>, <code>geom_smooth</code>)</td>
+<td>Relacionar altitude média e notas sensoriais, explorando padrões ambientais.</td>
+</tr>
+<tr class="odd">
+<td><strong>17. Aba 6 – Exportação de Dados</strong></td>
+<td><code>downloadButton()</code> e <code>downloadHandler()</code></td>
+<td>Permitir exportar dados tratados e relatórios diretamente do painel.</td>
+</tr>
+<tr class="even">
+<td><strong>18. Bloco Server: lógica e reatividade</strong></td>
+<td><code>reactive()</code>, <code>observe()</code>, <code>renderText()</code>, <code>renderPlotly()</code></td>
+<td>Implementar lógica de atualização automática e cálculos dinâmicos no app.</td>
+</tr>
+<tr class="odd">
+<td><strong>19. Publicação (Deploy) no ShinyApps.io</strong></td>
+<td>Criação de conta, <code>rsconnect::setAccountInfo()</code>, <code>deployApp()</code></td>
+<td>Publicar dashboards interativos na web com link público.</td>
+</tr>
+<tr class="even">
+<td><strong>20. Alternativas de Deploy Profissional</strong></td>
+<td>RStudio Connect, Shiny Server, Docker</td>
+<td>Conhecer opções de deploy corporativo e local.</td>
+</tr>
+<tr class="odd">
+<td><strong>21. Introdução ao <code>{blastula}</code> – E-mails automatizados</strong></td>
+<td>Estrutura do pacote (<code>compose_email</code>, <code>smtp_send</code>, <code>create_smtp_creds_file</code>)</td>
+<td>Compreender como gerar e enviar e-mails automatizados via R.</td>
+</tr>
+<tr class="even">
+<td><strong>22. Criando o corpo do e-mail (<code>email.qmd</code>)</strong></td>
+<td>YAML para formato email • <code>compose_email()</code> • Inclusão de anexos com <code>add_attachment()</code></td>
+<td>Construir templates dinâmicos de e-mail com corpo HTML e anexos automáticos.</td>
+</tr>
+<tr class="odd">
+<td><strong>23. Autenticação segura no Gmail</strong></td>
+<td>Criação de senha de app • <code>create_smtp_creds_file()</code> • <code>creds_file()</code></td>
+<td>Configurar autenticação criptografada e persistente para envios automáticos.</td>
+</tr>
+<tr class="even">
+<td><strong>24. Script de envio (<code>enviar_email.R</code>)</strong></td>
+<td><code>smtp_send()</code> com credenciais salvas • Personalização de assunto e destinatário</td>
+<td>Automatizar o envio de relatórios e anexos por e-mail direto do R.</td>
+</tr>
+<tr class="odd">
+<td><strong>25. Integração Quarto + Blastula + Pipeline</strong></td>
+<td>Renderização automática + envio periódico</td>
+<td>Criar fluxos que geram e distribuem relatórios completos de forma 100% automatizada.</td>
+</tr>
+</tbody>
+</table>
+<section id="check-list-do-aprendizado-5" class="level3">
+<h3 class="anchored" data-anchor-id="check-list-do-aprendizado-5">Check list do aprendizado</h3>
+<ul class="task-list">
+<li><p><label><input type="checkbox">Criar relatórios dinâmicos com Quarto (.qmd) e integrá-los a pipelines.</label></p></li>
+<li><p><label><input type="checkbox">Desenvolver dashboards interativos com Shiny.</label></p></li>
+<li><p><label><input type="checkbox">Publicar dashboards e relatórios online (Quarto Pub e ShinyApps.io).</label></p></li>
+<li><p><label><input type="checkbox">Automatizar envios de e-mails profissionais com <code>{blastula}</code>.</label></p></li>
+<li><p><label><input type="checkbox">Incorporar estética, responsividade e identidade visual corporativa em relatórios.</label></p></li>
+<li><p><label><input type="checkbox">Integrar R a fluxos de comunicação e tomada de decisão empresarial.</label></p></li>
+</ul>
+<!-- BOTÕES HORIZONTAIS -->
+<div class="listing-btn-group">
+<p><a href="https://introducaor-r3rgja9.gamma.site/" class="btn btn-cafe" target="_blank"> <i class="fa-solid fa-display"></i> Acesse o curso </a></p>
+</div>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniferlopes\.quarto\.pub\/portifolio");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2025 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

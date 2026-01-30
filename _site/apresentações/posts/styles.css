@@ -1,0 +1,143 @@
+/* Cores da R-Ladies */
+:root {
+  --rladies-purple: #b048a2;
+  --rladies-purple-light: #d8b5d0;
+  --rladies-purple-dark: #88398a;
+  --rladies-gray: #333333;
+}
+
+/* Cabeçalhos */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--rladies-purple) !important;
+  font-weight: 600;
+}
+
+h1 {
+  border-bottom: 3px solid var(--rladies-purple);
+  padding-bottom: 10px;
+}
+
+/* Links */
+a {
+  color: var(--rladies-purple);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  color: var(--rladies-purple-dark);
+  text-decoration: underline;
+}
+
+/* Código inline */
+code {
+  background-color: var(--rladies-purple-light);
+  color: var(--rladies-gray);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.95em;
+}
+
+/* Blocos de código */
+pre {
+  border-left: 4px solid var(--rladies-purple);
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+/* Tabelas */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+}
+
+thead {
+  background-color: var(--rladies-purple);
+  color: white;
+}
+
+th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+  background-color: var(--rladies-purple-light);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 5px solid var(--rladies-purple);
+  background-color: #f9f9f9;
+  padding: 15px 20px;
+  margin: 20px 0;
+  font-style: italic;
+}
+
+/* TOC - Table of Contents */
+#TOC {
+  background-color: #f8f9fa;
+  border: 2px solid var(--rladies-purple);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+#TOC ul {
+  list-style-type: none;
+}
+
+#TOC a {
+  color: var(--rladies-purple-dark);
+}
+
+#TOC a:hover {
+  color: var(--rladies-purple);
+  font-weight: 600;
+}
+
+/* Botões e destaque */
+.btn, button {
+  background-color: var(--rladies-purple);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn:hover, button:hover {
+  background-color: var(--rladies-purple-dark);
+}
+
+/* Notas e avisos */
+.callout-note {
+  border-left-color: var(--rladies-purple);
+}
+
+.callout-warning {
+  border-left-color: #f39c12;
+}
+
+.callout-important {
+  border-left-color: #e74c3c;
+}
+
+/* Rodapé */
+footer {
+  border-top: 2px solid var(--rladies-purple);
+  margin-top: 40px;
+  padding-top: 20px;
+  color: var(--rladies-gray);
+  text-align: center;
+}
+
+

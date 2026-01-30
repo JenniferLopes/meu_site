@@ -1,0 +1,45 @@
+---
+title: "Projetos"
+description: "Em breve publicarei em um outro site a parte de Projetos e Portifólio"
+
+listing:
+  contents: posts/
+  sort: "date desc"
+  type: default
+  image-align: left          
+  categories: true
+  feed: true
+  page-size: 10
+  fields:                    
+    - image
+    - title
+    - description
+    - date
+    - categories
+---
+
+:::: {style="margin-bottom: 40px;"}
+::: texto-justificado
+Bem-vinda (o)!
+
+**Aqui apresentarei projetos completos de ciência de dados, com aplicações na:**
+
+-   Agricultura
+-   Estatística \| Estatística Experimental Agrícola
+-   Programação
+-   Machine learning
+
+**Os desenvolvimentos incluem:**
+
+-   Modelagem estatística, preditiva e genética (REML/BLUP, MGIDI, PCA)
+-   Pipelines automatizados em R e Python
+-   Consultas, ETL e integração de dados via SQL (PostgreSQL, BigQuery, MariaDB)
+-   Coleta e consumo de dados via APIs (Kaggle, GitHub, IBGE, Spotify, etc.)
+-   Relatórios dinâmicos e publicações automatizadas com Quarto e Blastula
+-   Criação de sites e livros técnicos em Quarto
+-   Dashboards interativos com Shiny
+-   Versionamento e integração contínua com GitHub Actions (CI/CD)
+-   Documentação e reprodutibilidade com {targets} e workflows de dados
+-   Desenvolvimento de pacotes
+:::
+::::

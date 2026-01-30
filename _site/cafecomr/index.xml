@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Jennifer Luz Lopes</title>
+<link>https://jenniluzlopes.github.io/cafecomr/</link>
+<atom:link href="https://jenniluzlopes.github.io/cafecomr/index.xml" rel="self" type="application/rss+xml"/>
+<description>Edições e doses semanais da Comunidade de Estatística.</description>
+<generator>quarto-1.7.32</generator>
+<lastBuildDate>Sat, 01 Nov 2025 03:00:00 GMT</lastBuildDate>
+<item>
+  <title>Dose da Semana ☕ — Manipulando Dados com mutate(across)</title>
+  <dc:creator>Jennifer Luz Lopes</dc:creator>
+  <link>https://jenniluzlopes.github.io/cafecomr/posts/2025-11-01-primeira-dose.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Esta é a primeira edição do <strong>Café com R</strong>!</p>
+<p>Hoje vamos direto ao ponto: como aplicar transformações em múltiplas colunas com o <code>mutate(across())</code>.</p>
+<p>```{r} library(dplyr)</p>
+<p>dados &lt;- tibble(a = 1:5, b = 6:10, c = 11:15)</p>
+<p>dados %&gt;% mutate(across(a:c, ~ .x * 2))</p>
+<p>💬 <strong>Reflexão de Café:</strong></p>
+<blockquote class="blockquote">
+<p>“O código ensina a pensar — e pensar é o primeiro passo para aprender.”</p>
+</blockquote>
+<p>Até o próximo café,<br>
+<strong>Jenni ☕</strong></p>
+<pre><code> ---  ### 📘 Resultado: - O site mantém seu nome e menu principal (“Projetos”, “Sobre mim”).   - A aba **Café com R** abre o **blog com listagem automática**, igual ao modelo que você mostrou.   - A listagem mostra **a 1ª publicação com imagem, categorias e resumo**.  ---  Quer que eu monte também o arquivo `cafecomr/index.qmd` (página inicial do blog com introdução e manifesto visual do Café com R)?   Assim o blog já abre com a identidade pronta antes das postagens.</code></pre>
+
+
+
+<a onclick="window.scrollTo(0, 0); return false;" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a> ]]></description>
+  <category>R</category>
+  <category>Dica</category>
+  <category>Manipulação</category>
+  <guid>https://jenniluzlopes.github.io/cafecomr/posts/2025-11-01-primeira-dose.html</guid>
+  <pubDate>Sat, 01 Nov 2025 03:00:00 GMT</pubDate>
+  <media:content url="https://jenniluzlopes.github.io/cafecomr/imagens/cafe_dose1.png" medium="image" type="image/png"/>
+</item>
+</channel>
+</rss>

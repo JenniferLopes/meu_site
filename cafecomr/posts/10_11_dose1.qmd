@@ -1,0 +1,503 @@
+---
+title: "Café da Semana☕ "
+subtitle: "Seja bem vinda(o)"
+author: "Jennifer Luz Lopes"
+date: "2025-11-10"
+categories: [Eventos, Desenvolvimento, Pacotes]
+image: ../imagens/cafe1.png
+image-alt: ""
+description: "Vamos começar com uma edição especial,um pouco diferente!"
+---
+
+## Esta é a primeira edição do **Café com R**
+
+::::: grid
+::: g-col-6
+![](images/clipboard-1383341533.png)
+:::
+
+::: g-col-6
+Seja bem-vinda(o)!
+
+**`Aqui é uma pausa para falar de dados.`**
+
+A partir de hoje, toda semana vamos nos encontrar por aqui para conversar sobre ciência de dados de um jeito leve e prático.
+:::
+:::::
+
+<br>
+
+## Organização da Newsletter
+
+::: {.callout-tip style="border-left:6px solid #224573;  background-color:#F7F2EE;  box-shadow:0 2px 6px rgba(34,69,115,0.15);  border-radius:10px;  padding:1.2em 1.5em;"}
+Cada edição será uma pausa curta, mas que rende boas ideias. Você vai encontrar sempre a mesma estrutura, pensada para equilibrar aprendizado, reflexão e novidade:
+
+-   **Dose da Semana**: uma dica prática de R para aplicar agora.
+
+-   **Conversa de Café**: um espaço para pensar sobre aprendizado, propósito e comunidade.
+
+-   **Expresso de Notícias**: novidades do universo R e da ciência de dados.
+
+-   **Pilar da Semana (rotativo)**: um conteúdo especial, que pode ser um projeto, uma reflexão ou uma novidade.
+:::
+
+<br>
+
+## Abertura
+
+E hoje, começamos com chave de ouro. Simmm!
+
+-   Esta **edição é especial**, porque falo sobre um evento que me inspirou profundamente: o **R/Pharma**, que acompanhei online e que trouxe uma enxurrada de ideias novas sobre o uso do R.
+
+<br>
+
+## Expresso de Notícias: novidades do universo R e da ciência de dados
+
+### O que é o R/Pharma
+
+O R/Pharma é uma conferência online colaborativa, com foco científico e industrial, dedicada ao uso da tecnologia R no desenvolvimento de produtos farmacêuticos.
+
+-   Além das sessões virtuais, o evento também realiza encontros presenciais e satélites em outras regiões do mundo, como na Ásia-Pacífico.
+
+-   Mais do que uma conferência, o R/Pharma é uma comunidade que acredita no poder do código aberto e da colaboração entre empresas.\
+
+**Sua missão é clara:**
+
+> 1.  Promover o uso de R e soluções open source na indústria farmacêutica.
+> 2.  Organizar eventos comunitários de alto nível técnico e científico, sem viés comercial.
+> 3.  Incentivar debates, troca de conhecimento e construção coletiva de soluções.
+
+<iframe src="https://rinpharma.com/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+
+</iframe>
+
+<br>
+
+### Minha escolha
+
+Durante o R/Pharma, eu escolhi os seguintes Workshops para trazer um conteúdo mais profundos e bacanas para vocês:
+
+1.  **Introduction to building (better) R packages.**
+2.  **Creating Polished, Branded Documents with Quarto**
+
+Hoje eu vou trazer um pouco do que eu aprendi e vi durantes a apresentação da Nicola Rennie e na semana que vem, trago mais uma **dose de conhecimento** sobre o **Creating Polished, Branded Documents with Quarto (esse foi incrível também).**
+
+> **Bora? ahh, pega o café antes!**
+
+<br>
+
+## **Introduction to building (better) R packages.**
+
+![](images/clipboard-3357255287.png){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" width="728"}
+
+### Sobre o workshop
+
+Ele foi **FANTÁSTICO**, eu acompanho o trabalho da Nicola, ela é uma grande inspiração para quem quer seguir o caminho do open-souce e de transformar a programação em R em algo acessível, palpável e reprodutível para a comunidade.
+
+E ela começou trazendo a importancia de transformar scripts e funções em um pacote R, e que isso é um divisor de águas para quem quer dar um passo além na organização do próprio código.
+
+> ***"Quando deixamos de ter pastas soltas e passamos a estruturar tudo em um pacote, o trabalho ganha outra dimensão: fica mais fácil reutilizar, compartilhar, documentar e até testar o que fazemos."***
+
+Durante o workshop, a proposta foi exatamente essa mostrar que criar um pacote não precisa ser um processo complicado.
+
+> ***Pessoal, e não é, estou trabalhando no desenvolvimento de `dois pacotes`. O que precisamos é começar, ler os livros adequados, não tem atalho.***
+
+O conteúdo foi conduzido de forma leve e prática, revelando os elementos essenciais para colocar um pacote de pé:
+
+-   desde a estrutura mínima e a escrita de funções;
+
+-   até a criação de documentação e exemplos.
+
+> ***No fim das contas, esse workshop foi um lembrete importante: organizar o conhecimento em pacotes é uma das formas mais eficazes de devolver à comunidade aquilo que aprendemos.***
+
+::: {.callout-tip style="border-left:6px solid #224573;  background-color:#F7F2EE;  box-shadow:0 2px 6px rgba(34,69,115,0.15);  border-radius:10px;  padding:1.2em 1.5em;"}
+
+### Acredite
+
+Saímos com um pacote pronto, básico é claro, mas para 120 minutos, foi ótimo.
+:::
+
+E está aqui, comecei do zero, abrindo o R e seguindo as etapas da apresentação.
+
+![](images/clipboard-3328226595.png){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" fig-align="center"}
+
+Não tive disponibilidade para finalizar o README e etc, mas o resultado está no meu GitHub:
+
+[![Repositório GitHub](https://img.shields.io/badge/Repositório-GitHub_cookbook-224573?logo=github&logoColor=white)](https://github.com/JenniferLopes/cookbook) [![Site do Pacote](https://img.shields.io/badge/Site_do_Pacote-cookbook-6B4F4F?logo=quarto&logoColor=white)](https://jenniferlopes.github.io/cookbook/index.html)
+
+<br>
+
+### O que são pacotes?
+
+Uma coleção de (alguns dos) seguintes ingredientes:
+
+-   Funções / Objetos R/ Dados / Documentação / Testes / Documentos R Markdown / Quarto.
+
+### **Por que fazer** pacotes?
+
+**Porque facilitam nossas vidas, concordam?**
+
+-   Executar código / Reutilizar código em diferentes projetos;
+
+-   Compartilhar o código com outras pessoas;
+
+-   Leitura da documentação em vez dos comentários, aqui é um ponto interessante!
+
+### Desmistificação
+
+A Nicola trouxe um ponto importante que é a desmistificação do processo.
+
+> Segundo ela:
+>
+> ***"Criar um pacote não é algo reservado a programadores avançados, nem exige que o código seja perfeito. A ideia central é organizar, documentar e compartilhar o que você já faz, e fazer isso de um jeito que facilite a reutilização".***
+
+A grande maioria das pessoas, acha que desenvolver pacotes não é para si.
+
+**SINTO MUITO, quem pensa assim, se engana!**
+
+É possível sim, fazer os seus desenvolvimentos, basta você querer, é claro!
+
+![**Fonte: Imagens da Nicola.**](/cafecomr/imagens_gerais/giffff.gif){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);"}
+
+<br>
+
+### Os essenciais
+
+-   Durante a explicação, ela mostrou passo a passo como tudo começa com o pacote **`usethis`**, que cria a estrutura básica do projeto e automatiza tarefas repetitivas.
+
+-   Em seguida, apresentou o **`devtools`**, usado para construir, testar e instalar o pacote localmente.
+
+-   A documentação ganha vida com o **`roxygen2`**, que transforma comentários no código em arquivos de ajuda completos.
+
+-   E, se você quiser refinar o texto das funções, o **`stringr`** entra como um aliado opcional.
+
+**Acredite, esses caras fazem a coisa toda acontecer, consultem a documentação deles, tem muitas funções úteis:**
+
+::: callout-tip
+Para criar a imagem clicável com os pacotes, usei o pacote [hexsession](https://hexsession.liomys.mx/), vejam a documentação, eu amei demais!
+:::
+
+```{r}
+# install.packages("remotes)
+# remotes::install_github("luisdva/hexsession")
+
+# hexsession::make_tile(packages=c("terra","sf","tidyr"))
+```
+
+```{r}
+#| warning: false
+#| message: false
+#| echo: true
+
+library(usethis)
+library(devtools)
+library(roxygen2)
+library(stringr)
+
+hexsession::make_tile()
+```
+
+| Pacote | Função |
+|:-----------------------------------|:-----------------------------------|
+| **`usethis`** | Automatiza tarefas de desenvolvimento de pacotes e projetos em R (estrutura, licenças, Git, GitHub etc.) |
+| **`devtools`** | Simplifica o desenvolvimento de pacotes (instalação, build, documentação, testes, checagens) |
+| **`roxygen2`** | Gera automaticamente documentação de funções a partir de comentários no código |
+| **`stringr`** *(opcional)* | Facilita a manipulação de strings com funções consistentes e intuitivas |
+
+<br>
+
+## **Dose da Semana**: uma dica prática de R para aplicar agora
+
+### Como começar a desenvolver meus pacotes?
+
+Pegou o café aí?
+
+Abre o R então!
+
+![](/cafecomr/imagens_gerais/gato3.gif){style="border:3px solid #224573; border-radius:10px; box-shadow:0 0 10px rgba(34,69,115,0.3);" fig-align="center" width="296"}
+
+> Durante o workshop, a Nicola mostrou o fluxo completo, do zero até a criação de um pacote funcional. O processo pode parecer longo, mas na prática ele segue uma sequência lógica e muito tranquila.
+
+<br>
+
+#### **Criar a estrutura do pacote**
+
+-   Tudo começa com o `usethis`.
+
+-   É ele quem cria a base do pacote: pastas, arquivos e o esqueleto de tudo o que vem depois.
+
+```{r}
+# usethis::create_package("meuPacote")
+```
+
+::: {.callout-important style="border-left:6px solid #224573;  background-color:#F7F2EE;  box-shadow:0 2px 6px rgba(34,69,115,0.15);  border-radius:10px;  padding:1.2em 1.5em;"}
+**Importante**
+
+1.  Esse comando cria um novo diretório já configurado para funcionar como um pacote R.
+
+2.  Dentro dele, você encontrará pastas como `R/` (onde ficam as funções) e arquivos essenciais como o `DESCRIPTION`, que guarda as informações básicas do pacote.
+:::
+
+<br>
+
+#### Estrutura
+
+Para gerar a "árvore" do seu projeto use as funções dos pacotes [**`fs`**](https://github.com/r-lib/fs) e [**`here`**](https://here.r-lib.org/), eles são ótimos:
+
+```{r}
+# fs::dir_tree(here::here())
+```
+
+```{cookbook/}
+├── DESCRIPTION             # Metadados do pacote
+├── NAMESPACE               # Exportações geradas automaticamente
+├── LICENSE                 # Arquivo de licença
+├── _pkgdown.yml            # Configuração do site pkgdown
+├── cookbook.Rproj          # Projeto do RStudio
+├── README.md               # Documentação inicial do projeto
+│
+├── R/                      # Funções do pacote
+│   ├── generate_hex.R
+│   └── hello.R
+│
+├── man/                    # Documentação (gerada pelo roxygen2)
+│   ├── generate_hex.Rd
+│   └── hello.Rd
+│
+├── vignettes/              # Tutoriais e materiais explicativos (opcional)
+│   └── exemplo_tutorial.Rmd
+│
+├── tests/                  # Testes automatizados (opcional)
+│   └── testthat/
+│       └── test_hello.R
+│
+├── data/                   # Dados internos (opcional)
+│   └── exemplo.rda
+│
+├── inst/                   # Arquivos adicionais do pacote
+│   └── extdata/
+│       └── exemplo.csv
+│
+└── docs/                   # Site pkgdown (não editar manualmente)
+    └── index.html
+
+```
+
+<br>
+
+#### Adicionar funções
+
+As funções que já usamos no dia a dia podem ser colocadas dentro da pasta **`R/`**.
+
+```{r}
+# usethis::use_r("minha_funcao")
+```
+
+::: {.callout-important style="border-left:6px solid #224573;  background-color:#F7F2EE;  box-shadow:0 2px 6px rgba(34,69,115,0.15);  border-radius:10px;  padding:1.2em 1.5em;"}
+**Importante**
+
+-   Esse comando cria um arquivo **`.R`** pronto para receber a função.
+
+-   A ideia é ir centralizando o que faz sentido compartilhar. Pode ser uma função simples, mas que você sabe que vai reutilizar.
+:::
+
+<br>
+
+#### Documentar com o pacote `roxygen2`
+
+A documentação vem logo em seguida, e é aqui que o [**`roxygen2`**](https://roxygen2.r-lib.org/) entra.
+
+**AQUI ESTÁ O PULO DO GATO:**
+
+> **Em vez de escrever arquivos de ajuda manualmente, basta comentar as funções com `#'`, e o pacote faz o resto.**
+
+```{r}
+#' Calcula a média de um vetor
+#'
+#' Essa função retorna a média simples dos valores informados.
+#'
+#' @param x Vetor numérico.
+#' @return Média dos valores.
+#' @examples
+#' calcula_media(c(1, 2, 3))
+#' @export
+calcula_media <- function(x) {
+  mean(x)
+}
+```
+
+**Depois, é só rodar:**
+
+```{r}
+# devtools::document()
+```
+
+::: {.callout-important style="border-left:6px solid #224573;  background-color:#F7F2EE;  box-shadow:0 2px 6px rgba(34,69,115,0.15);  border-radius:10px;  padding:1.2em 1.5em;"}
+**Importante**
+
+**`document()`** gera automaticamente a documentação em formato **`.Rd`** dentro da pasta **`man/`**.
+:::
+
+<br>
+
+#### Testar e carregar o pacote
+
+Antes de instalar, a Nicola destacou a importância de testar. Essa parte, não vou trazer em profundidade, mas é essencial, pois gente, sempre vão aprecendo erros, e precisamos corrigí-los de imediato.
+
+> ***Deixei ao final a referência do livro [R Packages]{.underline} para vocês, tem um capítulo chamado [Testing]{.underline}, que aborda com profundidade essa etapa.***
+
+Com o **`devtools`**, dá para carregar o pacote sem precisar instalar toda hora.
+
+**Esse comando faz o R reconhecer as funções do pacote instantaneamente, o que facilita muito o desenvolvimento:**
+
+```{r}
+# devtools::load_all()
+```
+
+#### Instalar e usar
+
+Agora é a hora boa!
+
+Quando tudo estiver funcionando, é hora de instalar o pacote localmente.
+
+```{r}
+# devtools::install()
+```
+
+Depois disso, ele já pode ser usado como qualquer outro, **sinta orgulho de você:**
+
+```{r}
+# library(meuPacote)
+```
+
+<br>
+
+#### Compartilhar no GitHub
+
+Por fim, vem a etapa prazerosa que é compartilhar o pacote com a comunidade,\
+e no Workshop ela demonstrou como subir o projeto para o GitHub com um único comando:
+
+```{r}
+# usethis::use_github()
+```
+
+> **A partir daí, o pacote ganha um endereço público, documentação visível e a chance de ser usado e melhorado por outras pessoas.**
+
+<br>
+
+#### **Site do Pacote**
+
+No workshop não deu tempo dela demonstrar a publicação do site. Normalmente usamos o pacote [**`pkgdown`**](https://pkgdown.r-lib.org/)**.** O **pkgdown** transforma a documentação do pacote em um site navegável, bonito e automático, uma vitrine perfeita para apresentar o seu pacote.
+
+![](/cafecomr/imagens_gerais/pkgdown.png){fig-align="center"}
+
+**Trouxe alguns passos para vocês, de como fazer a publicacação.**
+
+**Para isso, use a seguinte função:**
+
+```{r}
+# install.packages("pkgdown")
+```
+
+**Esse comando cria a estrutura necessária para o site dentro do pacote.**
+
+```{r}
+# usethis::use_pkgdown()
+```
+
+**Depois disso, basta gerar a versão estática com:**
+
+```{r}
+# pkgdown::build_site()
+```
+
+-   Em poucos segundos, o pacote ganha uma página HTML com toda a documentação formatada, exemplos interativos, índice de funções e até histórico de versões.
+
+-   Para publicar o site, basta ativar o GitHub Pages e conectar o repositório à pasta gerada automaticamente.
+
+**Se quiser automatizar o processo (para que o site se atualize toda vez que houver um novo commit), o próprio pacote `usethis` facilita:**
+
+```{r}
+# usethis::use_github_action("pkgdown")
+```
+
+> Assim, o build do site passa a ser feito direto no GitHub, sem precisar rodar o comando manualmente.
+
+<br>
+
+### Para acompanhar o café: uma curadoria de boas leituras
+
+Chegamos ao final, e como o assunto desta Newsletter foi sobre o Workshop de desenvolvimento de pacotes, github e mais, trouxe 4 referências interessantes para vocês:
+
+1.  **Conheça mais sobre o trabalho da:** [Nicola Rennie](https://nrennie.rbind.io/), ela é especialista em visualização de dados com formação em estatística e ciência de dados, e tem interesse em compreender como comunicar ideias quantitativas complexas de forma acessível.
+
+    <iframe src="https://nrennie.rbind.io/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+
+    </iframe>
+
+    <br>
+
+2.  **Livro dos experientes:** [Hadley Wickham and Jennifer Bryan](https://r-pkgs.org/)
+
+<iframe src="https://r-pkgs.org/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+
+</iframe>
+
+<br>
+
+3.  **Artigo do RStudio user guide:** [Writing Packages](https://docs.posit.co/ide/user/ide/guide/pkg-devel/writing-packages.html)
+
+<iframe src="https://docs.posit.co/ide/user/ide/guide/pkg-devel/writing-packages.html" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+
+</iframe>
+
+<br>
+
+4.  **Aprofundar os conhecimentos do Git e GiHub:** [Happy Git and GitHub for the useR](https://happygitwithr.com/)
+    -   Esse livro da [Jenny Bryan](https://github.com/jennybc) é ótimo, recomendo fortemente a leitura!
+
+<iframe src="https://happygitwithr.com/" width="100%" height="650" style="border:3px solid #224573; border-radius:12px; box-shadow:0 0 12px rgba(34,69,115,0.3);">
+
+</iframe>
+
+<br>
+
+::: panel-tabset
+### Consideções finais sobre o Workshop
+
+O que ficou mais forte para mim nesse workshop foi a ideia de que empacotar conhecimento é mais do que um ato técnico, é um gesto de generosidade.
+
+Pense comigo:
+
+> **Cada função que a gente organiza, documenta e compartilha vira uma forma de ajudar alguém a resolver um problema que nós já enfrentamos, concorda?**
+
+### Primeiro café
+
+-   Provavelmente, você tem uma função que já te salvou tempo, provavelmente alguém mais precisa dela também.
+
+-   Com isso, acredito que E essa é a beleza da comunidade R: aprender, construir e devolver. Um ciclo que transforma o código em colaboração, e a prática em propósito.
+
+### ☕ Assine o Café com R
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+<iframe
+  src="https://forms.gle/Q5SKuSK1ViTL6FAWA"
+  width="100%"
+  height="550"
+  frameborder="0"
+  marginheight="0"
+  marginwidth="0"
+  style="
+    border:3px solid #224573;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(34,69,115,0.3);
+  ">
+Carregando…
+</iframe>
+
+:::

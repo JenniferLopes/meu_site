@@ -1,0 +1,865 @@
+---
+title: "3. Manipulação de Dados com dplyr"
+subtitle: "Usando o dataset CO2"
+description: "Aprenda manipulação de dados no R com dplyr. É open use e compartilhe"
+categories: ["R", "dplyr", "Data Wrangling", "Tidyverse"]
+image: "imagens/manipulacao.png"
+
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    logo: "imagens/logo.png"
+    preview-links: auto
+    css: "estilo_jeni.css"
+    footer: "Jennifer Lopes • Café com R"
+
+editor:
+  markdown:
+    wrap: 72
+---
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}
+
+## Introdução à manipulação de dados no R {background-color="#E5D3B3"}
+
+Manipulação de dados é a base da análise.\
+O pacote **dplyr** permite transformar dados de forma clara e eficiente.
+
+**Você aprenderá:**
+
+-   Fundamentos do dplyr
+-   Verbos principais e avançados
+-   Análises com dados agrupados
+-   Aplicações práticas com o dataset CO2
+
+------------------------------------------------------------------------
+
+## O dataset CO2: Carregando os dados:
+
+```{r echo=TRUE, eval=TRUE}
+library(dplyr)
+library(ggplot2)
+library(tibble)
+
+data(CO2)
+CO2 |> as_tibble()
+```
+
+------------------------------------------------------------------------
+
+## O dataset CO2 (cont.)
+
+**Variáveis principais:**
+
+-   `Plant`: identificação da planta
+-   `Type`: Quebec ou Mississippi
+-   `Treatment`: não resfriado ou resfriado
+-   `conc`: concentração de CO₂
+-   `uptake`: absorção de CO₂
+
+------------------------------------------------------------------------
+
+## Estrutura dos dados CO2 {background-color="#E5D3B3"}
+
+A estrutura:
+
+```         
+uptake ~ conc | Plant
+```
+
+**Significa:**
+
+-   `uptake` varia conforme `conc`
+-   A curva é observada individualmente para cada `Plant`
+
+------------------------------------------------------------------------
+
+## Aplicações dos dados CO2
+
+**Aplicações:**
+
+-   Análises fisiológicas
+-   Curvas de resposta à concentração
+-   Estudos experimentais
+-   Comparações entre plantas e tratamentos
+
+------------------------------------------------------------------------
+
+## Verbos principais do dplyr
+
+A gramática do dplyr usa verbos intuitivos:
+
+-   `filter()`: filtra linhas
+-   `select()`: seleciona colunas
+-   `arrange()`: ordena dados
+-   `mutate()`: cria/modifica variáveis
+-   `summarise()`: resume dados
+-   `group_by()`: agrupa para operações
+
+------------------------------------------------------------------------
+
+## filter(): selecionando observações
+
+**Plantas do tipo Quebec:**
+
+``` r
+CO2 |>
+  filter(Type == "Quebec")
+```
+
+**Concentrações acima de 500:**
+
+``` r
+CO2 |>
+  filter(conc > 500)
+```
+
+------------------------------------------------------------------------
+
+## filter(): múltiplas condições {background-color="#E5D3B3"}
+
+**Combinando condições:**
+
+``` r
+CO2 |>
+  filter(Type == "Quebec", Treatment == "chilled")
+```
+
+**Operador OR:**
+
+``` r
+CO2 |>
+  filter(Type == "Quebec" | conc > 500)
+```
+
+------------------------------------------------------------------------
+
+## select(): escolhendo colunas
+
+**Selecionando colunas específicas:**
+
+``` r
+CO2 |>
+  select(Plant, conc, uptake)
+```
+
+**Removendo colunas:**
+
+``` r
+CO2 |>
+  select(-Treatment)
+```
+
+------------------------------------------------------------------------
+
+## select(): seleção avançada
+
+**Seleção por padrão:**
+
+``` r
+CO2 |>
+  select(starts_with("u"))
+```
+
+**Outros helpers:**
+
+-   `ends_with()`
+-   `contains()`
+-   `where(is.numeric)`
+
+------------------------------------------------------------------------
+
+## arrange(): ordenando linhas
+
+**Ordenação crescente:**
+
+``` r
+CO2 |>
+  arrange(uptake)
+```
+
+**Ordenação decrescente:**
+
+``` r
+CO2 |>
+  arrange(desc(conc))
+```
+
+------------------------------------------------------------------------
+
+## arrange(): múltiplos critérios {background-color="#E5D3B3"}
+
+**Ordenando por múltiplas colunas:**
+
+``` r
+CO2 |>
+  arrange(Type, desc(uptake))
+```
+
+Primeiro ordena por `Type`, depois por `uptake` decrescente.
+
+------------------------------------------------------------------------
+
+## mutate(): criando novas variáveis
+
+**Variável normalizada:**
+
+``` r
+CO2 |>
+  mutate(uptake_norm = uptake / max(uptake))
+```
+
+**Classificação condicional:**
+
+``` r
+CO2 |>
+  mutate(faixa = if_else(conc < 500, "Baixa", "Alta"))
+```
+
+------------------------------------------------------------------------
+
+## mutate(): transformações múltiplas {background-color="#E5D3B3"}
+
+**Várias colunas de uma vez:**
+
+``` r
+CO2 |>
+  mutate(
+    log_conc = log(conc),
+    uptake_sq = uptake^2,
+    ratio = uptake / conc)
+```
+
+------------------------------------------------------------------------
+
+## group_by() + summarise()
+
+**Estatísticas por grupo:**
+
+``` r
+CO2 |>
+  group_by(Type) |>
+  summarise(
+    media = mean(uptake),
+    sd = sd(uptake),
+    n = n())
+```
+
+------------------------------------------------------------------------
+
+## group_by() + summarise() (cont.)
+
+**Múltiplos agrupamentos:**
+
+``` r
+CO2 |>
+  group_by(Type, Treatment) |>
+  summarise(
+    media = mean(uptake),
+    max = max(uptake),
+    .groups = "drop")
+```
+
+Sempre use `.groups = "drop"` para remover agrupamentos.
+
+------------------------------------------------------------------------
+
+## Workflow: combinação de verbos
+
+**Pipeline completo:**
+
+``` r
+CO2 |>
+  filter(conc >= 500) |>
+  mutate(log_conc = log(conc)) |>
+  group_by(Type, Treatment) |>
+  summarise(
+    media = mean(uptake),
+    max = max(uptake),
+    n = n(),
+    .groups = "drop")
+```
+
+------------------------------------------------------------------------
+
+## Workflow: o pipe \|\> {background-color="#E5D3B3"}
+
+O pipe `|>` permite encadear operações de forma legível.
+
+**Lê-se como:** "e então..."
+
+``` r
+dados |>        # pegue os dados, e então
+  filter() |>   # filtre, e então
+  mutate() |>   # crie variáveis, e então
+  summarise()   # resuma
+```
+
+------------------------------------------------------------------------
+
+## Estatísticas descritivas por planta
+
+``` r
+CO2 |>
+  group_by(Plant) |>
+  summarise(
+    min_uptake = min(uptake),
+    max_uptake = max(uptake),
+    intervalo = max(uptake) - min(uptake))
+```
+
+------------------------------------------------------------------------
+
+## Estatísticas descritivas (cont.) {background-color="#E5D3B3"}
+
+**Adicionando mais medidas:**
+
+``` r
+CO2 |>
+  group_by(Plant) |>
+  summarise(
+    media = mean(uptake),
+    n_medidas = n(),
+    variancia = var(uptake))
+```
+
+------------------------------------------------------------------------
+
+## mutate() com agrupamento
+
+**Centralização intra-grupo:**
+
+``` r
+CO2 |>
+  group_by(Plant) |>
+  mutate(uptake_centered = uptake - mean(uptake))
+```
+
+------------------------------------------------------------------------
+
+## mutate() com agrupamento (cont.) {background-color="#E5D3B3"}
+
+**Uso típico:**
+
+-   Centralização de variáveis
+-   Análises intra-grupo
+-   Cálculos relativos
+-   Preparação para modelos estatísticos
+
+**Diferença:** `mutate()` mantém todas as linhas, `summarise()` reduz
+para uma linha por grupo.
+
+------------------------------------------------------------------------
+
+## Funções auxiliares: first(), last(), n()
+
+``` r
+CO2 |>
+  group_by(Plant) |>
+  summarise(
+    n_medidas = n(),
+    conc_unicas = n_distinct(conc),
+    primeira = first(uptake),
+    ultima = last(uptake))
+```
+
+------------------------------------------------------------------------
+
+## Funções auxiliares: quando usar
+
+**Útil para:**
+
+-   Contar observações (`n()`)
+-   Identificar valores iniciais/finais (`first()`, `last()`)
+-   Verificar níveis únicos (`n_distinct()`)
+-   Exploração inicial dos dados
+
+------------------------------------------------------------------------
+
+## slice_family: slice_max e slice_min
+
+**Maiores valores:**
+
+``` r
+CO2 |>
+  group_by(Plant) |>
+  slice_max(uptake, n = 3)
+```
+
+**Menores valores:**
+
+``` r
+CO2 |>
+  group_by(Type) |>
+  slice_min(conc, n = 2)
+```
+
+------------------------------------------------------------------------
+
+## slice_family: slice_head e slice_tail {background-color="#E5D3B3"}
+
+**Primeiras linhas:**
+
+``` r
+CO2 |>
+  group_by(Type) |>
+  slice_head(n = 5)
+```
+
+**Últimas linhas:**
+
+``` r
+CO2 |>
+  group_by(Type) |>
+  slice_tail(n = 5)
+```
+
+------------------------------------------------------------------------
+
+## case_when(): múltiplas condições
+
+``` r
+CO2 |>
+  mutate(classificacao = case_when(
+    uptake < 20 ~ "Baixa",
+    uptake < 40 ~ "Média",
+    TRUE ~ "Alta"))
+```
+
+------------------------------------------------------------------------
+
+## case_when(): vantagens
+
+**Vantagens:**
+
+-   Mais legível que múltiplos `if_else()`
+-   Suporta muitas condições
+-   Sintaxe clara e concisa
+-   Ordem importa: primeira condição verdadeira vence
+
+**Dica:** use `TRUE ~` para o caso padrão (equivalente ao "else").
+
+------------------------------------------------------------------------
+
+## across(): operações em múltiplas colunas
+
+**Aplicar funções a várias colunas:**
+
+``` r
+CO2 |>
+  summarise(
+    across(
+      c(conc, uptake),
+      list(media = mean, sd = sd)))
+```
+
+------------------------------------------------------------------------
+
+## across(): com seletores {background-color="#E5D3B3"}
+
+**Com agrupamento e seletores:**
+
+``` r
+CO2 |>
+  group_by(Type) |>
+  summarise(
+    across(
+      where(is.numeric),
+      mean))
+```
+
+Aplica `mean()` em todas as colunas numéricas.
+
+------------------------------------------------------------------------
+
+## rowwise(): cálculos linha a linha
+
+``` r
+CO2 |>
+  rowwise() |>
+  mutate(
+    indice_composto = mean(c(uptake, conc)))
+```
+
+------------------------------------------------------------------------
+
+## rowwise(): quando usar {background-color="#E5D3B3"}
+
+**Quando usar:**
+
+-   Operações que precisam de valores da mesma linha
+-   Cálculos que não são vetorizados
+-   Funções que operam em conjuntos de valores
+
+**Atenção:** pode ser lento com grandes datasets.
+
+------------------------------------------------------------------------
+
+## Joins: complementando dados
+
+**Criando tabela auxiliar:**
+
+``` r
+info <- tibble(
+  Plant = unique(CO2$Plant),
+  lote = sample(1:3, 12, replace = TRUE))
+
+CO2 |>
+  left_join(info, by = "Plant")
+```
+
+------------------------------------------------------------------------
+
+## Joins: tipos principais
+
+**Tipos de join:**
+
+-   `left_join()`: mantém todas as linhas da esquerda
+-   `inner_join()`: apenas correspondências
+-   `full_join()`: todas as linhas de ambas
+-   `right_join()`: mantém todas as linhas da direita
+
+**Use quando:** precisar combinar dados de diferentes fontes.
+
+------------------------------------------------------------------------
+
+## lag() e lead(): valores anteriores/posteriores
+
+``` r
+CO2 |>
+  group_by(Plant) |>
+  arrange(conc) |>
+  mutate(
+    uptake_anterior = lag(uptake),
+    uptake_proximo = lead(uptake))
+```
+
+------------------------------------------------------------------------
+
+## Derivadas de resposta {background-color="#E5D3B3"}
+
+``` r
+CO2 |>
+  group_by(Plant) |>
+  arrange(conc) |>
+  mutate(
+    delta_uptake = uptake - lag(uptake),
+    delta_conc = conc - lag(conc),
+    taxa = delta_uptake / delta_conc)
+```
+
+**Aplicações:** calcular mudanças, taxas de crescimento, derivadas
+discretas.
+
+------------------------------------------------------------------------
+
+## Ranking: row_number() e dense_rank()
+
+``` r
+CO2 |>
+  group_by(Type) |>
+  mutate(
+    posicao = row_number(desc(uptake)),
+    posicao_densa = dense_rank(desc(uptake)),
+    percentil = percent_rank(uptake))
+```
+
+------------------------------------------------------------------------
+
+## Ranking: diferenças
+
+**Diferenças:**
+
+-   `row_number()`: números únicos consecutivos (1, 2, 3...)
+-   `dense_rank()`: empates recebem mesmo rank (1, 1, 2, 3...)
+-   `min_rank()`: empates pulam posições (1, 1, 3, 4...)
+-   `percent_rank()`: posição como percentual (0-1)
+
+------------------------------------------------------------------------
+
+## Detectando outliers com z-score
+
+``` r
+CO2 |>
+  group_by(Type) |>
+  mutate(
+    z = (uptake - mean(uptake)) / sd(uptake),
+    outlier = abs(z) > 2) |>
+  filter(outlier)
+```
+
+------------------------------------------------------------------------
+
+## Z-score: interpretação {background-color="#E5D3B3"}
+
+**Interpretação:**
+
+-   \|z\| \> 2: possível outlier (≈5% dos dados)
+-   \|z\| \> 3: outlier provável (≈0.3% dos dados)
+
+**Observação:** assume distribuição normal dos dados.
+
+------------------------------------------------------------------------
+
+## Estatísticas por quantis
+
+``` r
+CO2 |>
+  group_by(Type) |>
+  summarise(
+    q25 = quantile(uptake, 0.25),
+    mediana = quantile(uptake, 0.5),
+    q75 = quantile(uptake, 0.75))
+```
+
+------------------------------------------------------------------------
+
+## Estatísticas por quantis (cont.) {background-color="#E5D3B3"}
+
+**Adicionando intervalo interquartil:**
+
+``` r
+CO2 |>
+  group_by(Type) |>
+  summarise(
+    q25 = quantile(uptake, 0.25),
+    q75 = quantile(uptake, 0.75),
+    iqr = IQR(uptake))
+```
+
+**Vantagem:** medidas robustas, menos sensíveis a outliers.
+
+------------------------------------------------------------------------
+
+## Funções personalizadas
+
+**Criando função própria:**
+
+``` r
+cv <- function(x) sd(x) / mean(x) * 100
+
+CO2 |>
+  group_by(Type) |>
+  summarise(
+    coef_var = cv(uptake))
+```
+
+------------------------------------------------------------------------
+
+## Funções personalizadas: vantagens {background-color="#E5D3B3"}
+
+**Vantagens:**
+
+-   Reutilização de código
+-   Cálculos complexos simplificados
+-   Código mais legível e organizado
+-   Facilita manutenção
+
+**Dica:** crie funções para cálculos repetidos.
+
+------------------------------------------------------------------------
+
+## Agregações multifatoriais
+
+``` r
+CO2 |>
+  group_by(Type, Treatment) |>
+  summarise(
+    n = n(),
+    media = mean(uptake),
+    sd = sd(uptake),
+    .groups = "drop")
+```
+
+------------------------------------------------------------------------
+
+## Agregações multifatoriais (cont.) {background-color="#E5D3B3"}
+
+**Adicionando erro padrão:**
+
+``` r
+CO2 |>
+  group_by(Type, Treatment) |>
+  summarise(
+    n = n(),
+    media = mean(uptake),
+    se = sd(uptake) / sqrt(n()),
+    .groups = "drop")
+```
+
+**Análise completa:** tamanho amostral, tendência central, dispersão,
+erro padrão.
+
+------------------------------------------------------------------------
+
+## Visualização: médias por grupo
+
+``` r
+CO2 |>
+  group_by(Type, Treatment) |>
+  summarise(media = mean(uptake), .groups = "drop") |>
+  ggplot(aes(Type, media, fill = Treatment)) +
+  geom_col(position = "dodge")
+```
+
+------------------------------------------------------------------------
+
+## Visualização: adicionando labels {background-color="#E5D3B3"}
+
+``` r
+CO2 |>
+  group_by(Type, Treatment) |>
+  summarise(media = mean(uptake), .groups = "drop") |>
+  ggplot(aes(Type, media, fill = Treatment)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Absorção média de CO₂",
+    y = "Uptake médio",
+    x = "Tipo de planta")
+```
+
+------------------------------------------------------------------------
+
+## Curvas de resposta: visualização
+
+``` r
+ggplot(CO2, aes(conc, uptake, color = Plant)) +
+  geom_point() +
+  geom_smooth(method = "loess", se = FALSE)
+```
+
+------------------------------------------------------------------------
+
+## Curvas de resposta: com facetas {background-color="#E5D3B3"}
+
+```{r eval=TRUE, echo=TRUE}
+exemplo <- ggplot(CO2, aes(conc, uptake, color = Plant)) +
+  geom_point() +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~Type) +
+  labs(
+    title = "Curvas de resposta ao CO₂",
+    x = "Concentração de CO₂",
+    y = "Absorção de CO₂")
+exemplo
+```
+
+------------------------------------------------------------------------
+
+## Modelos por grupo: nest() + map()
+
+``` r
+library(purrr)
+library(broom)
+
+modelos <- CO2 |>
+  group_by(Plant) |>
+  nest()
+```
+
+------------------------------------------------------------------------
+
+## Modelos por grupo: ajustando {background-color="#E5D3B3"}
+
+``` r
+modelos <- CO2 |>
+  group_by(Plant) |>
+  nest() |>
+  mutate(
+    ajuste = map(data, ~ lm(uptake ~ conc, data = .x)),
+    resultados = map(ajuste, tidy)) |>
+  unnest(resultados)
+```
+
+**Programação funcional aplicada à análise de dados.**
+
+------------------------------------------------------------------------
+
+## Dicas finais: boas práticas
+
+**Boas práticas:**
+
+-   Use pipes `|>` para clareza
+-   Nomeie objetos intermediários quando necessário
+-   Sempre use `.groups = "drop"` em summarise()
+-   Verifique seus dados com `glimpse()` e `summary()`
+
+------------------------------------------------------------------------
+
+## Dicas finais: recursos de ajuda {background-color="#E5D3B3"}
+
+**Recursos:**
+
+-   Use `?dplyr::filter` para ajuda
+-   Cheat sheets do RStudio
+-   Comunidade R Brasil
+-   Stack Overflow em português
+
+**Documentação oficial:** <https://dplyr.tidyverse.org>
+
+------------------------------------------------------------------------
+
+## Considerações finais
+
+**Você aprendeu:**
+
+-   Verbos fundamentais do dplyr
+-   Manipulação com dados agrupados
+-   Técnicas avançadas de transformação
+-   Análise completa com dataset CO2
+-   Integração com visualização
+
+------------------------------------------------------------------------
+
+## Próximos passos
+
+**Próximos passos:**
+
+-   Praticar com seus próprios dados
+-   Explorar outros pacotes do tidyverse
+-   Aprofundar em tidyr (pivot, separate, unite)
+-   Aprender purrr para programação funcional
+-   Estudar ggplot2 para visualizações avançadas
+
+------------------------------------------------------------------------
+
+## Referências
+
+-   Wickham, H. & Grolemund, G. *R for Data Science*
+-   Documentação do tidyverse: <https://dplyr.tidyverse.org>
+-   Dataset CO2: `?datasets::CO2`
+-   Wickham, H. *Advanced R*
+
+------------------------------------------------------------------------
+
+## Muito Obrigada! {background-color="#E5D3B3"}
+
+**É OPEN, USE, COMPARTILHE!**
+
+[![Ilustração por Allison
+Horst](imagens/mutate.png)](https://allisonhorst.com/r-packages-functions)
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}

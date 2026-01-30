@@ -1,0 +1,15 @@
+---
+title: "Tese de Doutorado"
+description: "Obtenção do Título na área de Melhoramento Genético de Plantas."
+author: "Jennifer Luz Lopes"
+date: 2025-09-10
+categories: [Doutorado, Pesquisa]
+
+# ✅ thumbnail do post (usado na listagem)
+image: ../imagens/capa_tese.jpg
+image-alt: ""
+---
+
+# Pesquisa de Doutorado
+
+Em breve.

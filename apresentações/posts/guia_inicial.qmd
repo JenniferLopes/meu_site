@@ -1,0 +1,1085 @@
+---
+title: "1. Seus primeiros passos com R"
+subtitle: "Um guia amigável para começar sua jornada com R"
+description: "Tudo que você precisa saber para dar seus primeiros passos com confiança. É open use e compartilhe"
+categories: ["R", "Iniciantes", "Tutorial", "Onboarding"]
+image: "imagens/comunidade_capa.png"
+
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    logo: "imagens/logo.png"
+    preview-links: auto
+    css: "estilo_jeni.css"
+    footer: "Jennifer Lopes • Café com R"
+
+editor:
+  markdown:
+    wrap: 72
+---
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}
+
+## Bem-vindo ao mundo do R! {background-color="#E5D3B3"}
+
+Se você está aqui, é porque decidiu aprender R e essa é uma excelente
+decisão!
+
+![**Allison Horst.**](imagens/comunidade.png){fig-align="center"
+width="546"}
+
+## **Não se preocupe se:**
+
+-   Você nunca programou antes
+-   Tudo parecer confuso no início
+-   Você cometer erros (todos cometemos!)
+-   Precisar de tempo para aprender
+
+**Lembre-se:** toda jornada começa com um primeiro passo, e este guia
+vai te acompanhar nessa caminhada.
+
+------------------------------------------------------------------------
+
+## O que é R, afinal?
+
+**R é uma linguagem de programação** criada especialmente para análise
+de dados e estatística.
+
+**Por que R é especial:**
+
+-   Gratuito e de código aberto
+-   Comunidade enorme e acolhedora
+-   Milhares de pacotes prontos para usar
+-   Excelente para visualização de dados
+-   Muito usado em pesquisa e empresas
+
+**Em resumo:** R é sua ferramenta para transformar dados em insights.
+
+------------------------------------------------------------------------
+
+## Passo 1: Instalando o R {background-color="#E5D3B3"}
+
+Primeiro, vamos instalar o R no seu computador.
+
+**Acesse:**
+
+-   Site oficial: <https://cran.r-project.org/>
+-   Escolha seu sistema operacional (Windows, Mac ou Linux)
+-   Baixe e instale a versão mais recente
+
+## Passo 1: Instalando o R (cont) {background-color="#E5D3B3"}
+
+**Dica importante:**
+
+-   O R é o "motor" do seu carro.
+
+-   Ele faz todo o trabalho, mas você ainda precisa de um "painel de
+    controle" mais amigável o RStudio.
+
+-   **Não vamos praticar isso agora**, mas estes são os passos que você
+    fará no seu computador!
+
+------------------------------------------------------------------------
+
+## Passo 2: Instalando o RStudio
+
+O **RStudio** (agora chamado Posit) é uma interface que torna o R muito
+mais fácil de usar.
+
+**Acesse:**
+
+-   Site oficial: <https://posit.co/download/rstudio-desktop/>
+-   Baixe a versão gratuita (RStudio Desktop)
+-   Instale normalmente
+
+## Passo 2: Instalando o RStudio
+
+**Analogia útil:**
+
+-   R = motor do carro
+-   RStudio = painel com volante, pedais, etc.
+
+Você *pode* usar só o R, mas o RStudio torna tudo mais confortável!
+
+**Esta etapa você fará no seu computador após a apresentação.**
+
+------------------------------------------------------------------------
+
+## Conhecendo o RStudio
+
+Quando você abrir o RStudio, verá 4 painéis principais:
+
+**1. Script (superior esquerdo)**: Onde você escreve seus códigos
+
+**2. Console (inferior esquerdo)**: Onde o R executa os comandos
+
+**3. Environment (superior direito)**: Mostra objetos salvos na memória
+
+**4. Files/Plots/Help (inferior direito)**: Arquivos, gráficos e ajuda
+
+**Respire fundo!** No começo parece muito, mas logo você se acostuma.
+
+------------------------------------------------------------------------
+
+## Conhecendo o RStudio {background-color="#E5D3B3"}
+
+![**Essa imagem é minha e um pouco antiga, mas nada
+mudou!**](imagens/trocar-ambiente.jpeg){fig-align="center" width="596"}
+
+## Seu primeiro comando no R
+
+Vamos começar com algo simples. No **Console**, digite:
+
+```{r}
+#| echo: true
+#| eval: true
+
+2 + 2
+```
+
+Parabéns! Você acabou de fazer seu primeiro cálculo no R.
+
+## Seu primeiro comando no R
+
+Agora tente:
+
+```{r}
+#| echo: true
+#| eval: true
+
+"Olá, mundo do R!"
+```
+
+**Dica:** O R pode ser uma calculadora super poderosa!
+
+------------------------------------------------------------------------
+
+## Criando objetos (variáveis) {background-color="#E5D3B3"}
+
+No R, guardamos valores em objetos usando `<-` (ou `=`):
+
+```{r}
+#| echo: true
+#| eval: true
+
+# Criando objetos
+meu_nome <- "Maria"
+minha_idade <- 25
+
+# Mostrando valores
+meu_nome
+```
+
+**Pense nos objetos como gavetas** onde você guarda informações para
+usar depois.
+
+------------------------------------------------------------------------
+
+## Regras para nomear objetos
+
+**Pode:**
+
+-   Usar letras, números e underscores: `dados_2024`
+-   Começar com letra: `resultado`
+-   Usar snake_case: `meus_dados`
+
+## Regras para nomear objetos
+
+**Não pode:**
+
+-   Começar com número: `2dados`
+-   Usar espaços: `meus dados`
+-   Usar caracteres especiais: `dados@2024`
+
+**Dica:** Use nomes descritivos! `idade_pacientes` é melhor que `x`.
+
+------------------------------------------------------------------------
+
+## Criando seu primeiro script {background-color="#E5D3B3"}
+
+Scripts são arquivos onde você salva seus códigos.
+
+**Para criar um script:**
+
+1.  Clique em **File → New File → R Script**
+2.  Ou use o atalho: `Ctrl + Shift + N` (Windows/Linux) ou
+    `Cmd + Shift + N` (Mac) \## Criando seu primeiro script
+    {background-color="#E5D3B3"} **Vantagens do script:**
+
+-   Salva seu trabalho
+-   Permite revisitar e corrigir
+-   Compartilha com outras pessoas
+-   Reproduz análises
+
+------------------------------------------------------------------------
+
+## Seu primeiro script na prática
+
+Digite no script (não no console):
+
+``` r
+# Meu primeiro script em R
+# Data: 2025-11-29
+# Autor: Seu Nome
+
+# Calculando média de notas
+nota1 <- 8
+nota2 <- 7
+nota3 <- 9
+
+media <- (nota1 + nota2 + nota3) / 3
+print(media)
+```
+
+**Para executar:** selecione o código e pressione `Ctrl + Enter`
+(Windows/Linux) ou `Cmd + Enter` (Mac)
+
+**Experimente isso quando estiver no RStudio!**
+
+------------------------------------------------------------------------
+
+## A importância dos comentários {background-color="#E5D3B3"}
+
+Comentários começam com `#` e são ignorados pelo R.
+
+```{r}
+#| echo: true
+#| eval: true
+
+# Isto é um comentário - o R não executa
+altura <- 1.75  # Comentário no final da linha
+```
+
+**Use comentários para explicar SEU RACIOCÍNIO**, não o que o código faz
+(isso já está óbvio)
+
+**Bom comentário:**
+
+``` r
+# Removendo outliers acima de 3 desvios padrão
+dados_limpos <- dados[dados$valor < media + 3*sd, ]
+```
+
+## A importância dos comentários {background-color="#E5D3B3"}
+
+**Comentário desnecessário:**
+
+``` r
+# Criando variável x
+x <- 10
+```
+
+------------------------------------------------------------------------
+
+## Passo 3: Instalando pacotes
+
+**Pacotes** são coleções de funções prontas que expandem o R.
+
+**Para instalar um pacote:**
+
+``` r
+# Instalar (faz UMA vez)
+install.packages("tidyverse")
+```
+
+**Para carregar um pacote:**
+
+``` r
+# Carregar (faz TODA vez que abrir o R)
+library(tidyverse)
+```
+
+## Passo 3: Instalando pacotes
+
+**Analogia:** Instalar é como baixar um app no celular. Carregar é como
+abrir o app para usar.
+
+**Não execute isso agora** — só quando estiver no seu RStudio!
+
+------------------------------------------------------------------------
+
+## O kit inicial: tidyverse {background-color="#E5D3B3"}
+
+O **tidyverse** é um conjunto de pacotes que trabalham bem juntos:
+
+-   **readr** — ler dados
+-   **dplyr** — manipular dados
+-   **tidyr** — organizar dados
+-   **ggplot2** — visualizar dados
+-   **stringr** — trabalhar com texto
+-   **lubridate** — trabalhar com datas
+
+**Instalando tudo de uma vez (no seu computador):**
+
+## O kit inicial: tidyverse {background-color="#E5D3B3"}
+
+``` r
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+------------------------------------------------------------------------
+
+## Configurando sua pasta de trabalho
+
+**Pasta de trabalho** (working directory) é onde o R procura e salva
+arquivos.
+
+**Ver qual é sua pasta atual:**
+
+``` r
+getwd()
+```
+
+## Configurando sua pasta de trabalho
+
+**Definir nova pasta:**
+
+``` r
+setwd("C:/Users/SeuNome/Documentos/ProjetoR")
+```
+
+**Dica melhor:** Use **Projetos do RStudio** (falaremos disso em breve!)
+
+**Estes comandos você usará quando estiver trabalhando no RStudio.**
+
+------------------------------------------------------------------------
+
+## Criando um Projeto no RStudio {background-color="#E5D3B3"}
+
+**Projetos** organizam melhor seu trabalho.
+
+**Para criar:**
+
+1.  File → New Project
+2.  Escolha "New Directory"
+3.  Escolha "New Project"
+4.  Dê um nome e escolha onde salvar
+
+## Criando um Projeto no RStudio
+
+**Vantagens:**
+
+-   Organiza arquivos automaticamente
+-   Define pasta de trabalho
+-   Facilita retomar trabalho depois
+-   Facilita compartilhar
+
+------------------------------------------------------------------------
+
+## Estrutura de pastas recomendada
+
+Dentro do seu projeto, crie pastas:
+
+```         
+MeuProjeto/
+├── dados/           # Dados brutos
+├── scripts/         # Seus códigos R
+├── resultados/      # Tabelas e arquivos gerados
+├── graficos/        # Visualizações salvas
+└── relatorios/      # Relatórios finais
+```
+
+**Esta organização vai te salvar no futuro!**
+
+------------------------------------------------------------------------
+
+## Importando dados - Primeiro exemplo {background-color="#E5D3B3"}
+
+Vamos usar um dataset que já vem com o R:
+
+```{r}
+#| echo: true
+#| eval: true
+
+# Carregar dados mtcars (dados de carros)
+data(mtcars)
+
+# Ver primeiras linhas
+head(mtcars)
+```
+
+------------------------------------------------------------------------
+
+## Importando seus próprios dados
+
+**Arquivos CSV:**
+
+```{r}
+#| echo: true
+#| eval: false
+
+library(readr)
+
+# Importar CSV
+meus_dados <- read_csv("dados/arquivo.csv")
+
+# Ver estrutura dos dados
+glimpse(meus_dados)
+```
+
+**Onde está meu arquivo?**
+
+-   Se estiver na pasta `dados/` do seu projeto, use:
+    `"dados/arquivo.csv"`
+-   Use sempre caminhos relativos (nunca `"C:/Users/..."`)
+
+------------------------------------------------------------------------
+
+## Explorando seus dados {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+# Ver estrutura
+str(mtcars)
+
+# Resumo estatístico
+summary(mtcars)
+```
+
+------------------------------------------------------------------------
+
+## Explorando seus dados (cont.)
+
+```{r}
+#| echo: true
+#| eval: true
+
+# Ver nomes das colunas
+names(mtcars)
+
+# Primeiras e últimas linhas
+head(mtcars, 3)
+```
+
+------------------------------------------------------------------------
+
+## Manipulação básica com dplyr {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+#| eval: true
+#| message: false
+
+library(dplyr)
+
+# Filtrar linhas
+carros_potentes <- mtcars |>
+  filter(hp > 150)
+
+# Ver resultado
+head(carros_potentes, 3)
+```
+
+------------------------------------------------------------------------
+
+## Selecionando colunas
+
+```{r}
+#| echo: true
+#| eval: true
+
+# Selecionar apenas algumas colunas
+carros_simples <- mtcars |>
+  select(mpg, cyl, hp)
+
+head(carros_simples, 4)
+```
+
+**O operador `|>` (pipe)** significa "e então..."
+
+Leia como: "Pegue mtcars, E ENTÃO selecione as colunas..."
+
+------------------------------------------------------------------------
+
+## Criando novas variáveis {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+# Criar nova coluna
+mtcars_novo <- mtcars |>
+  mutate(
+    hp_por_cyl = hp / cyl,
+    eficiente = mpg > 20
+  )
+
+head(mtcars_novo[, c("hp", "cyl", "hp_por_cyl", "eficiente")], 3)
+```
+
+------------------------------------------------------------------------
+
+## Seu primeiro gráfico!
+
+```{r}
+#| echo: true
+#| eval: true
+#| fig-width: 9
+#| fig-height: 5
+
+library(ggplot2)
+
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(color = "#224573", size = 3) +
+  theme_minimal() +
+  labs(
+    title = "Relação entre Peso e Consumo",
+    x = "Peso (1000 lbs)",
+    y = "Milhas por galão"
+  )
+```
+
+------------------------------------------------------------------------
+
+## Entendendo o ggplot2 {background-color="#E5D3B3"}
+
+Todo gráfico ggplot2 tem 3 elementos:
+
+1.  **Dados:** `ggplot(mtcars, ...)`
+2.  **Mapeamento estético:** `aes(x = wt, y = mpg)`
+3.  **Geometria:** `geom_point()` (tipo de gráfico)
+
+**Você CONSTRÓI gráficos adicionando camadas com `+`**
+
+``` r
+ggplot(dados, aes(x, y)) +    # Base
+  geom_point() +               # Adiciona pontos
+  theme_minimal()              # Adiciona tema
+```
+
+------------------------------------------------------------------------
+
+## Erros comuns (e como evitá-los)
+
+**Erro 1: Esquecer de carregar pacotes**
+
+``` r
+# ❌ Erro
+dados <- read_csv("arquivo.csv")
+
+# ✅ Correto
+library(readr)
+dados <- read_csv("arquivo.csv")
+```
+
+**Sempre carregue os pacotes no início do script!**
+
+------------------------------------------------------------------------
+
+## Erros comuns (cont.) {background-color="#E5D3B3"}
+
+**Erro 2: Caminhos absolutos**
+
+``` r
+# ❌ Ruim (só funciona no seu computador)
+dados <- read_csv("C:/Users/Maria/Desktop/dados.csv")
+
+# ✅ Bom (funciona em qualquer computador com o projeto)
+dados <- read_csv("dados/dados.csv")
+```
+
+**Use projetos e caminhos relativos!**
+
+------------------------------------------------------------------------
+
+## Erros comuns (cont.)
+
+**Erro 3: Sobrescrever objetos importantes**
+
+``` r
+# ❌ Perigo!
+dados <- read_csv("originais.csv")
+dados <- dados |> filter(idade > 18)  # perdeu os originais!
+
+# ✅ Melhor
+dados <- read_csv("originais.csv")
+dados_adultos <- dados |> filter(idade > 18)
+```
+
+**Guarde o original e crie novos objetos!**
+
+------------------------------------------------------------------------
+
+## Erros comuns (cont.) {background-color="#E5D3B3"}
+
+**Erro 4: Não usar o pipe `|>`**
+
+``` r
+# ❌ Difícil de ler
+resultado <- arrange(filter(select(dados, nome, idade), idade > 18), nome)
+
+# ✅ Muito melhor!
+resultado <- dados |>
+  select(nome, idade) |>
+  filter(idade > 18) |>
+  arrange(nome)
+```
+
+**O pipe torna o código MUITO mais legível!**
+
+------------------------------------------------------------------------
+
+## Pedindo ajuda no R
+
+**Ajuda sobre uma função:**
+
+``` r
+?mean
+help(mean)
+```
+
+**Procurar ajuda:**
+
+``` r
+??regression
+```
+
+## Pedindo ajuda no R
+
+**Exemplos:**
+
+``` r
+example(mean)
+```
+
+**Não tenha vergonha de pedir ajuda!** Até programadores experientes
+consultam a documentação constantemente.
+
+------------------------------------------------------------------------
+
+## Onde buscar ajuda {background-color="#E5D3B3"}
+
+**Dentro do R:**
+
+-   Aba "Help" no RStudio
+-   `?funcao` para ajuda específica
+-   Vignettes dos pacotes
+
+**Na internet:**
+
+-   Stack Overflow (em inglês e português)
+-   Google: "como fazer X em R"
+-   ChatGPT/Claude para explicações
+-   Comunidade R Brasil (Telegram/Discord)
+
+------------------------------------------------------------------------
+
+## Sites e recursos úteis
+
+**Aprendizado:**
+
+-   [R for Data Science](https://r4ds.hadley.nz/):Livro gratuito online
+-   [RStudio Education](https://education.rstudio.com/):Tutoriais
+    oficiais
+-   [Posit Cheatsheets](https://posit.co/resources/cheatsheets/): Guias
+    rápidos
+
+**Comunidade:**
+
+-   [RStudio Community](https://community.rstudio.com/)
+-   [R-bloggers](https://www.r-bloggers.com/)
+-   [R-Ladies](https://www.rladiesgyn.com/)
+-   [Comunidade de Estatística - Thiago Marques]()
+
+------------------------------------------------------------------------
+
+## Boas práticas desde o início {background-color="#E5D3B3"}
+
+**1. Use projetos do RStudio**
+
+-   Mantém tudo organizado
+-   Facilita compartilhar
+
+**2. Comente seu código**
+
+-   Explique o PORQUÊ, não o QUÊ
+-   Seu eu-futuro agradece
+
+**3. Use nomes descritivos**
+
+-   `dados_vendas_2024` \> `df1`
+-   `calcular_media()` \> `func()`
+
+------------------------------------------------------------------------
+
+## Boas práticas (cont.)
+
+**4. Salve frequentemente**
+
+-   Scripts: `Ctrl + S` / `Cmd + S`
+-   Trabalho perdido dói!
+
+**5. Use versionamento**
+
+-   Git/GitHub quando estiver confortável
+-   Por enquanto, use datas nos nomes: `analise_2025-11-29.R`
+
+**6. Teste em partes**
+
+-   Execute linha por linha
+-   Verifique resultados parciais
+
+------------------------------------------------------------------------
+
+## Workflow típico de análise {background-color="#E5D3B3"}
+
+**1. Importar dados**
+
+``` r
+dados <- read_csv("dados/arquivo.csv")
+```
+
+**2. Explorar e limpar**
+
+``` r
+glimpse(dados)
+dados_limpos <- dados |> filter(!is.na(variavel))
+```
+
+**3. Transformar**
+
+``` r
+dados_processados <- dados_limpos |>
+  mutate(nova_var = var1 + var2)
+```
+
+**Este será seu workflow quando trabalhar com dados reais!**
+
+------------------------------------------------------------------------
+
+## Workflow típico (cont.)
+
+**4. Visualizar**
+
+``` r
+ggplot(dados_processados, aes(x, y)) +
+  geom_point()
+```
+
+**5. Modelar (quando necessário)**
+
+``` r
+modelo <- lm(y ~ x, data = dados_processados)
+```
+
+**6. Comunicar resultados**
+
+-   Gráficos salvos
+-   Relatórios em Quarto/RMarkdown
+
+**Você vai praticar este workflow nos seus projetos!**
+
+------------------------------------------------------------------------
+
+## Exemplo completo do zero {background-color="#E5D3B3"}
+
+Vamos fazer uma análise completa com o dataset `iris`:
+
+```{r}
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+# 1. Carregar pacotes
+library(dplyr)
+library(ggplot2)
+
+# 2. Carregar dados
+data(iris)
+
+# 3. Explorar
+glimpse(iris)
+```
+
+------------------------------------------------------------------------
+
+## Exemplo completo (cont.)
+
+```{r}
+#| echo: true
+#| eval: true
+
+# 4. Resumir dados
+resumo <- iris |>
+  group_by(Species) |>
+  summarise(
+    media_sepala = mean(Sepal.Length),
+    media_petala = mean(Petal.Length),
+    n = n()
+  )
+
+print(resumo)
+```
+
+------------------------------------------------------------------------
+
+## Exemplo completo (cont.) {background-color="#E5D3B3"}
+
+```{r}
+#| echo: true
+#| eval: true
+#| fig-width: 9
+#| fig-height: 5
+
+# 5. Visualizar
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(size = 3, alpha = 0.7) +
+  scale_color_manual(values = c("#224573", "#6B4F4F", "#4A6FA5")) +
+  theme_minimal() +
+  labs(
+    title = "Relação entre Comprimento da Sépala e Pétala",
+    x = "Comprimento da Sépala (cm)",
+    y = "Comprimento da Pétala (cm)"
+  )
+```
+
+------------------------------------------------------------------------
+
+## Salvando seu trabalho
+
+**Salvar script:**
+
+-   `Ctrl + S` / `Cmd + S`
+
+**Salvar gráfico:**
+
+``` r
+ggsave("graficos/meu_grafico.png", 
+       width = 10, height = 6)
+```
+
+**Salvar dados processados:**
+
+``` r
+write_csv(dados_processados, "resultados/dados_finais.csv")
+```
+
+------------------------------------------------------------------------
+
+## Checklist do iniciante {background-color="#E5D3B3"}
+
+**Preparação:**
+
+-   [ ] R instalado
+-   [ ] RStudio instalado\
+-   [ ] Tidyverse instalado
+-   [ ] Projeto criado
+-   [ ] Estrutura de pastas pronta
+
+**Em cada análise:**
+
+-   [ ] Comentários no script
+-   [ ] Pacotes carregados
+-   [ ] Dados importados corretamente
+-   [ ] Exploração inicial feita
+-   [ ] Resultados verificados
+-   [ ] Trabalho salvo
+
+------------------------------------------------------------------------
+
+## Próximos passos na sua jornada
+
+**Curto prazo:**
+
+-   Pratique com datasets do R (`iris`, `mtcars`, `diamonds`)
+-   Experimente diferentes gráficos no ggplot2
+-   Refaça tutoriais com seus próprios dados
+
+**Médio prazo:**
+
+-   Aprenda a criar relatórios com Quarto
+-   Explore análise exploratória com DataExplorer
+-   Aprenda mais sobre dplyr e tidyr
+
+**Longo prazo:**
+
+-   Modelagem estatística
+-   Machine learning com tidymodels
+-   Dashboards com Shiny
+
+------------------------------------------------------------------------
+
+## Dicas de ouro {background-color="#E5D3B3"}
+
+**1. Pratique regularmente**
+
+-   15 minutos por dia \> 2 horas uma vez por semana
+
+**2. Copie e modifique**
+
+-   Não há problema em copiar código
+-   Entenda o que está fazendo
+-   Adapte para sua necessidade
+
+**3. Cometa erros**
+
+-   Erros são parte do aprendizado
+-   Leia as mensagens de erro com calma
+-   Google a mensagem de erro
+
+------------------------------------------------------------------------
+
+## Dicas de ouro (cont.)
+
+**4. Construa seu próprio banco de códigos**
+
+-   Salve snippets úteis
+-   Crie templates de análises
+-   Documente suas soluções
+
+**5. Participe da comunidade**
+
+-   Pergunte quando tiver dúvidas
+-   Compartilhe o que aprender
+-   Ajude outros iniciantes
+
+**6. Seja paciente consigo mesmo**
+
+-   Aprender leva tempo
+-   Celebre pequenas vitórias
+-   Compare-se apenas com você de ontem
+
+------------------------------------------------------------------------
+
+## Recursos gratuitos para continuar {background-color="#E5D3B3"}
+
+**Livros online gratuitos:**
+
+-   [R for Data Science](https://r4ds.hadley.nz/)
+-   [Modern Statistics with R](https://modernstatisticswithr.com/)
+-   [Hands-On Programming with
+    R](https://rstudio-education.github.io/hopr/)
+
+**Tutoriais interativos:**
+
+-   [RStudio Primers](https://posit.cloud/learn/primers)
+-   [Swirl](https://swirlstats.com/) (aprenda dentro do R!)
+
+**Comunidades brasileiras:**
+
+-   [R Brasil (Telegram)](https://t.me/rbrasiloficial)
+-   [Curso-R](https://curso-r.com/)
+
+------------------------------------------------------------------------
+
+## Um último conselho {background-color="#E5D3B3"}
+
+> "A melhor maneira de aprender R é **usando** R."
+
+Não espere entender tudo antes de começar.
+
+**Comece pequeno:**
+
+-   Um gráfico simples hoje
+-   Uma análise básica amanhã
+-   Um mini projeto na semana que vem
+
+**Cada linha de código que você escreve é um passo na direção certa.**
+
+Você já deu o primeiro passo ao chegar até aqui. Parabéns!
+
+------------------------------------------------------------------------
+
+## Projeto prático sugerido {background-color="#E5D3B3"}
+
+**Para praticar, faça um mini projeto:**
+
+1.  Escolha um dataset (pode ser do R: `iris`, `mtcars`, `diamonds`)
+2.  Crie um projeto no RStudio
+3.  Escreva um script que:
+    -   Carregue os dados
+    -   Faça resumos estatísticos
+    -   Crie 2-3 gráficos
+    -   Tire pelo menos uma conclusão
+4.  Salve tudo organizado nas pastas
+5.  Adicione comentários explicando seu raciocínio
+
+**Este será seu primeiro projeto completo!**
+
+------------------------------------------------------------------------
+
+## Recapitulando {background-color="#E5D3B3"}
+
+**Você aprendeu:**
+
+-   Instalar R e RStudio
+-   Criar projetos e scripts
+-   Usar o console e executar códigos
+-   Instalar e carregar pacotes
+-   Importar e explorar dados
+-   Manipular dados com dplyr
+-   Criar visualizações com ggplot2
+-   Boas práticas e organização
+-   Onde buscar ajuda
+
+**Isso é MUITO para um primeiro contato!**
+
+------------------------------------------------------------------------
+
+## Mensagem final
+
+**Você não precisa saber tudo agora.**
+
+**Você não precisa ser perfeito.**
+
+**Você só precisa começar.**
+
+O R é uma ferramenta poderosa, e você acabou de ganhar a chave para
+usá-la.
+
+**O resto é prática, paciência e persistência.**
+
+Bem-vindo à comunidade R!
+
+------------------------------------------------------------------------
+
+## Agora {background-color="#E5D3B3"}
+
+**Seus primeiros passos estão completos!**
+
+Agora é hora de praticar e explorar.
+
+**Lembre-se:** a comunidade R está aqui para ajudar. Não hesite em
+perguntar!
+
+**Bons estudos e ótimas análises!**
+
+------------------------------------------------------------------------
+
+## Muito obrigada!
+
+*Esta apresentação é parte do projeto Café com R*
+
+*É OPEN, USE, COMPARTILHE!*
+
+![**Allison Horst.**](imagens/comunidade.png){fig-align="center"
+width="428"}
+
+## **☕ Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> Que cada **gole** desperte uma nova ideia.
+>
+> Que cada **script** abra uma nova conversa.
+>
+> Que o **Café com R**, se torne um ponto de encontro nosso!
+
+![](imagens/qrcode.jpg){fig-align="center" width="236"}

@@ -1,0 +1,186 @@
+---
+title: "Projeto - Previsão da produtividade de arroz em casca"
+description: "Usando o pacote tidymodels do R."
+author: "Jennifer Luz Lopes"
+date: 2025-12-08
+categories: [Machine Learning, Tidymodels]
+image: ../imagens/machine_rice.png
+image-alt: ""
+---
+
+# Previsão da produtividade de arroz em casca com tidymodels
+
+-   Pipeline completo de Machine Learning em R
+
+-   Este repositório apresenta um pipeline para prever a produtividade de arroz (paddy yield) usando o ecossistema **tidymodels**.
+
+-   O projeto inclui pré-processamento, engenharia de atributos, tuning, comparação de modelos, retreinamento e diagnóstico completo dos resíduos.
+
+## Relatório HTML
+
+Leia o relatório com todas as etapas e explicações [**`aqui`**](https://jenniferlopes.quarto.pub/previsao-produtividade-tidymodels/)**`.`**
+
+## Repositório do GitHub
+
+Acesse o repositório completo [**`aqui`**](https://github.com/JenniferLopes/machine_learning_projeto)**`.`**
+
+## Livro utilizado para reproduzir as etapas da modelagem
+
+[![](/projetos/imagens/tidy.png){width="217"}](https://www.tmwr.org/)
+
+## 1. Objetivo
+
+Construir um fluxo completo de modelagem para prever produtividade de arroz (kg/ha) a partir de variáveis agronômicas, climáticas e operacionais do [**Paddy Dataset (UCI, 2023)**](https://archive.ics.uci.edu/dataset/1186/paddy+dataset).
+
+## 2. Motivação
+
+Trabalhei com arroz desde a graduação até o doutorado, sempre na área de melhoramento genético. Eu nunca havia trabalhado com variáveis operacionais e ambientais como as deste dataset, e buscava um banco rico para aplicar técnicas modernas de Machine Learning. O Paddy Dataset foi a escolha ideal para essa exploração.
+
+## 3. Sobre o Dataset
+
+-   2789 observações
+-   45 variáveis preditoras completas (sem NA)
+-   Talhões do estado de Tamil Nadu (Índia)
+-   Variáveis de clima, irrigação, adubação, manejo, temperatura e produtividade
+
+**Fonte: Subramaniyan (2023), UCI Machine Learning Repository.**
+
+## 4. Pipeline de Modelagem
+
+**O pipeline inclui:**
+
+1.  **Carregamento e limpeza dos dados**
+2.  **Estatística descritiva e identificação da escala da resposta**
+3.  **Split estratificado (80/20)**
+4.  **Validação cruzada (5-Fold)**
+5.  **Recipe completa com engenharia de atributos**
+    -   fertilizante/ha
+    -   densidade de semeadura
+    -   efeitos de chuva por janelas
+    -   água total e água por hectare
+    -   médias e amplitudes térmicas
+    -   métricas de investimento
+    -   imputação, normalização, dummies e Yeo-Johnson
+6.  **Modelos utilizados**
+    -   Random Forest (ranger)
+    -   XGBoost
+7.  **Tuning com grid regular**
+8.  **Comparação Random Forest vs XGBoost**
+9.  **Treino Final com hiperparâmetros ótimos**
+10. **Avaliação no conjunto de teste**
+11. **Função de previsão para novos dados**
+12. **Função de retreinamento**
+13. **Análise completa de resíduos e gráficos de diagnóstico**
+
+## 5. Resultados Principais
+
+Modelo vencedor: **Random Forest**
+
+**Desempenho no teste:**
+
+-   RMSE \~ **796.72 kg/ha**
+
+-   R² \~ **0.9921**
+
+-   MAE \~ **569.86 kg/ha**
+
+> Esses valores indicam excelente capacidade de generalização e baixa taxa de erro considerando a escala dos dados.
+
+## 6. Estrutura do Repositório
+
+```         
+├── data
+│   ├── data_example.xlsx
+│   ├── new_data.xlsx
+│   ├── novos_api.csv
+│   ├── novos_dados_paddy.csv
+│   └── paddydataset.csv
+├── estilo.css
+├── imagens
+│   ├── artigo.JPG
+│   └── etapas.png
+├── machine_learning_portifólio.Rproj
+├── outputs
+│   ├── modelo_paddy_final.rds
+│   ├── modelo_paddy_retreinado.rds
+│   ├── model_comparison.csv
+│   ├── receita_preprocessamento.rds
+│   ├── test_metrics.csv
+│   └── test_predictions.csv
+├── paddy_ml.qmd
+├── README.md
+└── scripts
+    └── paddy_ml.r
+```
+
+## 7. Como Reproduzir
+
+### Instale os pacotes
+
+``` r
+if (!requireNamespace("pacman")) install.packages("pacman")
+pacman::p_load(tidymodels, tidyverse, skimr, janitor, ranger, xgboost,
+               doParallel, glue, vip, patchwork)
+```
+
+### Carregue os dados
+
+``` r
+df_raw <- read_csv("data/paddydataset.csv") |> clean_names()
+```
+
+### Execute o pipeline principal
+
+O script segue a ordem lógica do processo, por exemplo:
+
+1\. `01_preprocessamento`
+
+2\. `02_treinamento`
+
+3\. `03_avaliacao`
+
+4\. `04_retreinamento`
+
+## 8. Previsões em novos dados
+
+``` r
+previsoes <- predict_yield(novos_dados)
+```
+
+## 9. Retreinamento com novos dados
+
+``` r
+modelo_atualizado <- retrain_model(novos_dados, original_data = train_data)
+```
+
+## 10. Diagnóstico dos Resíduos
+
+**Foram gerados:**
+
+-   Gráfico Predito vs Observado
+
+-   Distribuição dos Resíduos
+
+-   Resíduos vs Preditos
+
+-   Q-Q Plot
+
+-   Painel combinado (patchwork)
+
+> **Esses gráficos confirmam ausência de viés, normalidade aproximada dos resíduos e bom ajuste geral.**
+
+## 11. Citação do Dataset
+
+```         
+@misc{paddy_dataset_1186,
+  author       = {Subramaniyan, Muthukumaran},
+  title        = {Paddy Dataset},
+  year         = {2023},
+  howpublished = {UCI Machine Learning Repository},
+  note         = {DOI: https://doi.org/10.24432/C55W3J}
+}
+```
+
+## 12. Licença
+
+MIT.
