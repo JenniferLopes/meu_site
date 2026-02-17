@@ -858,7 +858,7 @@ Identificar tipos incorretos é crucial. Variáveis categóricas como character 
 
 # DataExplorer: exploração automatizada
 
-[![**Para acessar, clique na imagem.**](imagens/explorer.png){fig-align="center" width="231"}](https://boxuancui.github.io/DataExplorer/)
+[![Para acessar, clique na imagem.](imagens/explorer.png){fig-align="center" width="231"}](https://boxuancui.github.io/DataExplorer/)
 
 ## O que é DataExplorer?
 
@@ -1001,7 +1001,7 @@ coffee %>%
 
 # skimr: Resumos estatísticos
 
-[![**Para acessar, clique na imagem.**](imagens/skim.png){fig-align="center" width="239"}](https://docs.ropensci.org/skimr/)
+[![Para acessar, clique na imagem.](imagens/skim.png){fig-align="center" width="239"}](https://docs.ropensci.org/skimr/)
 
 ## O que é skimr?
 
@@ -1150,7 +1150,7 @@ coffee %>%
 
 # naniar: análise de dados ausentes
 
-[![**Para acessar, clique na imagem.**](imagens/naniar.png){fig-align="center" width="182"}](https://naniar.njtierney.com/)
+[![Para acessar, clique na imagem.](imagens/naniar.png){fig-align="center" width="182"}](https://naniar.njtierney.com/)
 
 ## O que é naniar?
 
@@ -1651,7 +1651,7 @@ coffee %>%
   theme_classic(base_size = 14)
 ```
 
-## Relação altitude x pontuação -  gráfico
+## Relação altitude x pontuação - gráfico
 
 ```{r}
 #| echo: false
@@ -2272,7 +2272,7 @@ coffee_clustered %>%
 
 ## Obrigada!
 
-![**Imagem: Allison Horst.**](imagens/comunidade.png){alt="Imagem: Allison Horst." fig-align="center" width="449"}
+![Imagem: Allison Horst.](imagens/comunidade.png){fig-align="center" width="449"}
 
 Continue praticando e explorando!
 

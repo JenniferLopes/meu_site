@@ -1,0 +1,838 @@
+---
+title: "Aula 11. Web scraping com pacote rvest"
+subtitle: "Coletando dados do IBGE diretamente no R"
+categories: [R, rvest, Web Scraping, Tidyverse, IBGE]
+image: imagens/web.png
+description: "Aprenda a coletar dados diretamente da web com R e rvest."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+editor: visual
+---
+
+## **Democratização**
+
+> **Use, compartilhe, a aula está no github dentro do meu site.**
+
+![**Aproveitem muito!!! Ahhh essa é a meguy, minha gatinha linda, ela está na logo do café com R!**](imagens/meguy.jpg){fig-align="center" width="523"}
+
+## Códigos dos slides
+
+> Todos os códigos da aula estão funcionais. Prontos para reproduzir.
+
+## **Objetivos da apresentação**
+
+::: incremental
+-   **Compreender o que é web scraping e como funciona**
+-   **Conhecer os principais pacotes envolvidos**
+-   **Inspecionar elementos HTML de uma página**
+-   **Extrair tabelas e dados do site do IBGE**
+-   **Organizar os dados com tidyverse**
+-   **Aplicar boas práticas e ética no processo**
+:::
+
+# **O que é web scraping?**
+
+## **Definição**
+
+Web scraping é o processo automatizado de **extrair dados de páginas web**.
+
+::: incremental
+-   A página é requisitada via HTTP
+-   O HTML retornado é lido e interpretado
+-   Elementos específicos são selecionados
+-   Os dados são extraídos e organizados
+:::
+
+## **Quando usar web scraping?**
+
+::: incremental
+-   Quando não existe uma API disponível
+-   Quando os dados estão em tabelas HTML públicas
+-   Quando a coleta manual seria inviável
+-   Quando o site permite coleta automatizada
+:::
+
+::: callout-note
+Antes de coletar dados, verifique sempre o arquivo `robots.txt` e os termos de uso do site.
+:::
+
+## **Web scraping x API**
+
+| **Característica**  | **Web scraping**           | **API**                |
+|---------------------|----------------------------|------------------------|
+| Estrutura dos dados | HTML não estruturado       | JSON/XML estruturado   |
+| Estabilidade        | Frágil (depende do layout) | Estável                |
+| Permissão           | Verificar terms of use     | Geralmente documentada |
+| Facilidade          | Média                      | Alta                   |
+
+# **Pacotes essenciais**
+
+## **Visão geral dos pacotes**
+
+```{mermaid}
+flowchart LR
+    A[rvest] --> E[Extração de HTML]
+    B[httr2] --> F[Requisições HTTP]
+    C[xml2] --> G[Parsing de XML/HTML]
+    D[polite] --> H[Scraping ético]
+    I[dplyr + stringr] --> J[Limpeza e organização]
+```
+
+# **rvest**
+
+[![Clique na imagem e acesse o site do pacote.](imagens/rvest.png){fig-align="center"}](https://rvest.tidyverse.org/)
+
+## **rvest**
+
+O pacote principal da aula. Desenvolvido pela Posit, faz parte do ecossistema tidyverse.
+
+::: incremental
+-   Leitura de páginas HTML com `read_html()`
+-   Seleção de elementos com `html_element()` e `html_elements()`
+-   Extração de texto com `html_text2()`
+-   Extração de tabelas com `html_table()`
+-   Extração de atributos com `html_attr()`
+:::
+
+# **httr2**
+
+[![Clique na imagem e acesse o site do pacote.](imagens/rvest.png){fig-align="center"}](https://httr2.r-lib.org/)
+
+## **httr2**
+
+Responsável por fazer as **requisições HTTP** de forma controlada.
+
+::: incremental
+-   Envio de headers personalizados
+-   Controle de tempo entre requisições
+-   Tratamento de erros e redirecionamentos
+-   Autenticação quando necessário
+:::
+
+::: callout-tip
+## Dica
+
+Em muitos casos simples, o `rvest` já faz a requisição internamente. O `httr2` é útil para casos mais avançados.
+:::
+
+## **xml2**
+
+Biblioteca de baixo nível que o `rvest` usa internamente.
+
+::: incremental
+-   Parsing de documentos HTML e XML
+-   Navegação na árvore de nós
+-   Geralmente não é chamado diretamente
+-   Importante conhecer para entender erros
+:::
+
+# **polite**
+
+[![Clique na imagem e acesse o site do pacote.](imagens/polite.png){fig-align="center"}](https://dmi3kno.github.io/polite/)
+
+## **polite**
+
+Pacote que garante um scraping **respeitoso e ético**.
+
+::: incremental
+-   Verifica o `robots.txt` automaticamente
+-   Identifica o script com um `user-agent` descritivo
+-   Adiciona intervalos entre requisições (`crawl_delay`)
+-   Bloqueia coleta em páginas não permitidas
+:::
+
+::: callout-warning
+Usar o `polite` é uma boa prática. Scraping agressivo pode sobrecarregar servidores e resultar em bloqueio de IP.
+:::
+
+## **Instalação dos pacotes**
+
+```{r}
+#| eval: false
+#| echo: true
+
+pacman::p_load(rvest, httr2, xml2, polite, tidyverse, jsonlite, tibble)
+```
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(rvest)
+library(httr2)
+library(xml2)
+library(polite)
+library(dplyr)
+library(stringr)
+library(tidyr)
+library(jsonlite)
+library(tibble)
+```
+
+# **Entendendo o HTML**
+
+## **Estrutura básica de uma página**
+
+``` html
+<html>
+  <body>
+    <h1>Título principal</h1>
+    <p class="descricao">Um parágrafo de texto.</p>
+    <table id="dados">
+  <tr>
+<th>Coluna 1</th>
+<th>Coluna 2</th>
+  </tr>
+  <tr>
+<td>Valor A</td>
+<td>Valor B</td>
+  </tr>
+</table>
+  </body>
+</html>
+```
+
+## **Seletores CSS - o que são?**
+
+Seletores CSS identificam elementos dentro do HTML.
+
+| **Seletor**  | **O que seleciona**             |
+|--------------|---------------------------------|
+| `h1`         | Todas as tags `<h1>`            |
+| `.descricao` | Elementos com class `descricao` |
+| `#dados`     | Elemento com id `dados`         |
+| `table td`   | `<td>` dentro de `<table>`      |
+| `a[href]`    | Links com atributo `href`       |
+
+## **Como inspecionar uma página**
+
+::: incremental
+1.  Abra o site no navegador
+2.  Clique com o botão direito no elemento desejado
+3.  Selecione **Inspecionar** (ou `F12`)
+4.  Identifique a tag, classe ou id do elemento
+5.  Use esse seletor no seu código R
+:::
+
+::: callout-tip
+## Dica
+
+No Chrome e Firefox, a extensão **SelectorGadget** facilita muito a identificação de seletores CSS.
+:::
+
+# **Primeira requisição com rvest**
+
+## **Lendo uma página HTML**
+
+```{r}
+#| eval: true
+#| echo: true
+
+library(rvest)
+
+url <- "https://www.ibge.gov.br/cidades-e-estados.html"
+
+pagina <- read_html(url)
+
+pagina
+```
+
+O objeto retornado é um documento HTML que pode ser navegado com os demais verbos do **`rvest`**.
+
+## **Verificando o robots.txt com polite**
+
+```{r}
+#| eval: true
+#| echo: true
+
+library(polite)
+
+sessao <- bow(
+  url        = "https://www.ibge.gov.br",
+  user_agent = "Aula Web Scraping - Cafe com R / contato@exemplo.com"
+)
+
+sessao
+```
+
+O **`bow()`** verifica se a coleta é permitida e configura o intervalo de espera sugerido pelo servidor.
+
+## **Coletando com polite**
+
+```{r}
+#| eval: false
+#| echo: true
+
+pagina <- scrape(sessao)
+
+pagina
+```
+
+::: callout-note
+O **`scrape()`** substitui o **`read_html()`** quando usamos o fluxo do **`polite`**. Ele respeita o **`crawl_delay`** automaticamente.
+:::
+
+# **Extraindo tabelas do IBGE**
+
+## **Exemplo 1 - Tabela de municípios**
+
+O IBGE disponibiliza uma tabela pública com os códigos dos municípios brasileiros.
+
+```{r}
+#| eval: true
+#| echo: true
+
+library(rvest)
+library(dplyr)
+
+url <- "https://www.ibge.gov.br/explica/codigos-dos-municipios.php"
+
+pagina <- read_html(url)
+
+tabelas <- pagina |>
+  html_elements("table") |>
+  html_table()
+
+length(tabelas)
+```
+
+## **Selecionando e visualizando**
+
+```{r}
+#| eval: true
+#| echo: true
+
+tabela_municipios <- tabelas[[1]]
+
+glimpse(tabela_municipios)
+```
+
+```{r}
+#| eval: false
+#| echo: true
+
+head(tabela_municipios, 10)
+```
+
+## **Por que não usar scraping aqui?**
+
+A página `ibge.gov.br/cidades-e-estados.html` carrega os dados via **JavaScript dinâmico**.
+
+::: incremental
+-   O `read_html()` captura apenas o HTML estático
+-   Os tiles de estados são renderizados no navegador após o carregamento
+-   Seletores como `.tile__estado` retornam vazio porque o conteúdo não existe no HTML bruto
+:::
+
+::: callout-note
+Este é um caso real e muito comum no scraping. A solução correta é usar a **API oficial do IBGE**, que retorna os mesmos dados de forma estruturada.
+:::
+
+## **Identificando conteúdo dinâmico**
+
+::: incremental
+-   Abra o DevTools do navegador (`F12`)
+-   Vá até a aba **Network**
+-   Filtre por **Fetch/XHR**
+-   Recarregue a página
+-   Você verá as chamadas de API que o site faz nos bastidores
+:::
+
+::: callout-tip
+## Dica
+
+Quando o **`html_elements()`** retorna um vetor vazio, suspeite de conteúdo dinâmico. O DevTools revela a API por trás da página.
+:::
+
+# **Exemplo 2 - Estados via API do IBGE**
+
+## **A API oficial do IBGE**
+
+O IBGE disponibiliza uma API REST pública e gratuita.
+
+::: incremental
+-   Endpoint: **`servicodados.ibge.gov.br/api/v1/localidades/estados`**
+-   Retorna JSON com nome, sigla, região e código de cada estado
+-   Não requer autenticação
+-   Dados sempre atualizados e estáveis
+-   Documentação: [servicodados.ibge.gov.br/api/docs](https://servicodados.ibge.gov.br/api/docs/)
+:::
+
+## **Fazendo a requisição**
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(httr2)
+library(jsonlite)
+library(dplyr)
+library(tibble)
+
+url_api <- "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome"
+
+resposta <- request(url_api) |>
+  req_perform()
+
+resposta
+```
+
+O `request()` cria a requisição e `req_perform()` a executa.
+
+## **Convertendo o JSON**
+
+```{r}
+#| eval: false
+#| echo: true
+
+json_bruto <- resposta |>
+  resp_body_string()
+
+estados_lista <- fromJSON(json_bruto)
+
+glimpse(estados_lista)
+```
+
+O **`resp_body_string()`** extrai o conteúdo como texto e o **`fromJSON()`** converte para data frame automaticamente.
+
+## **Organizando os dados**
+
+```{r}
+#| eval: false
+#| echo: true
+
+estados <- estados_lista |>
+  as_tibble() |>
+  mutate(nome_regiao = regiao$nome) |>
+  select(id, sigla, nome, nome_regiao)
+
+estados
+```
+
+## **Contando estados por região**
+
+```{r}
+#| eval: false
+#| echo: true
+
+estados <- estados |>
+  count(nome_regiao, name = "qtd_estados") |>
+  arrange(desc(qtd_estados))
+```
+
+## **Visualizando por região**
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(ggplot2)
+
+estados <- estados |>
+  count(nome_regiao) |>
+  ggplot(aes(
+    x    = reorder(nome_regiao, n),
+    y    = n,
+    fill = nome_regiao)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  labs(
+    title   = "Quantidade de estados por região.",
+    x       = NULL,
+    y       = "Número de estados",
+    caption = "Fonte: API IBGE Localidades | Café com R.") +
+  theme_classic(base_size = 13) +
+  theme(plot.title = element_text(face = "bold"))
+```
+
+# **Limpeza e organização dos dados**
+
+## **Limpando nomes de colunas**
+
+Continuando com a tabela de municípios do Exemplo 1:
+
+```{r}
+#| eval: true
+#| echo: true
+
+library(stringr)
+
+tabela_limpa <- tabela_municipios |>
+  rename_with(~ str_to_lower(str_replace_all(., " ", "_"))) |>
+  mutate(across(where(is.character), str_squish))
+
+glimpse(tabela_limpa)
+```
+
+## **Removendo linhas desnecessárias**
+
+```{r}
+#| eval: true
+#| echo: true
+
+tabela_limpa <- tabela_limpa |>
+  filter(if_any(everything(), ~ !is.na(.))) |>
+  distinct()
+
+nrow(tabela_limpa)
+head(tabela_limpa, 5)
+```
+
+## **Separando informações combinadas**
+
+Quando uma coluna contém dois dados juntos, como `"São Paulo - SP"`:
+
+```{r}
+#| eval: true
+#| echo: true
+
+library(tidyr)
+
+# Exemplo com vetor simulado para demonstração
+exemplo <- tibble(
+  municipio_uf = c("São Paulo - SP", "Rio de Janeiro - RJ", "Belo Horizonte - MG"))
+
+exemplo |>
+  separate(
+    col   = municipio_uf,
+    into  = c("municipio", "uf"),
+    sep   = " - ",
+    extra = "merge")
+```
+
+# **Exemplo completo - PIB per capita por estado**
+
+## **Contexto**
+
+O IBGE disponibiliza dados de PIB per capita dos estados via API.
+
+::: incremental
+-   Endpoint público sem autenticação
+-   Dados da tabela 5938 do SIDRA
+-   Usaremos o pacote `sidrar` para acessar diretamente
+-   Alternativa robusta ao scraping de HTML
+:::
+
+## **Instalando e carregando o sidrar**
+
+```{r}
+#| eval: false
+#| echo: true
+
+install.packages("sidrar")
+library(sidrar)
+```
+
+::: callout-note
+O **`sidrar`** é o pacote oficial para acessar o banco de dados **SIDRA do IBGE** diretamente no R, sem precisar de scraping.
+:::
+
+## **Coletando PIB per capita por estado**
+
+```{r}
+#| eval: true
+#| echo: true
+
+library(sidrar)
+library(dplyr)
+
+# Tabela 5938 — PIB per capita dos estados (último ano disponível)
+pib_bruto <- get_sidra(
+  x        = 5938,
+  variable = 37,
+  geo      = "State",
+  period   = "last")
+
+glimpse(pib_bruto)
+```
+
+## **Limpando os dados**
+
+```{r}
+#| eval: true
+#| echo: true
+
+pib <- pib_bruto |>
+  select(
+    estado        = `Unidade da Federação`,
+    pib_per_capita = Valor) |>
+  filter(!is.na(pib_per_capita)) |>
+  mutate(pib_per_capita = as.numeric(pib_per_capita)) |>
+  arrange(desc(pib_per_capita))
+
+head(pib, 3)
+```
+
+## **Visualizando os 10 maiores PIBs per capita - continua**
+
+```{r}
+#| eval: true
+#| echo: true
+
+library(ggplot2)
+
+grafico_pib <- pib |>
+  slice_max(pib_per_capita, n = 10) |>
+  ggplot(aes(
+    x    = reorder(estado, pib_per_capita),
+    y    = pib_per_capita,
+    fill = estado)) +
+  geom_col(show.legend = FALSE) +
+  theme_classic()+
+  coord_flip()
+```
+
+## Paleta café com R
+
+```{r}
+
+#| eval: true
+#| echo: true
+paleta_cafe <- c(
+  "#3E2723", # marrom escuro
+  "#5D4037", # marrom
+  "#6D4C41", # marrom médio
+  "#8D6E63", # marrom claro
+  "#A1887F", # taupe
+  "#BCAAA4", # bege rosado
+  "#D7CCC8", # bege claro
+  "#4E342E", # café intenso
+  "#795548", # café clássico
+  "#A9746E"  # caramelo
+)
+```
+
+## **Gráfico completo**
+
+```{r}
+#| eval: true
+#| echo: true
+
+grafico_pib_completo <- grafico_pib +
+  scale_fill_manual(values = paleta_cafe) +
+  scale_y_continuous(
+    labels = scales::label_number(
+      big.mark = ".", 
+      decimal.mark = ",")) +
+  labs(
+    title    = "10 estados com maior PIB per capita.",
+    subtitle = "Dados coletados via API SIDRA do IBGE.",
+    x        = NULL,
+    y        = "PIB per capita (R$)",
+    caption  = "Fonte: IBGE - SIDRA | Café com R.") +
+  theme_classic(base_size = 13) +
+  theme(
+    plot.title      = element_text(face = "bold", color = "#3E2723"),
+    plot.subtitle   = element_text(color = "#6D4C41"),
+    axis.text       = element_text(color = "#4E342E"),
+    axis.title.y    = element_text(color = "#3E2723"),
+    plot.caption    = element_text(color = "#6D4C41"))
+
+```
+
+## **Gráfico completo**
+
+```{r}
+#| eval: true
+#| echo: true
+grafico_pib_completo
+```
+
+# **Coletando múltiplas páginas**
+
+## **O desafio da paginação**
+
+Muitos sites organizam o conteúdo em várias páginas. Para coletar tudo, é preciso **iterar sobre as URLs**.
+
+::: incremental
+-   Identificar o padrão de paginação na URL
+-   Criar um vetor com todas as URLs
+-   Iterar com `purrr::map()` ou um loop
+-   Combinar os resultados com `bind_rows()`
+:::
+
+## **Estrutura da iteração**
+
+```{r}
+#| eval: false
+#| echo: true
+
+library(purrr)
+library(rvest)
+
+# Função para extrair uma página
+extrair_pagina <- function(url) {
+  Sys.sleep(1) # intervalo obrigatório entre requisições
+  read_html(url) |>
+    html_element("table") |>
+    html_table()
+}
+
+# Vetor de URLs com padrão de paginação
+urls <- paste0(
+  "https://quotes.toscrape.com/page/",
+  1:5, "/")
+
+# Iteração segura com possibly() para não parar em erros
+resultado <- map(urls, possibly(extrair_pagina, NULL)) |>
+  compact() |>
+  bind_rows()
+```
+
+::: callout-warning
+Sempre inclua `Sys.sleep()` entre requisições. O `possibly()` evita que um erro em uma página quebre toda a coleta.
+:::
+
+# **Boas práticas e ética**
+
+## **Antes de coletar**
+
+::: incremental
+-   Leia os **termos de uso** do site
+-   Verifique o arquivo `robots.txt` (`site.com/robots.txt`)
+-   Prefira APIs oficiais quando disponíveis
+-   Identifique seu script com um `user-agent` descritivo
+:::
+
+## **Durante a coleta**
+
+::: incremental
+-   Use `Sys.sleep()` entre requisições
+-   Nunca faça requisições em paralelo sem controle
+-   Armazene os dados localmente para não coletar repetidamente
+-   Monitore o volume de requisições
+:::
+
+## **Aspectos legais**
+
+::: incremental
+-   Dados públicos não significam dados de uso livre
+-   Verifique a licença dos dados (Creative Commons, por exemplo)
+-   O IBGE disponibiliza dados sob licença aberta - mas cite a fonte
+-   Nunca colete dados pessoais sem autorização
+:::
+
+::: callout-note
+O IBGE possui uma **API oficial** (SIDRA e IBGE API) que deve ser preferida ao scraping direto sempre que os dados estiverem disponíveis por lá.
+:::
+
+## **API do IBGE - quando usá-la**
+
+```{r}
+#| eval: true
+#| echo: true
+
+library(sidrar)
+
+# Exemplo: população estimada por estado
+populacao <- get_sidra(
+  x        = 6579,
+  variable = 9324,
+  geo      = "State",
+  period   = "last")
+
+populacao |>
+  select(
+    estado = `Unidade da Federação`,
+    pop    = Valor) |>
+  arrange(desc(pop)) |>
+  head(10)
+```
+
+# **Fluxo completo - resumo**
+
+## **Pipeline de web scraping**
+
+1.  Identificar a URL
+2.  Verificar o arquivo robots.txt
+3.  Avaliar se o conteúdo é estático ou dinâmico
+4.  Se for estático: utilizar read_html + rvest
+5.  Se for dinâmico: buscar API ou endpoint XHR
+
+## **Pipeline de web scraping**
+
+6.  Para HTML estático: extrair com html_elements + html_table
+7.  Para dados via API: utilizar httr2 + jsonlite
+8.  Limpar e organizar os dados com dplyr e stringr
+9.  Analisar e visualizar os dados
+
+## **Funções mais usadas**
+
+| **Função**        | **Pacote** | **Para que serve**             |
+|-------------------|------------|--------------------------------|
+| `read_html()`     | rvest      | Ler página HTML                |
+| `html_elements()` | rvest      | Selecionar múltiplos elementos |
+| `html_element()`  | rvest      | Selecionar um elemento         |
+| `html_text2()`    | rvest      | Extrair texto                  |
+| `html_table()`    | rvest      | Extrair tabela                 |
+
+## **Funções mais usadas**
+
+| **Função**           | **Pacote** | **Para que serve**             |
+|----------------------|------------|--------------------------------|
+| `html_attr()`        | rvest      | Extrair atributo               |
+| `bow()` / `scrape()` | polite     | Scraping ético                 |
+| `request()`          | httr2      | Requisição HTTP                |
+| `fromJSON()`         | jsonlite   | Converter JSON para data frame |
+
+# **Recursos adicionais**
+
+## **Documentação e referências**
+
+-   **rvest:** [rvest.tidyverse.org](https://rvest.tidyverse.org/)
+-   **polite:** [dmi3kno.github.io/polite](https://dmi3kno.github.io/polite/)
+-   **httr2:** [httr2.r-lib.org](https://httr2.r-lib.org/)
+-   **IBGE API:** [servicodados.ibge.gov.br/api/docs](https://servicodados.ibge.gov.br/api/docs/)
+-   **SIDRA:** [sidra.ibge.gov.br](https://sidra.ibge.gov.br/)
+-   **SelectorGadget:** [selectorgadget.com](https://selectorgadget.com/)
+
+# **Conclusão**
+
+## **Principais aprendizados**
+
+::: incremental
+-   Web scraping é uma ferramenta poderosa para coletar dados públicos
+-   O `rvest` torna o processo simples e integrado ao tidyverse
+-   Seletores CSS são a chave para extrair o elemento certo
+-   Conteúdo dinâmico (JavaScript) exige API ou ferramentas específicas
+-   A limpeza dos dados é tão importante quanto a coleta
+-   Ética e respeito ao servidor são inegociáveis
+:::
+
+## **Próximos passos**
+
+::: incremental
+1.  Praticar com o site `quotes.toscrape.com`
+2.  Explorar a API do IBGE com diferentes endpoints
+3.  Aprofundar no pacote `sidrar` para dados tabulares
+4.  Combinar scraping com visualizações em ggplot2
+:::
+
+## **Obrigada!**
+
+![Imagem: Allison Horst.](imagens/comunidade.png){fig-align="center" width="449"}
+
+**Continue praticando e explorando!**
+
+***Esta apresentação é parte do projeto `Café com R!` É OPEN, USE, COMPARTILHE!***
+
+------------------------------------------------------------------------
+
+## **Assine o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> **Que cada gole desperte uma nova ideia.**
+>
+> **Que cada script abra uma nova conversa.**
+>
+> **Que o Café com R, se torne um ponto de encontro nosso!**
