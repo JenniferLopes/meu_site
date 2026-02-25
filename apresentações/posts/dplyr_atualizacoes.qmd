@@ -1,0 +1,639 @@
+---
+title: "Aula 12. Atualizações no pacote dplyr"
+subtitle: "Novas funções 1.2.0"
+categories: [R, dplyr, Tidyverse, Tutorial]
+image: imagens/dplyr.png
+description: "Tutorial prático das novas funções do dplyr usando o dataset CO2."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+editor: visual
+---
+
+## **Democratização**
+
+> **Use, compartilhe, a aula está no github dentro do meu site.**
+
+![**Aproveitem muito!!! Ahhh essa é a meguy, minha gatinha linda, ela está na logo do café com R!**](imagens/meguy.jpg){fig-align="center" width="523"}
+
+## Códigos dos slides
+
+> Todos os códigos da aula estão funcionais. Prontos para reproduzir.
+>
+> -   Adicionei o código dos slides em **gist (no GitHub)** para facilitar a prática.
+>
+> -   **Link do gist: <https://gist.github.com/jenniferlopes/>**
+
+## **Objetivos da apresentação**
+
+::: incremental
+-   **Conhecer as funções novas do dplyr 1.2.0**
+-   **Entender o que mudou em relação à versão 1.1.0**
+-   **Aplicar cada função com exemplos do dataset CO2**
+-   **Substituir padrões antigos por código mais limpo**
+-   **Ganhar confiança para usar o dplyr no dia a dia**
+:::
+
+## Pacote dplyr
+
+[![Clique na imagem e acesse o site da documentação do pacote.](imagens/dplyr.png){fig-align="center"}](https://dplyr.tidyverse.org/)
+
+## O que é o `dplyr`?
+
+-   `dplyr` é um dos principais pacotes do ecossistema tidyverse para manipulação de dados em R.
+
+-   Ele foi projetado para tornar operações em tabelas mais legíveis, rápidas e consistentes.
+
+-   `select()` seleciona colunas \| `filter()` filtra linhas
+
+-   `mutate()` cria ou transforma variáveis \| `summarise()` agrega resultados
+
+-   `arrange()` ordena dados \| `group_by()` define agrupamentos
+
+# Uso do pacote para:
+
+-   Sintaxe clara e encadeável com `|>`
+
+-   Alta performance em grandes bases
+
+-   Integração direta com bancos via `dbplyr`
+
+-   Código mais declarativo e menos propenso a erro
+
+## **O que mudou no dplyr 1.2.0?**
+
+A versão 1.2.0 trouxe **dois conjuntos principais** de novidades:
+
+::::: columns
+::: {.column width="50%"}
+**Família filter()**
+
+-   `filter_out()` - remover linhas
+-   `when_any()` - condições com `|`
+-   `when_all()` - todas as condições
+:::
+
+::: {.column width="50%"}
+**Família de recodificação**
+
+-   `recode_values()` - novo padrão
+-   `replace_values()` - atualização parcial
+-   `replace_when()` - substituição condicional
+:::
+:::::
+
+## **O que mudou no dplyr 1.2.0?**
+::: callout-warning
+`case_match()` foi **soft-depreciado** no 1.2.0. O substituto oficial é `recode_values()`.
+:::
+
+# **O dataset CO2**
+
+## **O que é o CO2?**
+
+O dataset `CO2` está disponível nativamente no R. Contém dados de um experimento sobre absorção de CO2 por plantas de capim.
+
+::: incremental
+-   **Plant:** identificador da planta (Qn1 a Mn3 - 12 plantas)
+-   **Type:** origem da planta - Quebec ou Mississippi
+-   **Treatment:** condição - chilled (frio) ou nonchilled
+-   **conc:** concentração de CO2 no ambiente (mL/L)
+-   **uptake:** taxa de absorção de CO2 (umol/m² s)
+:::
+
+## **Carregando e conhecendo os dados**
+
+```{r}
+#| eval: true
+#| echo: true
+library(rlang)
+library(dplyr)
+library(ggplot2)
+
+dados <- as_tibble(CO2)
+
+glimpse(dados)
+```
+
+## **Resumo inicial**
+
+```{r}
+#| eval: true
+#| echo: true
+
+dados |>
+  group_by(Type, Treatment) |>
+  summarise(
+    n            = n(),
+    uptake_medio = round(mean(uptake), 2),
+    uptake_max   = max(uptake),
+    .groups      = "drop")
+```
+
+
+```{r}
+#| eval: true
+#| echo: true
+#| include: false
+# **Paleta Café com R**
+paleta_cafe <- c(
+  "#3E2723", "#5D4037", "#6D4C41",
+  "#8D6E63", "#A1887F", "#BCAAA4",
+  "#D7CCC8", "#4E342E", "#795548",
+  "#A9746E")
+```
+
+# **Função 1 - filter_out()**
+
+## **O problema com filter() para remover linhas**
+
+`filter()` foi projetado para **manter** linhas. Quando queremos **remover**, a lógica se inverte e os NAs se tornam um problema.
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Queremos remover plants com uptake abaixo de 20
+# Com filter(), somos forçados a negar a condição
+dados |>
+  filter(!(uptake < 20)) |>
+  nrow()
+```
+
+# **Função 1 - filter_out()**
+::: callout-note
+Quando há `NA`, `filter(!(condição))` remove as linhas com `NA` também - comportamento inesperado e silencioso.
+:::
+
+## **filter_out() - a solução**
+
+`filter_out()` foi criado para **remover linhas** com a mesma naturalidade que `filter()` mantém linhas. Com `NA`, ele trabalha **a seu favor**: não remove o que não sabe.
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Removendo plants com uptake abaixo de 20
+dados |>
+  filter_out(uptake < 20) |>
+  nrow()
+```
+
+## **filter_out() - comparando com filter()**
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Removendo plantas com tratamento chilled E uptake baixo
+dados |>
+  filter_out(
+    Treatment == "chilled",
+    uptake < 25) |>
+  count(Treatment)
+```
+
+::: callout-tip
+## Dica
+
+Com `filter_out()`, condições separadas por vírgula são combinadas com `&` - assim como no `filter()`. Se qualquer condição for `NA`, a linha **não** é removida.
+:::
+
+# **Função 2 - when_any() e when_all()**
+
+## **O problema de combinar condições com OR**
+
+`filter()` combina condições com `&` (E). Para usar `|` (OU), o código fica verboso e difícil de ler.
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Queremos: plantas de Quebec com uptake alto
+# OU plantas de Mississippi com concentração máxima
+dados |>
+  filter(
+    (Type == "Quebec" & uptake > 40) |
+    (Type == "Mississippi" & conc == 1000)) |>
+  count(Type)
+```
+
+## **when_any() - condições combinadas com OR**
+
+`when_any()` aceita condições separadas por vírgula e as combina com `|`. O código fica muito mais legível.
+
+```{r}
+#| eval: true
+#| echo: true
+
+dados |>
+  filter(when_any(
+    Type == "Quebec"      & uptake > 40,
+    Type == "Mississippi" & conc == 1000)) |>
+  count(Type)
+```
+
+## **when_all() - todas as condições devem ser TRUE**
+
+`when_all()` retorna `TRUE` somente quando **todas** as condições são satisfeitas ao mesmo tempo.
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Plantas onde uptake é alto E conc é alta E tratamento é nonchilled
+dados |>
+  filter(when_all(
+    uptake > 35,
+    conc   > 500,
+    Treatment == "nonchilled")) |>
+  select(Plant, Type, Treatment, conc, uptake)
+```
+
+## **when_any() fora do filter()**
+
+`when_any()` e `when_all()` são funções vetoriais - funcionam em qualquer contexto, não apenas no `filter()`.
+
+```{r}
+#| eval: true
+#| echo: true
+
+dados |>
+  mutate(
+    destaque = when_any(
+      uptake > 40,
+      conc == 1000)) |>
+  count(destaque)
+```
+
+# **Função 3 - recode_values()**
+
+## **O problema com case_when() para recodificar**
+
+`case_when()` repete a variável em cada linha quando você está apenas mapeando valores.
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Padrão antigo - Type == aparece em cada linha
+dados |>
+  mutate(
+    origem = case_when(
+      Type == "Quebec"      ~ "Canada",
+      Type == "Mississippi" ~ "Estados Unidos")) |>
+  distinct(Type, origem)
+```
+
+## **recode_values() - o novo padrão**
+
+`recode_values()` recebe a variável uma vez e mapeia os valores diretamente. Mais limpo, mais legível.
+
+```{r}
+#| eval: true
+#| echo: true
+
+dados |>
+  mutate(
+    origem = Type |>
+      recode_values(
+        "Quebec"      ~ "Canada",
+        "Mississippi" ~ "Estados Unidos")) |>
+  distinct(Type, origem)
+```
+
+## **recode_values() - com lookup table**
+
+Uma das novidades mais importantes: suporte direto a tabelas de mapeamento via `from` e `to`.
+
+```{r}
+#| eval: true
+#| echo: true
+
+lookup <- tibble::tribble(
+  ~de,            ~para,
+  "Quebec",       "Canada",
+  "Mississippi",  "Estados Unidos",
+  "chilled",      "Resfriado",
+  "nonchilled",   "Temperatura normal")
+
+dados |>
+  mutate(
+    origem    = recode_values(Type,
+                  from = lookup$de[1:2],
+                  to   = lookup$para[1:2]),
+    condicao  = recode_values(Treatment,
+                  from = lookup$de[3:4],
+                  to   = lookup$para[3:4])) |>
+  distinct(Type, Treatment, origem, condicao)
+```
+
+## **recode_values() - unmatched = "error"**
+
+Para programação defensiva: erro imediato se algum valor não for mapeado.
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Exemplo com valor não previsto no mapeamento
+dados_teste <- dados |>
+  mutate(Type = if_else(
+    row_number() == 1, "Desconhecido", as.character(Type)))
+
+tryCatch(
+  dados_teste |>
+    mutate(
+      origem = recode_values(Type,
+        "Quebec"      ~ "Canada",
+        "Mississippi" ~ "Estados Unidos",
+        unmatched     = "error")),
+  error = function(e) conditionMessage(e))
+```
+
+# **Função 4 - replace_values()**
+
+## **Quando usar replace_values()**
+
+`replace_values()` é para **atualização parcial** de uma coluna existente - quando você quer alterar apenas alguns valores, mantendo o restante intacto.
+
+::: incremental
+-   `recode_values()` cria uma coluna nova (pode ter tipo diferente)
+-   `replace_values()` atualiza a coluna no lugar (tipo sempre igual)
+-   É type-stable: a saída tem sempre o mesmo tipo que a entrada
+-   Pipe-friendly: o primeiro argumento é a variável sendo atualizada
+:::
+
+## **replace_values() - padronizando nomes**
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Simulando nomes inconsistentes de plantas
+dados_teste <- dados |>
+  mutate(Plant = as.character(Plant)) |>
+  mutate(Plant = if_else(Plant == "Qn1", "QN1", Plant))
+
+dados_teste |>
+  mutate(
+    Plant = Plant |>
+      replace_values("QN1" ~ "Qn1")) |>
+  distinct(Plant) |>
+  head(5)
+```
+
+## **replace_values() - substituindo NAs**
+
+`replace_values()` cobre casos que antes exigiam `coalesce()`, `na_if()` ou `replace_na()`.
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Criando uptake com alguns NAs para demonstração
+dados_na <- dados |>
+  mutate(uptake = if_else(uptake < 15, NA_real_, uptake))
+
+# Substituindo NA por 0
+dados_na |>
+  mutate(uptake = replace_values(uptake, NA ~ 0)) |>
+  filter(is.na(uptake) | uptake == 0) |>
+  nrow()
+```
+
+## **replace_values() - múltiplas substituições**
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Padronizando múltiplos valores problemáticos de uma só vez
+dados |>
+  mutate(
+    Type_limpo = as.character(Type) |>
+      replace_values(
+        c("Quebec", "QUEBEC")      ~ "Quebec",
+        c("Mississippi", "MISS")   ~ "Mississippi")) |>
+  distinct(Type, Type_limpo)
+```
+
+# **Função 5 - replace_when()**
+
+## **O que é replace_when()**
+
+`replace_when()` é o complemento de `case_when()` para substituições parciais. Enquanto `case_when()` recria a coluna inteira, `replace_when()` altera apenas as linhas que satisfazem a condição.
+
+::: incremental
+-   `case_when()` → recria a coluna do zero (recodificação)
+-   `replace_when()` → atualiza apenas as linhas afetadas (substituição)
+-   Mais seguro: linhas não cobertas pela condição ficam intactas
+-   Pipe-friendly e type-stable
+:::
+
+## **replace_when() - ajuste condicional de valores**
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Corrigindo uptake de plantas resfriadas que parecem outliers
+dados |>
+  mutate(
+    uptake_ajustado = uptake |>
+      replace_when(
+        Treatment == "chilled" & uptake > 40 ~ uptake * 0.95,
+        Treatment == "chilled" & uptake < 10 ~ uptake * 1.10)) |>
+  filter(Treatment == "chilled") |>
+  select(Plant, Treatment, uptake, uptake_ajustado) |>
+  head(8)
+```
+
+## **replace_when() x case_when()**
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Comparando: case_when() exige .default para manter os demais valores
+dados |>
+  mutate(
+    # Com case_when() - precisa de .default = uptake
+    uptake_cw = case_when(
+      uptake > 40 ~ uptake * 0.9,
+      .default    = uptake),
+    # Com replace_when() - o .default é automático
+    uptake_rw = uptake |>
+      replace_when(uptake > 40 ~ uptake * 0.9)) |>
+  filter(uptake > 40) |>
+  select(Plant, uptake, uptake_cw, uptake_rw) |>
+  head(5)
+```
+
+# **Comparativo - antigo x novo**
+
+## **O que mudou na família filter()**
+
+| **Antes**        | **dplyr 1.2.0**                  |
+|--------------------------|----------------------------------|
+| `filter(!(condição))`    | `filter_out(condição)`           |
+| `filter(cond1 \| cond2)` | `filter(when_any(cond1, cond2))` |
+| `filter(cond1 & cond2)`  | `filter(when_all(cond1, cond2))` |
+
+## **O que mudou na família de recodificação**
+
+| **Antes**              | **dplyr 1.2.0**    | **Para que serve**       |
+|------------------------|------------------------|------------------------|
+| `case_when()` com `==`         | `recode_values()`  | Recodificar por valores  |
+| `case_when()` + `.default = x` | `replace_when()`   | Substituição condicional |
+| `coalesce()` / `na_if()`       | `replace_values()` | Substituição parcial     |
+| `case_match()`                 | `recode_values()`  | Soft-depreciado em 1.2.0 |
+
+# **Aplicação completa**
+
+## **Análise encadeada com as novas funções**
+
+Usando `filter_out()`, `recode_values()`, `replace_when()` e `when_any()` juntos:
+
+```{r}
+#| eval: true
+#| echo: true
+
+analise <- dados |>
+  # Remover concentrações muito baixas e plantas sem registro
+  filter_out(conc < 100) |>
+  # Recodificar origem com lookup
+  mutate(
+    origem = Type |>
+      recode_values(
+        "Quebec"      ~ "Canada",
+        "Mississippi" ~ "EUA"),
+    condicao = Treatment |>
+      recode_values(
+        "chilled"    ~ "Resfriada",
+        "nonchilled" ~ "Normal"))
+```
+
+## **Análise encadeada - continuação**
+
+```{r}
+#| eval: true
+#| echo: true
+
+analise |>
+  # Ajustar uptake de plantas em condição extrema
+  mutate(
+    uptake_adj = uptake |>
+      replace_when(
+        condicao == "Resfriada" & uptake < 20 ~ uptake * 1.05)) |>
+  # Destacar observações notáveis
+  filter(when_any(
+    uptake_adj > 40,
+    conc == 1000 & condicao == "Resfriada")) |>
+  count(origem, condicao)
+```
+
+## **Visualização - Absorção de CO2 por concentração e condição**
+
+```{r}
+#| eval: true
+#| echo: true
+
+grafico1 <- analise |>
+  ggplot(aes(
+    x    = factor(conc),
+    y    = uptake,
+    fill = condicao)) +
+  geom_boxplot(alpha = 0.85) +
+  scale_fill_manual(values = c(
+    "Resfriada" = "#5D4037",
+    "Normal"    = "#A9746E")) +
+  facet_wrap(~origem) +
+  labs(
+    title   = "Absorção de CO2 por concentração e condição",
+    x       = "Concentração de CO2 (mL/L)",
+    y       = "Absorção (umol/m² s)",
+    fill    = "Condição",
+    caption = "Fonte: dataset CO2 (R base) | Café com R.") +
+  theme_classic(base_size = 12) +
+  theme(
+    plot.title      = element_text(face = "bold", color = "#3E2723"),
+    strip.text      = element_text(face = "bold", color = "#4E342E"),
+    legend.position = "bottom")
+```
+
+## **Visualização - Absorção de CO2 por concentração e condição**
+```{r}
+grafico1
+```
+
+
+
+# **Referências**
+
+## **Documentação**
+
+-   **dplyr 1.2.0 release notes:** [dplyr.tidyverse.org/news](https://dplyr.tidyverse.org/news/index.html)
+-   **Blog Posit:** [tidyverse.org/blog](https://www.tidyverse.org/blog/)
+-   **dplyr cheat sheet:** [posit.co/resources/cheatsheets](https://posit.co/resources/cheatsheets/)
+
+# **Conclusão**
+
+## **Principais aprendizados**
+
+::: incremental
+-   `filter_out()` resolve o problema clássico de remover linhas com NAs de forma segura
+-   `when_any()` e `when_all()` tornam condições com `|` legíveis e explícitas
+-   `recode_values()` substitui `case_match()` e `case_when()` para mapeamento de valores
+-   `replace_values()` cobre `coalesce()`, `na_if()` e `replace_na()` em uma só função
+-   `replace_when()` atualiza parcialmente colunas sem precisar de `.default`
+:::
+
+## **O que continua válido da versão 1.1.0**
+
+::: incremental
+-   `.by` para agrupamento inline sem `ungroup()`
+-   `reframe()` para múltiplas linhas por grupo
+-   `pick()` para selecionar colunas dentro de data-masking
+-   `if_any()` e `if_all()` para filtros multi-coluna
+-   `consecutive_id()` para identificar blocos sequenciais
+-   `cross_join()` para produto cartesiano explícito
+:::
+
+## **Próximos passos**
+
+::: incremental
+1.  Instalar `dplyr 1.2.0` com `install.packages("dplyr")`
+2.  Substituir `filter(!(cond))` por `filter_out(cond)` nos scripts existentes
+3.  Migrar `case_match()` para `recode_values()` - está soft-depreciado
+4.  Explorar `replace_values()` como substituto de `coalesce()` e `na_if()`
+5.  Acompanhar o changelog em [dplyr.tidyverse.org/news](https://dplyr.tidyverse.org/news)
+:::
+
+## **Obrigada!**
+
+![Imagem: Allison Horst.](imagens/comunidade.png){fig-align="center" width="449"}
+
+**Continue praticando e explorando!**
+
+***Esta apresentação é parte do projeto `Café com R!` É OPEN, USE, COMPARTILHE!***
+
+------------------------------------------------------------------------
+
+## **Acompanhe o Café com R**
+
+**Fique por dentro das aulas, conteúdos, newsletter!**
+
+> **Que cada gole desperte uma nova ideia.**
+>
+> **Que cada script abra uma nova conversa.**
+>
+> **Que o Café com R, se torne um ponto de encontro nosso!**

@@ -788,7 +788,7 @@
     "href": "cafecomr/posts/02_12_dose4.html#pacotes-essenciais-no-r",
     "title": "Café da Semana☕",
     "section": "Pacotes essenciais no R",
-    "text": "Pacotes essenciais no R\n\ntidyr : Organizando seus dados\nO tidyr é o pacote especialista em transformar dados “bagunçados” em formato tidy (organizado). Se você já recebeu planilhas com dados espalhados por várias colunas quando deveriam estar em linhas (ou vice-versa), este é o pacote que vai salvar seu dia.\nPrincipais funções:\n\npivot_longer(): transforma dados de formato “wide” para “long”\npivot_wider(): o inverso, de “long” para “wide”\nseparate(): separa uma coluna em várias\nunite(): une várias colunas em uma\ndrop_na(): remove linhas com valores faltantes\n\nExemplo:\n\n\nCode\nlibrary(tidyr)\nlibrary(dplyr)\n\n# Dados em formato \"wide\"\ndados_wide &lt;- tibble(\n  planta = c(\"A\", \"B\", \"C\"),\n  jan = c(12, 15, 14),\n  fev = c(13, 16, 15),\n  mar = c(14, 17, 16)\n)\n\n# Transformando para formato \"long\" (tidy)\ndados_long &lt;- dados_wide |&gt;\n  pivot_longer(\n    cols = jan:mar,\n    names_to = \"mes\",\n    values_to = \"crescimento\")\n\nprint(dados_long)\n\n\n# A tibble: 9 × 3\n  planta mes   crescimento\n  &lt;chr&gt;  &lt;chr&gt;       &lt;dbl&gt;\n1 A      jan            12\n2 A      fev            13\n3 A      mar            14\n4 B      jan            15\n5 B      fev            16\n6 B      mar            17\n7 C      jan            14\n8 C      fev            15\n9 C      mar            16\n\n\nQuando usar: Sempre que seus dados não estiverem no formato “uma observação por linha, uma variável por coluna”. Fundamental antes de qualquer análise ou visualização.\nSalve já essas funções se você ainda não usa!\n\n\n\nreadr: Importação de dados\nO readr é o pacote do tidyverse para ler e escrever dados tabulares. Ele é muito mais rápido e consistente que as funções base do R, além de detectar automaticamente os tipos de dados.\nPrincipais funções:\n\nread_csv(): lê arquivos CSV\nread_delim(): lê arquivos com delimitadores customizados\nread_tsv(): lê arquivos separados por tabulação\nwrite_csv(): escreve arquivos CSV\nread_rds() / write_rds(): formato nativo do R\n\nExemplo:\n\n\nCode\nlibrary(readr)\n\n# Lendo um CSV\ndados &lt;- read_csv(\"meus_dados.csv\")\n\n# Especificando tipos de coluna\ndados &lt;- read_csv(\n  \"meus_dados.csv\",\n  col_types = cols(\n    id = col_integer(),\n    nome = col_character(),\n    data = col_date(format = \"%Y-%m-%d\"),\n    valor = col_double()))\n\n# Salvando processamento\nwrite_csv(dados_processados, \"dados_limpos.csv\")\n\n# Salvando em formato R nativo (mais rápido)\nwrite_rds(dados_processados, \"dados.rds\")\n\n\nQuando usar: Logo no início de qualquer projeto, na importação dos dados. Economiza tempo e evita problemas de encoding e tipos de dados.\n\n\n\nstringr : Manipulação de textos\nO stringr torna a manipulação de strings no R muito mais intuitiva. Todas as funções começam com str_ e trabalham de forma consistente, diferente das funções base do R.\nPrincipais funções:\n\nstr_detect(): detecta padrões\nstr_extract(): extrai padrões\nstr_replace(): substitui texto\nstr_trim(): remove espaços\nstr_to_lower() / str_to_upper(): converte maiúsculas/minúsculas\n\nExemplo:\n\n\nCode\nlibrary(stringr)\n\n\nWarning: pacote 'stringr' foi compilado no R versão 4.5.2\n\n\nCode\n# Limpeza de nomes\nnomes &lt;- c(\"  Maria Silva  \", \"JOÃO SANTOS\", \"Ana_Paula\")\n\nnomes_limpos &lt;- nomes |&gt;\n  str_trim() |&gt;                    # Remove espaços\n  str_to_title() |&gt;                # Padroniza capitalização\n  str_replace_all(\"_\", \" \")        # Substitui underscores\n\nprint(nomes_limpos)\n\n\n[1] \"Maria Silva\" \"João Santos\" \"Ana paula\"  \n\n\nCode\n# Extração de informações\nemails &lt;- c(\"joao@gmail.com\", \"maria@hotmail.com\", \"invalido\")\n\ndominios &lt;- str_extract(emails, \"(?&lt;=@).*$\")\ntem_email_valido &lt;- str_detect(emails, \"@.*\\\\.\")\n\nprint(dominios)\n\n\n[1] \"gmail.com\"   \"hotmail.com\" NA           \n\n\nCode\nprint(tem_email_valido)\n\n\n[1]  TRUE  TRUE FALSE\n\n\nQuando usar: Sempre que trabalhar com dados textuais : limpeza de nomes, extração de informações, padronização, validação de formatos.\n\n\n\nlubridate : Trabalhando com datas\nO lubridate simplifica completamente o trabalho com datas e horários no R. Parsing, manipulação, extração de componentes : tudo fica mais fácil.\nPrincipais funções:\n\nymd(), dmy(), mdy(): parsing de datas\nyear(), month(), day(): extração de componentes\nfloor_date(), ceiling_date(): arredondamento\nOperações aritméticas com datas\ninterval(), duration(), period(): intervalos de tempo\n\nExemplo:\n\n\nCode\nlibrary(lubridate)\n\n# Parsing de datas em diferentes formatos\ndata1 &lt;- ymd(\"2025-11-29\")\ndata2 &lt;- dmy(\"29/11/2025\")\ndata3 &lt;- mdy(\"11-29-2025\")\n\nprint(paste(\"data1:\", data1))\n\n\n[1] \"data1: 2025-11-29\"\n\n\nCode\nprint(paste(\"data2:\", data2))\n\n\n[1] \"data2: 2025-11-29\"\n\n\nCode\nprint(paste(\"data3:\", data3))\n\n\n[1] \"data3: 2025-11-29\"\n\n\nCode\n# Extração de componentes\nhoje &lt;- today()\nano_atual &lt;- year(hoje)\nmes_atual &lt;- month(hoje, label = TRUE)\ndia_semana &lt;- wday(hoje, label = TRUE)\n\nprint(paste(\"Hoje:\", hoje))\n\n\n[1] \"Hoje: 2026-02-17\"\n\n\nCode\nprint(paste(\"Dia da semana:\", dia_semana))\n\n\n[1] \"Dia da semana: ter\"\n\n\nCode\n# Operações com datas\ninicio &lt;- ymd(\"2025-01-01\")\nfim &lt;- ymd(\"2025-12-31\")\ndias_decorridos &lt;- as.numeric(fim - inicio)\n\nprint(paste(\"Dias no ano:\", dias_decorridos))\n\n\n[1] \"Dias no ano: 364\"\n\n\nQuando usar: Séries temporais, análise de eventos, cálculos de prazos, agrupamentos temporais.\n\n\n\nggplot2 : Visualização de dados\nO ggplot2 é o padrão-ouro para visualização de dados no R. Baseado na “gramática de gráficos”, permite criar visualizações sofisticadas de forma incremental e intuitiva.\nPrincipais componentes:\n\nggplot(): inicializa o gráfico\naes(): mapeamento estético (x, y, color, etc.)\ngeom_*(): tipo de gráfico (point, line, bar, etc.)\nfacet_*(): painéis múltiplos\ntheme_*(): aparência geral\nscale_*(): controle de escalas\n\nExemplo:\n\n\nCode\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# Usando dados CO2 do R\ndata(CO2)\n\n# Gráfico de dispersão com linha de tendência\nggplot(CO2, aes(x = conc, y = uptake, color = Type)) +\n  geom_point(alpha = 0.6, size = 2) +\n  geom_smooth(method = \"loess\", se = TRUE) +\n  facet_wrap(~Treatment) +\n  scale_color_manual(values = c(\"#224573\", \"#6B4F4F\")) +\n  theme_classic() +\n  labs(\n    title = \"Absorção de CO2 por concentração\",\n    x = \"Concentração de CO2 (mL/L)\",\n    y = \"Absorção de CO2\",\n    color = \"Tipo\", \n    caption = \"Jennifer Lopes - Café com R.\")\n\n\n\n\n\n\n\n\n\nQuando usar: Sempre! Visualização é fundamental em todas as etapas: exploração, análise e comunicação de resultados.\n\n\n\ndata.table : Performance com grandes volumes\nPara quem trabalha com datasets grandes, o data.table é imbatível em velocidade. Sua sintaxe concisa pode parecer estranha no início, mas a performance compensa.\nPrincipais características:\n\nExtremamente rápido para filtros, agregações e joins\nModifica dados in-place (economia de memória)\nSintaxe: DT[i, j, by] onde i = linhas, j = colunas, by = agrupamento\nCompatível com dplyr via dtplyr\n\nExemplo:\n\n\nCode\nlibrary(data.table)\n\n# Usando dados mtcars\nDT &lt;- as.data.table(mtcars)\n\n# Filtrar e sumarizar\nresultado &lt;- DT[mpg &gt; 20, \n                .(media_hp = mean(hp),\n                  total = .N), \n                by = .(cyl, am)]\n\nprint(resultado)\n\n\n     cyl    am  media_hp total\n   &lt;num&gt; &lt;num&gt;     &lt;num&gt; &lt;int&gt;\n1:     6     1 110.00000     2\n2:     4     1  81.87500     8\n3:     6     0 110.00000     1\n4:     4     0  84.66667     3\n\n\nCode\n# Criar nova coluna\nDT[, hp_por_cyl := hp / cyl]\n\n# Mostrar primeiras linhas\nhead(DT[, .(mpg, cyl, hp, hp_por_cyl)])\n\n\n     mpg   cyl    hp hp_por_cyl\n   &lt;num&gt; &lt;num&gt; &lt;num&gt;      &lt;num&gt;\n1:  21.0     6   110   18.33333\n2:  21.0     6   110   18.33333\n3:  22.8     4    93   23.25000\n4:  21.4     6   110   18.33333\n5:  18.7     8   175   21.87500\n6:  18.1     6   105   17.50000\n\n\nQuando usar: Datasets com 1 milhão+ de linhas, operações repetitivas, quando performance é crítica.\n\n\n\nQuarto/RMarkdown : Relatórios reproduzíveis\nQuarto é a nova geração de documentos dinâmicos (sucessor do RMarkdown). Permite criar relatórios, apresentações, websites e livros que misturam código, resultados e narrativa.\nPrincipais recursos:\n\nMúltiplos formatos de saída (HTML, PDF, Word, etc.)\nExecução de código R, Python, Julia\nChunks de código configuráveis\nSistema de citações e referências\nTemas e templates customizáveis\n\nExemplo:\n---\ntitle: \"Relatório de Vendas\"\nauthor: \"Seu Nome\"\ndate: today\nformat: \n  html:\n    toc: true\n    theme: cosmo\nexecute:\n  echo: false\n  warning: false\n---\n\n## Análise Mensal\n\n```{r}\n#| label: fig-vendas\n#| fig-cap: \"Evolução das vendas mensais\"\n\nlibrary(ggplot2)\ndata(CO2)\nggplot(CO2, aes(x = conc, y = uptake)) +\n  geom_col(fill = \"#224573\") +\n  theme_minimal()\n```\n\nAs vendas apresentaram crescimento consistente no período.\nQuando usar: Relatórios que precisam ser atualizados regularmente, documentação de análises, compartilhamento de resultados.\n\n\n\nDBI + dbplyr : Conexão com bancos de dados\nTrabalhar diretamente com bancos SQL sem sair do R. O DBI fornece a interface de conexão e o dbplyr traduz código dplyr para SQL.\nPrincipais funções:\n\ndbConnect(): conecta ao banco\ntbl(): referencia uma tabela\ncollect(): traz dados para R\ncompute(): cria tabela temporária\nQueries dplyr traduzidas automaticamente\n\nExemplo:\n\n\nCode\nlibrary(DBI)\nlibrary(dbplyr)\n\n# Conectar ao PostgreSQL\ncon &lt;- dbConnect(\n  RPostgres::Postgres(),\n  dbname = \"vendas\",\n  host = \"localhost\",\n  user = \"usuario\",\n  password = \"senha\"\n)\n\n# Trabalhar com tabela remota\nvendas_db &lt;- tbl(con, \"vendas\")\n\n# Usar dplyr normalmente - operações acontecem no banco\nresultado &lt;- vendas_db |&gt;\n  filter(ano == 2025) |&gt;\n  group_by(produto) |&gt;\n  summarise(total = sum(valor, na.rm = TRUE)) |&gt;\n  collect()  # Traz para R apenas o resultado\n\n# Ver SQL gerado\nvendas_db |&gt;\n  filter(ano == 2025) |&gt;\n  show_query()\n\n# Sempre desconectar ao final\ndbDisconnect(con)\n\n\nQuando usar: Dados armazenados em bancos SQL, datasets muito grandes para carregar na memória.\n\n\n\nDataExplorer : Análise exploratória automática\nO DataExplorer automatiza a análise exploratória de dados (EDA), gerando relatórios completos com estatísticas descritivas, gráficos e diagnósticos.\nPrincipais funções:\n\ncreate_report(): relatório completo automático\nplot_missing(): visualiza dados faltantes\nplot_histogram(): histogramas de todas variáveis\nplot_correlation(): matriz de correlação\nintroduce(): resumo geral do dataset\n\nExemplo:\n\n\nCode\nlibrary(DataExplorer)\n\n# Usando dados iris\ndata(iris)\n\n# Visão geral dos dados\nintro &lt;- introduce(iris)\nprint(intro)\n\n\n  rows columns discrete_columns continuous_columns all_missing_columns\n1  150       5                1                  4                   0\n  total_missing_values complete_rows total_observations memory_usage\n1                    0           150                750         7976\n\n\nCode\n# Visualizar dados faltantes\nplot_missing(iris)\n\n\n\n\n\n\n\n\n\nCode\n# Visualizar distribuições\nplot_histogram(iris)\n\n\n\n\n\n\n\n\n\nQuando usar: Início de projetos, primeiro contato com novos dados, relatórios rápidos para stakeholders.\n\n\n\ntidymodels : Framework de Machine Learning\nO tidymodels é um conjunto de pacotes para modelagem preditiva que segue os princípios do tidyverse. Substitui o antigo caret com uma abordagem mais moderna.\nPrincipais pacotes:\n\nrsample: divisão de dados (treino/teste)\nrecipes: pré-processamento de dados\nparsnip: interface unificada para modelos\nworkflows: pipelines de modelagem\ntune: tuning de hiperparâmetros\nyardstick: métricas de avaliação\n\nExemplo:\n\n\nCode\nlibrary(tidymodels)\n\n# Usando dados iris para classificação\ndata(iris)\n\n# Dividir dados\nset.seed(123)\nsplit &lt;- initial_split(iris, prop = 0.8, strata = Species)\ntreino &lt;- training(split)\nteste &lt;- testing(split)\n\n# Especificar modelo\nmodelo_lr &lt;- logistic_reg() |&gt;\n  set_engine(\"glm\") |&gt;\n  set_mode(\"classification\")\n\n# Treinar modelo simples\najuste &lt;- modelo_lr |&gt;\n  fit(Species ~ Sepal.Length + Sepal.Width, data = treino)\n\n# Prever\npredicoes &lt;- predict(ajuste, teste) |&gt;\n  bind_cols(teste)\n\n# Avaliar acurácia\nacuracia &lt;- predicoes |&gt;\n  accuracy(truth = Species, estimate = .pred_class)\n\nprint(acuracia)\n\n\n# A tibble: 1 × 3\n  .metric  .estimator .estimate\n  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;\n1 accuracy multiclass     0.667\n\n\nQuando usar: Modelagem preditiva, machine learning, comparação de modelos, tuning automatizado."
+    "text": "Pacotes essenciais no R\n\ntidyr : Organizando seus dados\nO tidyr é o pacote especialista em transformar dados “bagunçados” em formato tidy (organizado). Se você já recebeu planilhas com dados espalhados por várias colunas quando deveriam estar em linhas (ou vice-versa), este é o pacote que vai salvar seu dia.\nPrincipais funções:\n\npivot_longer(): transforma dados de formato “wide” para “long”\npivot_wider(): o inverso, de “long” para “wide”\nseparate(): separa uma coluna em várias\nunite(): une várias colunas em uma\ndrop_na(): remove linhas com valores faltantes\n\nExemplo:\n\n\nCode\nlibrary(tidyr)\nlibrary(dplyr)\n\n# Dados em formato \"wide\"\ndados_wide &lt;- tibble(\n  planta = c(\"A\", \"B\", \"C\"),\n  jan = c(12, 15, 14),\n  fev = c(13, 16, 15),\n  mar = c(14, 17, 16)\n)\n\n# Transformando para formato \"long\" (tidy)\ndados_long &lt;- dados_wide |&gt;\n  pivot_longer(\n    cols = jan:mar,\n    names_to = \"mes\",\n    values_to = \"crescimento\")\n\nprint(dados_long)\n\n\n# A tibble: 9 × 3\n  planta mes   crescimento\n  &lt;chr&gt;  &lt;chr&gt;       &lt;dbl&gt;\n1 A      jan            12\n2 A      fev            13\n3 A      mar            14\n4 B      jan            15\n5 B      fev            16\n6 B      mar            17\n7 C      jan            14\n8 C      fev            15\n9 C      mar            16\n\n\nQuando usar: Sempre que seus dados não estiverem no formato “uma observação por linha, uma variável por coluna”. Fundamental antes de qualquer análise ou visualização.\nSalve já essas funções se você ainda não usa!\n\n\n\nreadr: Importação de dados\nO readr é o pacote do tidyverse para ler e escrever dados tabulares. Ele é muito mais rápido e consistente que as funções base do R, além de detectar automaticamente os tipos de dados.\nPrincipais funções:\n\nread_csv(): lê arquivos CSV\nread_delim(): lê arquivos com delimitadores customizados\nread_tsv(): lê arquivos separados por tabulação\nwrite_csv(): escreve arquivos CSV\nread_rds() / write_rds(): formato nativo do R\n\nExemplo:\n\n\nCode\nlibrary(readr)\n\n# Lendo um CSV\ndados &lt;- read_csv(\"meus_dados.csv\")\n\n# Especificando tipos de coluna\ndados &lt;- read_csv(\n  \"meus_dados.csv\",\n  col_types = cols(\n    id = col_integer(),\n    nome = col_character(),\n    data = col_date(format = \"%Y-%m-%d\"),\n    valor = col_double()))\n\n# Salvando processamento\nwrite_csv(dados_processados, \"dados_limpos.csv\")\n\n# Salvando em formato R nativo (mais rápido)\nwrite_rds(dados_processados, \"dados.rds\")\n\n\nQuando usar: Logo no início de qualquer projeto, na importação dos dados. Economiza tempo e evita problemas de encoding e tipos de dados.\n\n\n\nstringr : Manipulação de textos\nO stringr torna a manipulação de strings no R muito mais intuitiva. Todas as funções começam com str_ e trabalham de forma consistente, diferente das funções base do R.\nPrincipais funções:\n\nstr_detect(): detecta padrões\nstr_extract(): extrai padrões\nstr_replace(): substitui texto\nstr_trim(): remove espaços\nstr_to_lower() / str_to_upper(): converte maiúsculas/minúsculas\n\nExemplo:\n\n\nCode\nlibrary(stringr)\n\n\nWarning: pacote 'stringr' foi compilado no R versão 4.5.2\n\n\nCode\n# Limpeza de nomes\nnomes &lt;- c(\"  Maria Silva  \", \"JOÃO SANTOS\", \"Ana_Paula\")\n\nnomes_limpos &lt;- nomes |&gt;\n  str_trim() |&gt;                    # Remove espaços\n  str_to_title() |&gt;                # Padroniza capitalização\n  str_replace_all(\"_\", \" \")        # Substitui underscores\n\nprint(nomes_limpos)\n\n\n[1] \"Maria Silva\" \"João Santos\" \"Ana paula\"  \n\n\nCode\n# Extração de informações\nemails &lt;- c(\"joao@gmail.com\", \"maria@hotmail.com\", \"invalido\")\n\ndominios &lt;- str_extract(emails, \"(?&lt;=@).*$\")\ntem_email_valido &lt;- str_detect(emails, \"@.*\\\\.\")\n\nprint(dominios)\n\n\n[1] \"gmail.com\"   \"hotmail.com\" NA           \n\n\nCode\nprint(tem_email_valido)\n\n\n[1]  TRUE  TRUE FALSE\n\n\nQuando usar: Sempre que trabalhar com dados textuais : limpeza de nomes, extração de informações, padronização, validação de formatos.\n\n\n\nlubridate : Trabalhando com datas\nO lubridate simplifica completamente o trabalho com datas e horários no R. Parsing, manipulação, extração de componentes : tudo fica mais fácil.\nPrincipais funções:\n\nymd(), dmy(), mdy(): parsing de datas\nyear(), month(), day(): extração de componentes\nfloor_date(), ceiling_date(): arredondamento\nOperações aritméticas com datas\ninterval(), duration(), period(): intervalos de tempo\n\nExemplo:\n\n\nCode\nlibrary(lubridate)\n\n# Parsing de datas em diferentes formatos\ndata1 &lt;- ymd(\"2025-11-29\")\ndata2 &lt;- dmy(\"29/11/2025\")\ndata3 &lt;- mdy(\"11-29-2025\")\n\nprint(paste(\"data1:\", data1))\n\n\n[1] \"data1: 2025-11-29\"\n\n\nCode\nprint(paste(\"data2:\", data2))\n\n\n[1] \"data2: 2025-11-29\"\n\n\nCode\nprint(paste(\"data3:\", data3))\n\n\n[1] \"data3: 2025-11-29\"\n\n\nCode\n# Extração de componentes\nhoje &lt;- today()\nano_atual &lt;- year(hoje)\nmes_atual &lt;- month(hoje, label = TRUE)\ndia_semana &lt;- wday(hoje, label = TRUE)\n\nprint(paste(\"Hoje:\", hoje))\n\n\n[1] \"Hoje: 2026-02-25\"\n\n\nCode\nprint(paste(\"Dia da semana:\", dia_semana))\n\n\n[1] \"Dia da semana: qua\"\n\n\nCode\n# Operações com datas\ninicio &lt;- ymd(\"2025-01-01\")\nfim &lt;- ymd(\"2025-12-31\")\ndias_decorridos &lt;- as.numeric(fim - inicio)\n\nprint(paste(\"Dias no ano:\", dias_decorridos))\n\n\n[1] \"Dias no ano: 364\"\n\n\nQuando usar: Séries temporais, análise de eventos, cálculos de prazos, agrupamentos temporais.\n\n\n\nggplot2 : Visualização de dados\nO ggplot2 é o padrão-ouro para visualização de dados no R. Baseado na “gramática de gráficos”, permite criar visualizações sofisticadas de forma incremental e intuitiva.\nPrincipais componentes:\n\nggplot(): inicializa o gráfico\naes(): mapeamento estético (x, y, color, etc.)\ngeom_*(): tipo de gráfico (point, line, bar, etc.)\nfacet_*(): painéis múltiplos\ntheme_*(): aparência geral\nscale_*(): controle de escalas\n\nExemplo:\n\n\nCode\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# Usando dados CO2 do R\ndata(CO2)\n\n# Gráfico de dispersão com linha de tendência\nggplot(CO2, aes(x = conc, y = uptake, color = Type)) +\n  geom_point(alpha = 0.6, size = 2) +\n  geom_smooth(method = \"loess\", se = TRUE) +\n  facet_wrap(~Treatment) +\n  scale_color_manual(values = c(\"#224573\", \"#6B4F4F\")) +\n  theme_classic() +\n  labs(\n    title = \"Absorção de CO2 por concentração\",\n    x = \"Concentração de CO2 (mL/L)\",\n    y = \"Absorção de CO2\",\n    color = \"Tipo\", \n    caption = \"Jennifer Lopes - Café com R.\")\n\n\n\n\n\n\n\n\n\nQuando usar: Sempre! Visualização é fundamental em todas as etapas: exploração, análise e comunicação de resultados.\n\n\n\ndata.table : Performance com grandes volumes\nPara quem trabalha com datasets grandes, o data.table é imbatível em velocidade. Sua sintaxe concisa pode parecer estranha no início, mas a performance compensa.\nPrincipais características:\n\nExtremamente rápido para filtros, agregações e joins\nModifica dados in-place (economia de memória)\nSintaxe: DT[i, j, by] onde i = linhas, j = colunas, by = agrupamento\nCompatível com dplyr via dtplyr\n\nExemplo:\n\n\nCode\nlibrary(data.table)\n\n\nWarning: pacote 'data.table' foi compilado no R versão 4.5.2\n\n\nCode\n# Usando dados mtcars\nDT &lt;- as.data.table(mtcars)\n\n# Filtrar e sumarizar\nresultado &lt;- DT[mpg &gt; 20, \n                .(media_hp = mean(hp),\n                  total = .N), \n                by = .(cyl, am)]\n\nprint(resultado)\n\n\n     cyl    am  media_hp total\n   &lt;num&gt; &lt;num&gt;     &lt;num&gt; &lt;int&gt;\n1:     6     1 110.00000     2\n2:     4     1  81.87500     8\n3:     6     0 110.00000     1\n4:     4     0  84.66667     3\n\n\nCode\n# Criar nova coluna\nDT[, hp_por_cyl := hp / cyl]\n\n# Mostrar primeiras linhas\nhead(DT[, .(mpg, cyl, hp, hp_por_cyl)])\n\n\n     mpg   cyl    hp hp_por_cyl\n   &lt;num&gt; &lt;num&gt; &lt;num&gt;      &lt;num&gt;\n1:  21.0     6   110   18.33333\n2:  21.0     6   110   18.33333\n3:  22.8     4    93   23.25000\n4:  21.4     6   110   18.33333\n5:  18.7     8   175   21.87500\n6:  18.1     6   105   17.50000\n\n\nQuando usar: Datasets com 1 milhão+ de linhas, operações repetitivas, quando performance é crítica.\n\n\n\nQuarto/RMarkdown : Relatórios reproduzíveis\nQuarto é a nova geração de documentos dinâmicos (sucessor do RMarkdown). Permite criar relatórios, apresentações, websites e livros que misturam código, resultados e narrativa.\nPrincipais recursos:\n\nMúltiplos formatos de saída (HTML, PDF, Word, etc.)\nExecução de código R, Python, Julia\nChunks de código configuráveis\nSistema de citações e referências\nTemas e templates customizáveis\n\nExemplo:\n---\ntitle: \"Relatório de Vendas\"\nauthor: \"Seu Nome\"\ndate: today\nformat: \n  html:\n    toc: true\n    theme: cosmo\nexecute:\n  echo: false\n  warning: false\n---\n\n## Análise Mensal\n\n```{r}\n#| label: fig-vendas\n#| fig-cap: \"Evolução das vendas mensais\"\n\nlibrary(ggplot2)\ndata(CO2)\nggplot(CO2, aes(x = conc, y = uptake)) +\n  geom_col(fill = \"#224573\") +\n  theme_minimal()\n```\n\nAs vendas apresentaram crescimento consistente no período.\nQuando usar: Relatórios que precisam ser atualizados regularmente, documentação de análises, compartilhamento de resultados.\n\n\n\nDBI + dbplyr : Conexão com bancos de dados\nTrabalhar diretamente com bancos SQL sem sair do R. O DBI fornece a interface de conexão e o dbplyr traduz código dplyr para SQL.\nPrincipais funções:\n\ndbConnect(): conecta ao banco\ntbl(): referencia uma tabela\ncollect(): traz dados para R\ncompute(): cria tabela temporária\nQueries dplyr traduzidas automaticamente\n\nExemplo:\n\n\nCode\nlibrary(DBI)\nlibrary(dbplyr)\n\n# Conectar ao PostgreSQL\ncon &lt;- dbConnect(\n  RPostgres::Postgres(),\n  dbname = \"vendas\",\n  host = \"localhost\",\n  user = \"usuario\",\n  password = \"senha\"\n)\n\n# Trabalhar com tabela remota\nvendas_db &lt;- tbl(con, \"vendas\")\n\n# Usar dplyr normalmente - operações acontecem no banco\nresultado &lt;- vendas_db |&gt;\n  filter(ano == 2025) |&gt;\n  group_by(produto) |&gt;\n  summarise(total = sum(valor, na.rm = TRUE)) |&gt;\n  collect()  # Traz para R apenas o resultado\n\n# Ver SQL gerado\nvendas_db |&gt;\n  filter(ano == 2025) |&gt;\n  show_query()\n\n# Sempre desconectar ao final\ndbDisconnect(con)\n\n\nQuando usar: Dados armazenados em bancos SQL, datasets muito grandes para carregar na memória.\n\n\n\nDataExplorer : Análise exploratória automática\nO DataExplorer automatiza a análise exploratória de dados (EDA), gerando relatórios completos com estatísticas descritivas, gráficos e diagnósticos.\nPrincipais funções:\n\ncreate_report(): relatório completo automático\nplot_missing(): visualiza dados faltantes\nplot_histogram(): histogramas de todas variáveis\nplot_correlation(): matriz de correlação\nintroduce(): resumo geral do dataset\n\nExemplo:\n\n\nCode\nlibrary(DataExplorer)\n\n# Usando dados iris\ndata(iris)\n\n# Visão geral dos dados\nintro &lt;- introduce(iris)\nprint(intro)\n\n\n  rows columns discrete_columns continuous_columns all_missing_columns\n1  150       5                1                  4                   0\n  total_missing_values complete_rows total_observations memory_usage\n1                    0           150                750         7976\n\n\nCode\n# Visualizar dados faltantes\nplot_missing(iris)\n\n\n\n\n\n\n\n\n\nCode\n# Visualizar distribuições\nplot_histogram(iris)\n\n\n\n\n\n\n\n\n\nQuando usar: Início de projetos, primeiro contato com novos dados, relatórios rápidos para stakeholders.\n\n\n\ntidymodels : Framework de Machine Learning\nO tidymodels é um conjunto de pacotes para modelagem preditiva que segue os princípios do tidyverse. Substitui o antigo caret com uma abordagem mais moderna.\nPrincipais pacotes:\n\nrsample: divisão de dados (treino/teste)\nrecipes: pré-processamento de dados\nparsnip: interface unificada para modelos\nworkflows: pipelines de modelagem\ntune: tuning de hiperparâmetros\nyardstick: métricas de avaliação\n\nExemplo:\n\n\nCode\nlibrary(tidymodels)\n\n# Usando dados iris para classificação\ndata(iris)\n\n# Dividir dados\nset.seed(123)\nsplit &lt;- initial_split(iris, prop = 0.8, strata = Species)\ntreino &lt;- training(split)\nteste &lt;- testing(split)\n\n# Especificar modelo\nmodelo_lr &lt;- logistic_reg() |&gt;\n  set_engine(\"glm\") |&gt;\n  set_mode(\"classification\")\n\n# Treinar modelo simples\najuste &lt;- modelo_lr |&gt;\n  fit(Species ~ Sepal.Length + Sepal.Width, data = treino)\n\n# Prever\npredicoes &lt;- predict(ajuste, teste) |&gt;\n  bind_cols(teste)\n\n# Avaliar acurácia\nacuracia &lt;- predicoes |&gt;\n  accuracy(truth = Species, estimate = .pred_class)\n\nprint(acuracia)\n\n\n# A tibble: 1 × 3\n  .metric  .estimator .estimate\n  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;\n1 accuracy multiclass     0.667\n\n\nQuando usar: Modelagem preditiva, machine learning, comparação de modelos, tuning automatizado."
   },
   {
     "objectID": "cafecomr/posts/02_12_dose4.html#para-acompanhar-o-café",
@@ -2849,797 +2849,6 @@
     "text": "☕ Assine o Café com R\nFique por dentro das aulas, conteúdos, newsletter!\n\nQue cada gole desperte uma nova ideia.\nQue cada script abra uma nova conversa.\nQue o Café com R, se torne um ponto de encontro nosso!"
   },
   {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#democratização",
-    "href": "apresentações/posts/apresentacao_r_python.html#democratização",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Democratização",
-    "text": "Democratização\n\nFico feliz de construir aulas que podemos juntas(os) realizar a integração do R com outras linguagens e sistemas.\n\n\nAproveitem muito!!! Ahhh essa é a meguy, minha gatinha linda!"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#códigos-dos-slides",
-    "href": "apresentações/posts/apresentacao_r_python.html#códigos-dos-slides",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Códigos dos slides",
-    "text": "Códigos dos slides\n\nTodos os códigos da aula estão funcionais. Prontos para reproduzir."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#objetivos-da-apresentação",
-    "href": "apresentações/posts/apresentacao_r_python.html#objetivos-da-apresentação",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Objetivos da apresentação",
-    "text": "Objetivos da apresentação\n\nCompreender a integração entre R e Python\nConfigurar o ambiente de trabalho\nExecutar código Python no RStudio\nTransferir dados entre as linguagens\nAplicar em casos práticos"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#por-que-integrar-r-e-python",
-    "href": "apresentações/posts/apresentacao_r_python.html#por-que-integrar-r-e-python",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Por que integrar R e Python?",
-    "text": "Por que integrar R e Python?\n\n\nVantagens do R\n\nAnálise estatística\nVisualização com ggplot2\nTidyverse para manipulação de dados\nQuarto e RMarkdown\n\n\nVantagens do Python\n\nMachine learning (scikit-learn)\nDeep learning (TensorFlow, PyTorch)\nWeb scraping\nProcessamento de linguagem natural"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#o-pacote-reticulate",
-    "href": "apresentações/posts/apresentacao_r_python.html#o-pacote-reticulate",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "O Pacote Reticulate",
-    "text": "O Pacote Reticulate\nReticulate permite executar código Python dentro do ambiente R.\n\nDesenvolvido pela Posit (RStudio)\nTradução bidirecional de objetos\nCompartilhamento de dados entre linguagens\nSuporte a ambientes virtuais Python\nAcesse a documentação"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#estrutura-da-integração",
-    "href": "apresentações/posts/apresentacao_r_python.html#estrutura-da-integração",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Estrutura da integração",
-    "text": "Estrutura da integração\n\n\n\n\n\nflowchart LR\n    A[R Environment] &lt;--&gt;|reticulate| B[Python Environment]\n    B --&gt; C[pandas]\n    B --&gt; D[numpy]\n    B --&gt; E[scikit-learn]\n    A --&gt; F[ggplot2]\n    A --&gt; G[dplyr]\n    A --&gt; H[tidyr]"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#pré-requisitos",
-    "href": "apresentações/posts/apresentacao_r_python.html#pré-requisitos",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Pré-requisitos",
-    "text": "Pré-requisitos\n\nR instalado (versão 4.0 ou superior)\nRStudio (versão recente recomendada)\nPython (versão 3.8 ou superior)\nQuarto (para renderizar documentos .qmd)"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#instalação-do-python",
-    "href": "apresentações/posts/apresentacao_r_python.html#instalação-do-python",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Instalação do Python",
-    "text": "Instalação do Python\nOpções de instalação:\n\nSite oficial: python.org/downloads\nAnaconda: Distribuição completa com pacotes científicos\nMiniconda: Versão minimalista do Anaconda\n\n\n\n\n\n\n\nDica\n\n\nAnote o caminho de instalação do Python para configuração posterior."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#instalação-do-quarto",
-    "href": "apresentações/posts/apresentacao_r_python.html#instalação-do-quarto",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Instalação do Quarto",
-    "text": "Instalação do Quarto\n\nAcesse: quarto.org/docs/get-started\nBaixe o instalador para seu sistema operacional\nExecute a instalação padrão\n\n\n\n\n\n\n\nNote\n\n\nO Quarto é independente do R e pode ser usado com Python, Julia e Observable."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#instalação-do-reticulate-no-r",
-    "href": "apresentações/posts/apresentacao_r_python.html#instalação-do-reticulate-no-r",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Instalação do Reticulate no R",
-    "text": "Instalação do Reticulate no R\n\n# Instalar o pacote reticulate\ninstall.packages(\"reticulate\")\n\n# Carregar o pacote\nlibrary(reticulate)"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#verificar-configuração-do-python",
-    "href": "apresentações/posts/apresentacao_r_python.html#verificar-configuração-do-python",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Verificar configuração do Python",
-    "text": "Verificar configuração do Python\n\nlibrary(reticulate)\n\n# Verificar qual Python está sendo usado\npy_config()\n\nSaída esperada: Informações sobre versão, caminho e pacotes disponíveis."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#definir-python-manualmente",
-    "href": "apresentações/posts/apresentacao_r_python.html#definir-python-manualmente",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Definir Python manualmente",
-    "text": "Definir Python manualmente\nSe o R não detectar o Python automaticamente:\n\n# Windows\nuse_python(\"C:/Python311/python.exe\", required = TRUE)\n\n\n\n\n\n\n\nWarning\n\n\nUse o caminho completo para o executável do Python."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#criar-ambiente-virtual-recomendado",
-    "href": "apresentações/posts/apresentacao_r_python.html#criar-ambiente-virtual-recomendado",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Criar ambiente virtual (recomendado)",
-    "text": "Criar ambiente virtual (recomendado)\n\n# Criar ambiente virtual\nvirtualenv_create(\"r-reticulate\")\n\n# Usar o ambiente virtual\nuse_virtualenv(\"r-reticulate\")\n\n# Verificar\npy_config()\n\nVantagem: Isolamento de dependências e evita conflitos."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#instalar-pacotes-python-via-r",
-    "href": "apresentações/posts/apresentacao_r_python.html#instalar-pacotes-python-via-r",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Instalar pacotes Python via R",
-    "text": "Instalar pacotes Python via R\n\n# Instalar pacotes necessários\npy_install(c(\"numpy\", \"pandas\", \"matplotlib\"))\n\n# Verificar instalação - Retorna True ou False\npy_module_available(\"pandas\")\npy_module_available(\"numpy\")\n\n\n\n\n\n\n\nAlternativa\n\n\nVocê também pode usar pip install no terminal."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#estrutura-de-chunks-em-quarto",
-    "href": "apresentações/posts/apresentacao_r_python.html#estrutura-de-chunks-em-quarto",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Estrutura de Chunks em Quarto",
-    "text": "Estrutura de Chunks em Quarto\nDocumentos .qmd permitem chunks de diferentes linguagens:\n```{r}\n# Código R\nlibrary(dplyr)\n```\n\n```{python}\n# Código Python\nimport pandas as pd\n```"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#primeiro-código-em-python",
-    "href": "apresentações/posts/apresentacao_r_python.html#primeiro-código-em-python",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Primeiro código em Python",
-    "text": "Primeiro código em Python\n\nimport pandas as pd\nimport numpy as np\n\n# Criar array\nnumeros = np.array([1, 2, 3, 4, 5])\nprint(f\"Média: {numeros.mean()}\")\n\nResultado: O código Python executa diretamente no documento."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#declarar-dependências",
-    "href": "apresentações/posts/apresentacao_r_python.html#declarar-dependências",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Declarar dependências",
-    "text": "Declarar dependências\n\n# Garantir que os pacotes estão disponíveis\npy_require(\"numpy\")\npy_require(\"pandas\")\n\n# Listar todos os pacotes instalados\npy_list_packages()"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#executar-python-dentro-do-r",
-    "href": "apresentações/posts/apresentacao_r_python.html#executar-python-dentro-do-r",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Executar Python dentro do R",
-    "text": "Executar Python dentro do R\n\n# Executar código Python como string\npy_run_string(\"\nx = 10\ny = 20\nsoma = x + y\nprint(f'Resultado: {soma}')\n\")\n\nÚtil para: pequenos scripts ou testes rápidos."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#r-para-python-objeto-py",
-    "href": "apresentações/posts/apresentacao_r_python.html#r-para-python-objeto-py",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "R para Python: Objeto py$",
-    "text": "R para Python: Objeto py$\n\n# Criar data frame em R\ndados_R &lt;- data.frame(\n  id = 1:5,\n  valor = c(10, 20, 30, 40, 50))\n\n# Transferir para Python\npy$dados_python &lt;- dados_R"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#acessar-no-python",
-    "href": "apresentações/posts/apresentacao_r_python.html#acessar-no-python",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Acessar no Python",
-    "text": "Acessar no Python\n\n# Objeto transferido do R está disponível\nprint(dados_python)\n\n# Manipular com pandas\ndados_python['dobro'] = dados_python['valor'] * 2\nprint(dados_python)"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#python-para-r-objeto-py",
-    "href": "apresentações/posts/apresentacao_r_python.html#python-para-r-objeto-py",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Python para R: Objeto py$",
-    "text": "Python para R: Objeto py$\n\nimport pandas as pd\n\n# Criar dataframe em Python\nresultado = pd.DataFrame({\n    'nome': ['Ana', 'Bruno', 'Carlos'],\n    'nota': [8.5, 9.0, 7.5]\n})"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#acessar-no-r",
-    "href": "apresentações/posts/apresentacao_r_python.html#acessar-no-r",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Acessar no R",
-    "text": "Acessar no R\n\n# Recuperar objeto do Python\nresultado_R &lt;- py$resultado\n\n# Usar no R\nlibrary(dplyr)\nresultado_R %&gt;%\n  filter(nota &gt; 8.0) %&gt;%\n  arrange(desc(nota))"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#conversão-automática-de-tipos",
-    "href": "apresentações/posts/apresentacao_r_python.html#conversão-automática-de-tipos",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Conversão automática de tipos",
-    "text": "Conversão automática de tipos\n\n\n\nPython\nR\n\n\n\n\ndict\nlist\n\n\nlist\nvector\n\n\ntuple\nvector\n\n\npandas.DataFrame\ndata.frame\n\n\nnumpy.ndarray\nmatrix"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#contexto-do-exemplo",
-    "href": "apresentações/posts/apresentacao_r_python.html#contexto-do-exemplo",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Contexto do exemplo",
-    "text": "Contexto do exemplo\nAnálise de avaliações de café de diferentes países:\n\nFonte: TidyTuesday (dados públicos)\nObjetivo: Identificar países com melhor pontuação\nProcesso: Importação (Python) + Visualização (R)"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#importar-dados-com-pandas",
-    "href": "apresentações/posts/apresentacao_r_python.html#importar-dados-com-pandas",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Importar dados com pandas",
-    "text": "Importar dados com pandas\n\nimport pandas as pd\n\n# URL dos dados\nurl = \"https://raw.githubusercontent.com/rfordatascience/tidytuesday/refs/heads/main/data/2020/2020-07-07/coffee_ratings.csv\"\n\n# Importar\ndados = pd.read_csv(url)\n\n# Visualizar estrutura\nprint(dados.shape)\nprint(dados.head())"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#inspeção-inicial",
-    "href": "apresentações/posts/apresentacao_r_python.html#inspeção-inicial",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Inspeção inicial",
-    "text": "Inspeção inicial\n\n# Estatísticas descritivas\nprint(dados.describe())\n\n# Verificar valores ausentes\nprint(dados.isnull().sum())\n\n# Informações das colunas\nprint(dados.info())"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#selecionar-colunas-relevantes",
-    "href": "apresentações/posts/apresentacao_r_python.html#selecionar-colunas-relevantes",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Selecionar colunas relevantes",
-    "text": "Selecionar colunas relevantes\n\n# Selecionar variáveis de interesse\ndados_filtrados = dados[[\n    \"country_of_origin\",\n    \"aroma\",\n    \"flavor\",\n    \"aftertaste\",\n    \"acidity\",\n    \"total_cup_points\"]]\n\n# Remover linhas sem país\ndados_filtrados = dados_filtrados.dropna(\n    subset=[\"country_of_origin\"])"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#agregação-por-país",
-    "href": "apresentações/posts/apresentacao_r_python.html#agregação-por-país",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Agregação por país",
-    "text": "Agregação por país\n\n# Calcular médias por país\nresumo_pais = (\n    dados_filtrados\n    .groupby(\"country_of_origin\", as_index=False)\n    [[\n        \"aroma\", \"flavor\", \"aftertaste\",\n        \"acidity\", \"total_cup_points\"\n    ]]\n    .mean())\n\nprint(resumo_pais.head())"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#transferir-para-r",
-    "href": "apresentações/posts/apresentacao_r_python.html#transferir-para-r",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Transferir para R",
-    "text": "Transferir para R\n\n# Importar dados processados do Python\nresumo_pais_R &lt;- py$resumo_pais\n\n# Verificar estrutura\nstr(resumo_pais_R)\nhead(resumo_pais_R)"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#visualização-com-ggplot2",
-    "href": "apresentações/posts/apresentacao_r_python.html#visualização-com-ggplot2",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Visualização com ggplot2",
-    "text": "Visualização com ggplot2\n\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# 10 países principais\n\ngrafico_cafe &lt;- resumo_pais_R %&gt;%\n  arrange(desc(total_cup_points)) %&gt;%\n  slice_max(total_cup_points, n = 10) %&gt;%\n  ggplot(aes(\n    x = reorder(country_of_origin, total_cup_points),\n    y = total_cup_points,\n    fill = country_of_origin)) +\n  geom_col(show.legend = FALSE) +\n  coord_flip()"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#gráfico-completo",
-    "href": "apresentações/posts/apresentacao_r_python.html#gráfico-completo",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Gráfico completo",
-    "text": "Gráfico completo\n\ngrafico_cafe +\n  labs(\n    title = \"10 principais países - Pontuação média\",\n    subtitle = \"Dados processados em Python, visualização em R\",\n    x = \"País de origem\",\n    y = \"Pontuação média total\",\n    caption = \"Fonte: TidyTuesday | Coffee Ratings | Café com R\") +\n  theme_minimal(base_size = 14) +\n  theme(\n    plot.title = element_text(face = \"bold\"),\n    axis.text = element_text(color = \"gray30\"))\ngrafico_cafe"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#exportar-gráfico",
-    "href": "apresentações/posts/apresentacao_r_python.html#exportar-gráfico",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Exportar Gráfico",
-    "text": "Exportar Gráfico\n\n# Salvar em alta resolução\nggsave(\n  filename = \"principais_paises.png\",\n  plot = grafico_cafe,\n  width = 10,\n  height = 6,\n  dpi = 300)"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#importação-de-dados",
-    "href": "apresentações/posts/apresentacao_r_python.html#importação-de-dados",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Importação de dados",
-    "text": "Importação de dados\n\n\n\n\n\n\n\n\nOperação\nPython\nR\n\n\n\n\nLer CSV\npd.read_csv()\nread.csv() ou read_csv()\n\n\nLer Excel\npd.read_excel()\nread_excel()\n\n\nLer JSON\npd.read_json()\njsonlite::fromJSON()"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#visualização-de-dados",
-    "href": "apresentações/posts/apresentacao_r_python.html#visualização-de-dados",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Visualização de dados",
-    "text": "Visualização de dados\n\n\n\nOperação\nPython\nR\n\n\n\n\nPrimeiras linhas\ndf.head()\nhead(df)\n\n\nÚltimas linhas\ndf.tail()\ntail(df)\n\n\nEstrutura\ndf.info()\nstr(df)\n\n\nResumo\ndf.describe()\nsummary(df)"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#manipulação-de-dados",
-    "href": "apresentações/posts/apresentacao_r_python.html#manipulação-de-dados",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Manipulação de dados",
-    "text": "Manipulação de dados\n\n\n\n\n\n\n\n\nOperação\nPython\nR (dplyr)\n\n\n\n\nFiltrar\ndf[df['col'] &gt; 5]\nfilter(df, col &gt; 5)\n\n\nSelecionar\ndf[['col1', 'col2']]\nselect(df, col1, col2)\n\n\nCriar coluna\ndf['nova'] = df['a'] + df['b']\nmutate(df, nova = a + b)\n\n\nAgrupar\ndf.groupby('grupo').mean()\ngroup_by(df, grupo) %&gt;% summarise(mean())"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#ordenação-e-limpeza",
-    "href": "apresentações/posts/apresentacao_r_python.html#ordenação-e-limpeza",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Ordenação e limpeza",
-    "text": "Ordenação e limpeza\n\n\n\n\n\n\n\n\nOperação\nPython\nR (dplyr)\n\n\n\n\nOrdenar\ndf.sort_values('col')\narrange(df, col)\n\n\nRemover NA\ndf.dropna()\ndrop_na(df)\n\n\nRenomear\ndf.rename(columns={'old':'new'})\nrename(df, new = old)"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#organização-do-projeto",
-    "href": "apresentações/posts/apresentacao_r_python.html#organização-do-projeto",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Organização do projeto",
-    "text": "Organização do projeto\nprojeto/\n├── dados/\n│   ├── raw/\n│   └── processed/\n├── scripts/\n│   ├── 01_importacao.qmd\n│   └── 02_analise.qmd\n├── outputs/\n│   ├── figuras/\n│   └── tabelas/\n└── requirements.txt"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#documentação-de-dependências",
-    "href": "apresentações/posts/apresentacao_r_python.html#documentação-de-dependências",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Documentação de dependências",
-    "text": "Documentação de dependências\nPython (requirements.txt):\npandas==2.0.0\nnumpy==1.24.0\nmatplotlib==3.7.0\nR (no início do script):"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#controle-de-versão",
-    "href": "apresentações/posts/apresentacao_r_python.html#controle-de-versão",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Controle de versão",
-    "text": "Controle de versão\n\nUse ambientes virtuais para Python\nDocumente versões dos pacotes\nTeste em ambiente limpo antes de compartilhar\nUse renv para R e venv para Python"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#tratamento-de-erros",
-    "href": "apresentações/posts/apresentacao_r_python.html#tratamento-de-erros",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Tratamento de erros",
-    "text": "Tratamento de erros\n\n# Verificar se módulo está disponível\nif (py_module_available(\"pandas\")) {\n  py_require(\"pandas\")\n} else {\n  py_install(\"pandas\")\n  py_require(\"pandas\")\n}"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#performance",
-    "href": "apresentações/posts/apresentacao_r_python.html#performance",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Performance",
-    "text": "Performance\n\nEvite conversões desnecessárias entre R e Python\nProcesse dados grandes na linguagem mais eficiente\nUse data.table (R) ou polars (Python) para grandes volumes\nConsidere processamento paralelo quando apropriado"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#machine-learning",
-    "href": "apresentações/posts/apresentacao_r_python.html#machine-learning",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Machine Learning",
-    "text": "Machine Learning\n\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Treinar modelo em Python\nX_train, X_test, y_train, y_test = train_test_split(X, y)\nmodelo = RandomForestClassifier()\nmodelo.fit(X_train, y_train)\n\n\n# Visualizar resultados no R\npredicoes &lt;- py$modelo$predict(py$X_test)\n# Criar gráficos com ggplot2"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#web-scraping",
-    "href": "apresentações/posts/apresentacao_r_python.html#web-scraping",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Web Scraping",
-    "text": "Web Scraping\n\nimport requests\nfrom bs4 import BeautifulSoup\n\n# Coletar dados da web\nurl = \"https://exemplo.com/dados\"\nresponse = requests.get(url)\ndados_web = extrair_tabela(response.text)\n\n\n# Analisar no R\ndados_R &lt;- py$dados_web\nanalise &lt;- dados_R %&gt;% ..."
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#deep-learning",
-    "href": "apresentações/posts/apresentacao_r_python.html#deep-learning",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Deep Learning",
-    "text": "Deep Learning\n\nimport tensorflow as tf\n\n# Construir modelo\nmodelo = tf.keras.Sequential([\n    tf.keras.layers.Dense(128, activation='relu'),\n    tf.keras.layers.Dense(10, activation='softmax')])\n\n# Treinar\nmodelo.fit(X_train, y_train, epochs=10)"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#python-não-é-detectado",
-    "href": "apresentações/posts/apresentacao_r_python.html#python-não-é-detectado",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Python não é detectado",
-    "text": "Python não é detectado\nSolução:\n\n# Especificar caminho manualmente\nuse_python(\"/caminho/para/python\", required = TRUE)\n\n# Ou usar conda\nuse_condaenv(\"nome_ambiente\")"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#pacotes-python-não-encontrados",
-    "href": "apresentações/posts/apresentacao_r_python.html#pacotes-python-não-encontrados",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Pacotes Python não encontrados",
-    "text": "Pacotes Python não encontrados\nSolução:\n\n# Reinstalar no ambiente correto\npy_install(\"pandas\", pip = TRUE)\n\n# Verificar\npy_module_available(\"pandas\")"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#erro-de-codificação",
-    "href": "apresentações/posts/apresentacao_r_python.html#erro-de-codificação",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Erro de codificação",
-    "text": "Erro de codificação\nSolução:\n\n# Especificar encoding ao ler arquivos\ndados = pd.read_csv(\"arquivo.csv\", encoding=\"utf-8\")"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#conflitos-de-versão",
-    "href": "apresentações/posts/apresentacao_r_python.html#conflitos-de-versão",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Conflitos de versão",
-    "text": "Conflitos de versão\n\nUse ambientes virtuais isolados\nDocumente versões exatas dos pacotes\nTeste compatibilidade antes de atualizar\nConsidere usar Docker para reprodutibilidade total"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#documentação-oficial",
-    "href": "apresentações/posts/apresentacao_r_python.html#documentação-oficial",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Documentação oficial",
-    "text": "Documentação oficial\n\nReticulate: rstudio.github.io/reticulate\nPandas: pandas.pydata.org/docs\nNumPy: numpy.org/doc\nQuarto: quarto.org"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#principais-aprendizados",
-    "href": "apresentações/posts/apresentacao_r_python.html#principais-aprendizados",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Principais aprendizados",
-    "text": "Principais aprendizados\n\nReticulate permite integração transparente R-Python\nPossível aproveitar bibliotecas específicas de cada linguagem\nTransferência bidirecional de dados é simples\nConfiguração inicial requer atenção aos detalhes"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#quando-usar-integração",
-    "href": "apresentações/posts/apresentacao_r_python.html#quando-usar-integração",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Quando usar integração",
-    "text": "Quando usar integração\n\nMachine learning com scikit-learn/TensorFlow\nWeb scraping complexo\nProcessamento de linguagem natural\nAproveitar pacotes específicos de cada ecossistema"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#próximos-passos",
-    "href": "apresentações/posts/apresentacao_r_python.html#próximos-passos",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Próximos passos",
-    "text": "Próximos passos\n\nConfigurar ambiente local\nPraticar com datasets reais\nExplorar pacotes avançados\nCompartilhar conhecimento com a comunidade"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#obrigada",
-    "href": "apresentações/posts/apresentacao_r_python.html#obrigada",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "Obrigada!",
-    "text": "Obrigada!\n\nImagem: Allison Horst.Continue praticando e explorando!\nEsta apresentação é parte do projeto Café com R! É OPEN, USE, COMPARTILHE!"
-  },
-  {
-    "objectID": "apresentações/posts/apresentacao_r_python.html#assine-o-café-com-r",
-    "href": "apresentações/posts/apresentacao_r_python.html#assine-o-café-com-r",
-    "title": "Aula 9. Integração R x Python com pacote Reticulate",
-    "section": "☕ Assine o Café com R",
-    "text": "☕ Assine o Café com R\nFique por dentro das aulas, conteúdos, newsletter!\n\nQue cada gole desperte uma nova ideia.\nQue cada script abra uma nova conversa.\nQue o Café com R, se torne um ponto de encontro nosso!"
-  },
-  {
-    "objectID": "apresentações/index.html",
-    "href": "apresentações/index.html",
-    "title": "Aqui você encontra conteúdos e publicações sobre Ciência de Dados",
-    "section": "",
-    "text": "Como salvar essa apresentação em PDF\nVocê também pode salvar esta apresentação diretamente em PDF usando o modo PDF Export Mode do próprio visualizador do Quarto (menu lateral &gt; Tools &gt; PDF Export Mode). Isso ajusta automaticamente os slides para um formato adequado de impressão.\nAlém disso, esta apresentação ficará disponível online no meu site, permitindo que você acesse quando quiser.\n\n\nNo GitHub em breve - até final de janeiro.\nEm breve, todo o material, incluindo o arquivo .qmd, o tema visual e os códigos utilizados estará no meu GitHub, para que você possa reproduzir, adaptar ou integrar às suas próprias aulas e projetos com total liberdade.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n1. 2026\n\n\n\nAno NOVO\n\n\n\nAbrindo um novo script.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n1. Seus primeiros passos com R\n\n\n\nR\n\nIniciantes\n\nTutorial\n\nOnboarding\n\n\n\nTudo que você precisa saber para dar seus primeiros passos com confiança. É open use e compartilhe\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2. Funções em R\n\n\n\nFunções\n\nR\n\n\n\nO que realmente muda quando você aprende a criá-las?É open use e compartilhe\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n3. Manipulação de Dados com dplyr\n\n\n\nR\n\ndplyr\n\nData Wrangling\n\nTidyverse\n\n\n\nAprenda manipulação de dados no R com dplyr. É open use e compartilhe\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n4. Visualização de Dados com ggplot2\n\n\n\nR\n\nggplot2\n\nVisualização\n\nTidyverse\n\n\n\nAprenda a criar visualizações no R com ggplot2. É open use e compartilhe\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n5. Do SQL para o R com dbplyr\n\n\n\nSQL\n\nR\n\nWeb\n\ndbplyr\n\n\n\nTraduza suas queries SQL para o universo tidyverse. É open use e compartilhe.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n5.1. SQL x R (dbplyr)\n\n\n\nSQL\n\nR\n\nWeb\n\ndbplyr\n\n\n\ncheat sheet - Com as funções. É open use e compartilhe.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n6. Consumo de APIs RESTful no R\n\n\n\nAPIs\n\nR\n\nWeb\n\n\n\nAprenda a consumir APIs RESTful e integrar dados externos aos seus projetos em R. É open use e compartilhe.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n7. Tidymodels para Regressão em R\n\n\n\nR\n\nMachine Learning\n\nRegressão\n\nTidymodels\n\n\n\nVocê já conhece o tidymodels? Aqui tem um tutorial.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n7.1. Documentação: Tidymodels para Regressão em R\n\n\n\nR\n\nMachine Learning\n\nRegressão\n\nTidymodels\n\n\n\nGuia completo para análise de regressão usando o pacote Tidymodels\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n8. Estatística com R\n\n\n\nEstatística\n\nR\n\nAnálise de Dados\n\n\n\nAprenda os fundamentos de estatística aplicada usando R e o dataset CO2\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAula 10. Tidy Data e Análise Exploratória de dados\n\n\n\nEstatística\n\nR\n\ntidy\n\nEDA\n\nAnálise Exploratória\n\n\n\nPrincípios de organização e workflow em R.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAula 11. Web scraping com pacote rvest\n\n\n\nR\n\nrvest\n\nWeb Scraping\n\nTidyverse\n\nIBGE\n\n\n\nAprenda a coletar dados diretamente da web com R e rvest.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAula 9. Integração R x Python com pacote Reticulate\n\n\n\nPython\n\nR\n\nQuarto\n\nReticulate\n\n\n\nCombinando o melhor de dois mundos.\n\n\n\n\n\n\n\n\nNo matching items\n Back to top"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "Jennifer Lopes",
-    "section": "",
-    "text": "[2016] Sou Engenheira Agronôma, formada pela Universidade Federal de Pelotas-RS.\n[2017- 2025] Mestre e Doutorada em Ciências - Ênfase em Melhoramento Genético de Plantas- UFPel.\n[2023- 2025] Analista de Dados SR- Genética e Melhoramento Florestal- Suzano.SA\n[2024-Atual] Consultora e Instrutora - Ciência de Dados em R\n\n\n\nAgricultura\nMelhoramento Genético de Plantas | Biotecnologia | Genética quantitativa\nExperimentação Agrícola\nEstatística | Análise de Dados | Ciência de dados | Machine Learning\nRelatórios | Sites | Livros em Quarto\n\n\n\nAtualmente, estou entusiasmada em contribuir como cofundadora do capítulo R-Ladies Goiânia, uma organização global dedicada a promover a diversidade de gênero na comunidade R.💜\nFaço parte do apoio Analytics na Comunidade de Estatística do Professor Thiago Marques. Essa sem dúvidas é a maior comunidade de estatística do Brasil, ela tem um grande objetivo: Disseminar o conhecimento para a comunidade como um todo!"
-  },
-  {
-    "objectID": "about.html#formação",
-    "href": "about.html#formação",
-    "title": "Jennifer Lopes",
-    "section": "",
-    "text": "[2016] Sou Engenheira Agronôma, formada pela Universidade Federal de Pelotas-RS.\n[2017- 2025] Mestre e Doutorada em Ciências - Ênfase em Melhoramento Genético de Plantas- UFPel.\n[2023- 2025] Analista de Dados SR- Genética e Melhoramento Florestal- Suzano.SA\n[2024-Atual] Consultora e Instrutora - Ciência de Dados em R"
-  },
-  {
-    "objectID": "about.html#áreas-de-interesse",
-    "href": "about.html#áreas-de-interesse",
-    "title": "Jennifer Lopes",
-    "section": "",
-    "text": "Agricultura\nMelhoramento Genético de Plantas | Biotecnologia | Genética quantitativa\nExperimentação Agrícola\nEstatística | Análise de Dados | Ciência de dados | Machine Learning\nRelatórios | Sites | Livros em Quarto"
-  },
-  {
-    "objectID": "about.html#comunidades-trabalho-voluntário",
-    "href": "about.html#comunidades-trabalho-voluntário",
-    "title": "Jennifer Lopes",
-    "section": "",
-    "text": "Atualmente, estou entusiasmada em contribuir como cofundadora do capítulo R-Ladies Goiânia, uma organização global dedicada a promover a diversidade de gênero na comunidade R.💜\nFaço parte do apoio Analytics na Comunidade de Estatística do Professor Thiago Marques. Essa sem dúvidas é a maior comunidade de estatística do Brasil, ela tem um grande objetivo: Disseminar o conhecimento para a comunidade como um todo!"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#assine-o-café-com-r",
-    "href": "apresentações/posts/api_R.html#assine-o-café-com-r",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "☕ Assine o Café com R",
-    "text": "☕ Assine o Café com R\nFique por dentro das aulas, conteúdos, newsletter!\n\nQue cada gole desperte uma nova ideia.\nQue cada script abra uma nova conversa.\nQue o Café com R, se torne um ponto de encontro nosso!"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#o-que-são-apis",
-    "href": "apresentações/posts/api_R.html#o-que-são-apis",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "O que são APIs?",
-    "text": "O que são APIs?\nAPI = Application Programming Interface\nUma API é como um garçom em um restaurante:\n\nVocê (seu código) faz um pedido\nO garçom (API) leva ao cozinheiro (servidor)\nRetorna com seu prato (dados)\n\nExemplos do dia a dia:\n\nPrevisão do tempo\nCotação de moedas\nDados do IBGE\nTwitter/X, GitHub, OpenAI\nDados governamentais"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#por-que-usar-apis",
-    "href": "apresentações/posts/api_R.html#por-que-usar-apis",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Por que usar APIs?",
-    "text": "Por que usar APIs?\nEm vez de baixar arquivos manualmente:\n# ❌ Jeito manual (trabalhoso)\n# 1. Abrir navegador\n# 2. Baixar CSV\n# 3. Salvar em pasta\n# 4. Importar no R\ndados &lt;- read.csv(\"dados_baixados.csv\")\nUse APIs para automatizar:\n# ✅ Jeito automatizado\nlibrary(httr2)\nresposta &lt;- request(\"https://api.exemplo.com/dados\") |&gt;\n  req_perform()\n\ndados &lt;- resp_body_json(resposta)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#rest-o-padrão-da-web",
-    "href": "apresentações/posts/api_R.html#rest-o-padrão-da-web",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "REST: O padrão da web",
-    "text": "REST: O padrão da web\nREST = Representational State Transfer\nPrincípios básicos:\n\nURLs estruturadas - Cada recurso tem um endereço único\n\nhttps://api.exemplo.com/usuarios\nhttps://api.exemplo.com/usuarios/123"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#rest-o-padrão-da-web-continuação",
-    "href": "apresentações/posts/api_R.html#rest-o-padrão-da-web-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "REST: O padrão da web (continuação)",
-    "text": "REST: O padrão da web (continuação)\n\nMétodos HTTP definem ações:\n\nGET - Buscar dados\nPOST - Criar novo recurso\nPUT/PATCH - Atualizar recurso\nDELETE - Remover recurso"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#rest-o-padrão-da-web-continuação-1",
-    "href": "apresentações/posts/api_R.html#rest-o-padrão-da-web-continuação-1",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "REST: O padrão da web (continuação)",
-    "text": "REST: O padrão da web (continuação)\nMais princípios:\n\nStateless - Cada requisição é independente\nFormato JSON - Dados estruturados e legíveis\n\nExemplo de URL REST:\nGET https://api.loja.com/produtos/123\nGET https://api.loja.com/produtos?categoria=livros\nPOST https://api.loja.com/produtos\nPUT https://api.loja.com/produtos/123\nDELETE https://api.loja.com/produtos/123"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#anatomia-de-uma-requisição",
-    "href": "apresentações/posts/api_R.html#anatomia-de-uma-requisição",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Anatomia de uma requisição",
-    "text": "Anatomia de uma requisição\nEstrutura completa:\nrequisicao &lt;- request(\"https://api.exemplo.com/dados\") |&gt;\n  req_headers(\n    \"Authorization\" = \"Bearer SEU_TOKEN\",\n    \"Content-Type\" = \"application/json\"\n  ) |&gt;\n  req_url_query(\n    limite = 100,\n    pagina = 1,\n    ordenar = \"data_desc\"\n  ) |&gt;\n  req_body_json(list(\n    filtro = \"ativo\"\n  ))"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#anatomia-de-uma-requisição-continuação",
-    "href": "apresentações/posts/api_R.html#anatomia-de-uma-requisição-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Anatomia de uma requisição (continuação)",
-    "text": "Anatomia de uma requisição (continuação)\nComponentes:\n\nURL base + endpoint\n\nBase: https://api.exemplo.com\nEndpoint: /dados\n\nHeaders (cabeçalhos)\n\nAutenticação, tipo de conteúdo"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#anatomia-de-uma-requisição-continuação-1",
-    "href": "apresentações/posts/api_R.html#anatomia-de-uma-requisição-continuação-1",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Anatomia de uma requisição (continuação)",
-    "text": "Anatomia de uma requisição (continuação)\n\nQuery parameters (parâmetros)\n\nFiltros, paginação, ordenação\n\nBody (corpo - para POST/PUT)\n\nDados a serem enviados"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#pacotes-para-consumir-apis",
-    "href": "apresentações/posts/api_R.html#pacotes-para-consumir-apis",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Pacotes para consumir APIs",
-    "text": "Pacotes para consumir APIs\nPrincipais opções:\n# httr2 - Moderno e recomendado\nlibrary(httr2)\nrequest(\"https://api.exemplo.com\") |&gt;\n  req_perform() |&gt;\n  resp_body_json()\n\n# httr - Clássico (ainda usado)\nlibrary(httr)\nGET(\"https://api.exemplo.com\")\n\n# jsonlite - Para processar JSON\nlibrary(jsonlite)\nfromJSON(\"dados.json\")\nRecomendação: use httr2 para projetos novos"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#seu-primeiro-get-request",
-    "href": "apresentações/posts/api_R.html#seu-primeiro-get-request",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Seu primeiro GET request",
-    "text": "Seu primeiro GET request\nAPI pública: JSONPlaceholder (para testes)\nlibrary(httr2)\n\n# Fazer requisição\nresposta &lt;- request(\"https://jsonplaceholder.typicode.com/users\") |&gt;\n  req_perform()\n\n# Ver status\nresp_status(resposta)  # 200 = sucesso\n\n# Extrair dados\nusuarios &lt;- resp_body_json(resposta)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#seu-primeiro-get-request-continuação",
-    "href": "apresentações/posts/api_R.html#seu-primeiro-get-request-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Seu primeiro GET request (continuação)",
-    "text": "Seu primeiro GET request (continuação)\nProcessar os dados:\n# Converter para data frame\nlibrary(purrr)\ndf_usuarios &lt;- map_df(usuarios, as_tibble)\n\nhead(df_usuarios)\nResultado: - Lista de usuários convertida em tibble - Pronto para análise!"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#códigos-de-status-http",
-    "href": "apresentações/posts/api_R.html#códigos-de-status-http",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Códigos de status HTTP",
-    "text": "Códigos de status HTTP\nEntenda as respostas da API:\n\n\n\nCódigo\nSignificado\nDescrição\n\n\n\n\n200\nOK\nSucesso! Dados retornados\n\n\n201\nCreated\nRecurso criado com sucesso\n\n\n204\nNo Content\nSucesso, mas sem dados de retorno\n\n\n400\nBad Request\nErro na sua requisição\n\n\n401\nUnauthorized\nAutenticação necessária"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#códigos-de-status-http-continuação",
-    "href": "apresentações/posts/api_R.html#códigos-de-status-http-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Códigos de status HTTP (continuação)",
-    "text": "Códigos de status HTTP (continuação)\nMais códigos importantes:\n\n\n\nCódigo\nSignificado\nDescrição\n\n\n\n\n403\nForbidden\nSem permissão\n\n\n404\nNot Found\nRecurso não existe\n\n\n429\nToo Many Requests\nLimite de requisições excedido\n\n\n500\nInternal Server Error\nErro no servidor\n\n\n\n# Verificar status\nresp_status(resposta)\nresp_status_desc(resposta)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#trabalhando-com-json",
-    "href": "apresentações/posts/api_R.html#trabalhando-com-json",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Trabalhando com JSON",
-    "text": "Trabalhando com JSON\nJSON é o formato padrão de APIs REST:\n{\n  \"id\": 1,\n  \"nome\": \"Ana Silva\",\n  \"email\": \"ana@exemplo.com\",\n  \"endereco\": {\n    \"rua\": \"Rua das Flores\",\n    \"cidade\": \"São Paulo\"\n  },\n  \"hobbies\": [\"leitura\", \"corrida\"]\n}"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#trabalhando-com-json-continuação",
-    "href": "apresentações/posts/api_R.html#trabalhando-com-json-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Trabalhando com JSON (continuação)",
-    "text": "Trabalhando com JSON (continuação)\nProcessar no R:\n# Extrair JSON da resposta\ndados &lt;- resp_body_json(resposta)\n\n# Acessar campos\ndados$nome\ndados$endereco$cidade\ndados$hobbies[[1]]\n\n# Converter lista complexa em data frame\nlibrary(tidyr)\ndf &lt;- unnest_wider(as_tibble(dados), everything())"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#autenticação-api-keys",
-    "href": "apresentações/posts/api_R.html#autenticação-api-keys",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Autenticação: API Keys",
-    "text": "Autenticação: API Keys\nMuitas APIs exigem identificação:\n# NUNCA coloque tokens diretamente no código!\n# ❌ ERRADO\napi_key &lt;- \"abc123token456\"\n\n# ✅ CORRETO: use variáveis de ambiente\n# No arquivo .Renviron:\n# API_KEY=abc123token456\n\n# No código:\napi_key &lt;- Sys.getenv(\"API_KEY\")"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#autenticação-api-keys-continuação",
-    "href": "apresentações/posts/api_R.html#autenticação-api-keys-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Autenticação: API Keys (continuação)",
-    "text": "Autenticação: API Keys (continuação)\nUsar a chave nas requisições:\nrequisicao &lt;- request(\"https://api.exemplo.com/dados\") |&gt;\n  req_headers(\n    \"Authorization\" = paste(\"Bearer\", api_key)\n  ) |&gt;\n  req_perform()\nConfigurar .Renviron:\n# Abrir arquivo\nusethis::edit_r_environ()\n\n# Adicionar:\nAPI_KEY=seu_token_aqui\n\n# Reiniciar R"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#parâmetros-de-consulta",
-    "href": "apresentações/posts/api_R.html#parâmetros-de-consulta",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Parâmetros de consulta",
-    "text": "Parâmetros de consulta\nFiltrar e personalizar resultados:\n# URL final: \n# https://api.exemplo.com/produtos?categoria=eletronicos&limite=50\n\nrequest(\"https://api.exemplo.com/produtos\") |&gt;\n  req_url_query(\n    categoria = \"eletronicos\",\n    limite = 50,\n    ordem = \"preco\",\n    desconto = TRUE\n  ) |&gt;\n  req_perform()"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#parâmetros-de-consulta-continuação",
-    "href": "apresentações/posts/api_R.html#parâmetros-de-consulta-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Parâmetros de consulta (continuação)",
-    "text": "Parâmetros de consulta (continuação)\nParâmetros dinâmicos:\n# Criar lista de filtros\nfiltros &lt;- list(\n  categoria = \"eletronicos\",\n  preco_max = 1000,\n  em_estoque = TRUE\n)\n\n# Usar com !!!\nrequest(\"https://api.exemplo.com/produtos\") |&gt;\n  req_url_query(!!!filtros) |&gt;\n  req_perform()"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#paginação-de-resultados",
-    "href": "apresentações/posts/api_R.html#paginação-de-resultados",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Paginação de resultados",
-    "text": "Paginação de resultados\nAPIs limitam quantidade de dados por requisição:\nbuscar_todos_usuarios &lt;- function(url_base) {\n  todos_dados &lt;- list()\n  pagina &lt;- 1\n  \n  repeat {\n    cat(\"Buscando página\", pagina, \"\\n\")\n    \n    resposta &lt;- request(url_base) |&gt;\n      req_url_query(\n        pagina = pagina,\n        limite = 100\n      ) |&gt;\n      req_perform()\n    \n    dados &lt;- resp_body_json(resposta)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#paginação-de-resultados-continuação",
-    "href": "apresentações/posts/api_R.html#paginação-de-resultados-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Paginação de resultados (continuação)",
-    "text": "Paginação de resultados (continuação)\n    # Parar se não houver mais dados\n    if (length(dados) == 0) break\n    \n    todos_dados &lt;- c(todos_dados, dados)\n    pagina &lt;- pagina + 1\n    \n    # Respeitar rate limits\n    Sys.sleep(1)\n  }\n  \n  return(todos_dados)\n}"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#post-enviando-dados",
-    "href": "apresentações/posts/api_R.html#post-enviando-dados",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "POST: Enviando dados",
-    "text": "POST: Enviando dados\nCriar novos recursos na API:\n# Dados a enviar\nnovo_usuario &lt;- list(\n  nome = \"Carlos Santos\",\n  email = \"carlos@exemplo.com\",\n  idade = 28\n)\n\n# POST request\nresposta &lt;- request(\"https://api.exemplo.com/usuarios\") |&gt;\n  req_method(\"POST\") |&gt;\n  req_headers(\n    \"Authorization\" = paste(\"Bearer\", api_key),\n    \"Content-Type\" = \"application/json\"\n  ) |&gt;\n  req_body_json(novo_usuario) |&gt;\n  req_perform()"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#post-enviando-dados-continuação",
-    "href": "apresentações/posts/api_R.html#post-enviando-dados-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "POST: Enviando dados (continuação)",
-    "text": "POST: Enviando dados (continuação)\nVerificar o resultado:\n# Verificar sucesso\nresp_status(resposta)  # Deve ser 201\n\n# Ver recurso criado\nusuario_criado &lt;- resp_body_json(resposta)\nusuario_criado$id\nDica: Status 201 (Created) indica que o recurso foi criado com sucesso!"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#tratamento-de-erros",
-    "href": "apresentações/posts/api_R.html#tratamento-de-erros",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Tratamento de erros",
-    "text": "Tratamento de erros\nAPIs podem falhar - esteja preparado:\nbuscar_dados_seguro &lt;- function(url) {\n  tryCatch({\n    resposta &lt;- request(url) |&gt;\n      req_retry(max_tries = 3) |&gt;  # Tentar 3 vezes\n      req_timeout(30) |&gt;            # Timeout de 30s\n      req_perform()\n    \n    # Verificar status\n    if (resp_status(resposta) != 200) {\n      stop(\"Erro na API: \", resp_status_desc(resposta))\n    }\n    \n    return(resp_body_json(resposta))"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#tratamento-de-erros-continuação",
-    "href": "apresentações/posts/api_R.html#tratamento-de-erros-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Tratamento de erros (continuação)",
-    "text": "Tratamento de erros (continuação)\n  }, error = function(e) {\n    warning(\"Erro ao buscar dados: \", e$message)\n    return(NULL)\n  })\n}\n\n# Uso\ndados &lt;- buscar_dados_seguro(\"https://api.exemplo.com/dados\")\n\nif (!is.null(dados)) {\n  # Processar dados\n}"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#rate-limits",
-    "href": "apresentações/posts/api_R.html#rate-limits",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Rate Limits",
-    "text": "Rate Limits\nAPIs limitam número de requisições:\n\n\n\n\n\n\nAtenção aos limites\n\n\nExemplos comuns: - 100 requisições por hora - 1000 requisições por dia - 10 requisições por minuto\n\n\n\n# Função com controle de taxa\nbuscar_com_limite &lt;- function(urls, delay = 1) {\n  resultados &lt;- list()\n  \n  for (i in seq_along(urls)) {\n    cat(\"Processando\", i, \"de\", length(urls), \"\\n\")"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#rate-limits-continuação",
-    "href": "apresentações/posts/api_R.html#rate-limits-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Rate Limits (continuação)",
-    "text": "Rate Limits (continuação)\n    resultados[[i]] &lt;- request(urls[i]) |&gt;\n      req_perform() |&gt;\n      resp_body_json()\n    \n    # Aguardar entre requisições\n    if (i &lt; length(urls)) {\n      Sys.sleep(delay)\n    }\n  }\n  \n  return(resultados)\n}\nDica: Sempre respeite os limites para não ser bloqueado!"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#exemplo-prático-api-do-ibge",
-    "href": "apresentações/posts/api_R.html#exemplo-prático-api-do-ibge",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Exemplo prático: API do IBGE",
-    "text": "Exemplo prático: API do IBGE\nBuscar municípios brasileiros:\nlibrary(httr2)\nlibrary(dplyr)\n\n# Buscar todos municípios\nurl &lt;- \"https://servicodados.ibge.gov.br/api/v1/localidades/municipios\"\n\nresposta &lt;- request(url) |&gt;\n  req_perform()\n\nmunicipios &lt;- resp_body_json(resposta)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#exemplo-prático-api-do-ibge-continuação",
-    "href": "apresentações/posts/api_R.html#exemplo-prático-api-do-ibge-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Exemplo prático: API do IBGE (continuação)",
-    "text": "Exemplo prático: API do IBGE (continuação)\nProcessar os dados:\n# Converter para data frame\ndf_municipios &lt;- map_df(municipios, function(m) {\n  tibble(\n    id = m$id,\n    nome = m$nome,\n    uf = m$microrregiao$mesorregiao$UF$sigla,\n    regiao = m$microrregiao$mesorregiao$UF$regiao$nome\n  )\n})\n\n# Análise\ndf_municipios |&gt;\n  count(uf, sort = TRUE) |&gt;\n  head(10)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#exemplo-prático-viacep",
-    "href": "apresentações/posts/api_R.html#exemplo-prático-viacep",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Exemplo prático: ViaCEP",
-    "text": "Exemplo prático: ViaCEP\nBuscar endereço por CEP:\nbuscar_cep &lt;- function(cep) {\n  # Limpar CEP\n  cep_limpo &lt;- gsub(\"[^0-9]\", \"\", cep)\n  \n  # Validar\n  if (nchar(cep_limpo) != 8) {\n    stop(\"CEP deve ter 8 dígitos\")\n  }\n  \n  # Buscar\n  url &lt;- paste0(\"https://viacep.com.br/ws/\", cep_limpo, \"/json/\")\n  \n  resposta &lt;- request(url) |&gt;\n    req_perform()"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#exemplo-prático-viacep-continuação",
-    "href": "apresentações/posts/api_R.html#exemplo-prático-viacep-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Exemplo prático: ViaCEP (continuação)",
-    "text": "Exemplo prático: ViaCEP (continuação)\n  dados &lt;- resp_body_json(resposta)\n  \n  # Verificar se encontrou\n  if (!is.null(dados$erro)) {\n    warning(\"CEP não encontrado\")\n    return(NULL)\n  }\n  \n  return(as_tibble(dados))\n}\n\n# Uso\nendereco &lt;- buscar_cep(\"01310-100\")\nendereco$logradouro\nendereco$bairro\nendereco$localidade"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#exemplo-api-do-github",
-    "href": "apresentações/posts/api_R.html#exemplo-api-do-github",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Exemplo: API do GitHub",
-    "text": "Exemplo: API do GitHub\nBuscar repositórios de um usuário:\nbuscar_repos_github &lt;- function(usuario) {\n  url &lt;- paste0(\"https://api.github.com/users/\", usuario, \"/repos\")\n  \n  resposta &lt;- request(url) |&gt;\n    req_headers(\n      \"User-Agent\" = \"R-httr2\",\n      \"Accept\" = \"application/vnd.github.v3+json\"\n    ) |&gt;\n    req_url_query(\n      sort = \"updated\",\n      per_page = 100\n    ) |&gt;\n    req_perform()"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#exemplo-api-do-github-continuação",
-    "href": "apresentações/posts/api_R.html#exemplo-api-do-github-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Exemplo: API do GitHub (continuação)",
-    "text": "Exemplo: API do GitHub (continuação)\n  repos &lt;- resp_body_json(resposta)\n  \n  # Extrair informações relevantes\n  map_df(repos, function(r) {\n    tibble(\n      nome = r$name,\n      descricao = r$description %||% NA,\n      linguagem = r$language %||% NA,\n      stars = r$stargazers_count,\n      forks = r$forks_count,\n      atualizado = r$updated_at\n    )\n  })\n}\n\n# Uso\nmeus_repos &lt;- buscar_repos_github(\"hadley\")"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#boas-práticas",
-    "href": "apresentações/posts/api_R.html#boas-práticas",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Boas práticas",
-    "text": "Boas práticas\n1. Segurança\n\nUse HTTPS sempre\nNunca commite tokens\nRotacione credenciais\n\n2. Performance\n\nCache resultados quando possível\nRespeite rate limits\nUse paginação"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#boas-práticas-continuação",
-    "href": "apresentações/posts/api_R.html#boas-práticas-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Boas práticas (continuação)",
-    "text": "Boas práticas (continuação)\n3. Confiabilidade\n\nTrate erros graciosamente\nImplemente retry lógico\nValide dados recebidos\n\n4. Manutenibilidade\n\nDocumente endpoints\nOrganize seu código\nEscreva testes"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#boas-práticas-continuação-1",
-    "href": "apresentações/posts/api_R.html#boas-práticas-continuação-1",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Boas práticas (continuação)",
-    "text": "Boas práticas (continuação)\n# Cache simples\ncache_api &lt;- memoise::memoise(\n  function(url) {\n    request(url) |&gt; req_perform() |&gt; resp_body_json()\n  }\n)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#apis-do-governo-brasileiro",
-    "href": "apresentações/posts/api_R.html#apis-do-governo-brasileiro",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "APIs do governo brasileiro",
-    "text": "APIs do governo brasileiro\nRecursos públicos disponíveis:\n1. IBGE - Dados geográficos e estatísticos - https://servicodados.ibge.gov.br/api/docs\n2. Banco Central - Indicadores econômicos - https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/\n3. Portal da Transparência - http://www.transparencia.gov.br/api-de-dados"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#apis-do-governo-brasileiro-continuação",
-    "href": "apresentações/posts/api_R.html#apis-do-governo-brasileiro-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "APIs do governo brasileiro (continuação)",
-    "text": "APIs do governo brasileiro (continuação)\n4. Dados Abertos do Governo - https://dados.gov.br/\n5. TSE - Dados eleitorais - https://dadosabertos.tse.jus.br/"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#recursos-e-documentação",
-    "href": "apresentações/posts/api_R.html#recursos-e-documentação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Recursos e documentação",
-    "text": "Recursos e documentação\nDocumentação de APIs:\n\nSwagger/OpenAPI - Padrão para documentar APIs REST\nPostman - Testar requisições antes de codificar\ncurl converter - Converter comandos curl para httr2\n\nConversor curl para httr2: https://curlconverter.com/r/"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#pacotes-úteis",
-    "href": "apresentações/posts/api_R.html#pacotes-úteis",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Pacotes úteis",
-    "text": "Pacotes úteis\nProcessamento:\nlibrary(jsonlite)    # JSON\nlibrary(xml2)        # XML\nlibrary(rvest)       # Web scraping\nUtilitários:\nlibrary(memoise)     # Cache\nlibrary(progress)    # Barra de progresso\nlibrary(polite)      # Web scraping ético"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#depuração-de-requisições",
-    "href": "apresentações/posts/api_R.html#depuração-de-requisições",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Depuração de requisições",
-    "text": "Depuração de requisições\nEntenda o que está acontecendo:\n# 1. Ver requisição completa\nreq &lt;- request(\"https://api.exemplo.com/dados\") |&gt;\n  req_headers(\"Authorization\" = \"Bearer TOKEN\")\n\n# Ver detalhes antes de executar\nreq_dry_run(req)\n\n# 2. Capturar respostas\nresposta &lt;- req |&gt;\n  req_perform()\n\n# Ver corpo completo\nresp_body_string(resposta)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#depuração-de-requisições-continuação",
-    "href": "apresentações/posts/api_R.html#depuração-de-requisições-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Depuração de requisições (continuação)",
-    "text": "Depuração de requisições (continuação)\n# Ver headers\nresp_headers(resposta)\n\n# 3. Modo verbose para debug\nresposta &lt;- req |&gt;\n  req_verbose() |&gt;  # Mostra toda comunicação\n  req_perform()\nDica: Use req_dry_run() para testar sem fazer a requisição real!"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#criando-sua-própria-api",
-    "href": "apresentações/posts/api_R.html#criando-sua-própria-api",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Criando sua própria API",
-    "text": "Criando sua própria API\nCom plumber - transforme funções R em API:\nlibrary(plumber)\n\n# arquivo api.R\n#* @apiTitle Minha API de Análise\n#* @apiDescription API para análises estatísticas\n\n#* Calcular média\n#* @param valores Lista de números separados por vírgula\n#* @get /media\nfunction(valores) {\n  nums &lt;- as.numeric(strsplit(valores, \",\")[[1]])\n  mean(nums, na.rm = TRUE)\n}"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#criando-sua-própria-api-continuação",
-    "href": "apresentações/posts/api_R.html#criando-sua-própria-api-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Criando sua própria API (continuação)",
-    "text": "Criando sua própria API (continuação)\n#* Testar normalidade\n#* @param valores Lista de números separados por vírgula\n#* @post /normalidade\nfunction(valores) {\n  nums &lt;- as.numeric(strsplit(valores, \",\")[[1]])\n  teste &lt;- shapiro.test(nums)\n  list(\n    estatistica = teste$statistic,\n    p_valor = teste$p.value\n  )\n}\n\n# Iniciar servidor\n# plumber::plumb(\"api.R\")$run(port = 8000)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#resumo-jornada-com-apis",
-    "href": "apresentações/posts/api_R.html#resumo-jornada-com-apis",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Resumo: Jornada com APIs",
-    "text": "Resumo: Jornada com APIs\nO que você aprendeu:\n\nFundamentos - REST, HTTP, JSON\nRequisições - GET, POST, autenticação\nTratamento - Erros, paginação, rate limits\nPráticas - Segurança, cache\nExemplos - APIs reais (IBGE, ViaCEP, GitHub)"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#resumo-jornada-com-apis-continuação",
-    "href": "apresentações/posts/api_R.html#resumo-jornada-com-apis-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Resumo: Jornada com APIs (continuação)",
-    "text": "Resumo: Jornada com APIs (continuação)\nPróximos passos:\n\nEscolha uma API de interesse\nLeia a documentação\nCrie funções para consultas\nAutomatize análises\nCompartilhe seu código\n\nLembre-se: APIs são portas para um mundo de dados!"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#recursos-para-aprender-mais",
-    "href": "apresentações/posts/api_R.html#recursos-para-aprender-mais",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Recursos para aprender mais",
-    "text": "Recursos para aprender mais\nDocumentação:\n\nhttr2 - https://httr2.r-lib.org/\nPlumber - https://www.rplumber.io/\nHTTP Cats (códigos de status com gatinhos!)\n\nhttps://http.cat/\n\n\nTutoriais:\n\nWickham, H. Web APIs with httr2\n\nhttps://httr2.r-lib.org/articles/"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#recursos-para-aprender-mais-continuação",
-    "href": "apresentações/posts/api_R.html#recursos-para-aprender-mais-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Recursos para aprender mais (continuação)",
-    "text": "Recursos para aprender mais (continuação)\n\nAn Introduction to APIs (Zapier)\n\nhttps://zapier.com/resources/guides/apis\n\nREST API Tutorial\n\nhttps://restfulapi.net/\n\n\nAPIs para praticar:\n\nJSONPlaceholder: https://jsonplaceholder.typicode.com/\nPublic APIs List: https://github.com/public-apis/public-apis"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#referências",
-    "href": "apresentações/posts/api_R.html#referências",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Referências",
-    "text": "Referências\nLivros e Guias:\n\nWickham, H. (2024). httr2: Tools for HTTP. R package. https://httr2.r-lib.org/\nTrost, J., & Richardson, E. (2022). Plumber: An API Generator for R. https://www.rplumber.io/\nFielding, R. T. (2000). Architectural Styles and the Design of Network-based Software Architectures. Doctoral dissertation."
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#referências-continuação",
-    "href": "apresentações/posts/api_R.html#referências-continuação",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Referências (continuação)",
-    "text": "Referências (continuação)\n\nMozilla Developer Network. HTTP Methods. https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods\n\nSlides criados com Quarto\nhttps://quarto.org/\nhttps://quarto.org/docs/presentations/revealjs/"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#boas-apis-começam-com-boas-requisições",
-    "href": "apresentações/posts/api_R.html#boas-apis-começam-com-boas-requisições",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Boas APIs começam com boas requisições!",
-    "text": "Boas APIs começam com boas requisições!\nExplore, automatize e integre dados externos aos seus projetos!\n# Seu primeiro passo\nlibrary(httr2)\n\nrequest(\"https://api.exemplo.com/dados\") |&gt;\n  req_perform() |&gt;\n  resp_body_json()\n\n# O mundo de dados aguarda você!\nDúvidas? Compartilhe suas experiências com APIs!"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#muito-obrigada",
-    "href": "apresentações/posts/api_R.html#muito-obrigada",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "Muito obrigada!",
-    "text": "Muito obrigada!\nEsta apresentação é parte do projeto Café com R\nÉ OPEN, USE, COMPARTILHE!\nPerguntas? Dúvidas? Sugestões?\nPróximo passo: Abra seu RStudio e comece a praticar!"
-  },
-  {
-    "objectID": "apresentações/posts/api_R.html#assine-o-café-com-r-1",
-    "href": "apresentações/posts/api_R.html#assine-o-café-com-r-1",
-    "title": "6. Consumo de APIs RESTful no R",
-    "section": "☕ Assine o Café com R",
-    "text": "☕ Assine o Café com R\nFique por dentro das aulas, conteúdos, newsletter!\n\nQue cada gole desperte uma nova ideia.\nQue cada script abra uma nova conversa.\nQue o Café com R, se torne um ponto de encontro nosso!"
-  },
-  {
     "objectID": "apresentações/posts/apresentacao_tidy_eda.html#pergunta-para-você",
     "href": "apresentações/posts/apresentacao_tidy_eda.html#pergunta-para-você",
     "title": "Aula 10. Tidy Data e Análise Exploratória de dados",
@@ -4541,6 +3750,1077 @@
     "title": "Aula 10. Tidy Data e Análise Exploratória de dados",
     "section": "☕ Assine o Café com R",
     "text": "☕ Assine o Café com R\nFique por dentro das aulas, conteúdos, newsletter!\nClique aqui.\n\nQue cada gole desperte uma nova ideia.\nQue cada script abra uma nova conversa.\nQue o Café com R, se torne um ponto de encontro nosso!"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#assine-o-café-com-r",
+    "href": "apresentações/posts/api_R.html#assine-o-café-com-r",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "☕ Assine o Café com R",
+    "text": "☕ Assine o Café com R\nFique por dentro das aulas, conteúdos, newsletter!\n\nQue cada gole desperte uma nova ideia.\nQue cada script abra uma nova conversa.\nQue o Café com R, se torne um ponto de encontro nosso!"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#o-que-são-apis",
+    "href": "apresentações/posts/api_R.html#o-que-são-apis",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "O que são APIs?",
+    "text": "O que são APIs?\nAPI = Application Programming Interface\nUma API é como um garçom em um restaurante:\n\nVocê (seu código) faz um pedido\nO garçom (API) leva ao cozinheiro (servidor)\nRetorna com seu prato (dados)\n\nExemplos do dia a dia:\n\nPrevisão do tempo\nCotação de moedas\nDados do IBGE\nTwitter/X, GitHub, OpenAI\nDados governamentais"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#por-que-usar-apis",
+    "href": "apresentações/posts/api_R.html#por-que-usar-apis",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Por que usar APIs?",
+    "text": "Por que usar APIs?\nEm vez de baixar arquivos manualmente:\n# ❌ Jeito manual (trabalhoso)\n# 1. Abrir navegador\n# 2. Baixar CSV\n# 3. Salvar em pasta\n# 4. Importar no R\ndados &lt;- read.csv(\"dados_baixados.csv\")\nUse APIs para automatizar:\n# ✅ Jeito automatizado\nlibrary(httr2)\nresposta &lt;- request(\"https://api.exemplo.com/dados\") |&gt;\n  req_perform()\n\ndados &lt;- resp_body_json(resposta)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#rest-o-padrão-da-web",
+    "href": "apresentações/posts/api_R.html#rest-o-padrão-da-web",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "REST: O padrão da web",
+    "text": "REST: O padrão da web\nREST = Representational State Transfer\nPrincípios básicos:\n\nURLs estruturadas - Cada recurso tem um endereço único\n\nhttps://api.exemplo.com/usuarios\nhttps://api.exemplo.com/usuarios/123"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#rest-o-padrão-da-web-continuação",
+    "href": "apresentações/posts/api_R.html#rest-o-padrão-da-web-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "REST: O padrão da web (continuação)",
+    "text": "REST: O padrão da web (continuação)\n\nMétodos HTTP definem ações:\n\nGET - Buscar dados\nPOST - Criar novo recurso\nPUT/PATCH - Atualizar recurso\nDELETE - Remover recurso"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#rest-o-padrão-da-web-continuação-1",
+    "href": "apresentações/posts/api_R.html#rest-o-padrão-da-web-continuação-1",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "REST: O padrão da web (continuação)",
+    "text": "REST: O padrão da web (continuação)\nMais princípios:\n\nStateless - Cada requisição é independente\nFormato JSON - Dados estruturados e legíveis\n\nExemplo de URL REST:\nGET https://api.loja.com/produtos/123\nGET https://api.loja.com/produtos?categoria=livros\nPOST https://api.loja.com/produtos\nPUT https://api.loja.com/produtos/123\nDELETE https://api.loja.com/produtos/123"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#anatomia-de-uma-requisição",
+    "href": "apresentações/posts/api_R.html#anatomia-de-uma-requisição",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Anatomia de uma requisição",
+    "text": "Anatomia de uma requisição\nEstrutura completa:\nrequisicao &lt;- request(\"https://api.exemplo.com/dados\") |&gt;\n  req_headers(\n    \"Authorization\" = \"Bearer SEU_TOKEN\",\n    \"Content-Type\" = \"application/json\"\n  ) |&gt;\n  req_url_query(\n    limite = 100,\n    pagina = 1,\n    ordenar = \"data_desc\"\n  ) |&gt;\n  req_body_json(list(\n    filtro = \"ativo\"\n  ))"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#anatomia-de-uma-requisição-continuação",
+    "href": "apresentações/posts/api_R.html#anatomia-de-uma-requisição-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Anatomia de uma requisição (continuação)",
+    "text": "Anatomia de uma requisição (continuação)\nComponentes:\n\nURL base + endpoint\n\nBase: https://api.exemplo.com\nEndpoint: /dados\n\nHeaders (cabeçalhos)\n\nAutenticação, tipo de conteúdo"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#anatomia-de-uma-requisição-continuação-1",
+    "href": "apresentações/posts/api_R.html#anatomia-de-uma-requisição-continuação-1",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Anatomia de uma requisição (continuação)",
+    "text": "Anatomia de uma requisição (continuação)\n\nQuery parameters (parâmetros)\n\nFiltros, paginação, ordenação\n\nBody (corpo - para POST/PUT)\n\nDados a serem enviados"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#pacotes-para-consumir-apis",
+    "href": "apresentações/posts/api_R.html#pacotes-para-consumir-apis",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Pacotes para consumir APIs",
+    "text": "Pacotes para consumir APIs\nPrincipais opções:\n# httr2 - Moderno e recomendado\nlibrary(httr2)\nrequest(\"https://api.exemplo.com\") |&gt;\n  req_perform() |&gt;\n  resp_body_json()\n\n# httr - Clássico (ainda usado)\nlibrary(httr)\nGET(\"https://api.exemplo.com\")\n\n# jsonlite - Para processar JSON\nlibrary(jsonlite)\nfromJSON(\"dados.json\")\nRecomendação: use httr2 para projetos novos"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#seu-primeiro-get-request",
+    "href": "apresentações/posts/api_R.html#seu-primeiro-get-request",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Seu primeiro GET request",
+    "text": "Seu primeiro GET request\nAPI pública: JSONPlaceholder (para testes)\nlibrary(httr2)\n\n# Fazer requisição\nresposta &lt;- request(\"https://jsonplaceholder.typicode.com/users\") |&gt;\n  req_perform()\n\n# Ver status\nresp_status(resposta)  # 200 = sucesso\n\n# Extrair dados\nusuarios &lt;- resp_body_json(resposta)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#seu-primeiro-get-request-continuação",
+    "href": "apresentações/posts/api_R.html#seu-primeiro-get-request-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Seu primeiro GET request (continuação)",
+    "text": "Seu primeiro GET request (continuação)\nProcessar os dados:\n# Converter para data frame\nlibrary(purrr)\ndf_usuarios &lt;- map_df(usuarios, as_tibble)\n\nhead(df_usuarios)\nResultado: - Lista de usuários convertida em tibble - Pronto para análise!"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#códigos-de-status-http",
+    "href": "apresentações/posts/api_R.html#códigos-de-status-http",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Códigos de status HTTP",
+    "text": "Códigos de status HTTP\nEntenda as respostas da API:\n\n\n\nCódigo\nSignificado\nDescrição\n\n\n\n\n200\nOK\nSucesso! Dados retornados\n\n\n201\nCreated\nRecurso criado com sucesso\n\n\n204\nNo Content\nSucesso, mas sem dados de retorno\n\n\n400\nBad Request\nErro na sua requisição\n\n\n401\nUnauthorized\nAutenticação necessária"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#códigos-de-status-http-continuação",
+    "href": "apresentações/posts/api_R.html#códigos-de-status-http-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Códigos de status HTTP (continuação)",
+    "text": "Códigos de status HTTP (continuação)\nMais códigos importantes:\n\n\n\nCódigo\nSignificado\nDescrição\n\n\n\n\n403\nForbidden\nSem permissão\n\n\n404\nNot Found\nRecurso não existe\n\n\n429\nToo Many Requests\nLimite de requisições excedido\n\n\n500\nInternal Server Error\nErro no servidor\n\n\n\n# Verificar status\nresp_status(resposta)\nresp_status_desc(resposta)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#trabalhando-com-json",
+    "href": "apresentações/posts/api_R.html#trabalhando-com-json",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Trabalhando com JSON",
+    "text": "Trabalhando com JSON\nJSON é o formato padrão de APIs REST:\n{\n  \"id\": 1,\n  \"nome\": \"Ana Silva\",\n  \"email\": \"ana@exemplo.com\",\n  \"endereco\": {\n    \"rua\": \"Rua das Flores\",\n    \"cidade\": \"São Paulo\"\n  },\n  \"hobbies\": [\"leitura\", \"corrida\"]\n}"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#trabalhando-com-json-continuação",
+    "href": "apresentações/posts/api_R.html#trabalhando-com-json-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Trabalhando com JSON (continuação)",
+    "text": "Trabalhando com JSON (continuação)\nProcessar no R:\n# Extrair JSON da resposta\ndados &lt;- resp_body_json(resposta)\n\n# Acessar campos\ndados$nome\ndados$endereco$cidade\ndados$hobbies[[1]]\n\n# Converter lista complexa em data frame\nlibrary(tidyr)\ndf &lt;- unnest_wider(as_tibble(dados), everything())"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#autenticação-api-keys",
+    "href": "apresentações/posts/api_R.html#autenticação-api-keys",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Autenticação: API Keys",
+    "text": "Autenticação: API Keys\nMuitas APIs exigem identificação:\n# NUNCA coloque tokens diretamente no código!\n# ❌ ERRADO\napi_key &lt;- \"abc123token456\"\n\n# ✅ CORRETO: use variáveis de ambiente\n# No arquivo .Renviron:\n# API_KEY=abc123token456\n\n# No código:\napi_key &lt;- Sys.getenv(\"API_KEY\")"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#autenticação-api-keys-continuação",
+    "href": "apresentações/posts/api_R.html#autenticação-api-keys-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Autenticação: API Keys (continuação)",
+    "text": "Autenticação: API Keys (continuação)\nUsar a chave nas requisições:\nrequisicao &lt;- request(\"https://api.exemplo.com/dados\") |&gt;\n  req_headers(\n    \"Authorization\" = paste(\"Bearer\", api_key)\n  ) |&gt;\n  req_perform()\nConfigurar .Renviron:\n# Abrir arquivo\nusethis::edit_r_environ()\n\n# Adicionar:\nAPI_KEY=seu_token_aqui\n\n# Reiniciar R"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#parâmetros-de-consulta",
+    "href": "apresentações/posts/api_R.html#parâmetros-de-consulta",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Parâmetros de consulta",
+    "text": "Parâmetros de consulta\nFiltrar e personalizar resultados:\n# URL final: \n# https://api.exemplo.com/produtos?categoria=eletronicos&limite=50\n\nrequest(\"https://api.exemplo.com/produtos\") |&gt;\n  req_url_query(\n    categoria = \"eletronicos\",\n    limite = 50,\n    ordem = \"preco\",\n    desconto = TRUE\n  ) |&gt;\n  req_perform()"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#parâmetros-de-consulta-continuação",
+    "href": "apresentações/posts/api_R.html#parâmetros-de-consulta-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Parâmetros de consulta (continuação)",
+    "text": "Parâmetros de consulta (continuação)\nParâmetros dinâmicos:\n# Criar lista de filtros\nfiltros &lt;- list(\n  categoria = \"eletronicos\",\n  preco_max = 1000,\n  em_estoque = TRUE\n)\n\n# Usar com !!!\nrequest(\"https://api.exemplo.com/produtos\") |&gt;\n  req_url_query(!!!filtros) |&gt;\n  req_perform()"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#paginação-de-resultados",
+    "href": "apresentações/posts/api_R.html#paginação-de-resultados",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Paginação de resultados",
+    "text": "Paginação de resultados\nAPIs limitam quantidade de dados por requisição:\nbuscar_todos_usuarios &lt;- function(url_base) {\n  todos_dados &lt;- list()\n  pagina &lt;- 1\n  \n  repeat {\n    cat(\"Buscando página\", pagina, \"\\n\")\n    \n    resposta &lt;- request(url_base) |&gt;\n      req_url_query(\n        pagina = pagina,\n        limite = 100\n      ) |&gt;\n      req_perform()\n    \n    dados &lt;- resp_body_json(resposta)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#paginação-de-resultados-continuação",
+    "href": "apresentações/posts/api_R.html#paginação-de-resultados-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Paginação de resultados (continuação)",
+    "text": "Paginação de resultados (continuação)\n    # Parar se não houver mais dados\n    if (length(dados) == 0) break\n    \n    todos_dados &lt;- c(todos_dados, dados)\n    pagina &lt;- pagina + 1\n    \n    # Respeitar rate limits\n    Sys.sleep(1)\n  }\n  \n  return(todos_dados)\n}"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#post-enviando-dados",
+    "href": "apresentações/posts/api_R.html#post-enviando-dados",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "POST: Enviando dados",
+    "text": "POST: Enviando dados\nCriar novos recursos na API:\n# Dados a enviar\nnovo_usuario &lt;- list(\n  nome = \"Carlos Santos\",\n  email = \"carlos@exemplo.com\",\n  idade = 28\n)\n\n# POST request\nresposta &lt;- request(\"https://api.exemplo.com/usuarios\") |&gt;\n  req_method(\"POST\") |&gt;\n  req_headers(\n    \"Authorization\" = paste(\"Bearer\", api_key),\n    \"Content-Type\" = \"application/json\"\n  ) |&gt;\n  req_body_json(novo_usuario) |&gt;\n  req_perform()"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#post-enviando-dados-continuação",
+    "href": "apresentações/posts/api_R.html#post-enviando-dados-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "POST: Enviando dados (continuação)",
+    "text": "POST: Enviando dados (continuação)\nVerificar o resultado:\n# Verificar sucesso\nresp_status(resposta)  # Deve ser 201\n\n# Ver recurso criado\nusuario_criado &lt;- resp_body_json(resposta)\nusuario_criado$id\nDica: Status 201 (Created) indica que o recurso foi criado com sucesso!"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#tratamento-de-erros",
+    "href": "apresentações/posts/api_R.html#tratamento-de-erros",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Tratamento de erros",
+    "text": "Tratamento de erros\nAPIs podem falhar - esteja preparado:\nbuscar_dados_seguro &lt;- function(url) {\n  tryCatch({\n    resposta &lt;- request(url) |&gt;\n      req_retry(max_tries = 3) |&gt;  # Tentar 3 vezes\n      req_timeout(30) |&gt;            # Timeout de 30s\n      req_perform()\n    \n    # Verificar status\n    if (resp_status(resposta) != 200) {\n      stop(\"Erro na API: \", resp_status_desc(resposta))\n    }\n    \n    return(resp_body_json(resposta))"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#tratamento-de-erros-continuação",
+    "href": "apresentações/posts/api_R.html#tratamento-de-erros-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Tratamento de erros (continuação)",
+    "text": "Tratamento de erros (continuação)\n  }, error = function(e) {\n    warning(\"Erro ao buscar dados: \", e$message)\n    return(NULL)\n  })\n}\n\n# Uso\ndados &lt;- buscar_dados_seguro(\"https://api.exemplo.com/dados\")\n\nif (!is.null(dados)) {\n  # Processar dados\n}"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#rate-limits",
+    "href": "apresentações/posts/api_R.html#rate-limits",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Rate Limits",
+    "text": "Rate Limits\nAPIs limitam número de requisições:\n\n\n\n\n\n\nAtenção aos limites\n\n\nExemplos comuns: - 100 requisições por hora - 1000 requisições por dia - 10 requisições por minuto\n\n\n\n# Função com controle de taxa\nbuscar_com_limite &lt;- function(urls, delay = 1) {\n  resultados &lt;- list()\n  \n  for (i in seq_along(urls)) {\n    cat(\"Processando\", i, \"de\", length(urls), \"\\n\")"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#rate-limits-continuação",
+    "href": "apresentações/posts/api_R.html#rate-limits-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Rate Limits (continuação)",
+    "text": "Rate Limits (continuação)\n    resultados[[i]] &lt;- request(urls[i]) |&gt;\n      req_perform() |&gt;\n      resp_body_json()\n    \n    # Aguardar entre requisições\n    if (i &lt; length(urls)) {\n      Sys.sleep(delay)\n    }\n  }\n  \n  return(resultados)\n}\nDica: Sempre respeite os limites para não ser bloqueado!"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#exemplo-prático-api-do-ibge",
+    "href": "apresentações/posts/api_R.html#exemplo-prático-api-do-ibge",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Exemplo prático: API do IBGE",
+    "text": "Exemplo prático: API do IBGE\nBuscar municípios brasileiros:\nlibrary(httr2)\nlibrary(dplyr)\n\n# Buscar todos municípios\nurl &lt;- \"https://servicodados.ibge.gov.br/api/v1/localidades/municipios\"\n\nresposta &lt;- request(url) |&gt;\n  req_perform()\n\nmunicipios &lt;- resp_body_json(resposta)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#exemplo-prático-api-do-ibge-continuação",
+    "href": "apresentações/posts/api_R.html#exemplo-prático-api-do-ibge-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Exemplo prático: API do IBGE (continuação)",
+    "text": "Exemplo prático: API do IBGE (continuação)\nProcessar os dados:\n# Converter para data frame\ndf_municipios &lt;- map_df(municipios, function(m) {\n  tibble(\n    id = m$id,\n    nome = m$nome,\n    uf = m$microrregiao$mesorregiao$UF$sigla,\n    regiao = m$microrregiao$mesorregiao$UF$regiao$nome\n  )\n})\n\n# Análise\ndf_municipios |&gt;\n  count(uf, sort = TRUE) |&gt;\n  head(10)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#exemplo-prático-viacep",
+    "href": "apresentações/posts/api_R.html#exemplo-prático-viacep",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Exemplo prático: ViaCEP",
+    "text": "Exemplo prático: ViaCEP\nBuscar endereço por CEP:\nbuscar_cep &lt;- function(cep) {\n  # Limpar CEP\n  cep_limpo &lt;- gsub(\"[^0-9]\", \"\", cep)\n  \n  # Validar\n  if (nchar(cep_limpo) != 8) {\n    stop(\"CEP deve ter 8 dígitos\")\n  }\n  \n  # Buscar\n  url &lt;- paste0(\"https://viacep.com.br/ws/\", cep_limpo, \"/json/\")\n  \n  resposta &lt;- request(url) |&gt;\n    req_perform()"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#exemplo-prático-viacep-continuação",
+    "href": "apresentações/posts/api_R.html#exemplo-prático-viacep-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Exemplo prático: ViaCEP (continuação)",
+    "text": "Exemplo prático: ViaCEP (continuação)\n  dados &lt;- resp_body_json(resposta)\n  \n  # Verificar se encontrou\n  if (!is.null(dados$erro)) {\n    warning(\"CEP não encontrado\")\n    return(NULL)\n  }\n  \n  return(as_tibble(dados))\n}\n\n# Uso\nendereco &lt;- buscar_cep(\"01310-100\")\nendereco$logradouro\nendereco$bairro\nendereco$localidade"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#exemplo-api-do-github",
+    "href": "apresentações/posts/api_R.html#exemplo-api-do-github",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Exemplo: API do GitHub",
+    "text": "Exemplo: API do GitHub\nBuscar repositórios de um usuário:\nbuscar_repos_github &lt;- function(usuario) {\n  url &lt;- paste0(\"https://api.github.com/users/\", usuario, \"/repos\")\n  \n  resposta &lt;- request(url) |&gt;\n    req_headers(\n      \"User-Agent\" = \"R-httr2\",\n      \"Accept\" = \"application/vnd.github.v3+json\"\n    ) |&gt;\n    req_url_query(\n      sort = \"updated\",\n      per_page = 100\n    ) |&gt;\n    req_perform()"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#exemplo-api-do-github-continuação",
+    "href": "apresentações/posts/api_R.html#exemplo-api-do-github-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Exemplo: API do GitHub (continuação)",
+    "text": "Exemplo: API do GitHub (continuação)\n  repos &lt;- resp_body_json(resposta)\n  \n  # Extrair informações relevantes\n  map_df(repos, function(r) {\n    tibble(\n      nome = r$name,\n      descricao = r$description %||% NA,\n      linguagem = r$language %||% NA,\n      stars = r$stargazers_count,\n      forks = r$forks_count,\n      atualizado = r$updated_at\n    )\n  })\n}\n\n# Uso\nmeus_repos &lt;- buscar_repos_github(\"hadley\")"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#boas-práticas",
+    "href": "apresentações/posts/api_R.html#boas-práticas",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Boas práticas",
+    "text": "Boas práticas\n1. Segurança\n\nUse HTTPS sempre\nNunca commite tokens\nRotacione credenciais\n\n2. Performance\n\nCache resultados quando possível\nRespeite rate limits\nUse paginação"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#boas-práticas-continuação",
+    "href": "apresentações/posts/api_R.html#boas-práticas-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Boas práticas (continuação)",
+    "text": "Boas práticas (continuação)\n3. Confiabilidade\n\nTrate erros graciosamente\nImplemente retry lógico\nValide dados recebidos\n\n4. Manutenibilidade\n\nDocumente endpoints\nOrganize seu código\nEscreva testes"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#boas-práticas-continuação-1",
+    "href": "apresentações/posts/api_R.html#boas-práticas-continuação-1",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Boas práticas (continuação)",
+    "text": "Boas práticas (continuação)\n# Cache simples\ncache_api &lt;- memoise::memoise(\n  function(url) {\n    request(url) |&gt; req_perform() |&gt; resp_body_json()\n  }\n)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#apis-do-governo-brasileiro",
+    "href": "apresentações/posts/api_R.html#apis-do-governo-brasileiro",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "APIs do governo brasileiro",
+    "text": "APIs do governo brasileiro\nRecursos públicos disponíveis:\n1. IBGE - Dados geográficos e estatísticos - https://servicodados.ibge.gov.br/api/docs\n2. Banco Central - Indicadores econômicos - https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/\n3. Portal da Transparência - http://www.transparencia.gov.br/api-de-dados"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#apis-do-governo-brasileiro-continuação",
+    "href": "apresentações/posts/api_R.html#apis-do-governo-brasileiro-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "APIs do governo brasileiro (continuação)",
+    "text": "APIs do governo brasileiro (continuação)\n4. Dados Abertos do Governo - https://dados.gov.br/\n5. TSE - Dados eleitorais - https://dadosabertos.tse.jus.br/"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#recursos-e-documentação",
+    "href": "apresentações/posts/api_R.html#recursos-e-documentação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Recursos e documentação",
+    "text": "Recursos e documentação\nDocumentação de APIs:\n\nSwagger/OpenAPI - Padrão para documentar APIs REST\nPostman - Testar requisições antes de codificar\ncurl converter - Converter comandos curl para httr2\n\nConversor curl para httr2: https://curlconverter.com/r/"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#pacotes-úteis",
+    "href": "apresentações/posts/api_R.html#pacotes-úteis",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Pacotes úteis",
+    "text": "Pacotes úteis\nProcessamento:\nlibrary(jsonlite)    # JSON\nlibrary(xml2)        # XML\nlibrary(rvest)       # Web scraping\nUtilitários:\nlibrary(memoise)     # Cache\nlibrary(progress)    # Barra de progresso\nlibrary(polite)      # Web scraping ético"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#depuração-de-requisições",
+    "href": "apresentações/posts/api_R.html#depuração-de-requisições",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Depuração de requisições",
+    "text": "Depuração de requisições\nEntenda o que está acontecendo:\n# 1. Ver requisição completa\nreq &lt;- request(\"https://api.exemplo.com/dados\") |&gt;\n  req_headers(\"Authorization\" = \"Bearer TOKEN\")\n\n# Ver detalhes antes de executar\nreq_dry_run(req)\n\n# 2. Capturar respostas\nresposta &lt;- req |&gt;\n  req_perform()\n\n# Ver corpo completo\nresp_body_string(resposta)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#depuração-de-requisições-continuação",
+    "href": "apresentações/posts/api_R.html#depuração-de-requisições-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Depuração de requisições (continuação)",
+    "text": "Depuração de requisições (continuação)\n# Ver headers\nresp_headers(resposta)\n\n# 3. Modo verbose para debug\nresposta &lt;- req |&gt;\n  req_verbose() |&gt;  # Mostra toda comunicação\n  req_perform()\nDica: Use req_dry_run() para testar sem fazer a requisição real!"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#criando-sua-própria-api",
+    "href": "apresentações/posts/api_R.html#criando-sua-própria-api",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Criando sua própria API",
+    "text": "Criando sua própria API\nCom plumber - transforme funções R em API:\nlibrary(plumber)\n\n# arquivo api.R\n#* @apiTitle Minha API de Análise\n#* @apiDescription API para análises estatísticas\n\n#* Calcular média\n#* @param valores Lista de números separados por vírgula\n#* @get /media\nfunction(valores) {\n  nums &lt;- as.numeric(strsplit(valores, \",\")[[1]])\n  mean(nums, na.rm = TRUE)\n}"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#criando-sua-própria-api-continuação",
+    "href": "apresentações/posts/api_R.html#criando-sua-própria-api-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Criando sua própria API (continuação)",
+    "text": "Criando sua própria API (continuação)\n#* Testar normalidade\n#* @param valores Lista de números separados por vírgula\n#* @post /normalidade\nfunction(valores) {\n  nums &lt;- as.numeric(strsplit(valores, \",\")[[1]])\n  teste &lt;- shapiro.test(nums)\n  list(\n    estatistica = teste$statistic,\n    p_valor = teste$p.value\n  )\n}\n\n# Iniciar servidor\n# plumber::plumb(\"api.R\")$run(port = 8000)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#resumo-jornada-com-apis",
+    "href": "apresentações/posts/api_R.html#resumo-jornada-com-apis",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Resumo: Jornada com APIs",
+    "text": "Resumo: Jornada com APIs\nO que você aprendeu:\n\nFundamentos - REST, HTTP, JSON\nRequisições - GET, POST, autenticação\nTratamento - Erros, paginação, rate limits\nPráticas - Segurança, cache\nExemplos - APIs reais (IBGE, ViaCEP, GitHub)"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#resumo-jornada-com-apis-continuação",
+    "href": "apresentações/posts/api_R.html#resumo-jornada-com-apis-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Resumo: Jornada com APIs (continuação)",
+    "text": "Resumo: Jornada com APIs (continuação)\nPróximos passos:\n\nEscolha uma API de interesse\nLeia a documentação\nCrie funções para consultas\nAutomatize análises\nCompartilhe seu código\n\nLembre-se: APIs são portas para um mundo de dados!"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#recursos-para-aprender-mais",
+    "href": "apresentações/posts/api_R.html#recursos-para-aprender-mais",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Recursos para aprender mais",
+    "text": "Recursos para aprender mais\nDocumentação:\n\nhttr2 - https://httr2.r-lib.org/\nPlumber - https://www.rplumber.io/\nHTTP Cats (códigos de status com gatinhos!)\n\nhttps://http.cat/\n\n\nTutoriais:\n\nWickham, H. Web APIs with httr2\n\nhttps://httr2.r-lib.org/articles/"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#recursos-para-aprender-mais-continuação",
+    "href": "apresentações/posts/api_R.html#recursos-para-aprender-mais-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Recursos para aprender mais (continuação)",
+    "text": "Recursos para aprender mais (continuação)\n\nAn Introduction to APIs (Zapier)\n\nhttps://zapier.com/resources/guides/apis\n\nREST API Tutorial\n\nhttps://restfulapi.net/\n\n\nAPIs para praticar:\n\nJSONPlaceholder: https://jsonplaceholder.typicode.com/\nPublic APIs List: https://github.com/public-apis/public-apis"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#referências",
+    "href": "apresentações/posts/api_R.html#referências",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Referências",
+    "text": "Referências\nLivros e Guias:\n\nWickham, H. (2024). httr2: Tools for HTTP. R package. https://httr2.r-lib.org/\nTrost, J., & Richardson, E. (2022). Plumber: An API Generator for R. https://www.rplumber.io/\nFielding, R. T. (2000). Architectural Styles and the Design of Network-based Software Architectures. Doctoral dissertation."
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#referências-continuação",
+    "href": "apresentações/posts/api_R.html#referências-continuação",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Referências (continuação)",
+    "text": "Referências (continuação)\n\nMozilla Developer Network. HTTP Methods. https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods\n\nSlides criados com Quarto\nhttps://quarto.org/\nhttps://quarto.org/docs/presentations/revealjs/"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#boas-apis-começam-com-boas-requisições",
+    "href": "apresentações/posts/api_R.html#boas-apis-começam-com-boas-requisições",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Boas APIs começam com boas requisições!",
+    "text": "Boas APIs começam com boas requisições!\nExplore, automatize e integre dados externos aos seus projetos!\n# Seu primeiro passo\nlibrary(httr2)\n\nrequest(\"https://api.exemplo.com/dados\") |&gt;\n  req_perform() |&gt;\n  resp_body_json()\n\n# O mundo de dados aguarda você!\nDúvidas? Compartilhe suas experiências com APIs!"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#muito-obrigada",
+    "href": "apresentações/posts/api_R.html#muito-obrigada",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "Muito obrigada!",
+    "text": "Muito obrigada!\nEsta apresentação é parte do projeto Café com R\nÉ OPEN, USE, COMPARTILHE!\nPerguntas? Dúvidas? Sugestões?\nPróximo passo: Abra seu RStudio e comece a praticar!"
+  },
+  {
+    "objectID": "apresentações/posts/api_R.html#assine-o-café-com-r-1",
+    "href": "apresentações/posts/api_R.html#assine-o-café-com-r-1",
+    "title": "6. Consumo de APIs RESTful no R",
+    "section": "☕ Assine o Café com R",
+    "text": "☕ Assine o Café com R\nFique por dentro das aulas, conteúdos, newsletter!\n\nQue cada gole desperte uma nova ideia.\nQue cada script abra uma nova conversa.\nQue o Café com R, se torne um ponto de encontro nosso!"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Jennifer Lopes",
+    "section": "",
+    "text": "[2016] Sou Engenheira Agronôma, formada pela Universidade Federal de Pelotas-RS.\n[2017- 2025] Mestre e Doutorada em Ciências - Ênfase em Melhoramento Genético de Plantas- UFPel.\n[2023- 2025] Analista de Dados SR- Genética e Melhoramento Florestal- Suzano.SA\n[2024-Atual] Consultora e Instrutora - Ciência de Dados em R\n\n\n\nAgricultura\nMelhoramento Genético de Plantas | Biotecnologia | Genética quantitativa\nExperimentação Agrícola\nEstatística | Análise de Dados | Ciência de dados | Machine Learning\nRelatórios | Sites | Livros em Quarto\n\n\n\nAtualmente, estou entusiasmada em contribuir como cofundadora do capítulo R-Ladies Goiânia, uma organização global dedicada a promover a diversidade de gênero na comunidade R.💜\nFaço parte do apoio Analytics na Comunidade de Estatística do Professor Thiago Marques. Essa sem dúvidas é a maior comunidade de estatística do Brasil, ela tem um grande objetivo: Disseminar o conhecimento para a comunidade como um todo!"
+  },
+  {
+    "objectID": "about.html#formação",
+    "href": "about.html#formação",
+    "title": "Jennifer Lopes",
+    "section": "",
+    "text": "[2016] Sou Engenheira Agronôma, formada pela Universidade Federal de Pelotas-RS.\n[2017- 2025] Mestre e Doutorada em Ciências - Ênfase em Melhoramento Genético de Plantas- UFPel.\n[2023- 2025] Analista de Dados SR- Genética e Melhoramento Florestal- Suzano.SA\n[2024-Atual] Consultora e Instrutora - Ciência de Dados em R"
+  },
+  {
+    "objectID": "about.html#áreas-de-interesse",
+    "href": "about.html#áreas-de-interesse",
+    "title": "Jennifer Lopes",
+    "section": "",
+    "text": "Agricultura\nMelhoramento Genético de Plantas | Biotecnologia | Genética quantitativa\nExperimentação Agrícola\nEstatística | Análise de Dados | Ciência de dados | Machine Learning\nRelatórios | Sites | Livros em Quarto"
+  },
+  {
+    "objectID": "about.html#comunidades-trabalho-voluntário",
+    "href": "about.html#comunidades-trabalho-voluntário",
+    "title": "Jennifer Lopes",
+    "section": "",
+    "text": "Atualmente, estou entusiasmada em contribuir como cofundadora do capítulo R-Ladies Goiânia, uma organização global dedicada a promover a diversidade de gênero na comunidade R.💜\nFaço parte do apoio Analytics na Comunidade de Estatística do Professor Thiago Marques. Essa sem dúvidas é a maior comunidade de estatística do Brasil, ela tem um grande objetivo: Disseminar o conhecimento para a comunidade como um todo!"
+  },
+  {
+    "objectID": "apresentações/index.html",
+    "href": "apresentações/index.html",
+    "title": "Aqui você encontra conteúdos e publicações sobre Ciência de Dados",
+    "section": "",
+    "text": "Como salvar essa apresentação em PDF\nVocê também pode salvar esta apresentação diretamente em PDF usando o modo PDF Export Mode do próprio visualizador do Quarto (menu lateral &gt; Tools &gt; PDF Export Mode). Isso ajusta automaticamente os slides para um formato adequado de impressão.\nAlém disso, esta apresentação ficará disponível online no meu site, permitindo que você acesse quando quiser.\n\n\nNo GitHub em breve - até final de janeiro.\nEm breve, todo o material, incluindo o arquivo .qmd, o tema visual e os códigos utilizados estará no meu GitHub, para que você possa reproduzir, adaptar ou integrar às suas próprias aulas e projetos com total liberdade.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n1. 2026\n\n\n\nAno NOVO\n\n\n\nAbrindo um novo script.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n1. Seus primeiros passos com R\n\n\n\nR\n\nIniciantes\n\nTutorial\n\nOnboarding\n\n\n\nTudo que você precisa saber para dar seus primeiros passos com confiança. É open use e compartilhe\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2. Funções em R\n\n\n\nFunções\n\nR\n\n\n\nO que realmente muda quando você aprende a criá-las?É open use e compartilhe\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n3. Manipulação de Dados com dplyr\n\n\n\nR\n\ndplyr\n\nData Wrangling\n\nTidyverse\n\n\n\nAprenda manipulação de dados no R com dplyr. É open use e compartilhe\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n4. Visualização de Dados com ggplot2\n\n\n\nR\n\nggplot2\n\nVisualização\n\nTidyverse\n\n\n\nAprenda a criar visualizações no R com ggplot2. É open use e compartilhe\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n5. Do SQL para o R com dbplyr\n\n\n\nSQL\n\nR\n\nWeb\n\ndbplyr\n\n\n\nTraduza suas queries SQL para o universo tidyverse. É open use e compartilhe.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n5.1. SQL x R (dbplyr)\n\n\n\nSQL\n\nR\n\nWeb\n\ndbplyr\n\n\n\ncheat sheet - Com as funções. É open use e compartilhe.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n6. Consumo de APIs RESTful no R\n\n\n\nAPIs\n\nR\n\nWeb\n\n\n\nAprenda a consumir APIs RESTful e integrar dados externos aos seus projetos em R. É open use e compartilhe.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n7. Tidymodels para Regressão em R\n\n\n\nR\n\nMachine Learning\n\nRegressão\n\nTidymodels\n\n\n\nVocê já conhece o tidymodels? Aqui tem um tutorial.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n7.1. Documentação: Tidymodels para Regressão em R\n\n\n\nR\n\nMachine Learning\n\nRegressão\n\nTidymodels\n\n\n\nGuia completo para análise de regressão usando o pacote Tidymodels\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n8. Estatística com R\n\n\n\nEstatística\n\nR\n\nAnálise de Dados\n\n\n\nAprenda os fundamentos de estatística aplicada usando R e o dataset CO2\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAula 10. Tidy Data e Análise Exploratória de dados\n\n\n\nEstatística\n\nR\n\ntidy\n\nEDA\n\nAnálise Exploratória\n\n\n\nPrincípios de organização e workflow em R.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAula 11. Web scraping com pacote rvest\n\n\n\nR\n\nrvest\n\nWeb Scraping\n\nTidyverse\n\nIBGE\n\n\n\nAprenda a coletar dados diretamente da web com R e rvest.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAula 12. Atualizações no pacote dplyr\n\n\n\nR\n\ndplyr\n\nTidyverse\n\nTutorial\n\n\n\nTutorial prático das novas funções do dplyr usando o dataset CO2.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAula 9. Integração R x Python com pacote Reticulate\n\n\n\nPython\n\nR\n\nQuarto\n\nReticulate\n\n\n\nCombinando o melhor de dois mundos.\n\n\n\n\n\n\n\n\nNo matching items\n Back to top"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#democratização",
+    "href": "apresentações/posts/apresentacao_r_python.html#democratização",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Democratização",
+    "text": "Democratização\n\nFico feliz de construir aulas que podemos juntas(os) realizar a integração do R com outras linguagens e sistemas.\n\n\nAproveitem muito!!! Ahhh essa é a meguy, minha gatinha linda!"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#códigos-dos-slides",
+    "href": "apresentações/posts/apresentacao_r_python.html#códigos-dos-slides",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Códigos dos slides",
+    "text": "Códigos dos slides\n\nTodos os códigos da aula estão funcionais. Prontos para reproduzir."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#objetivos-da-apresentação",
+    "href": "apresentações/posts/apresentacao_r_python.html#objetivos-da-apresentação",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Objetivos da apresentação",
+    "text": "Objetivos da apresentação\n\nCompreender a integração entre R e Python\nConfigurar o ambiente de trabalho\nExecutar código Python no RStudio\nTransferir dados entre as linguagens\nAplicar em casos práticos"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#por-que-integrar-r-e-python",
+    "href": "apresentações/posts/apresentacao_r_python.html#por-que-integrar-r-e-python",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Por que integrar R e Python?",
+    "text": "Por que integrar R e Python?\n\n\nVantagens do R\n\nAnálise estatística\nVisualização com ggplot2\nTidyverse para manipulação de dados\nQuarto e RMarkdown\n\n\nVantagens do Python\n\nMachine learning (scikit-learn)\nDeep learning (TensorFlow, PyTorch)\nWeb scraping\nProcessamento de linguagem natural"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#o-pacote-reticulate",
+    "href": "apresentações/posts/apresentacao_r_python.html#o-pacote-reticulate",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "O Pacote Reticulate",
+    "text": "O Pacote Reticulate\nReticulate permite executar código Python dentro do ambiente R.\n\nDesenvolvido pela Posit (RStudio)\nTradução bidirecional de objetos\nCompartilhamento de dados entre linguagens\nSuporte a ambientes virtuais Python\nAcesse a documentação"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#estrutura-da-integração",
+    "href": "apresentações/posts/apresentacao_r_python.html#estrutura-da-integração",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Estrutura da integração",
+    "text": "Estrutura da integração\n\n\n\n\n\nflowchart LR\n    A[R Environment] &lt;--&gt;|reticulate| B[Python Environment]\n    B --&gt; C[pandas]\n    B --&gt; D[numpy]\n    B --&gt; E[scikit-learn]\n    A --&gt; F[ggplot2]\n    A --&gt; G[dplyr]\n    A --&gt; H[tidyr]"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#pré-requisitos",
+    "href": "apresentações/posts/apresentacao_r_python.html#pré-requisitos",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Pré-requisitos",
+    "text": "Pré-requisitos\n\nR instalado (versão 4.0 ou superior)\nRStudio (versão recente recomendada)\nPython (versão 3.8 ou superior)\nQuarto (para renderizar documentos .qmd)"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#instalação-do-python",
+    "href": "apresentações/posts/apresentacao_r_python.html#instalação-do-python",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Instalação do Python",
+    "text": "Instalação do Python\nOpções de instalação:\n\nSite oficial: python.org/downloads\nAnaconda: Distribuição completa com pacotes científicos\nMiniconda: Versão minimalista do Anaconda\n\n\n\n\n\n\n\nDica\n\n\nAnote o caminho de instalação do Python para configuração posterior."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#instalação-do-quarto",
+    "href": "apresentações/posts/apresentacao_r_python.html#instalação-do-quarto",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Instalação do Quarto",
+    "text": "Instalação do Quarto\n\nAcesse: quarto.org/docs/get-started\nBaixe o instalador para seu sistema operacional\nExecute a instalação padrão\n\n\n\n\n\n\n\nNote\n\n\nO Quarto é independente do R e pode ser usado com Python, Julia e Observable."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#instalação-do-reticulate-no-r",
+    "href": "apresentações/posts/apresentacao_r_python.html#instalação-do-reticulate-no-r",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Instalação do Reticulate no R",
+    "text": "Instalação do Reticulate no R\n\n# Instalar o pacote reticulate\ninstall.packages(\"reticulate\")\n\n# Carregar o pacote\nlibrary(reticulate)"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#verificar-configuração-do-python",
+    "href": "apresentações/posts/apresentacao_r_python.html#verificar-configuração-do-python",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Verificar configuração do Python",
+    "text": "Verificar configuração do Python\n\nlibrary(reticulate)\n\n# Verificar qual Python está sendo usado\npy_config()\n\nSaída esperada: Informações sobre versão, caminho e pacotes disponíveis."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#definir-python-manualmente",
+    "href": "apresentações/posts/apresentacao_r_python.html#definir-python-manualmente",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Definir Python manualmente",
+    "text": "Definir Python manualmente\nSe o R não detectar o Python automaticamente:\n\n# Windows\nuse_python(\"C:/Python311/python.exe\", required = TRUE)\n\n\n\n\n\n\n\nWarning\n\n\nUse o caminho completo para o executável do Python."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#criar-ambiente-virtual-recomendado",
+    "href": "apresentações/posts/apresentacao_r_python.html#criar-ambiente-virtual-recomendado",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Criar ambiente virtual (recomendado)",
+    "text": "Criar ambiente virtual (recomendado)\n\n# Criar ambiente virtual\nvirtualenv_create(\"r-reticulate\")\n\n# Usar o ambiente virtual\nuse_virtualenv(\"r-reticulate\")\n\n# Verificar\npy_config()\n\nVantagem: Isolamento de dependências e evita conflitos."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#instalar-pacotes-python-via-r",
+    "href": "apresentações/posts/apresentacao_r_python.html#instalar-pacotes-python-via-r",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Instalar pacotes Python via R",
+    "text": "Instalar pacotes Python via R\n\n# Instalar pacotes necessários\npy_install(c(\"numpy\", \"pandas\", \"matplotlib\"))\n\n# Verificar instalação - Retorna True ou False\npy_module_available(\"pandas\")\npy_module_available(\"numpy\")\n\n\n\n\n\n\n\nAlternativa\n\n\nVocê também pode usar pip install no terminal."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#estrutura-de-chunks-em-quarto",
+    "href": "apresentações/posts/apresentacao_r_python.html#estrutura-de-chunks-em-quarto",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Estrutura de Chunks em Quarto",
+    "text": "Estrutura de Chunks em Quarto\nDocumentos .qmd permitem chunks de diferentes linguagens:\n```{r}\n# Código R\nlibrary(dplyr)\n```\n\n```{python}\n# Código Python\nimport pandas as pd\n```"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#primeiro-código-em-python",
+    "href": "apresentações/posts/apresentacao_r_python.html#primeiro-código-em-python",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Primeiro código em Python",
+    "text": "Primeiro código em Python\n\nimport pandas as pd\nimport numpy as np\n\n# Criar array\nnumeros = np.array([1, 2, 3, 4, 5])\nprint(f\"Média: {numeros.mean()}\")\n\nResultado: O código Python executa diretamente no documento."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#declarar-dependências",
+    "href": "apresentações/posts/apresentacao_r_python.html#declarar-dependências",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Declarar dependências",
+    "text": "Declarar dependências\n\n# Garantir que os pacotes estão disponíveis\npy_require(\"numpy\")\npy_require(\"pandas\")\n\n# Listar todos os pacotes instalados\npy_list_packages()"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#executar-python-dentro-do-r",
+    "href": "apresentações/posts/apresentacao_r_python.html#executar-python-dentro-do-r",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Executar Python dentro do R",
+    "text": "Executar Python dentro do R\n\n# Executar código Python como string\npy_run_string(\"\nx = 10\ny = 20\nsoma = x + y\nprint(f'Resultado: {soma}')\n\")\n\nÚtil para: pequenos scripts ou testes rápidos."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#r-para-python-objeto-py",
+    "href": "apresentações/posts/apresentacao_r_python.html#r-para-python-objeto-py",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "R para Python: Objeto py$",
+    "text": "R para Python: Objeto py$\n\n# Criar data frame em R\ndados_R &lt;- data.frame(\n  id = 1:5,\n  valor = c(10, 20, 30, 40, 50))\n\n# Transferir para Python\npy$dados_python &lt;- dados_R"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#acessar-no-python",
+    "href": "apresentações/posts/apresentacao_r_python.html#acessar-no-python",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Acessar no Python",
+    "text": "Acessar no Python\n\n# Objeto transferido do R está disponível\nprint(dados_python)\n\n# Manipular com pandas\ndados_python['dobro'] = dados_python['valor'] * 2\nprint(dados_python)"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#python-para-r-objeto-py",
+    "href": "apresentações/posts/apresentacao_r_python.html#python-para-r-objeto-py",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Python para R: Objeto py$",
+    "text": "Python para R: Objeto py$\n\nimport pandas as pd\n\n# Criar dataframe em Python\nresultado = pd.DataFrame({\n    'nome': ['Ana', 'Bruno', 'Carlos'],\n    'nota': [8.5, 9.0, 7.5]\n})"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#acessar-no-r",
+    "href": "apresentações/posts/apresentacao_r_python.html#acessar-no-r",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Acessar no R",
+    "text": "Acessar no R\n\n# Recuperar objeto do Python\nresultado_R &lt;- py$resultado\n\n# Usar no R\nlibrary(dplyr)\nresultado_R %&gt;%\n  filter(nota &gt; 8.0) %&gt;%\n  arrange(desc(nota))"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#conversão-automática-de-tipos",
+    "href": "apresentações/posts/apresentacao_r_python.html#conversão-automática-de-tipos",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Conversão automática de tipos",
+    "text": "Conversão automática de tipos\n\n\n\nPython\nR\n\n\n\n\ndict\nlist\n\n\nlist\nvector\n\n\ntuple\nvector\n\n\npandas.DataFrame\ndata.frame\n\n\nnumpy.ndarray\nmatrix"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#contexto-do-exemplo",
+    "href": "apresentações/posts/apresentacao_r_python.html#contexto-do-exemplo",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Contexto do exemplo",
+    "text": "Contexto do exemplo\nAnálise de avaliações de café de diferentes países:\n\nFonte: TidyTuesday (dados públicos)\nObjetivo: Identificar países com melhor pontuação\nProcesso: Importação (Python) + Visualização (R)"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#importar-dados-com-pandas",
+    "href": "apresentações/posts/apresentacao_r_python.html#importar-dados-com-pandas",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Importar dados com pandas",
+    "text": "Importar dados com pandas\n\nimport pandas as pd\n\n# URL dos dados\nurl = \"https://raw.githubusercontent.com/rfordatascience/tidytuesday/refs/heads/main/data/2020/2020-07-07/coffee_ratings.csv\"\n\n# Importar\ndados = pd.read_csv(url)\n\n# Visualizar estrutura\nprint(dados.shape)\nprint(dados.head())"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#inspeção-inicial",
+    "href": "apresentações/posts/apresentacao_r_python.html#inspeção-inicial",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Inspeção inicial",
+    "text": "Inspeção inicial\n\n# Estatísticas descritivas\nprint(dados.describe())\n\n# Verificar valores ausentes\nprint(dados.isnull().sum())\n\n# Informações das colunas\nprint(dados.info())"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#selecionar-colunas-relevantes",
+    "href": "apresentações/posts/apresentacao_r_python.html#selecionar-colunas-relevantes",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Selecionar colunas relevantes",
+    "text": "Selecionar colunas relevantes\n\n# Selecionar variáveis de interesse\ndados_filtrados = dados[[\n    \"country_of_origin\",\n    \"aroma\",\n    \"flavor\",\n    \"aftertaste\",\n    \"acidity\",\n    \"total_cup_points\"]]\n\n# Remover linhas sem país\ndados_filtrados = dados_filtrados.dropna(\n    subset=[\"country_of_origin\"])"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#agregação-por-país",
+    "href": "apresentações/posts/apresentacao_r_python.html#agregação-por-país",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Agregação por país",
+    "text": "Agregação por país\n\n# Calcular médias por país\nresumo_pais = (\n    dados_filtrados\n    .groupby(\"country_of_origin\", as_index=False)\n    [[\n        \"aroma\", \"flavor\", \"aftertaste\",\n        \"acidity\", \"total_cup_points\"\n    ]]\n    .mean())\n\nprint(resumo_pais.head())"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#transferir-para-r",
+    "href": "apresentações/posts/apresentacao_r_python.html#transferir-para-r",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Transferir para R",
+    "text": "Transferir para R\n\n# Importar dados processados do Python\nresumo_pais_R &lt;- py$resumo_pais\n\n# Verificar estrutura\nstr(resumo_pais_R)\nhead(resumo_pais_R)"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#visualização-com-ggplot2",
+    "href": "apresentações/posts/apresentacao_r_python.html#visualização-com-ggplot2",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Visualização com ggplot2",
+    "text": "Visualização com ggplot2\n\nlibrary(ggplot2)\nlibrary(dplyr)\n\n# 10 países principais\n\ngrafico_cafe &lt;- resumo_pais_R %&gt;%\n  arrange(desc(total_cup_points)) %&gt;%\n  slice_max(total_cup_points, n = 10) %&gt;%\n  ggplot(aes(\n    x = reorder(country_of_origin, total_cup_points),\n    y = total_cup_points,\n    fill = country_of_origin)) +\n  geom_col(show.legend = FALSE) +\n  coord_flip()"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#gráfico-completo",
+    "href": "apresentações/posts/apresentacao_r_python.html#gráfico-completo",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Gráfico completo",
+    "text": "Gráfico completo\n\ngrafico_cafe +\n  labs(\n    title = \"10 principais países - Pontuação média\",\n    subtitle = \"Dados processados em Python, visualização em R\",\n    x = \"País de origem\",\n    y = \"Pontuação média total\",\n    caption = \"Fonte: TidyTuesday | Coffee Ratings | Café com R\") +\n  theme_minimal(base_size = 14) +\n  theme(\n    plot.title = element_text(face = \"bold\"),\n    axis.text = element_text(color = \"gray30\"))\ngrafico_cafe"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#exportar-gráfico",
+    "href": "apresentações/posts/apresentacao_r_python.html#exportar-gráfico",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Exportar Gráfico",
+    "text": "Exportar Gráfico\n\n# Salvar em alta resolução\nggsave(\n  filename = \"principais_paises.png\",\n  plot = grafico_cafe,\n  width = 10,\n  height = 6,\n  dpi = 300)"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#importação-de-dados",
+    "href": "apresentações/posts/apresentacao_r_python.html#importação-de-dados",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Importação de dados",
+    "text": "Importação de dados\n\n\n\n\n\n\n\n\nOperação\nPython\nR\n\n\n\n\nLer CSV\npd.read_csv()\nread.csv() ou read_csv()\n\n\nLer Excel\npd.read_excel()\nread_excel()\n\n\nLer JSON\npd.read_json()\njsonlite::fromJSON()"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#visualização-de-dados",
+    "href": "apresentações/posts/apresentacao_r_python.html#visualização-de-dados",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Visualização de dados",
+    "text": "Visualização de dados\n\n\n\nOperação\nPython\nR\n\n\n\n\nPrimeiras linhas\ndf.head()\nhead(df)\n\n\nÚltimas linhas\ndf.tail()\ntail(df)\n\n\nEstrutura\ndf.info()\nstr(df)\n\n\nResumo\ndf.describe()\nsummary(df)"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#manipulação-de-dados",
+    "href": "apresentações/posts/apresentacao_r_python.html#manipulação-de-dados",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Manipulação de dados",
+    "text": "Manipulação de dados\n\n\n\n\n\n\n\n\nOperação\nPython\nR (dplyr)\n\n\n\n\nFiltrar\ndf[df['col'] &gt; 5]\nfilter(df, col &gt; 5)\n\n\nSelecionar\ndf[['col1', 'col2']]\nselect(df, col1, col2)\n\n\nCriar coluna\ndf['nova'] = df['a'] + df['b']\nmutate(df, nova = a + b)\n\n\nAgrupar\ndf.groupby('grupo').mean()\ngroup_by(df, grupo) %&gt;% summarise(mean())"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#ordenação-e-limpeza",
+    "href": "apresentações/posts/apresentacao_r_python.html#ordenação-e-limpeza",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Ordenação e limpeza",
+    "text": "Ordenação e limpeza\n\n\n\n\n\n\n\n\nOperação\nPython\nR (dplyr)\n\n\n\n\nOrdenar\ndf.sort_values('col')\narrange(df, col)\n\n\nRemover NA\ndf.dropna()\ndrop_na(df)\n\n\nRenomear\ndf.rename(columns={'old':'new'})\nrename(df, new = old)"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#organização-do-projeto",
+    "href": "apresentações/posts/apresentacao_r_python.html#organização-do-projeto",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Organização do projeto",
+    "text": "Organização do projeto\nprojeto/\n├── dados/\n│   ├── raw/\n│   └── processed/\n├── scripts/\n│   ├── 01_importacao.qmd\n│   └── 02_analise.qmd\n├── outputs/\n│   ├── figuras/\n│   └── tabelas/\n└── requirements.txt"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#documentação-de-dependências",
+    "href": "apresentações/posts/apresentacao_r_python.html#documentação-de-dependências",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Documentação de dependências",
+    "text": "Documentação de dependências\nPython (requirements.txt):\npandas==2.0.0\nnumpy==1.24.0\nmatplotlib==3.7.0\nR (no início do script):"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#controle-de-versão",
+    "href": "apresentações/posts/apresentacao_r_python.html#controle-de-versão",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Controle de versão",
+    "text": "Controle de versão\n\nUse ambientes virtuais para Python\nDocumente versões dos pacotes\nTeste em ambiente limpo antes de compartilhar\nUse renv para R e venv para Python"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#tratamento-de-erros",
+    "href": "apresentações/posts/apresentacao_r_python.html#tratamento-de-erros",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Tratamento de erros",
+    "text": "Tratamento de erros\n\n# Verificar se módulo está disponível\nif (py_module_available(\"pandas\")) {\n  py_require(\"pandas\")\n} else {\n  py_install(\"pandas\")\n  py_require(\"pandas\")\n}"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#performance",
+    "href": "apresentações/posts/apresentacao_r_python.html#performance",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Performance",
+    "text": "Performance\n\nEvite conversões desnecessárias entre R e Python\nProcesse dados grandes na linguagem mais eficiente\nUse data.table (R) ou polars (Python) para grandes volumes\nConsidere processamento paralelo quando apropriado"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#machine-learning",
+    "href": "apresentações/posts/apresentacao_r_python.html#machine-learning",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Machine Learning",
+    "text": "Machine Learning\n\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\n\n# Treinar modelo em Python\nX_train, X_test, y_train, y_test = train_test_split(X, y)\nmodelo = RandomForestClassifier()\nmodelo.fit(X_train, y_train)\n\n\n# Visualizar resultados no R\npredicoes &lt;- py$modelo$predict(py$X_test)\n# Criar gráficos com ggplot2"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#web-scraping",
+    "href": "apresentações/posts/apresentacao_r_python.html#web-scraping",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Web Scraping",
+    "text": "Web Scraping\n\nimport requests\nfrom bs4 import BeautifulSoup\n\n# Coletar dados da web\nurl = \"https://exemplo.com/dados\"\nresponse = requests.get(url)\ndados_web = extrair_tabela(response.text)\n\n\n# Analisar no R\ndados_R &lt;- py$dados_web\nanalise &lt;- dados_R %&gt;% ..."
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#deep-learning",
+    "href": "apresentações/posts/apresentacao_r_python.html#deep-learning",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Deep Learning",
+    "text": "Deep Learning\n\nimport tensorflow as tf\n\n# Construir modelo\nmodelo = tf.keras.Sequential([\n    tf.keras.layers.Dense(128, activation='relu'),\n    tf.keras.layers.Dense(10, activation='softmax')])\n\n# Treinar\nmodelo.fit(X_train, y_train, epochs=10)"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#python-não-é-detectado",
+    "href": "apresentações/posts/apresentacao_r_python.html#python-não-é-detectado",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Python não é detectado",
+    "text": "Python não é detectado\nSolução:\n\n# Especificar caminho manualmente\nuse_python(\"/caminho/para/python\", required = TRUE)\n\n# Ou usar conda\nuse_condaenv(\"nome_ambiente\")"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#pacotes-python-não-encontrados",
+    "href": "apresentações/posts/apresentacao_r_python.html#pacotes-python-não-encontrados",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Pacotes Python não encontrados",
+    "text": "Pacotes Python não encontrados\nSolução:\n\n# Reinstalar no ambiente correto\npy_install(\"pandas\", pip = TRUE)\n\n# Verificar\npy_module_available(\"pandas\")"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#erro-de-codificação",
+    "href": "apresentações/posts/apresentacao_r_python.html#erro-de-codificação",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Erro de codificação",
+    "text": "Erro de codificação\nSolução:\n\n# Especificar encoding ao ler arquivos\ndados = pd.read_csv(\"arquivo.csv\", encoding=\"utf-8\")"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#conflitos-de-versão",
+    "href": "apresentações/posts/apresentacao_r_python.html#conflitos-de-versão",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Conflitos de versão",
+    "text": "Conflitos de versão\n\nUse ambientes virtuais isolados\nDocumente versões exatas dos pacotes\nTeste compatibilidade antes de atualizar\nConsidere usar Docker para reprodutibilidade total"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#documentação-oficial",
+    "href": "apresentações/posts/apresentacao_r_python.html#documentação-oficial",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Documentação oficial",
+    "text": "Documentação oficial\n\nReticulate: rstudio.github.io/reticulate\nPandas: pandas.pydata.org/docs\nNumPy: numpy.org/doc\nQuarto: quarto.org"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#principais-aprendizados",
+    "href": "apresentações/posts/apresentacao_r_python.html#principais-aprendizados",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Principais aprendizados",
+    "text": "Principais aprendizados\n\nReticulate permite integração transparente R-Python\nPossível aproveitar bibliotecas específicas de cada linguagem\nTransferência bidirecional de dados é simples\nConfiguração inicial requer atenção aos detalhes"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#quando-usar-integração",
+    "href": "apresentações/posts/apresentacao_r_python.html#quando-usar-integração",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Quando usar integração",
+    "text": "Quando usar integração\n\nMachine learning com scikit-learn/TensorFlow\nWeb scraping complexo\nProcessamento de linguagem natural\nAproveitar pacotes específicos de cada ecossistema"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#próximos-passos",
+    "href": "apresentações/posts/apresentacao_r_python.html#próximos-passos",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Próximos passos",
+    "text": "Próximos passos\n\nConfigurar ambiente local\nPraticar com datasets reais\nExplorar pacotes avançados\nCompartilhar conhecimento com a comunidade"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#obrigada",
+    "href": "apresentações/posts/apresentacao_r_python.html#obrigada",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "Obrigada!",
+    "text": "Obrigada!\n\nImagem: Allison Horst.Continue praticando e explorando!\nEsta apresentação é parte do projeto Café com R! É OPEN, USE, COMPARTILHE!"
+  },
+  {
+    "objectID": "apresentações/posts/apresentacao_r_python.html#assine-o-café-com-r",
+    "href": "apresentações/posts/apresentacao_r_python.html#assine-o-café-com-r",
+    "title": "Aula 9. Integração R x Python com pacote Reticulate",
+    "section": "☕ Assine o Café com R",
+    "text": "☕ Assine o Café com R\nFique por dentro das aulas, conteúdos, newsletter!\n\nQue cada gole desperte uma nova ideia.\nQue cada script abra uma nova conversa.\nQue o Café com R, se torne um ponto de encontro nosso!"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#democratização",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#democratização",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Democratização",
+    "text": "Democratização\n\nUse, compartilhe, a aula está no github dentro do meu site.\n\n\nAproveitem muito!!! Ahhh essa é a meguy, minha gatinha linda, ela está na logo do café com R!"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#códigos-dos-slides",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#códigos-dos-slides",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Códigos dos slides",
+    "text": "Códigos dos slides\n\nTodos os códigos da aula estão funcionais. Prontos para reproduzir.\n\nAdicionei o código dos slides em gist (no GitHub) para facilitar a prática.\nLink do gist: https://gist.github.com/jenniferlopes/"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#objetivos-da-apresentação",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#objetivos-da-apresentação",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Objetivos da apresentação",
+    "text": "Objetivos da apresentação\n\nConhecer as funções novas do dplyr 1.2.0\nEntender o que mudou em relação à versão 1.1.0\nAplicar cada função com exemplos do dataset CO2\nSubstituir padrões antigos por código mais limpo\nGanhar confiança para usar o dplyr no dia a dia"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#pacote-dplyr",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#pacote-dplyr",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Pacote dplyr",
+    "text": "Pacote dplyr\n\n\n\n\n\n\n\nClique na imagem e acesse o site da documentação do pacote."
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-que-é-o-dplyr",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-que-é-o-dplyr",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O que é o dplyr?",
+    "text": "O que é o dplyr?\n\ndplyr é um dos principais pacotes do ecossistema tidyverse para manipulação de dados em R.\nEle foi projetado para tornar operações em tabelas mais legíveis, rápidas e consistentes.\nselect() seleciona colunas | filter() filtra linhas\nmutate() cria ou transforma variáveis | summarise() agrega resultados\narrange() ordena dados | group_by() define agrupamentos"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-que-mudou-no-dplyr-1.2.0",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-que-mudou-no-dplyr-1.2.0",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O que mudou no dplyr 1.2.0?",
+    "text": "O que mudou no dplyr 1.2.0?\nA versão 1.2.0 trouxe dois conjuntos principais de novidades:\n\n\nFamília filter()\n\nfilter_out() - remover linhas\nwhen_any() - condições com |\nwhen_all() - todas as condições\n\n\nFamília de recodificação\n\nrecode_values() - novo padrão\nreplace_values() - atualização parcial\nreplace_when() - substituição condicional"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-que-mudou-no-dplyr-1.2.0-1",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-que-mudou-no-dplyr-1.2.0-1",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O que mudou no dplyr 1.2.0?",
+    "text": "O que mudou no dplyr 1.2.0?\n\n\n\n\n\n\nWarning\n\n\ncase_match() foi soft-depreciado no 1.2.0. O substituto oficial é recode_values()."
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-que-é-o-co2",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-que-é-o-co2",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O que é o CO2?",
+    "text": "O que é o CO2?\nO dataset CO2 está disponível nativamente no R. Contém dados de um experimento sobre absorção de CO2 por plantas de capim.\n\nPlant: identificador da planta (Qn1 a Mn3 - 12 plantas)\nType: origem da planta - Quebec ou Mississippi\nTreatment: condição - chilled (frio) ou nonchilled\nconc: concentração de CO2 no ambiente (mL/L)\nuptake: taxa de absorção de CO2 (umol/m² s)"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#carregando-e-conhecendo-os-dados",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#carregando-e-conhecendo-os-dados",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Carregando e conhecendo os dados",
+    "text": "Carregando e conhecendo os dados\n\nlibrary(rlang)\nlibrary(dplyr)\nlibrary(ggplot2)\n\ndados &lt;- as_tibble(CO2)\n\nglimpse(dados)\n\nRows: 84\nColumns: 5\n$ Plant     &lt;ord&gt; Qn1, Qn1, Qn1, Qn1, Qn1, Qn1, Qn1, Qn2, Qn2, Qn2, Qn2, Qn2, …\n$ Type      &lt;fct&gt; Quebec, Quebec, Quebec, Quebec, Quebec, Quebec, Quebec, Queb…\n$ Treatment &lt;fct&gt; nonchilled, nonchilled, nonchilled, nonchilled, nonchilled, …\n$ conc      &lt;dbl&gt; 95, 175, 250, 350, 500, 675, 1000, 95, 175, 250, 350, 500, 6…\n$ uptake    &lt;dbl&gt; 16.0, 30.4, 34.8, 37.2, 35.3, 39.2, 39.7, 13.6, 27.3, 37.1, …"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#resumo-inicial",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#resumo-inicial",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Resumo inicial",
+    "text": "Resumo inicial\n\ndados |&gt;\n  group_by(Type, Treatment) |&gt;\n  summarise(\n    n            = n(),\n    uptake_medio = round(mean(uptake), 2),\n    uptake_max   = max(uptake),\n    .groups      = \"drop\")\n\n# A tibble: 4 × 5\n  Type        Treatment      n uptake_medio uptake_max\n  &lt;fct&gt;       &lt;fct&gt;      &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;\n1 Quebec      nonchilled    21         35.3       45.5\n2 Quebec      chilled       21         31.8       42.4\n3 Mississippi nonchilled    21         26.0       35.5\n4 Mississippi chilled       21         15.8       22.2"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-problema-com-filter-para-remover-linhas",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-problema-com-filter-para-remover-linhas",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O problema com filter() para remover linhas",
+    "text": "O problema com filter() para remover linhas\nfilter() foi projetado para manter linhas. Quando queremos remover, a lógica se inverte e os NAs se tornam um problema.\n\n# Queremos remover plants com uptake abaixo de 20\n# Com filter(), somos forçados a negar a condição\ndados |&gt;\n  filter(!(uptake &lt; 20)) |&gt;\n  nrow()\n\n[1] 54"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#filter_out---a-solução",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#filter_out---a-solução",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "filter_out() - a solução",
+    "text": "filter_out() - a solução\nfilter_out() foi criado para remover linhas com a mesma naturalidade que filter() mantém linhas. Com NA, ele trabalha a seu favor: não remove o que não sabe.\n\n# Removendo plants com uptake abaixo de 20\ndados |&gt;\n  filter_out(uptake &lt; 20) |&gt;\n  nrow()\n\n[1] 54"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#filter_out---comparando-com-filter",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#filter_out---comparando-com-filter",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "filter_out() - comparando com filter()",
+    "text": "filter_out() - comparando com filter()\n\n# Removendo plantas com tratamento chilled E uptake baixo\ndados |&gt;\n  filter_out(\n    Treatment == \"chilled\",\n    uptake &lt; 25) |&gt;\n  count(Treatment)\n\n# A tibble: 2 × 2\n  Treatment      n\n  &lt;fct&gt;      &lt;int&gt;\n1 nonchilled    42\n2 chilled       16\n\n\n\n\n\n\n\n\nDica\n\n\nCom filter_out(), condições separadas por vírgula são combinadas com & - assim como no filter(). Se qualquer condição for NA, a linha não é removida."
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-problema-de-combinar-condições-com-or",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-problema-de-combinar-condições-com-or",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O problema de combinar condições com OR",
+    "text": "O problema de combinar condições com OR\nfilter() combina condições com & (E). Para usar | (OU), o código fica verboso e difícil de ler.\n\n# Queremos: plantas de Quebec com uptake alto\n# OU plantas de Mississippi com concentração máxima\ndados |&gt;\n  filter(\n    (Type == \"Quebec\" & uptake &gt; 40) |\n    (Type == \"Mississippi\" & conc == 1000)) |&gt;\n  count(Type)\n\n# A tibble: 2 × 2\n  Type            n\n  &lt;fct&gt;       &lt;int&gt;\n1 Quebec         11\n2 Mississippi     6"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#when_any---condições-combinadas-com-or",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#when_any---condições-combinadas-com-or",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "when_any() - condições combinadas com OR",
+    "text": "when_any() - condições combinadas com OR\nwhen_any() aceita condições separadas por vírgula e as combina com |. O código fica muito mais legível.\n\ndados |&gt;\n  filter(when_any(\n    Type == \"Quebec\"      & uptake &gt; 40,\n    Type == \"Mississippi\" & conc == 1000)) |&gt;\n  count(Type)\n\n# A tibble: 2 × 2\n  Type            n\n  &lt;fct&gt;       &lt;int&gt;\n1 Quebec         11\n2 Mississippi     6"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#when_all---todas-as-condições-devem-ser-true",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#when_all---todas-as-condições-devem-ser-true",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "when_all() - todas as condições devem ser TRUE",
+    "text": "when_all() - todas as condições devem ser TRUE\nwhen_all() retorna TRUE somente quando todas as condições são satisfeitas ao mesmo tempo.\n\n# Plantas onde uptake é alto E conc é alta E tratamento é nonchilled\ndados |&gt;\n  filter(when_all(\n    uptake &gt; 35,\n    conc   &gt; 500,\n    Treatment == \"nonchilled\")) |&gt;\n  select(Plant, Type, Treatment, conc, uptake)\n\n# A tibble: 7 × 5\n  Plant Type        Treatment   conc uptake\n  &lt;ord&gt; &lt;fct&gt;       &lt;fct&gt;      &lt;dbl&gt;  &lt;dbl&gt;\n1 Qn1   Quebec      nonchilled   675   39.2\n2 Qn1   Quebec      nonchilled  1000   39.7\n3 Qn2   Quebec      nonchilled   675   41.4\n4 Qn2   Quebec      nonchilled  1000   44.3\n5 Qn3   Quebec      nonchilled   675   43.9\n6 Qn3   Quebec      nonchilled  1000   45.5\n7 Mn1   Mississippi nonchilled  1000   35.5"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#when_any-fora-do-filter",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#when_any-fora-do-filter",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "when_any() fora do filter()",
+    "text": "when_any() fora do filter()\nwhen_any() e when_all() são funções vetoriais - funcionam em qualquer contexto, não apenas no filter().\n\ndados |&gt;\n  mutate(\n    destaque = when_any(\n      uptake &gt; 40,\n      conc == 1000)) |&gt;\n  count(destaque)\n\n# A tibble: 2 × 2\n  destaque     n\n  &lt;lgl&gt;    &lt;int&gt;\n1 FALSE       65\n2 TRUE        19"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-problema-com-case_when-para-recodificar",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-problema-com-case_when-para-recodificar",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O problema com case_when() para recodificar",
+    "text": "O problema com case_when() para recodificar\ncase_when() repete a variável em cada linha quando você está apenas mapeando valores.\n\n# Padrão antigo - Type == aparece em cada linha\ndados |&gt;\n  mutate(\n    origem = case_when(\n      Type == \"Quebec\"      ~ \"Canada\",\n      Type == \"Mississippi\" ~ \"Estados Unidos\")) |&gt;\n  distinct(Type, origem)\n\n# A tibble: 2 × 2\n  Type        origem        \n  &lt;fct&gt;       &lt;chr&gt;         \n1 Quebec      Canada        \n2 Mississippi Estados Unidos"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#recode_values---o-novo-padrão",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#recode_values---o-novo-padrão",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "recode_values() - o novo padrão",
+    "text": "recode_values() - o novo padrão\nrecode_values() recebe a variável uma vez e mapeia os valores diretamente. Mais limpo, mais legível.\n\ndados |&gt;\n  mutate(\n    origem = Type |&gt;\n      recode_values(\n        \"Quebec\"      ~ \"Canada\",\n        \"Mississippi\" ~ \"Estados Unidos\")) |&gt;\n  distinct(Type, origem)\n\n# A tibble: 2 × 2\n  Type        origem        \n  &lt;fct&gt;       &lt;chr&gt;         \n1 Quebec      Canada        \n2 Mississippi Estados Unidos"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#recode_values---com-lookup-table",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#recode_values---com-lookup-table",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "recode_values() - com lookup table",
+    "text": "recode_values() - com lookup table\nUma das novidades mais importantes: suporte direto a tabelas de mapeamento via from e to.\n\nlookup &lt;- tibble::tribble(\n  ~de,            ~para,\n  \"Quebec\",       \"Canada\",\n  \"Mississippi\",  \"Estados Unidos\",\n  \"chilled\",      \"Resfriado\",\n  \"nonchilled\",   \"Temperatura normal\")\n\ndados |&gt;\n  mutate(\n    origem    = recode_values(Type,\n                  from = lookup$de[1:2],\n                  to   = lookup$para[1:2]),\n    condicao  = recode_values(Treatment,\n                  from = lookup$de[3:4],\n                  to   = lookup$para[3:4])) |&gt;\n  distinct(Type, Treatment, origem, condicao)\n\n# A tibble: 4 × 4\n  Type        Treatment  origem         condicao          \n  &lt;fct&gt;       &lt;fct&gt;      &lt;chr&gt;          &lt;chr&gt;             \n1 Quebec      nonchilled Canada         Temperatura normal\n2 Quebec      chilled    Canada         Resfriado         \n3 Mississippi nonchilled Estados Unidos Temperatura normal\n4 Mississippi chilled    Estados Unidos Resfriado"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#recode_values---unmatched-error",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#recode_values---unmatched-error",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "recode_values() - unmatched = “error”",
+    "text": "recode_values() - unmatched = “error”\nPara programação defensiva: erro imediato se algum valor não for mapeado.\n\n# Exemplo com valor não previsto no mapeamento\ndados_teste &lt;- dados |&gt;\n  mutate(Type = if_else(\n    row_number() == 1, \"Desconhecido\", as.character(Type)))\n\ntryCatch(\n  dados_teste |&gt;\n    mutate(\n      origem = recode_values(Type,\n        \"Quebec\"      ~ \"Canada\",\n        \"Mississippi\" ~ \"Estados Unidos\",\n        unmatched     = \"error\")),\n  error = function(e) conditionMessage(e))\n\n[1] \"ℹ In argument: `origem = recode_values(...)`.\\nCaused by error in `recode_values()`:\\n! Each location must be matched.\\n✖ Location 1 is unmatched.\""
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#quando-usar-replace_values",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#quando-usar-replace_values",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Quando usar replace_values()",
+    "text": "Quando usar replace_values()\nreplace_values() é para atualização parcial de uma coluna existente - quando você quer alterar apenas alguns valores, mantendo o restante intacto.\n\nrecode_values() cria uma coluna nova (pode ter tipo diferente)\nreplace_values() atualiza a coluna no lugar (tipo sempre igual)\nÉ type-stable: a saída tem sempre o mesmo tipo que a entrada\nPipe-friendly: o primeiro argumento é a variável sendo atualizada"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#replace_values---padronizando-nomes",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#replace_values---padronizando-nomes",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "replace_values() - padronizando nomes",
+    "text": "replace_values() - padronizando nomes\n\n# Simulando nomes inconsistentes de plantas\ndados_teste &lt;- dados |&gt;\n  mutate(Plant = as.character(Plant)) |&gt;\n  mutate(Plant = if_else(Plant == \"Qn1\", \"QN1\", Plant))\n\ndados_teste |&gt;\n  mutate(\n    Plant = Plant |&gt;\n      replace_values(\"QN1\" ~ \"Qn1\")) |&gt;\n  distinct(Plant) |&gt;\n  head(5)\n\n# A tibble: 5 × 1\n  Plant\n  &lt;chr&gt;\n1 Qn1  \n2 Qn2  \n3 Qn3  \n4 Qc1  \n5 Qc2"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#replace_values---substituindo-nas",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#replace_values---substituindo-nas",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "replace_values() - substituindo NAs",
+    "text": "replace_values() - substituindo NAs\nreplace_values() cobre casos que antes exigiam coalesce(), na_if() ou replace_na().\n\n# Criando uptake com alguns NAs para demonstração\ndados_na &lt;- dados |&gt;\n  mutate(uptake = if_else(uptake &lt; 15, NA_real_, uptake))\n\n# Substituindo NA por 0\ndados_na |&gt;\n  mutate(uptake = replace_values(uptake, NA ~ 0)) |&gt;\n  filter(is.na(uptake) | uptake == 0) |&gt;\n  nrow()\n\n[1] 16"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#replace_values---múltiplas-substituições",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#replace_values---múltiplas-substituições",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "replace_values() - múltiplas substituições",
+    "text": "replace_values() - múltiplas substituições\n\n# Padronizando múltiplos valores problemáticos de uma só vez\ndados |&gt;\n  mutate(\n    Type_limpo = as.character(Type) |&gt;\n      replace_values(\n        c(\"Quebec\", \"QUEBEC\")      ~ \"Quebec\",\n        c(\"Mississippi\", \"MISS\")   ~ \"Mississippi\")) |&gt;\n  distinct(Type, Type_limpo)\n\n# A tibble: 2 × 2\n  Type        Type_limpo \n  &lt;fct&gt;       &lt;chr&gt;      \n1 Quebec      Quebec     \n2 Mississippi Mississippi"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-que-é-replace_when",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-que-é-replace_when",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O que é replace_when()",
+    "text": "O que é replace_when()\nreplace_when() é o complemento de case_when() para substituições parciais. Enquanto case_when() recria a coluna inteira, replace_when() altera apenas as linhas que satisfazem a condição.\n\ncase_when() → recria a coluna do zero (recodificação)\nreplace_when() → atualiza apenas as linhas afetadas (substituição)\nMais seguro: linhas não cobertas pela condição ficam intactas\nPipe-friendly e type-stable"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#replace_when---ajuste-condicional-de-valores",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#replace_when---ajuste-condicional-de-valores",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "replace_when() - ajuste condicional de valores",
+    "text": "replace_when() - ajuste condicional de valores\n\n# Corrigindo uptake de plantas resfriadas que parecem outliers\ndados |&gt;\n  mutate(\n    uptake_ajustado = uptake |&gt;\n      replace_when(\n        Treatment == \"chilled\" & uptake &gt; 40 ~ uptake * 0.95,\n        Treatment == \"chilled\" & uptake &lt; 10 ~ uptake * 1.10)) |&gt;\n  filter(Treatment == \"chilled\") |&gt;\n  select(Plant, Treatment, uptake, uptake_ajustado) |&gt;\n  head(8)\n\n# A tibble: 8 × 4\n  Plant Treatment uptake uptake_ajustado\n  &lt;ord&gt; &lt;fct&gt;      &lt;dbl&gt;           &lt;dbl&gt;\n1 Qc1   chilled     14.2            14.2\n2 Qc1   chilled     24.1            24.1\n3 Qc1   chilled     30.3            30.3\n4 Qc1   chilled     34.6            34.6\n5 Qc1   chilled     32.5            32.5\n6 Qc1   chilled     35.4            35.4\n7 Qc1   chilled     38.7            38.7\n8 Qc2   chilled      9.3            10.2"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#replace_when-x-case_when",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#replace_when-x-case_when",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "replace_when() x case_when()",
+    "text": "replace_when() x case_when()\n\n# Comparando: case_when() exige .default para manter os demais valores\ndados |&gt;\n  mutate(\n    # Com case_when() - precisa de .default = uptake\n    uptake_cw = case_when(\n      uptake &gt; 40 ~ uptake * 0.9,\n      .default    = uptake),\n    # Com replace_when() - o .default é automático\n    uptake_rw = uptake |&gt;\n      replace_when(uptake &gt; 40 ~ uptake * 0.9)) |&gt;\n  filter(uptake &gt; 40) |&gt;\n  select(Plant, uptake, uptake_cw, uptake_rw) |&gt;\n  head(5)\n\n# A tibble: 5 × 4\n  Plant uptake uptake_cw uptake_rw\n  &lt;ord&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;\n1 Qn2     41.8      37.6      37.6\n2 Qn2     40.6      36.5      36.5\n3 Qn2     41.4      37.3      37.3\n4 Qn2     44.3      39.9      39.9\n5 Qn3     40.3      36.3      36.3"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-que-mudou-na-família-filter",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-que-mudou-na-família-filter",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O que mudou na família filter()",
+    "text": "O que mudou na família filter()\n\n\n\nAntes\ndplyr 1.2.0\n\n\n\n\nfilter(!(condição))\nfilter_out(condição)\n\n\nfilter(cond1 \\| cond2)\nfilter(when_any(cond1, cond2))\n\n\nfilter(cond1 & cond2)\nfilter(when_all(cond1, cond2))"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-que-mudou-na-família-de-recodificação",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-que-mudou-na-família-de-recodificação",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O que mudou na família de recodificação",
+    "text": "O que mudou na família de recodificação\n\n\n\n\n\n\n\n\nAntes\ndplyr 1.2.0\nPara que serve\n\n\n\n\ncase_when() com ==\nrecode_values()\nRecodificar por valores\n\n\ncase_when() + .default = x\nreplace_when()\nSubstituição condicional\n\n\ncoalesce() / na_if()\nreplace_values()\nSubstituição parcial\n\n\ncase_match()\nrecode_values()\nSoft-depreciado em 1.2.0"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#análise-encadeada-com-as-novas-funções",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#análise-encadeada-com-as-novas-funções",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Análise encadeada com as novas funções",
+    "text": "Análise encadeada com as novas funções\nUsando filter_out(), recode_values(), replace_when() e when_any() juntos:\n\nanalise &lt;- dados |&gt;\n  # Remover concentrações muito baixas e plantas sem registro\n  filter_out(conc &lt; 100) |&gt;\n  # Recodificar origem com lookup\n  mutate(\n    origem = Type |&gt;\n      recode_values(\n        \"Quebec\"      ~ \"Canada\",\n        \"Mississippi\" ~ \"EUA\"),\n    condicao = Treatment |&gt;\n      recode_values(\n        \"chilled\"    ~ \"Resfriada\",\n        \"nonchilled\" ~ \"Normal\"))"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#análise-encadeada---continuação",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#análise-encadeada---continuação",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Análise encadeada - continuação",
+    "text": "Análise encadeada - continuação\n\nanalise |&gt;\n  # Ajustar uptake de plantas em condição extrema\n  mutate(\n    uptake_adj = uptake |&gt;\n      replace_when(\n        condicao == \"Resfriada\" & uptake &lt; 20 ~ uptake * 1.05)) |&gt;\n  # Destacar observações notáveis\n  filter(when_any(\n    uptake_adj &gt; 40,\n    conc == 1000 & condicao == \"Resfriada\")) |&gt;\n  count(origem, condicao)\n\n# A tibble: 3 × 3\n  origem condicao      n\n  &lt;chr&gt;  &lt;chr&gt;     &lt;int&gt;\n1 Canada Normal        9\n2 Canada Resfriada     3\n3 EUA    Resfriada     3"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#visualização---absorção-de-co2-por-concentração-e-condição",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#visualização---absorção-de-co2-por-concentração-e-condição",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Visualização - Absorção de CO2 por concentração e condição",
+    "text": "Visualização - Absorção de CO2 por concentração e condição\n\ngrafico1 &lt;- analise |&gt;\n  ggplot(aes(\n    x    = factor(conc),\n    y    = uptake,\n    fill = condicao)) +\n  geom_boxplot(alpha = 0.85) +\n  scale_fill_manual(values = c(\n    \"Resfriada\" = \"#5D4037\",\n    \"Normal\"    = \"#A9746E\")) +\n  facet_wrap(~origem) +\n  labs(\n    title   = \"Absorção de CO2 por concentração e condição\",\n    x       = \"Concentração de CO2 (mL/L)\",\n    y       = \"Absorção (umol/m² s)\",\n    fill    = \"Condição\",\n    caption = \"Fonte: dataset CO2 (R base) | Café com R.\") +\n  theme_classic(base_size = 12) +\n  theme(\n    plot.title      = element_text(face = \"bold\", color = \"#3E2723\"),\n    strip.text      = element_text(face = \"bold\", color = \"#4E342E\"),\n    legend.position = \"bottom\")"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#visualização---absorção-de-co2-por-concentração-e-condição-1",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#visualização---absorção-de-co2-por-concentração-e-condição-1",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Visualização - Absorção de CO2 por concentração e condição",
+    "text": "Visualização - Absorção de CO2 por concentração e condição"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#documentação",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#documentação",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Documentação",
+    "text": "Documentação\n\ndplyr 1.2.0 release notes: dplyr.tidyverse.org/news\nBlog Posit: tidyverse.org/blog\ndplyr cheat sheet: posit.co/resources/cheatsheets"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#principais-aprendizados",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#principais-aprendizados",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Principais aprendizados",
+    "text": "Principais aprendizados\n\nfilter_out() resolve o problema clássico de remover linhas com NAs de forma segura\nwhen_any() e when_all() tornam condições com | legíveis e explícitas\nrecode_values() substitui case_match() e case_when() para mapeamento de valores\nreplace_values() cobre coalesce(), na_if() e replace_na() em uma só função\nreplace_when() atualiza parcialmente colunas sem precisar de .default"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#o-que-continua-válido-da-versão-1.1.0",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#o-que-continua-válido-da-versão-1.1.0",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "O que continua válido da versão 1.1.0",
+    "text": "O que continua válido da versão 1.1.0\n\n.by para agrupamento inline sem ungroup()\nreframe() para múltiplas linhas por grupo\npick() para selecionar colunas dentro de data-masking\nif_any() e if_all() para filtros multi-coluna\nconsecutive_id() para identificar blocos sequenciais\ncross_join() para produto cartesiano explícito"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#próximos-passos",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#próximos-passos",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Próximos passos",
+    "text": "Próximos passos\n\nInstalar dplyr 1.2.0 com install.packages(\"dplyr\")\nSubstituir filter(!(cond)) por filter_out(cond) nos scripts existentes\nMigrar case_match() para recode_values() - está soft-depreciado\nExplorar replace_values() como substituto de coalesce() e na_if()\nAcompanhar o changelog em dplyr.tidyverse.org/news"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#obrigada",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#obrigada",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Obrigada!",
+    "text": "Obrigada!\n\nImagem: Allison Horst.Continue praticando e explorando!\nEsta apresentação é parte do projeto Café com R! É OPEN, USE, COMPARTILHE!"
+  },
+  {
+    "objectID": "apresentações/posts/dplyr_atualizacoes.html#acompanhe-o-café-com-r",
+    "href": "apresentações/posts/dplyr_atualizacoes.html#acompanhe-o-café-com-r",
+    "title": "Aula 12. Atualizações no pacote dplyr",
+    "section": "Acompanhe o Café com R",
+    "text": "Acompanhe o Café com R\nFique por dentro das aulas, conteúdos, newsletter!\n\nQue cada gole desperte uma nova ideia.\nQue cada script abra uma nova conversa.\nQue o Café com R, se torne um ponto de encontro nosso!"
   },
   {
     "objectID": "apresentações/posts/funções_jeni.html#antes-de-começar",

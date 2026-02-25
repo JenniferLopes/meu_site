@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Jennifer Luz Lopes – Aula 12. Atualizações no pacote dplyr</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
+  <link rel="stylesheet" href="estilo_jeni.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Aula 12. Atualizações no pacote dplyr</h1>
+  <p class="subtitle">Novas funções 1.2.0</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="democratização" class="slide level2">
+<h2><strong>Democratização</strong></h2>
+<blockquote>
+<p><strong>Use, compartilhe, a aula está no github dentro do meu site.</strong></p>
+</blockquote>
+
+<img data-src="imagens/meguy.jpg" width="523" class="r-stretch quarto-figure-center"><p class="caption"><strong>Aproveitem muito!!! Ahhh essa é a meguy, minha gatinha linda, ela está na logo do café com R!</strong></p></section>
+<section id="códigos-dos-slides" class="slide level2">
+<h2>Códigos dos slides</h2>
+<blockquote>
+<p>Todos os códigos da aula estão funcionais. Prontos para reproduzir.</p>
+<ul>
+<li><p>Adicionei o código dos slides em <strong>gist (no GitHub)</strong> para facilitar a prática.</p></li>
+<li><p><strong>Link do gist: <a href="https://gist.github.com/jenniferlopes/" class="uri">https://gist.github.com/jenniferlopes/</a></strong></p></li>
+</ul>
+</blockquote>
+</section>
+<section id="objetivos-da-apresentação" class="slide level2">
+<h2><strong>Objetivos da apresentação</strong></h2>
+<ul>
+<li class="fragment"><strong>Conhecer as funções novas do dplyr 1.2.0</strong></li>
+<li class="fragment"><strong>Entender o que mudou em relação à versão 1.1.0</strong></li>
+<li class="fragment"><strong>Aplicar cada função com exemplos do dataset CO2</strong></li>
+<li class="fragment"><strong>Substituir padrões antigos por código mais limpo</strong></li>
+<li class="fragment"><strong>Ganhar confiança para usar o dplyr no dia a dia</strong></li>
+</ul>
+</section>
+<section id="pacote-dplyr" class="slide level2">
+<h2>Pacote dplyr</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="https://dplyr.tidyverse.org/"><img data-src="imagens/dplyr.png" class="quarto-figure quarto-figure-center"></a></p>
+</figure>
+</div>
+<figcaption>Clique na imagem e acesse o site da documentação do pacote.</figcaption>
+</figure>
+</div>
+</section>
+<section id="o-que-é-o-dplyr" class="slide level2">
+<h2>O que é o <code>dplyr</code>?</h2>
+<ul>
+<li><p><code>dplyr</code> é um dos principais pacotes do ecossistema tidyverse para manipulação de dados em R.</p></li>
+<li><p>Ele foi projetado para tornar operações em tabelas mais legíveis, rápidas e consistentes.</p></li>
+<li><p><code>select()</code> seleciona colunas | <code>filter()</code> filtra linhas</p></li>
+<li><p><code>mutate()</code> cria ou transforma variáveis | <code>summarise()</code> agrega resultados</p></li>
+<li><p><code>arrange()</code> ordena dados | <code>group_by()</code> define agrupamentos</p></li>
+</ul>
+</section>
+<section>
+<section id="uso-do-pacote-para" class="title-slide slide level1 center">
+<h1>Uso do pacote para:</h1>
+<ul>
+<li><p>Sintaxe clara e encadeável com <code>|&gt;</code></p></li>
+<li><p>Alta performance em grandes bases</p></li>
+<li><p>Integração direta com bancos via <code>dbplyr</code></p></li>
+<li><p>Código mais declarativo e menos propenso a erro</p></li>
+</ul>
+</section>
+<section id="o-que-mudou-no-dplyr-1.2.0" class="slide level2">
+<h2><strong>O que mudou no dplyr 1.2.0?</strong></h2>
+<p>A versão 1.2.0 trouxe <strong>dois conjuntos principais</strong> de novidades:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Família filter()</strong></p>
+<ul>
+<li><code>filter_out()</code> - remover linhas</li>
+<li><code>when_any()</code> - condições com <code>|</code></li>
+<li><code>when_all()</code> - todas as condições</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>Família de recodificação</strong></p>
+<ul>
+<li><code>recode_values()</code> - novo padrão</li>
+<li><code>replace_values()</code> - atualização parcial</li>
+<li><code>replace_when()</code> - substituição condicional</li>
+</ul>
+</div></div>
+</section>
+<section id="o-que-mudou-no-dplyr-1.2.0-1" class="slide level2">
+<h2><strong>O que mudou no dplyr 1.2.0?</strong></h2>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p><code>case_match()</code> foi <strong>soft-depreciado</strong> no 1.2.0. O substituto oficial é <code>recode_values()</code>.</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="o-dataset-co2" class="title-slide slide level1 center">
+<h1><strong>O dataset CO2</strong></h1>
+
+</section>
+<section id="o-que-é-o-co2" class="slide level2">
+<h2><strong>O que é o CO2?</strong></h2>
+<p>O dataset <code>CO2</code> está disponível nativamente no R. Contém dados de um experimento sobre absorção de CO2 por plantas de capim.</p>
+<ul>
+<li class="fragment"><strong>Plant:</strong> identificador da planta (Qn1 a Mn3 - 12 plantas)</li>
+<li class="fragment"><strong>Type:</strong> origem da planta - Quebec ou Mississippi</li>
+<li class="fragment"><strong>Treatment:</strong> condição - chilled (frio) ou nonchilled</li>
+<li class="fragment"><strong>conc:</strong> concentração de CO2 no ambiente (mL/L)</li>
+<li class="fragment"><strong>uptake:</strong> taxa de absorção de CO2 (umol/m² s)</li>
+</ul>
+</section>
+<section id="carregando-e-conhecendo-os-dados" class="slide level2">
+<h2><strong>Carregando e conhecendo os dados</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(rlang)</span>
+<span id="cb1-2"><a></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a></a></span>
+<span id="cb1-5"><a></a>dados <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(CO2)</span>
+<span id="cb1-6"><a></a></span>
+<span id="cb1-7"><a></a><span class="fu">glimpse</span>(dados)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 84
+Columns: 5
+$ Plant     &lt;ord&gt; Qn1, Qn1, Qn1, Qn1, Qn1, Qn1, Qn1, Qn2, Qn2, Qn2, Qn2, Qn2, …
+$ Type      &lt;fct&gt; Quebec, Quebec, Quebec, Quebec, Quebec, Quebec, Quebec, Queb…
+$ Treatment &lt;fct&gt; nonchilled, nonchilled, nonchilled, nonchilled, nonchilled, …
+$ conc      &lt;dbl&gt; 95, 175, 250, 350, 500, 675, 1000, 95, 175, 250, 350, 500, 6…
+$ uptake    &lt;dbl&gt; 16.0, 30.4, 34.8, 37.2, 35.3, 39.2, 39.7, 13.6, 27.3, 37.1, …</code></pre>
+</div>
+</div>
+</section>
+<section id="resumo-inicial" class="slide level2">
+<h2><strong>Resumo inicial</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a></a>  <span class="fu">group_by</span>(Type, Treatment) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-4"><a></a>    <span class="at">n            =</span> <span class="fu">n</span>(),</span>
+<span id="cb3-5"><a></a>    <span class="at">uptake_medio =</span> <span class="fu">round</span>(<span class="fu">mean</span>(uptake), <span class="dv">2</span>),</span>
+<span id="cb3-6"><a></a>    <span class="at">uptake_max   =</span> <span class="fu">max</span>(uptake),</span>
+<span id="cb3-7"><a></a>    <span class="at">.groups      =</span> <span class="st">"drop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  Type        Treatment      n uptake_medio uptake_max
+  &lt;fct&gt;       &lt;fct&gt;      &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+1 Quebec      nonchilled    21         35.3       45.5
+2 Quebec      chilled       21         31.8       42.4
+3 Mississippi nonchilled    21         26.0       35.5
+4 Mississippi chilled       21         15.8       22.2</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="função-1---filter_out" class="title-slide slide level1 center">
+<h1><strong>Função 1 - filter_out()</strong></h1>
+
+</section>
+<section id="o-problema-com-filter-para-remover-linhas" class="slide level2">
+<h2><strong>O problema com filter() para remover linhas</strong></h2>
+<p><code>filter()</code> foi projetado para <strong>manter</strong> linhas. Quando queremos <strong>remover</strong>, a lógica se inverte e os NAs se tornam um problema.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># Queremos remover plants com uptake abaixo de 20</span></span>
+<span id="cb5-2"><a></a><span class="co"># Com filter(), somos forçados a negar a condição</span></span>
+<span id="cb5-3"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a></a>  <span class="fu">filter</span>(<span class="sc">!</span>(uptake <span class="sc">&lt;</span> <span class="dv">20</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 54</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="função-1---filter_out-1" class="title-slide slide level1 center">
+<h1><strong>Função 1 - filter_out()</strong></h1>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Quando há <code>NA</code>, <code>filter(!(condição))</code> remove as linhas com <code>NA</code> também - comportamento inesperado e silencioso.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="filter_out---a-solução" class="slide level2">
+<h2><strong>filter_out() - a solução</strong></h2>
+<p><code>filter_out()</code> foi criado para <strong>remover linhas</strong> com a mesma naturalidade que <code>filter()</code> mantém linhas. Com <code>NA</code>, ele trabalha <strong>a seu favor</strong>: não remove o que não sabe.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># Removendo plants com uptake abaixo de 20</span></span>
+<span id="cb7-2"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a></a>  <span class="fu">filter_out</span>(uptake <span class="sc">&lt;</span> <span class="dv">20</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 54</code></pre>
+</div>
+</div>
+</section>
+<section id="filter_out---comparando-com-filter" class="slide level2">
+<h2><strong>filter_out() - comparando com filter()</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="co"># Removendo plantas com tratamento chilled E uptake baixo</span></span>
+<span id="cb9-2"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a></a>  <span class="fu">filter_out</span>(</span>
+<span id="cb9-4"><a></a>    Treatment <span class="sc">==</span> <span class="st">"chilled"</span>,</span>
+<span id="cb9-5"><a></a>    uptake <span class="sc">&lt;</span> <span class="dv">25</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a></a>  <span class="fu">count</span>(Treatment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  Treatment      n
+  &lt;fct&gt;      &lt;int&gt;
+1 nonchilled    42
+2 chilled       16</code></pre>
+</div>
+</div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Dica</strong></p>
+</div>
+<div class="callout-content">
+<p>Com <code>filter_out()</code>, condições separadas por vírgula são combinadas com <code>&amp;</code> - assim como no <code>filter()</code>. Se qualquer condição for <code>NA</code>, a linha <strong>não</strong> é removida.</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="função-2---when_any-e-when_all" class="title-slide slide level1 center">
+<h1><strong>Função 2 - when_any() e when_all()</strong></h1>
+
+</section>
+<section id="o-problema-de-combinar-condições-com-or" class="slide level2">
+<h2><strong>O problema de combinar condições com OR</strong></h2>
+<p><code>filter()</code> combina condições com <code>&amp;</code> (E). Para usar <code>|</code> (OU), o código fica verboso e difícil de ler.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="co"># Queremos: plantas de Quebec com uptake alto</span></span>
+<span id="cb11-2"><a></a><span class="co"># OU plantas de Mississippi com concentração máxima</span></span>
+<span id="cb11-3"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a></a>  <span class="fu">filter</span>(</span>
+<span id="cb11-5"><a></a>    (Type <span class="sc">==</span> <span class="st">"Quebec"</span> <span class="sc">&amp;</span> uptake <span class="sc">&gt;</span> <span class="dv">40</span>) <span class="sc">|</span></span>
+<span id="cb11-6"><a></a>    (Type <span class="sc">==</span> <span class="st">"Mississippi"</span> <span class="sc">&amp;</span> conc <span class="sc">==</span> <span class="dv">1000</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb11-7"><a></a>  <span class="fu">count</span>(Type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  Type            n
+  &lt;fct&gt;       &lt;int&gt;
+1 Quebec         11
+2 Mississippi     6</code></pre>
+</div>
+</div>
+</section>
+<section id="when_any---condições-combinadas-com-or" class="slide level2">
+<h2><strong>when_any() - condições combinadas com OR</strong></h2>
+<p><code>when_any()</code> aceita condições separadas por vírgula e as combina com <code>|</code>. O código fica muito mais legível.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a></a>  <span class="fu">filter</span>(<span class="fu">when_any</span>(</span>
+<span id="cb13-3"><a></a>    Type <span class="sc">==</span> <span class="st">"Quebec"</span>      <span class="sc">&amp;</span> uptake <span class="sc">&gt;</span> <span class="dv">40</span>,</span>
+<span id="cb13-4"><a></a>    Type <span class="sc">==</span> <span class="st">"Mississippi"</span> <span class="sc">&amp;</span> conc <span class="sc">==</span> <span class="dv">1000</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-5"><a></a>  <span class="fu">count</span>(Type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  Type            n
+  &lt;fct&gt;       &lt;int&gt;
+1 Quebec         11
+2 Mississippi     6</code></pre>
+</div>
+</div>
+</section>
+<section id="when_all---todas-as-condições-devem-ser-true" class="slide level2">
+<h2><strong>when_all() - todas as condições devem ser TRUE</strong></h2>
+<p><code>when_all()</code> retorna <code>TRUE</code> somente quando <strong>todas</strong> as condições são satisfeitas ao mesmo tempo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="co"># Plantas onde uptake é alto E conc é alta E tratamento é nonchilled</span></span>
+<span id="cb15-2"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a></a>  <span class="fu">filter</span>(<span class="fu">when_all</span>(</span>
+<span id="cb15-4"><a></a>    uptake <span class="sc">&gt;</span> <span class="dv">35</span>,</span>
+<span id="cb15-5"><a></a>    conc   <span class="sc">&gt;</span> <span class="dv">500</span>,</span>
+<span id="cb15-6"><a></a>    Treatment <span class="sc">==</span> <span class="st">"nonchilled"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb15-7"><a></a>  <span class="fu">select</span>(Plant, Type, Treatment, conc, uptake)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 5
+  Plant Type        Treatment   conc uptake
+  &lt;ord&gt; &lt;fct&gt;       &lt;fct&gt;      &lt;dbl&gt;  &lt;dbl&gt;
+1 Qn1   Quebec      nonchilled   675   39.2
+2 Qn1   Quebec      nonchilled  1000   39.7
+3 Qn2   Quebec      nonchilled   675   41.4
+4 Qn2   Quebec      nonchilled  1000   44.3
+5 Qn3   Quebec      nonchilled   675   43.9
+6 Qn3   Quebec      nonchilled  1000   45.5
+7 Mn1   Mississippi nonchilled  1000   35.5</code></pre>
+</div>
+</div>
+</section>
+<section id="when_any-fora-do-filter" class="slide level2">
+<h2><strong>when_any() fora do filter()</strong></h2>
+<p><code>when_any()</code> e <code>when_all()</code> são funções vetoriais - funcionam em qualquer contexto, não apenas no <code>filter()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb17-3"><a></a>    <span class="at">destaque =</span> <span class="fu">when_any</span>(</span>
+<span id="cb17-4"><a></a>      uptake <span class="sc">&gt;</span> <span class="dv">40</span>,</span>
+<span id="cb17-5"><a></a>      conc <span class="sc">==</span> <span class="dv">1000</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb17-6"><a></a>  <span class="fu">count</span>(destaque)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  destaque     n
+  &lt;lgl&gt;    &lt;int&gt;
+1 FALSE       65
+2 TRUE        19</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="função-3---recode_values" class="title-slide slide level1 center">
+<h1><strong>Função 3 - recode_values()</strong></h1>
+
+</section>
+<section id="o-problema-com-case_when-para-recodificar" class="slide level2">
+<h2><strong>O problema com case_when() para recodificar</strong></h2>
+<p><code>case_when()</code> repete a variável em cada linha quando você está apenas mapeando valores.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="co"># Padrão antigo - Type == aparece em cada linha</span></span>
+<span id="cb19-2"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-4"><a></a>    <span class="at">origem =</span> <span class="fu">case_when</span>(</span>
+<span id="cb19-5"><a></a>      Type <span class="sc">==</span> <span class="st">"Quebec"</span>      <span class="sc">~</span> <span class="st">"Canada"</span>,</span>
+<span id="cb19-6"><a></a>      Type <span class="sc">==</span> <span class="st">"Mississippi"</span> <span class="sc">~</span> <span class="st">"Estados Unidos"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb19-7"><a></a>  <span class="fu">distinct</span>(Type, origem)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  Type        origem        
+  &lt;fct&gt;       &lt;chr&gt;         
+1 Quebec      Canada        
+2 Mississippi Estados Unidos</code></pre>
+</div>
+</div>
+</section>
+<section id="recode_values---o-novo-padrão" class="slide level2">
+<h2><strong>recode_values() - o novo padrão</strong></h2>
+<p><code>recode_values()</code> recebe a variável uma vez e mapeia os valores diretamente. Mais limpo, mais legível.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-3"><a></a>    <span class="at">origem =</span> Type <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a></a>      <span class="fu">recode_values</span>(</span>
+<span id="cb21-5"><a></a>        <span class="st">"Quebec"</span>      <span class="sc">~</span> <span class="st">"Canada"</span>,</span>
+<span id="cb21-6"><a></a>        <span class="st">"Mississippi"</span> <span class="sc">~</span> <span class="st">"Estados Unidos"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb21-7"><a></a>  <span class="fu">distinct</span>(Type, origem)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  Type        origem        
+  &lt;fct&gt;       &lt;chr&gt;         
+1 Quebec      Canada        
+2 Mississippi Estados Unidos</code></pre>
+</div>
+</div>
+</section>
+<section id="recode_values---com-lookup-table" class="slide level2">
+<h2><strong>recode_values() - com lookup table</strong></h2>
+<p>Uma das novidades mais importantes: suporte direto a tabelas de mapeamento via <code>from</code> e <code>to</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>lookup <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb23-2"><a></a>  <span class="sc">~</span>de,            <span class="sc">~</span>para,</span>
+<span id="cb23-3"><a></a>  <span class="st">"Quebec"</span>,       <span class="st">"Canada"</span>,</span>
+<span id="cb23-4"><a></a>  <span class="st">"Mississippi"</span>,  <span class="st">"Estados Unidos"</span>,</span>
+<span id="cb23-5"><a></a>  <span class="st">"chilled"</span>,      <span class="st">"Resfriado"</span>,</span>
+<span id="cb23-6"><a></a>  <span class="st">"nonchilled"</span>,   <span class="st">"Temperatura normal"</span>)</span>
+<span id="cb23-7"><a></a></span>
+<span id="cb23-8"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb23-9"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-10"><a></a>    <span class="at">origem    =</span> <span class="fu">recode_values</span>(Type,</span>
+<span id="cb23-11"><a></a>                  <span class="at">from =</span> lookup<span class="sc">$</span>de[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],</span>
+<span id="cb23-12"><a></a>                  <span class="at">to   =</span> lookup<span class="sc">$</span>para[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]),</span>
+<span id="cb23-13"><a></a>    <span class="at">condicao  =</span> <span class="fu">recode_values</span>(Treatment,</span>
+<span id="cb23-14"><a></a>                  <span class="at">from =</span> lookup<span class="sc">$</span>de[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>],</span>
+<span id="cb23-15"><a></a>                  <span class="at">to   =</span> lookup<span class="sc">$</span>para[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>])) <span class="sc">|&gt;</span></span>
+<span id="cb23-16"><a></a>  <span class="fu">distinct</span>(Type, Treatment, origem, condicao)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 4
+  Type        Treatment  origem         condicao          
+  &lt;fct&gt;       &lt;fct&gt;      &lt;chr&gt;          &lt;chr&gt;             
+1 Quebec      nonchilled Canada         Temperatura normal
+2 Quebec      chilled    Canada         Resfriado         
+3 Mississippi nonchilled Estados Unidos Temperatura normal
+4 Mississippi chilled    Estados Unidos Resfriado         </code></pre>
+</div>
+</div>
+</section>
+<section id="recode_values---unmatched-error" class="slide level2">
+<h2><strong>recode_values() - unmatched = “error”</strong></h2>
+<p>Para programação defensiva: erro imediato se algum valor não for mapeado.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="co"># Exemplo com valor não previsto no mapeamento</span></span>
+<span id="cb25-2"><a></a>dados_teste <span class="ot">&lt;-</span> dados <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a></a>  <span class="fu">mutate</span>(<span class="at">Type =</span> <span class="fu">if_else</span>(</span>
+<span id="cb25-4"><a></a>    <span class="fu">row_number</span>() <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"Desconhecido"</span>, <span class="fu">as.character</span>(Type)))</span>
+<span id="cb25-5"><a></a></span>
+<span id="cb25-6"><a></a><span class="fu">tryCatch</span>(</span>
+<span id="cb25-7"><a></a>  dados_teste <span class="sc">|&gt;</span></span>
+<span id="cb25-8"><a></a>    <span class="fu">mutate</span>(</span>
+<span id="cb25-9"><a></a>      <span class="at">origem =</span> <span class="fu">recode_values</span>(Type,</span>
+<span id="cb25-10"><a></a>        <span class="st">"Quebec"</span>      <span class="sc">~</span> <span class="st">"Canada"</span>,</span>
+<span id="cb25-11"><a></a>        <span class="st">"Mississippi"</span> <span class="sc">~</span> <span class="st">"Estados Unidos"</span>,</span>
+<span id="cb25-12"><a></a>        <span class="at">unmatched     =</span> <span class="st">"error"</span>)),</span>
+<span id="cb25-13"><a></a>  <span class="at">error =</span> <span class="cf">function</span>(e) <span class="fu">conditionMessage</span>(e))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "ℹ In argument: `origem = recode_values(...)`.\nCaused by error in `recode_values()`:\n! Each location must be matched.\n✖ Location 1 is unmatched."</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="função-4---replace_values" class="title-slide slide level1 center">
+<h1><strong>Função 4 - replace_values()</strong></h1>
+
+</section>
+<section id="quando-usar-replace_values" class="slide level2">
+<h2><strong>Quando usar replace_values()</strong></h2>
+<p><code>replace_values()</code> é para <strong>atualização parcial</strong> de uma coluna existente - quando você quer alterar apenas alguns valores, mantendo o restante intacto.</p>
+<ul>
+<li class="fragment"><code>recode_values()</code> cria uma coluna nova (pode ter tipo diferente)</li>
+<li class="fragment"><code>replace_values()</code> atualiza a coluna no lugar (tipo sempre igual)</li>
+<li class="fragment">É type-stable: a saída tem sempre o mesmo tipo que a entrada</li>
+<li class="fragment">Pipe-friendly: o primeiro argumento é a variável sendo atualizada</li>
+</ul>
+</section>
+<section id="replace_values---padronizando-nomes" class="slide level2">
+<h2><strong>replace_values() - padronizando nomes</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="co"># Simulando nomes inconsistentes de plantas</span></span>
+<span id="cb27-2"><a></a>dados_teste <span class="ot">&lt;-</span> dados <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a></a>  <span class="fu">mutate</span>(<span class="at">Plant =</span> <span class="fu">as.character</span>(Plant)) <span class="sc">|&gt;</span></span>
+<span id="cb27-4"><a></a>  <span class="fu">mutate</span>(<span class="at">Plant =</span> <span class="fu">if_else</span>(Plant <span class="sc">==</span> <span class="st">"Qn1"</span>, <span class="st">"QN1"</span>, Plant))</span>
+<span id="cb27-5"><a></a></span>
+<span id="cb27-6"><a></a>dados_teste <span class="sc">|&gt;</span></span>
+<span id="cb27-7"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb27-8"><a></a>    <span class="at">Plant =</span> Plant <span class="sc">|&gt;</span></span>
+<span id="cb27-9"><a></a>      <span class="fu">replace_values</span>(<span class="st">"QN1"</span> <span class="sc">~</span> <span class="st">"Qn1"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb27-10"><a></a>  <span class="fu">distinct</span>(Plant) <span class="sc">|&gt;</span></span>
+<span id="cb27-11"><a></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 1
+  Plant
+  &lt;chr&gt;
+1 Qn1  
+2 Qn2  
+3 Qn3  
+4 Qc1  
+5 Qc2  </code></pre>
+</div>
+</div>
+</section>
+<section id="replace_values---substituindo-nas" class="slide level2">
+<h2><strong>replace_values() - substituindo NAs</strong></h2>
+<p><code>replace_values()</code> cobre casos que antes exigiam <code>coalesce()</code>, <code>na_if()</code> ou <code>replace_na()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># Criando uptake com alguns NAs para demonstração</span></span>
+<span id="cb29-2"><a></a>dados_na <span class="ot">&lt;-</span> dados <span class="sc">|&gt;</span></span>
+<span id="cb29-3"><a></a>  <span class="fu">mutate</span>(<span class="at">uptake =</span> <span class="fu">if_else</span>(uptake <span class="sc">&lt;</span> <span class="dv">15</span>, <span class="cn">NA_real_</span>, uptake))</span>
+<span id="cb29-4"><a></a></span>
+<span id="cb29-5"><a></a><span class="co"># Substituindo NA por 0</span></span>
+<span id="cb29-6"><a></a>dados_na <span class="sc">|&gt;</span></span>
+<span id="cb29-7"><a></a>  <span class="fu">mutate</span>(<span class="at">uptake =</span> <span class="fu">replace_values</span>(uptake, <span class="cn">NA</span> <span class="sc">~</span> <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb29-8"><a></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(uptake) <span class="sc">|</span> uptake <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb29-9"><a></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 16</code></pre>
+</div>
+</div>
+</section>
+<section id="replace_values---múltiplas-substituições" class="slide level2">
+<h2><strong>replace_values() - múltiplas substituições</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="co"># Padronizando múltiplos valores problemáticos de uma só vez</span></span>
+<span id="cb31-2"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb31-4"><a></a>    <span class="at">Type_limpo =</span> <span class="fu">as.character</span>(Type) <span class="sc">|&gt;</span></span>
+<span id="cb31-5"><a></a>      <span class="fu">replace_values</span>(</span>
+<span id="cb31-6"><a></a>        <span class="fu">c</span>(<span class="st">"Quebec"</span>, <span class="st">"QUEBEC"</span>)      <span class="sc">~</span> <span class="st">"Quebec"</span>,</span>
+<span id="cb31-7"><a></a>        <span class="fu">c</span>(<span class="st">"Mississippi"</span>, <span class="st">"MISS"</span>)   <span class="sc">~</span> <span class="st">"Mississippi"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb31-8"><a></a>  <span class="fu">distinct</span>(Type, Type_limpo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  Type        Type_limpo 
+  &lt;fct&gt;       &lt;chr&gt;      
+1 Quebec      Quebec     
+2 Mississippi Mississippi</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="função-5---replace_when" class="title-slide slide level1 center">
+<h1><strong>Função 5 - replace_when()</strong></h1>
+
+</section>
+<section id="o-que-é-replace_when" class="slide level2">
+<h2><strong>O que é replace_when()</strong></h2>
+<p><code>replace_when()</code> é o complemento de <code>case_when()</code> para substituições parciais. Enquanto <code>case_when()</code> recria a coluna inteira, <code>replace_when()</code> altera apenas as linhas que satisfazem a condição.</p>
+<ul>
+<li class="fragment"><code>case_when()</code> → recria a coluna do zero (recodificação)</li>
+<li class="fragment"><code>replace_when()</code> → atualiza apenas as linhas afetadas (substituição)</li>
+<li class="fragment">Mais seguro: linhas não cobertas pela condição ficam intactas</li>
+<li class="fragment">Pipe-friendly e type-stable</li>
+</ul>
+</section>
+<section id="replace_when---ajuste-condicional-de-valores" class="slide level2">
+<h2><strong>replace_when() - ajuste condicional de valores</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="co"># Corrigindo uptake de plantas resfriadas que parecem outliers</span></span>
+<span id="cb33-2"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb33-3"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb33-4"><a></a>    <span class="at">uptake_ajustado =</span> uptake <span class="sc">|&gt;</span></span>
+<span id="cb33-5"><a></a>      <span class="fu">replace_when</span>(</span>
+<span id="cb33-6"><a></a>        Treatment <span class="sc">==</span> <span class="st">"chilled"</span> <span class="sc">&amp;</span> uptake <span class="sc">&gt;</span> <span class="dv">40</span> <span class="sc">~</span> uptake <span class="sc">*</span> <span class="fl">0.95</span>,</span>
+<span id="cb33-7"><a></a>        Treatment <span class="sc">==</span> <span class="st">"chilled"</span> <span class="sc">&amp;</span> uptake <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> uptake <span class="sc">*</span> <span class="fl">1.10</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb33-8"><a></a>  <span class="fu">filter</span>(Treatment <span class="sc">==</span> <span class="st">"chilled"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb33-9"><a></a>  <span class="fu">select</span>(Plant, Treatment, uptake, uptake_ajustado) <span class="sc">|&gt;</span></span>
+<span id="cb33-10"><a></a>  <span class="fu">head</span>(<span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 4
+  Plant Treatment uptake uptake_ajustado
+  &lt;ord&gt; &lt;fct&gt;      &lt;dbl&gt;           &lt;dbl&gt;
+1 Qc1   chilled     14.2            14.2
+2 Qc1   chilled     24.1            24.1
+3 Qc1   chilled     30.3            30.3
+4 Qc1   chilled     34.6            34.6
+5 Qc1   chilled     32.5            32.5
+6 Qc1   chilled     35.4            35.4
+7 Qc1   chilled     38.7            38.7
+8 Qc2   chilled      9.3            10.2</code></pre>
+</div>
+</div>
+</section>
+<section id="replace_when-x-case_when" class="slide level2">
+<h2><strong>replace_when() x case_when()</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="co"># Comparando: case_when() exige .default para manter os demais valores</span></span>
+<span id="cb35-2"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb35-3"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb35-4"><a></a>    <span class="co"># Com case_when() - precisa de .default = uptake</span></span>
+<span id="cb35-5"><a></a>    <span class="at">uptake_cw =</span> <span class="fu">case_when</span>(</span>
+<span id="cb35-6"><a></a>      uptake <span class="sc">&gt;</span> <span class="dv">40</span> <span class="sc">~</span> uptake <span class="sc">*</span> <span class="fl">0.9</span>,</span>
+<span id="cb35-7"><a></a>      <span class="at">.default    =</span> uptake),</span>
+<span id="cb35-8"><a></a>    <span class="co"># Com replace_when() - o .default é automático</span></span>
+<span id="cb35-9"><a></a>    <span class="at">uptake_rw =</span> uptake <span class="sc">|&gt;</span></span>
+<span id="cb35-10"><a></a>      <span class="fu">replace_when</span>(uptake <span class="sc">&gt;</span> <span class="dv">40</span> <span class="sc">~</span> uptake <span class="sc">*</span> <span class="fl">0.9</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb35-11"><a></a>  <span class="fu">filter</span>(uptake <span class="sc">&gt;</span> <span class="dv">40</span>) <span class="sc">|&gt;</span></span>
+<span id="cb35-12"><a></a>  <span class="fu">select</span>(Plant, uptake, uptake_cw, uptake_rw) <span class="sc">|&gt;</span></span>
+<span id="cb35-13"><a></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 4
+  Plant uptake uptake_cw uptake_rw
+  &lt;ord&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 Qn2     41.8      37.6      37.6
+2 Qn2     40.6      36.5      36.5
+3 Qn2     41.4      37.3      37.3
+4 Qn2     44.3      39.9      39.9
+5 Qn3     40.3      36.3      36.3</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="comparativo---antigo-x-novo" class="title-slide slide level1 center">
+<h1><strong>Comparativo - antigo x novo</strong></h1>
+
+</section>
+<section id="o-que-mudou-na-família-filter" class="slide level2">
+<h2><strong>O que mudou na família filter()</strong></h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th><strong>Antes</strong></th>
+<th><strong>dplyr 1.2.0</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>filter(!(condição))</code></td>
+<td><code>filter_out(condição)</code></td>
+</tr>
+<tr class="even">
+<td><code>filter(cond1 \| cond2)</code></td>
+<td><code>filter(when_any(cond1, cond2))</code></td>
+</tr>
+<tr class="odd">
+<td><code>filter(cond1 &amp; cond2)</code></td>
+<td><code>filter(when_all(cond1, cond2))</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="o-que-mudou-na-família-de-recodificação" class="slide level2">
+<h2><strong>O que mudou na família de recodificação</strong></h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Antes</strong></th>
+<th><strong>dplyr 1.2.0</strong></th>
+<th><strong>Para que serve</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>case_when()</code> com <code>==</code></td>
+<td><code>recode_values()</code></td>
+<td>Recodificar por valores</td>
+</tr>
+<tr class="even">
+<td><code>case_when()</code> + <code>.default = x</code></td>
+<td><code>replace_when()</code></td>
+<td>Substituição condicional</td>
+</tr>
+<tr class="odd">
+<td><code>coalesce()</code> / <code>na_if()</code></td>
+<td><code>replace_values()</code></td>
+<td>Substituição parcial</td>
+</tr>
+<tr class="even">
+<td><code>case_match()</code></td>
+<td><code>recode_values()</code></td>
+<td>Soft-depreciado em 1.2.0</td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="aplicação-completa" class="title-slide slide level1 center">
+<h1><strong>Aplicação completa</strong></h1>
+
+</section>
+<section id="análise-encadeada-com-as-novas-funções" class="slide level2">
+<h2><strong>Análise encadeada com as novas funções</strong></h2>
+<p>Usando <code>filter_out()</code>, <code>recode_values()</code>, <code>replace_when()</code> e <code>when_any()</code> juntos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>analise <span class="ot">&lt;-</span> dados <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a></a>  <span class="co"># Remover concentrações muito baixas e plantas sem registro</span></span>
+<span id="cb37-3"><a></a>  <span class="fu">filter_out</span>(conc <span class="sc">&lt;</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb37-4"><a></a>  <span class="co"># Recodificar origem com lookup</span></span>
+<span id="cb37-5"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb37-6"><a></a>    <span class="at">origem =</span> Type <span class="sc">|&gt;</span></span>
+<span id="cb37-7"><a></a>      <span class="fu">recode_values</span>(</span>
+<span id="cb37-8"><a></a>        <span class="st">"Quebec"</span>      <span class="sc">~</span> <span class="st">"Canada"</span>,</span>
+<span id="cb37-9"><a></a>        <span class="st">"Mississippi"</span> <span class="sc">~</span> <span class="st">"EUA"</span>),</span>
+<span id="cb37-10"><a></a>    <span class="at">condicao =</span> Treatment <span class="sc">|&gt;</span></span>
+<span id="cb37-11"><a></a>      <span class="fu">recode_values</span>(</span>
+<span id="cb37-12"><a></a>        <span class="st">"chilled"</span>    <span class="sc">~</span> <span class="st">"Resfriada"</span>,</span>
+<span id="cb37-13"><a></a>        <span class="st">"nonchilled"</span> <span class="sc">~</span> <span class="st">"Normal"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="análise-encadeada---continuação" class="slide level2">
+<h2><strong>Análise encadeada - continuação</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>analise <span class="sc">|&gt;</span></span>
+<span id="cb38-2"><a></a>  <span class="co"># Ajustar uptake de plantas em condição extrema</span></span>
+<span id="cb38-3"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb38-4"><a></a>    <span class="at">uptake_adj =</span> uptake <span class="sc">|&gt;</span></span>
+<span id="cb38-5"><a></a>      <span class="fu">replace_when</span>(</span>
+<span id="cb38-6"><a></a>        condicao <span class="sc">==</span> <span class="st">"Resfriada"</span> <span class="sc">&amp;</span> uptake <span class="sc">&lt;</span> <span class="dv">20</span> <span class="sc">~</span> uptake <span class="sc">*</span> <span class="fl">1.05</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb38-7"><a></a>  <span class="co"># Destacar observações notáveis</span></span>
+<span id="cb38-8"><a></a>  <span class="fu">filter</span>(<span class="fu">when_any</span>(</span>
+<span id="cb38-9"><a></a>    uptake_adj <span class="sc">&gt;</span> <span class="dv">40</span>,</span>
+<span id="cb38-10"><a></a>    conc <span class="sc">==</span> <span class="dv">1000</span> <span class="sc">&amp;</span> condicao <span class="sc">==</span> <span class="st">"Resfriada"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb38-11"><a></a>  <span class="fu">count</span>(origem, condicao)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  origem condicao      n
+  &lt;chr&gt;  &lt;chr&gt;     &lt;int&gt;
+1 Canada Normal        9
+2 Canada Resfriada     3
+3 EUA    Resfriada     3</code></pre>
+</div>
+</div>
+</section>
+<section id="visualização---absorção-de-co2-por-concentração-e-condição" class="slide level2">
+<h2><strong>Visualização - Absorção de CO2 por concentração e condição</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>grafico1 <span class="ot">&lt;-</span> analise <span class="sc">|&gt;</span></span>
+<span id="cb40-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(</span>
+<span id="cb40-3"><a></a>    <span class="at">x    =</span> <span class="fu">factor</span>(conc),</span>
+<span id="cb40-4"><a></a>    <span class="at">y    =</span> uptake,</span>
+<span id="cb40-5"><a></a>    <span class="at">fill =</span> condicao)) <span class="sc">+</span></span>
+<span id="cb40-6"><a></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb40-7"><a></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb40-8"><a></a>    <span class="st">"Resfriada"</span> <span class="ot">=</span> <span class="st">"#5D4037"</span>,</span>
+<span id="cb40-9"><a></a>    <span class="st">"Normal"</span>    <span class="ot">=</span> <span class="st">"#A9746E"</span>)) <span class="sc">+</span></span>
+<span id="cb40-10"><a></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>origem) <span class="sc">+</span></span>
+<span id="cb40-11"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb40-12"><a></a>    <span class="at">title   =</span> <span class="st">"Absorção de CO2 por concentração e condição"</span>,</span>
+<span id="cb40-13"><a></a>    <span class="at">x       =</span> <span class="st">"Concentração de CO2 (mL/L)"</span>,</span>
+<span id="cb40-14"><a></a>    <span class="at">y       =</span> <span class="st">"Absorção (umol/m² s)"</span>,</span>
+<span id="cb40-15"><a></a>    <span class="at">fill    =</span> <span class="st">"Condição"</span>,</span>
+<span id="cb40-16"><a></a>    <span class="at">caption =</span> <span class="st">"Fonte: dataset CO2 (R base) | Café com R."</span>) <span class="sc">+</span></span>
+<span id="cb40-17"><a></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb40-18"><a></a>  <span class="fu">theme</span>(</span>
+<span id="cb40-19"><a></a>    <span class="at">plot.title      =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">color =</span> <span class="st">"#3E2723"</span>),</span>
+<span id="cb40-20"><a></a>    <span class="at">strip.text      =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">color =</span> <span class="st">"#4E342E"</span>),</span>
+<span id="cb40-21"><a></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualização---absorção-de-co2-por-concentração-e-condição-1" class="slide level2">
+<h2><strong>Visualização - Absorção de CO2 por concentração e condição</strong></h2>
+
+<img data-src="dplyr_atualizacoes_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section></section>
+<section>
+<section id="referências" class="title-slide slide level1 center">
+<h1><strong>Referências</strong></h1>
+
+</section>
+<section id="documentação" class="slide level2">
+<h2><strong>Documentação</strong></h2>
+<ul>
+<li><strong>dplyr 1.2.0 release notes:</strong> <a href="https://dplyr.tidyverse.org/news/index.html">dplyr.tidyverse.org/news</a></li>
+<li><strong>Blog Posit:</strong> <a href="https://www.tidyverse.org/blog/">tidyverse.org/blog</a></li>
+<li><strong>dplyr cheat sheet:</strong> <a href="https://posit.co/resources/cheatsheets/">posit.co/resources/cheatsheets</a></li>
+</ul>
+</section></section>
+<section>
+<section id="conclusão" class="title-slide slide level1 center">
+<h1><strong>Conclusão</strong></h1>
+
+</section>
+<section id="principais-aprendizados" class="slide level2">
+<h2><strong>Principais aprendizados</strong></h2>
+<ul>
+<li class="fragment"><code>filter_out()</code> resolve o problema clássico de remover linhas com NAs de forma segura</li>
+<li class="fragment"><code>when_any()</code> e <code>when_all()</code> tornam condições com <code>|</code> legíveis e explícitas</li>
+<li class="fragment"><code>recode_values()</code> substitui <code>case_match()</code> e <code>case_when()</code> para mapeamento de valores</li>
+<li class="fragment"><code>replace_values()</code> cobre <code>coalesce()</code>, <code>na_if()</code> e <code>replace_na()</code> em uma só função</li>
+<li class="fragment"><code>replace_when()</code> atualiza parcialmente colunas sem precisar de <code>.default</code></li>
+</ul>
+</section>
+<section id="o-que-continua-válido-da-versão-1.1.0" class="slide level2">
+<h2><strong>O que continua válido da versão 1.1.0</strong></h2>
+<ul>
+<li class="fragment"><code>.by</code> para agrupamento inline sem <code>ungroup()</code></li>
+<li class="fragment"><code>reframe()</code> para múltiplas linhas por grupo</li>
+<li class="fragment"><code>pick()</code> para selecionar colunas dentro de data-masking</li>
+<li class="fragment"><code>if_any()</code> e <code>if_all()</code> para filtros multi-coluna</li>
+<li class="fragment"><code>consecutive_id()</code> para identificar blocos sequenciais</li>
+<li class="fragment"><code>cross_join()</code> para produto cartesiano explícito</li>
+</ul>
+</section>
+<section id="próximos-passos" class="slide level2">
+<h2><strong>Próximos passos</strong></h2>
+<ol type="1">
+<li class="fragment">Instalar <code>dplyr 1.2.0</code> com <code>install.packages("dplyr")</code></li>
+<li class="fragment">Substituir <code>filter(!(cond))</code> por <code>filter_out(cond)</code> nos scripts existentes</li>
+<li class="fragment">Migrar <code>case_match()</code> para <code>recode_values()</code> - está soft-depreciado</li>
+<li class="fragment">Explorar <code>replace_values()</code> como substituto de <code>coalesce()</code> e <code>na_if()</code></li>
+<li class="fragment">Acompanhar o changelog em <a href="https://dplyr.tidyverse.org/news">dplyr.tidyverse.org/news</a></li>
+</ol>
+</section>
+<section id="obrigada" class="slide level2">
+<h2><strong>Obrigada!</strong></h2>
+
+<img data-src="imagens/comunidade.png" width="449" class="r-stretch quarto-figure-center"><p class="caption">Imagem: Allison Horst.</p><p><strong>Continue praticando e explorando!</strong></p>
+<p><strong><em>Esta apresentação é parte do projeto <code>Café com R!</code> É OPEN, USE, COMPARTILHE!</em></strong></p>
+</section>
+<section id="acompanhe-o-café-com-r" class="slide level2">
+<h2><strong>Acompanhe o Café com R</strong></h2>
+<p><strong>Fique por dentro das aulas, conteúdos, newsletter!</strong></p>
+<blockquote>
+<p><strong>Que cada gole desperte uma nova ideia.</strong></p>
+<p><strong>Que cada script abra uma nova conversa.</strong></p>
+<p><strong>Que o Café com R, se torne um ponto de encontro nosso!</strong></p>
+</blockquote>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="imagens/logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Jennifer Lopes | Café com R</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jenniferlopes\.quarto\.pub\/portifolio");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
