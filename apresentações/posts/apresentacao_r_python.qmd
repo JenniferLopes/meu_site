@@ -532,7 +532,7 @@ ggsave(
 ## **Ordenação e limpeza**
 
 | **Operação** | **Python** | **R (dplyr)** |
-|-----------------|---------------------------------|-----------------------|
+|------------------|--------------------------------|----------------------|
 | **Ordenar** | **`df.sort_values('col')`** | **`arrange(df, col)`** |
 | **Remover NA** | **`df.dropna()`** | **`drop_na(df)`** |
 | **Renomear** | **`df.rename(columns={'old':'new'})`** | **`rename(df, new = old)`** |
@@ -765,7 +765,7 @@ dados = pd.read_csv("arquivo.csv", encoding="utf-8")
 
 ## **Obrigada!**
 
-![**Imagem: Allison Horst.**](imagens/comunidade.png){alt="Imagem: Allison Horst." fig-align="center" width="449"}
+![Imagem: Allison Horst.](imagens/comunidade.png){fig-align="center" width="449"}
 
 **Continue praticando e explorando!**
 

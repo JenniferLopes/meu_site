@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Jennifer Luz Lopes – Aula 13. R e Python para começar em dados</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
+  <link rel="stylesheet" href="estilo_jeni.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Aula 13. R e Python para começar em dados</h1>
+  <p class="subtitle">Como aprender as duas linguagens com clareza e estratégia?</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="democratização" class="slide level2">
+<h2><strong>Democratização</strong></h2>
+<blockquote>
+<p><strong>Esta aula foi pensada para quem está no início da jornada em dados e quer tomar decisões de aprendizado com consciência, não com pressa.</strong></p>
+</blockquote>
+
+<img data-src="images/clipboard-1858834684.png" class="r-stretch"></section>
+<section id="acompanhe-o-café-com-r" class="slide level2">
+<h2>Acompanhe o café com R</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="https://jenniferlopes.quarto.pub/portifolio/"><img data-src="imagens/qrcode.png" class="quarto-figure quarto-figure-center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="438"></a></p>
+</figure>
+</div>
+<figcaption>Printa a tela e escaneia o qrcode. Café com R.</figcaption>
+</figure>
+</div>
+</section>
+<section id="onde-criei-essa-aula" class="slide level2">
+<h2>Onde criei essa aula?</h2>
+<ol type="1">
+<li><p>No quarto - <a href="https://quarto.org"><strong>acesse aqui</strong></a>.</p></li>
+<li><p>No R - <a href="https://cran.r-project.org"><strong>acesse aqui</strong></a>.</p></li>
+<li><p>No RStudio - <a href="https://posit.co/download/rstudio-desktop/"><strong>acesse aqui</strong></a>.</p></li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imagens/quarto.JPG" class="quarto-figure quarto-figure-center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="611" height="258"></p>
+</figure>
+</div>
+</section>
+<section id="objetivos-da-apresentação" class="slide level2">
+<h2><strong>Objetivos da apresentação</strong></h2>
+<ul>
+<li class="fragment"><strong>Entender o papel de <code>R</code> e <code>Python</code> no contexto de dados</strong></li>
+<li class="fragment"><strong>Comparar as linguagens com critérios técnicos e práticos</strong></li>
+<li class="fragment"><strong>Definir uma estratégia de aprendizado por perfil</strong></li>
+<li class="fragment"><strong>Conhecer os primeiros pacotes e recursos de cada linguagem</strong></li>
+<li class="fragment"><strong>Construir uma base sólida antes de avançar</strong></li>
+</ul>
+</section>
+<section>
+<section id="o-contexto-por-que-aprender-a-programar-para-dados" class="title-slide slide level1 center">
+<h1><strong>O contexto: por que aprender a programar para dados?</strong></h1>
+
+</section>
+<section id="dados-estão-em-todo-lugar" class="slide level2">
+<h2><strong>Dados estão em todo lugar</strong></h2>
+<p>A capacidade de <strong>coletar</strong>, <strong>transformar</strong> e <strong>comunicar dados</strong> se tornou uma competência fundamental em praticamente todas as áreas do conhecimento.</p>
+<ul>
+<li class="fragment">Ciências exatas, humanas e biológicas utilizam dados em seus processos</li>
+<li class="fragment">O mercado de trabalho valoriza profissionais que automatizam análises</li>
+<li class="fragment">Planilhas não escalam - código escala</li>
+<li class="fragment">Reprodutibilidade é um requisito em ciência e em negócios</li>
+</ul>
+</section>
+<section id="por-que-não-basta-excel" class="slide level2">
+<h2><strong>Por que não basta Excel?</strong></h2>
+<ul>
+<li class="fragment">Excel não é auditável: cada clique é invisível</li>
+<li class="fragment">Não suporta grandes volumes de dados com eficiência</li>
+<li class="fragment">Dificuldade de colaboração e versionamento</li>
+<li class="fragment">Automatização limitada e frágil</li>
+<li class="fragment">Não integra com bancos de dados, APIs ou modelos estatísticos</li>
+</ul>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Excel é uma ferramenta legítima para exploração inicial. O problema é quando ele se torna o único instrumento de análise.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="r-e-python-linguagens-de-propósito-analítico" class="slide level2">
+<h2><strong>R e Python: linguagens de propósito analítico</strong></h2>
+<p><strong>Ambas foram desenvolvidas com foco em análise de dados, estatística e computação científica.</strong></p>
+<ul>
+<li class="fragment"><strong>R:</strong> criada por estatísticos, para estatísticos</li>
+<li class="fragment"><strong>Python:</strong> criada para legibilidade e uso geral, adotada fortemente por cientistas de dados</li>
+<li class="fragment">Ambas são <strong>gratuitas</strong>, de <strong>código aberto</strong> e com <strong>comunidades ativas</strong></li>
+</ul>
+</section></section>
+<section>
+<section id="entendendo-as-linguagens" class="title-slide slide level1 center">
+<h1><strong>Entendendo as linguagens</strong></h1>
+
+</section>
+<section id="o-que-é-r" class="slide level2">
+<h2><strong>O que é R?</strong></h2>
+<p>R é uma linguagem e ambiente de computação estatística criada por Ross Ihaka e Robert Gentleman na Universidade de Auckland, em 1993.</p>
+<ul>
+<li class="fragment">Focada em análise estatística e visualização</li>
+<li class="fragment">Sintaxe projetada para trabalhar com dados tabulares</li>
+<li class="fragment">Ecosistema do Tidyverse: coerente, legível e poderoso</li>
+<li class="fragment">Forte presença em pesquisa acadêmica, epidemiologia, econometria e ciências sociais</li>
+</ul>
+</section>
+<section id="o-que-é-python" class="slide level2">
+<h2><strong>O que é Python?</strong></h2>
+<p>Python é uma linguagem de programação de propósito geral criada por Guido van Rossum em 1991, com filosofia de legibilidade e simplicidade.</p>
+<ul>
+<li class="fragment">Amplamente adotada em ciência de dados, machine learning e automação</li>
+<li class="fragment">Sintaxe próxima da linguagem natural</li>
+<li class="fragment">Ecosistema com pandas, NumPy, scikit-learn, TensorFlow</li>
+<li class="fragment">Forte presença na indústria, startups e engenharia de dados</li>
+</ul>
+</section>
+<section id="r-x-python---visão-geral-minha-opinião" class="slide level2">
+<h2><strong>R x Python - visão geral minha opinião</strong></h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Dimensão</strong></th>
+<th><strong>R</strong></th>
+<th><strong>Python</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Origem</td>
+<td>Estatística acadêmica</td>
+<td>Programação geral</td>
+</tr>
+<tr class="even">
+<td>Ponto forte principal</td>
+<td>Análise estatística</td>
+<td>Machine learning e automação</td>
+</tr>
+<tr class="odd">
+<td>Curva de aprendizado</td>
+<td>Moderada para dados tabulares</td>
+<td>Moderada com sintaxe mais direta</td>
+</tr>
+<tr class="even">
+<td>Visualização nativa</td>
+<td>ggplot2 - expressivo e elegante</td>
+<td>matplotlib e seaborn</td>
+</tr>
+<tr class="odd">
+<td>Comunidade acadêmica</td>
+<td>Muito forte</td>
+<td>Crescente</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="r-x-python---aplicações-minha-opinião" class="slide level2">
+<h2><strong>R x Python - aplicações minha opinião</strong></h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th><strong>Área</strong></th>
+<th><strong>R</strong></th>
+<th><strong>Python</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estatística inferencial</td>
+<td>Excelente</td>
+<td>Bom</td>
+</tr>
+<tr class="even">
+<td>Visualização de dados</td>
+<td>Excelente</td>
+<td>Muito bom</td>
+</tr>
+<tr class="odd">
+<td>Machine learning</td>
+<td>Bom</td>
+<td>Excelente</td>
+</tr>
+<tr class="even">
+<td>Deep learning</td>
+<td>Limitado</td>
+<td>Excelente</td>
+</tr>
+<tr class="odd">
+<td>Web scraping</td>
+<td>Bom</td>
+<td>Excelente</td>
+</tr>
+<tr class="even">
+<td>Automação de processos</td>
+<td>Limitado</td>
+<td>Excelente</td>
+</tr>
+<tr class="odd">
+<td>Relatórios e documentos</td>
+<td>Excelente</td>
+<td>Bom</td>
+</tr>
+<tr class="even">
+<td>Manipulação de dados</td>
+<td>Excelente</td>
+<td>Excelente</td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="qual-aprender-primeiro" class="title-slide slide level1 center">
+<h1><strong>Qual aprender primeiro?</strong></h1>
+
+</section>
+<section id="não-existe-resposta-universal" class="slide level2">
+<h2><strong>Não existe resposta universal</strong></h2>
+<p>A escolha depende de três fatores principais:</p>
+<ol type="1">
+<li class="fragment"><strong>Objetivo profissional ou acadêmico</strong></li>
+<li class="fragment"><strong>Área de atuação ou interesse</strong></li>
+<li class="fragment"><strong>Contexto da equipe ou da instituição</strong></li>
+</ol>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Recomendação</strong></p>
+</div>
+<div class="callout-content">
+<p>Defina sua área antes de escolher a linguagem. A linguagem é um instrumento - o problema que você quer resolver é o ponto de partida.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="perfil-1---pesquisa-e-academia" class="slide level2">
+<h2><strong>Perfil 1 - Pesquisa e academia</strong></h2>
+<p>Se o objetivo é análise estatística, publicação científica ou trabalho com dados observacionais:</p>
+<ul>
+<li class="fragment"><strong>Comece com R</strong></li>
+<li class="fragment">O Tidyverse oferece uma gramática coerente para análise de dados</li>
+<li class="fragment">ggplot2 é a ferramenta de visualização mais expressiva disponível</li>
+<li class="fragment">R Markdown e Quarto integram código, texto e resultados em documentos reproduzíveis</li>
+<li class="fragment">A comunidade acadêmica é ampla e os pacotes são especializados</li>
+</ul>
+</section>
+<section id="perfil-2---mercado-e-indústria" class="slide level2">
+<h2><strong>Perfil 2 - Mercado e indústria</strong></h2>
+<p>Se o objetivo é trabalhar com engenharia de dados, machine learning aplicado ou automação:</p>
+<ul>
+<li class="fragment"><strong>Comece com Python</strong></li>
+<li class="fragment">A demanda por Python no mercado de trabalho é mais ampla</li>
+<li class="fragment">A integração com sistemas, APIs e bancos de dados é mais natural</li>
+<li class="fragment">scikit-learn, TensorFlow e PyTorch são referências em machine learning</li>
+<li class="fragment">A curva de aprendizado é suave para quem está começando do zero</li>
+</ul>
+</section>
+<section id="perfil-3---análise-de-dados-generalista" class="slide level2">
+<h2><strong>Perfil 3 - Análise de dados generalista</strong></h2>
+<p>Se o objetivo é explorar dados, gerar relatórios e apoiar decisões em diferentes contextos:</p>
+<ul>
+<li class="fragment"><strong>As duas linguagens se complementam</strong></li>
+<li class="fragment">R para análise exploratória, visualização e estatística</li>
+<li class="fragment">Python para automação, coleta e modelagem</li>
+<li class="fragment">O pacote Reticulate permite integrar as duas no mesmo projeto</li>
+<li class="fragment">A combinação é um diferencial real no mercado</li>
+</ul>
+</section>
+<section id="tem-aula-aqui-no-site" class="slide level2">
+<h2>Tem aula aqui no site</h2>
+
+<img data-src="imagens/pyr.png" width="268" class="r-stretch quarto-figure-center"><p class="caption"><strong>Aula 9. Integração R x Python com pacote Reticulate.</strong></p><div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Consulte os slides anteriores para detalhes sobre o pacote Reticulate. Link <a href="https://jenniferlopes.quarto.pub/portifolio/apresenta%C3%A7%C3%B5es/posts/apresentacao_r_python.html#/title-slide"><strong>aqui</strong></a>.</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="começando-com-r" class="title-slide slide level1 center">
+<h1><strong>Começando com R</strong></h1>
+
+</section>
+<section id="o-ambiente-de-trabalho-em-r" class="slide level2">
+<h2><strong>O ambiente de trabalho em R</strong></h2>
+<p>Para iniciar com R, três ferramentas são necessárias:</p>
+<ol type="1">
+<li class="fragment"><strong>R</strong> - o motor da linguagem: <a href="https://cran.r-project.org/">cran.r-project.org</a></li>
+<li class="fragment"><strong>RStudio</strong> - interface de desenvolvimento: <a href="https://posit.co/download/rstudio-desktop/">posit.co/download/rstudio-desktop</a></li>
+<li class="fragment"><strong>Quarto</strong> - sistema de publicação: <a href="https://quarto.org/">quarto.org</a></li>
+</ol>
+</section>
+<section id="primeiros-passos-no-r" class="slide level2">
+<h2><strong>Primeiros passos no R</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># Atribuição de valores</span></span>
+<span id="cb1-2"><a></a>x <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb1-3"><a></a>y <span class="ot">&lt;-</span> <span class="dv">25</span></span>
+<span id="cb1-4"><a></a></span>
+<span id="cb1-5"><a></a><span class="co"># Operações básicas</span></span>
+<span id="cb1-6"><a></a>soma   <span class="ot">&lt;-</span> x <span class="sc">+</span> y</span>
+<span id="cb1-7"><a></a>media  <span class="ot">&lt;-</span> (x <span class="sc">+</span> y) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb1-8"><a></a>potencia <span class="ot">&lt;-</span> x<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-9"><a></a></span>
+<span id="cb1-10"><a></a><span class="co"># Visualizando resultados</span></span>
+<span id="cb1-11"><a></a><span class="fu">print</span>(soma)</span>
+<span id="cb1-12"><a></a><span class="fu">print</span>(media)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Dica</strong></p>
+</div>
+<div class="callout-content">
+<p>No R, o operador de atribuição padrão é <strong><code>&lt;-</code></strong>. O atalho no teclado é <strong><code>Alt + -</code></strong> no RStudio.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="vetores-a-estrutura-fundamental-do-r" class="slide level2">
+<h2><strong>Vetores: a estrutura fundamental do R</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="co"># Criando vetores</span></span>
+<span id="cb2-2"><a></a>idades   <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">35</span>, <span class="dv">28</span>, <span class="dv">41</span>, <span class="dv">19</span>)</span>
+<span id="cb2-3"><a></a>nomes    <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Jeny"</span>, <span class="st">"Meguy"</span>, <span class="st">"Carla"</span>, <span class="st">"Diego"</span>, <span class="st">"Elisa"</span>)</span>
+<span id="cb2-4"><a></a>aprovado <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>)</span>
+<span id="cb2-5"><a></a></span>
+<span id="cb2-6"><a></a><span class="co"># Operações vetorizadas - o R opera em todos os elementos</span></span>
+<span id="cb2-7"><a></a>idades <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb2-8"><a></a>idades <span class="sc">&gt;</span> <span class="dv">25</span></span>
+<span id="cb2-9"><a></a></span>
+<span id="cb2-10"><a></a><span class="co"># Acessando elementos por índice</span></span>
+<span id="cb2-11"><a></a>nomes[<span class="dv">1</span>]       <span class="co"># primeiro elemento</span></span>
+<span id="cb2-12"><a></a>idades[<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>]    <span class="co"># do terceiro ao quinto</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-frames-tabelas-no-r" class="slide level2">
+<h2><strong>Data frames: tabelas no R</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># Criando um data frame</span></span>
+<span id="cb3-2"><a></a>turma <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-3"><a></a>  <span class="at">nome     =</span> <span class="fu">c</span>(<span class="st">"Jeny"</span>, <span class="st">"Meguy"</span>, <span class="st">"Carla"</span>),</span>
+<span id="cb3-4"><a></a>  <span class="at">nota     =</span> <span class="fu">c</span>(<span class="fl">8.5</span>, <span class="fl">7.2</span>, <span class="fl">9.1</span>),</span>
+<span id="cb3-5"><a></a>  <span class="at">presente =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>))</span>
+<span id="cb3-6"><a></a></span>
+<span id="cb3-7"><a></a><span class="co"># Visualizando</span></span>
+<span id="cb3-8"><a></a>turma</span>
+<span id="cb3-9"><a></a></span>
+<span id="cb3-10"><a></a><span class="co"># Acessando colunas</span></span>
+<span id="cb3-11"><a></a>turma<span class="sc">$</span>nota</span>
+<span id="cb3-12"><a></a>turma[, <span class="st">"nome"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="o-tidyverse-ecosistema-para-análise-de-dados" class="slide level2">
+<h2><strong>O Tidyverse: ecosistema para análise de dados</strong></h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="https://tidyverse.org/"><img data-src="imagens/tidyverse.png" class="quarto-figure quarto-figure-center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="354"></a></p>
+</figure>
+</div>
+<figcaption>Acesse e conheça os pacotes, clicando na imagem.</figcaption>
+</figure>
+</div>
+</section>
+<section id="o-tidyverse-ecosistema-para-análise-de-dados-1" class="slide level2">
+<h2><strong>O Tidyverse: ecosistema para análise de dados</strong></h2>
+<p>O <strong><code>Tidyverse</code></strong> é uma coleção de pacotes com uma filosofia comum: dados organizados, código legível e consistência entre funções.</p>
+<ul>
+<li class="fragment"><strong>dplyr</strong> - manipulação de dados com verbos claros</li>
+<li class="fragment"><strong>ggplot2</strong> - visualização por camadas (Grammar of Graphics)</li>
+<li class="fragment"><strong>tidyr</strong> - organização e transformação da estrutura dos dados</li>
+<li class="fragment"><strong>readr</strong> - importação de arquivos CSV e delimitados</li>
+<li class="fragment"><strong>stringr</strong> - manipulação de texto</li>
+</ul>
+</section>
+<section id="instalando-e-carregando-o-tidyverse" class="slide level2">
+<h2><strong>Instalando e carregando o Tidyverse</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="co"># Instalação - executar apenas uma vez</span></span>
+<span id="cb4-2"><a></a><span class="fu">install.packages</span>(<span class="st">"tidyverse"</span>)</span>
+<span id="cb4-3"><a></a></span>
+<span id="cb4-4"><a></a><span class="co"># Carregamento - executar em cada sessão</span></span>
+<span id="cb4-5"><a></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="primeiros-passos-com-dplyr" class="slide level2">
+<h2><strong>Primeiros passos com dplyr</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb5-2"><a></a></span>
+<span id="cb5-3"><a></a><span class="co"># Dataset nativo do R</span></span>
+<span id="cb5-4"><a></a>dados <span class="ot">&lt;-</span> mtcars</span>
+<span id="cb5-5"><a></a></span>
+<span id="cb5-6"><a></a><span class="co"># Filtrando linhas</span></span>
+<span id="cb5-7"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb5-8"><a></a>  <span class="fu">filter</span>(cyl <span class="sc">==</span> <span class="dv">4</span>)</span>
+<span id="cb5-9"><a></a></span>
+<span id="cb5-10"><a></a><span class="co"># Selecionando colunas</span></span>
+<span id="cb5-11"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb5-12"><a></a>  <span class="fu">select</span>(mpg, cyl, hp)</span>
+<span id="cb5-13"><a></a></span>
+<span id="cb5-14"><a></a><span class="co"># Criando nova coluna</span></span>
+<span id="cb5-15"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb5-16"><a></a>  <span class="fu">mutate</span>(<span class="at">consumo_km =</span> mpg <span class="sc">*</span> <span class="fl">0.425</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="encadeamento-com-pipe" class="slide level2">
+<h2><strong>Encadeamento com pipe</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb6-2"><a></a></span>
+<span id="cb6-3"><a></a><span class="co"># Múltiplas operações encadeadas com pipe nativo |&gt;</span></span>
+<span id="cb6-4"><a></a>resumo <span class="ot">&lt;-</span> mtcars <span class="sc">|&gt;</span></span>
+<span id="cb6-5"><a></a>  <span class="fu">filter</span>(cyl <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">6</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a></a>  <span class="fu">select</span>(mpg, cyl, hp, wt) <span class="sc">|&gt;</span></span>
+<span id="cb6-7"><a></a>  <span class="fu">mutate</span>(<span class="at">eficiencia =</span> mpg <span class="sc">/</span> wt) <span class="sc">|&gt;</span></span>
+<span id="cb6-8"><a></a>  <span class="fu">group_by</span>(cyl) <span class="sc">|&gt;</span></span>
+<span id="cb6-9"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb6-10"><a></a>    <span class="at">media_mpg       =</span> <span class="fu">mean</span>(mpg),</span>
+<span id="cb6-11"><a></a>    <span class="at">media_eficiencia =</span> <span class="fu">mean</span>(eficiencia),</span>
+<span id="cb6-12"><a></a>    <span class="at">n_veiculos      =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb6-13"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(media_mpg))</span>
+<span id="cb6-14"><a></a></span>
+<span id="cb6-15"><a></a>resumo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="primeira-visualização-com-ggplot2" class="slide level2">
+<h2><strong>Primeira visualização com ggplot2</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-2"><a></a></span>
+<span id="cb7-3"><a></a><span class="co"># Gráfico de dispersão</span></span>
+<span id="cb7-4"><a></a>grafico1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb7-5"><a></a>  <span class="at">data =</span> mtcars,</span>
+<span id="cb7-6"><a></a>  <span class="fu">aes</span>(<span class="at">x =</span> wt, <span class="at">y =</span> mpg, <span class="at">color =</span> <span class="fu">factor</span>(cyl))) <span class="sc">+</span></span>
+<span id="cb7-7"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb7-8"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-9"><a></a>    <span class="at">title  =</span> <span class="st">"Consumo por peso do veículo."</span>,</span>
+<span id="cb7-10"><a></a>    <span class="at">x      =</span> <span class="st">"Peso (1000 lbs)"</span>,</span>
+<span id="cb7-11"><a></a>    <span class="at">y      =</span> <span class="st">"Milhas por galão"</span>,</span>
+<span id="cb7-12"><a></a>    <span class="at">color  =</span> <span class="st">"Cilindros"</span>, </span>
+<span id="cb7-13"><a></a>    <span class="at">caption =</span> <span class="st">"Jeni Lopes | Café com R."</span>) <span class="sc">+</span></span>
+<span id="cb7-14"><a></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="primeira-visualização-com-ggplot2-1" class="slide level2">
+<h2><strong>Primeira visualização com ggplot2</strong></h2>
+
+<img data-src="aula_r_python_iniciantes_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
+<section id="lendo-dados-externos-no-r" class="slide level2">
+<h2><strong>Lendo dados externos no R</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">library</span>(readr)</span>
+<span id="cb8-2"><a></a></span>
+<span id="cb8-3"><a></a><span class="co"># Lendo CSV local</span></span>
+<span id="cb8-4"><a></a>dados_local <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"dados/meu_arquivo.csv"</span>)</span>
+<span id="cb8-5"><a></a></span>
+<span id="cb8-6"><a></a><span class="co"># Lendo CSV de URL</span></span>
+<span id="cb8-7"><a></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/datasets/population/main/data/population.csv"</span></span>
+<span id="cb8-8"><a></a>dados_url <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb8-9"><a></a></span>
+<span id="cb8-10"><a></a><span class="co"># Lendo Excel</span></span>
+<span id="cb8-11"><a></a><span class="fu">library</span>(readxl)</span>
+<span id="cb8-12"><a></a>dados_excel <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dados/planilha.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">1</span>)</span>
+<span id="cb8-13"><a></a></span>
+<span id="cb8-14"><a></a><span class="co"># Visualizando a estrutura</span></span>
+<span id="cb8-15"><a></a><span class="fu">glimpse</span>(dados_local)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section></section>
+<section>
+<section id="começando-com-python" class="title-slide slide level1 center">
+<h1><strong>Começando com Python</strong></h1>
+
+</section>
+<section id="o-ambiente-de-trabalho-em-python" class="slide level2">
+<h2><strong>O ambiente de trabalho em Python</strong></h2>
+<p>Para iniciar com Python para dados, três componentes são recomendados:</p>
+<ol type="1">
+<li class="fragment"><strong>Python</strong> - o interpretador: <a href="https://www.python.org/downloads/">python.org/downloads</a></li>
+<li class="fragment"><strong>VS Code ou JupyterLab</strong> - ambientes de desenvolvimento</li>
+<li class="fragment"><strong>pip ou conda</strong> - gerenciadores de pacotes</li>
+</ol>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Alternativa para iniciantes</strong></p>
+</div>
+<div class="callout-content">
+<p>O <strong>Google Colab</strong> permite usar Python no navegador sem instalar nada. É ideal para quem está começando e quer focar no aprendizado da linguagem.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="primeiros-passos-em-python" class="slide level2">
+<h2><strong>Primeiros passos em Python</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a><span class="co"># Atribuição de valores</span></span>
+<span id="cb9-2"><a></a>x <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb9-3"><a></a>y <span class="op">=</span> <span class="dv">25</span></span>
+<span id="cb9-4"><a></a></span>
+<span id="cb9-5"><a></a><span class="co"># Operações básicas</span></span>
+<span id="cb9-6"><a></a>soma     <span class="op">=</span> x <span class="op">+</span> y</span>
+<span id="cb9-7"><a></a>media    <span class="op">=</span> (x <span class="op">+</span> y) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb9-8"><a></a>potencia <span class="op">=</span> x <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb9-9"><a></a></span>
+<span id="cb9-10"><a></a><span class="co"># Exibindo resultados</span></span>
+<span id="cb9-11"><a></a><span class="bu">print</span>(<span class="ss">f"Soma: </span><span class="sc">{</span>soma<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb9-12"><a></a><span class="bu">print</span>(<span class="ss">f"Média: </span><span class="sc">{</span>media<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb9-13"><a></a><span class="bu">print</span>(<span class="ss">f"Potência: </span><span class="sc">{</span>potencia<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Em Python, o operador de atribuição é <code>=</code>. f-strings (f”…“) permitem inserir variáveis diretamente dentro de texto.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="listas-estrutura-básica-em-python" class="slide level2">
+<h2><strong>Listas: estrutura básica em Python</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a><span class="co"># Criando listas</span></span>
+<span id="cb10-2"><a></a>idades  <span class="op">=</span> [<span class="dv">22</span>, <span class="dv">35</span>, <span class="dv">28</span>, <span class="dv">41</span>, <span class="dv">19</span>]</span>
+<span id="cb10-3"><a></a>nomes   <span class="op">=</span> [<span class="st">"Jeny"</span>, <span class="st">"Meguy"</span>, <span class="st">"Carla"</span>, <span class="st">"Diego"</span>, <span class="st">"Elisa"</span>]</span>
+<span id="cb10-4"><a></a></span>
+<span id="cb10-5"><a></a><span class="co"># Acessando elementos - índice começa em 0</span></span>
+<span id="cb10-6"><a></a><span class="bu">print</span>(nomes[<span class="dv">0</span>])    <span class="co"># primeiro elemento</span></span>
+<span id="cb10-7"><a></a><span class="bu">print</span>(idades[<span class="dv">2</span>:<span class="dv">5</span>]) <span class="co"># do terceiro ao quinto</span></span>
+<span id="cb10-8"><a></a></span>
+<span id="cb10-9"><a></a><span class="co"># Adicionando elementos</span></span>
+<span id="cb10-10"><a></a>nomes.append(<span class="st">"Fernanda"</span>)</span>
+<span id="cb10-11"><a></a></span>
+<span id="cb10-12"><a></a><span class="co"># Iterando</span></span>
+<span id="cb10-13"><a></a><span class="cf">for</span> nome <span class="kw">in</span> nomes:</span>
+<span id="cb10-14"><a></a>    <span class="bu">print</span>(nome)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="numpy-operações-numéricas" class="slide level2">
+<h2><strong>NumPy: operações numéricas</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb11-2"><a></a></span>
+<span id="cb11-3"><a></a><span class="co"># Arrays NumPy - mais eficientes que listas para cálculos</span></span>
+<span id="cb11-4"><a></a>idades <span class="op">=</span> np.array([<span class="dv">22</span>, <span class="dv">35</span>, <span class="dv">28</span>, <span class="dv">41</span>, <span class="dv">19</span>])</span>
+<span id="cb11-5"><a></a></span>
+<span id="cb11-6"><a></a><span class="co"># Operações vetorizadas</span></span>
+<span id="cb11-7"><a></a><span class="bu">print</span>(idades <span class="op">*</span> <span class="dv">2</span>)</span>
+<span id="cb11-8"><a></a><span class="bu">print</span>(idades <span class="op">&gt;</span> <span class="dv">25</span>)</span>
+<span id="cb11-9"><a></a></span>
+<span id="cb11-10"><a></a><span class="co"># Estatísticas descritivas</span></span>
+<span id="cb11-11"><a></a><span class="bu">print</span>(<span class="ss">f"Média: </span><span class="sc">{</span>idades<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb11-12"><a></a><span class="bu">print</span>(<span class="ss">f"Desvio padrão: </span><span class="sc">{</span>idades<span class="sc">.</span>std()<span class="sc">:.1f}</span><span class="ss">"</span>)</span>
+<span id="cb11-13"><a></a><span class="bu">print</span>(<span class="ss">f"Mínimo: </span><span class="sc">{</span>idades<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss"> | Máximo: </span><span class="sc">{</span>idades<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="pandas-o-coração-da-análise-em-python" class="slide level2">
+<h2><strong>pandas: o coração da análise em Python</strong></h2>
+<p>O pandas é o pacote central para análise de dados tabulares em Python. Sua estrutura principal, o DataFrame, é equivalente a uma tabela.</p>
+<ul>
+<li class="fragment">Leitura de CSV, Excel, JSON, SQL e outros formatos</li>
+<li class="fragment">Seleção, filtragem e transformação de colunas</li>
+<li class="fragment">Agrupamento e sumarização de dados</li>
+<li class="fragment">Tratamento de valores ausentes</li>
+<li class="fragment">Integração nativa com NumPy e matplotlib</li>
+</ul>
+</section>
+<section id="primeiros-passos-com-pandas" class="slide level2">
+<h2><strong>Primeiros passos com pandas</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb12-2"><a></a></span>
+<span id="cb12-3"><a></a><span class="co"># Criando um DataFrame</span></span>
+<span id="cb12-4"><a></a>turma <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb12-5"><a></a>    <span class="st">"nome"</span>    : [<span class="st">"Jeny"</span>, <span class="st">"Meguy"</span>, <span class="st">"Carla"</span>],</span>
+<span id="cb12-6"><a></a>    <span class="st">"nota"</span>    : [<span class="fl">8.5</span>, <span class="fl">7.2</span>, <span class="fl">9.1</span>],</span>
+<span id="cb12-7"><a></a>    <span class="st">"presente"</span>: [<span class="va">True</span>, <span class="va">True</span>, <span class="va">False</span>]</span>
+<span id="cb12-8"><a></a>})</span>
+<span id="cb12-9"><a></a></span>
+<span id="cb12-10"><a></a><span class="co"># Visualizando</span></span>
+<span id="cb12-11"><a></a><span class="bu">print</span>(turma)</span>
+<span id="cb12-12"><a></a></span>
+<span id="cb12-13"><a></a><span class="co"># Informações estruturais</span></span>
+<span id="cb12-14"><a></a><span class="bu">print</span>(turma.dtypes)</span>
+<span id="cb12-15"><a></a><span class="bu">print</span>(turma.describe())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="manipulação-de-dados-com-pandas" class="slide level2">
+<h2><strong>Manipulação de dados com pandas</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-2"><a></a></span>
+<span id="cb13-3"><a></a><span class="co"># Carregando dados</span></span>
+<span id="cb13-4"><a></a>df <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/tips.csv"</span>)</span>
+<span id="cb13-5"><a></a></span>
+<span id="cb13-6"><a></a><span class="co"># Filtrando linhas</span></span>
+<span id="cb13-7"><a></a>jantar <span class="op">=</span> df[df[<span class="st">"time"</span>] <span class="op">==</span> <span class="st">"Dinner"</span>]</span>
+<span id="cb13-8"><a></a></span>
+<span id="cb13-9"><a></a><span class="co"># Selecionando colunas</span></span>
+<span id="cb13-10"><a></a>colunas <span class="op">=</span> df[[<span class="st">"total_bill"</span>, <span class="st">"tip"</span>, <span class="st">"size"</span>]]</span>
+<span id="cb13-11"><a></a></span>
+<span id="cb13-12"><a></a><span class="co"># Criando coluna calculada</span></span>
+<span id="cb13-13"><a></a>df[<span class="st">"percentual_gorjeta"</span>] <span class="op">=</span> (df[<span class="st">"tip"</span>] <span class="op">/</span> df[<span class="st">"total_bill"</span>]) <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb13-14"><a></a></span>
+<span id="cb13-15"><a></a><span class="co"># Agrupamento e resumo</span></span>
+<span id="cb13-16"><a></a>df.groupby(<span class="st">"day"</span>)[<span class="st">"tip"</span>].mean().<span class="bu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualização-com-matplotlib-e-seaborn" class="slide level2">
+<h2><strong>Visualização com matplotlib e seaborn</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb14-2"><a></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb14-3"><a></a></span>
+<span id="cb14-4"><a></a><span class="co"># Carregando dataset de exemplo</span></span>
+<span id="cb14-5"><a></a>tips <span class="op">=</span> sns.load_dataset(<span class="st">"tips"</span>)</span>
+<span id="cb14-6"><a></a></span>
+<span id="cb14-7"><a></a><span class="co"># Gráfico de dispersão com seaborn</span></span>
+<span id="cb14-8"><a></a>sns.scatterplot(</span>
+<span id="cb14-9"><a></a>    data <span class="op">=</span> tips,</span>
+<span id="cb14-10"><a></a>    x    <span class="op">=</span> <span class="st">"total_bill"</span>,</span>
+<span id="cb14-11"><a></a>    y    <span class="op">=</span> <span class="st">"tip"</span>,</span>
+<span id="cb14-12"><a></a>    hue  <span class="op">=</span> <span class="st">"day"</span>)</span>
+<span id="cb14-13"><a></a></span>
+<span id="cb14-14"><a></a>plt.title(<span class="st">"Gorjeta por valor total da conta"</span>)</span>
+<span id="cb14-15"><a></a>plt.xlabel(<span class="st">"Valor total (USD)"</span>)</span>
+<span id="cb14-16"><a></a>plt.ylabel(<span class="st">"Gorjeta (USD)"</span>)</span>
+<span id="cb14-17"><a></a>plt.tight_layout()</span>
+<span id="cb14-18"><a></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="lendo-dados-externos-em-python" class="slide level2">
+<h2><strong>Lendo dados externos em Python</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb15-2"><a></a></span>
+<span id="cb15-3"><a></a><span class="co"># Lendo CSV local</span></span>
+<span id="cb15-4"><a></a>dados_local <span class="op">=</span> pd.read_csv(<span class="st">"dados/meu_arquivo.csv"</span>)</span>
+<span id="cb15-5"><a></a></span>
+<span id="cb15-6"><a></a><span class="co"># Lendo CSV de URL</span></span>
+<span id="cb15-7"><a></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/datasets/population/main/data/population.csv"</span></span>
+<span id="cb15-8"><a></a>dados_url <span class="op">=</span> pd.read_csv(url)</span>
+<span id="cb15-9"><a></a></span>
+<span id="cb15-10"><a></a><span class="co"># Lendo Excel</span></span>
+<span id="cb15-11"><a></a>dados_excel <span class="op">=</span> pd.read_excel(<span class="st">"dados/planilha.xlsx"</span>, sheet_name<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb15-12"><a></a></span>
+<span id="cb15-13"><a></a><span class="co"># Visualizando a estrutura</span></span>
+<span id="cb15-14"><a></a><span class="bu">print</span>(dados_local.shape)</span>
+<span id="cb15-15"><a></a><span class="bu">print</span>(dados_local.head())</span>
+<span id="cb15-16"><a></a><span class="bu">print</span>(dados_local.info())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section></section>
+<section>
+<section id="comparando-as-sintaxes" class="title-slide slide level1 center">
+<h1><strong>Comparando as sintaxes</strong></h1>
+
+</section>
+<section id="carregar-e-visualizar-dados" class="slide level2">
+<h2><strong>Carregar e visualizar dados</strong></h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th><strong>Operação</strong></th>
+<th><strong>R</strong></th>
+<th><strong>Python</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ler CSV</td>
+<td><code>read_csv("arquivo.csv")</code></td>
+<td><code>pd.read_csv("arquivo.csv")</code></td>
+</tr>
+<tr class="even">
+<td>Ver primeiras linhas</td>
+<td><code>head(df)</code></td>
+<td><code>df.head()</code></td>
+</tr>
+<tr class="odd">
+<td>Estrutura dos dados</td>
+<td><code>str(df)</code></td>
+<td><code>df.info()</code></td>
+</tr>
+<tr class="even">
+<td>Resumo estatístico</td>
+<td><code>summary(df)</code></td>
+<td><code>df.describe()</code></td>
+</tr>
+<tr class="odd">
+<td>Dimensões</td>
+<td><code>dim(df)</code></td>
+<td><code>df.shape</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="filtrar-e-selecionar" class="slide level2">
+<h2><strong>Filtrar e selecionar</strong></h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Operação</strong></th>
+<th><strong>R (dplyr)</strong></th>
+<th><strong>Python (pandas)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Filtrar linhas</td>
+<td><code>filter(df, col &gt; 5)</code></td>
+<td><code>df[df["col"] &gt; 5]</code></td>
+</tr>
+<tr class="even">
+<td>Selecionar colunas</td>
+<td><code>select(df, col1, col2)</code></td>
+<td><code>df[["col1", "col2"]]</code></td>
+</tr>
+<tr class="odd">
+<td>Criar coluna</td>
+<td><code>mutate(df, nova = a + b)</code></td>
+<td><code>df["nova"] = df["a"] + df["b"]</code></td>
+</tr>
+<tr class="even">
+<td>Renomear coluna</td>
+<td><code>rename(df, novo = antigo)</code></td>
+<td><code>df.rename(columns={"antigo": "novo"})</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="agrupar-e-resumir" class="slide level2">
+<h2><strong>Agrupar e resumir</strong></h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Operação</strong></th>
+<th><strong>R (dplyr)</strong></th>
+<th><strong>Python (pandas)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Agrupar e calcular</td>
+<td><code>group_by(df, grupo) |&gt; summarise(media = mean(val))</code></td>
+<td><code>df.groupby("grupo")["val"].mean()</code></td>
+</tr>
+<tr class="even">
+<td>Ordenar</td>
+<td><code>arrange(df, col)</code></td>
+<td><code>df.sort_values("col")</code></td>
+</tr>
+<tr class="odd">
+<td>Remover duplicatas</td>
+<td><code>distinct(df)</code></td>
+<td><code>df.drop_duplicates()</code></td>
+</tr>
+<tr class="even">
+<td>Remover NA</td>
+<td><code>drop_na(df)</code></td>
+<td><code>df.dropna()</code></td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="erros-comuns-de-quem-está-começando" class="title-slide slide level1 center">
+<h1><strong>Erros comuns de quem está começando</strong></h1>
+
+</section>
+<section id="erros-conceituais" class="slide level2">
+<h2><strong>Erros conceituais</strong></h2>
+<ul>
+<li class="fragment"><strong>Tentar aprender as duas linguagens ao mesmo tempo, do zero</strong> - escolha uma, domine o essencial, depois avance para a outra</li>
+<li class="fragment"><strong>Copiar código sem entender o que ele faz</strong> - o aprendizado está na leitura e modificação deliberada</li>
+<li class="fragment"><strong>Pular direto para machine learning</strong> - sem base em manipulação e visualização, o machine learning não sustenta</li>
+<li class="fragment"><strong>Evitar os erros</strong> - erros de código são parte indispensável do processo de aprendizado</li>
+</ul>
+</section>
+<section id="erros-técnicos-em-r" class="slide level2">
+<h2><strong>Erros técnicos em R</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="co"># ERRO: objeto não encontrado</span></span>
+<span id="cb16-2"><a></a><span class="co"># print(resultado)  # resultado não foi criado ainda</span></span>
+<span id="cb16-3"><a></a></span>
+<span id="cb16-4"><a></a><span class="co"># ERRO: índice fora do limite</span></span>
+<span id="cb16-5"><a></a><span class="co"># vetor &lt;- c(1, 2, 3)</span></span>
+<span id="cb16-6"><a></a><span class="co"># vetor[5]  # retorna NA, não erro - cuidado com silêncio</span></span>
+<span id="cb16-7"><a></a></span>
+<span id="cb16-8"><a></a><span class="co"># ERRO: tipo incompatível</span></span>
+<span id="cb16-9"><a></a><span class="co"># "10" + 5  # não funciona - string + numero</span></span>
+<span id="cb16-10"><a></a></span>
+<span id="cb16-11"><a></a><span class="co"># CORRETO: converter antes de operar</span></span>
+<span id="cb16-12"><a></a><span class="fu">as.numeric</span>(<span class="st">"10"</span>) <span class="sc">+</span> <span class="dv">5</span></span>
+<span id="cb16-13"><a></a></span>
+<span id="cb16-14"><a></a><span class="co"># ERRO: pacote não carregado</span></span>
+<span id="cb16-15"><a></a><span class="co"># filter(dados, nota &gt; 7)  # precisa do library(dplyr)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="erros-técnicos-em-python" class="slide level2">
+<h2><strong>Erros técnicos em Python</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a><span class="co"># ERRO: índice começa em 0, não em 1</span></span>
+<span id="cb17-2"><a></a>lista <span class="op">=</span> [<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>]</span>
+<span id="cb17-3"><a></a><span class="co"># lista[3]  # IndexError: list index out of range</span></span>
+<span id="cb17-4"><a></a>lista[<span class="dv">2</span>]    <span class="co"># correto - terceiro elemento</span></span>
+<span id="cb17-5"><a></a></span>
+<span id="cb17-6"><a></a><span class="co"># ERRO: indentação obrigatória em Python</span></span>
+<span id="cb17-7"><a></a><span class="co"># if x &gt; 5:</span></span>
+<span id="cb17-8"><a></a><span class="co"># print("maior")  # IndentationError</span></span>
+<span id="cb17-9"><a></a></span>
+<span id="cb17-10"><a></a><span class="co"># CORRETO:</span></span>
+<span id="cb17-11"><a></a><span class="cf">if</span> x <span class="op">&gt;</span> <span class="dv">5</span>:</span>
+<span id="cb17-12"><a></a>    <span class="bu">print</span>(<span class="st">"maior"</span>)  <span class="co"># indentação com 4 espaços</span></span>
+<span id="cb17-13"><a></a></span>
+<span id="cb17-14"><a></a><span class="co"># ERRO: pacote não importado</span></span>
+<span id="cb17-15"><a></a><span class="co"># df = pd.DataFrame()  # NameError: pd not defined</span></span>
+<span id="cb17-16"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd    <span class="co"># importar antes de usar</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="erros-de-processo" class="slide level2">
+<h2><strong>Erros de processo</strong></h2>
+<ul>
+<li class="fragment"><strong>Não versionar o código</strong> - use Git desde o início, mesmo em projetos pessoais</li>
+<li class="fragment"><strong>Não documentar o que o código faz</strong> - comentários são para o seu futuro eu</li>
+<li class="fragment"><strong>Trabalhar sem projeto organizado</strong> - separe dados brutos, scripts e saídas em pastas distintas</li>
+<li class="fragment"><strong>Não salvar resultados intermediários</strong> - ao processar dados pesados, salve etapas parciais</li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>Um script sem comentários é um script que você não vai entender em três meses.</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="estratégia-de-aprendizado" class="title-slide slide level1 center">
+<h1><strong>Estratégia de aprendizado</strong></h1>
+
+</section>
+<section id="estrutura-recomendada---fase-1" class="slide level2">
+<h2><strong>Estrutura recomendada - fase 1</strong></h2>
+<p>A primeira fase de aprendizado deve cobrir os fundamentos da linguagem escolhida.</p>
+<ul>
+<li class="fragment">Tipos de dados e estruturas básicas</li>
+<li class="fragment">Operações e controle de fluxo</li>
+<li class="fragment">Funções: criar, chamar, entender parâmetros</li>
+<li class="fragment">Importação e exportação de arquivos</li>
+<li class="fragment">Manipulação básica de tabelas</li>
+</ul>
+</section>
+<section id="estrutura-recomendada---fase-2" class="slide level2">
+<h2><strong>Estrutura recomendada - fase 2</strong></h2>
+<p>A segunda fase, deve focar em análise exploratória e visualização.</p>
+<ul>
+<li class="fragment">Limpeza de dados: valores ausentes, duplicatas, tipos incorretos</li>
+<li class="fragment">Transformações: filtrar, agrupar, calcular</li>
+<li class="fragment">Visualização: gráficos de barras, dispersão, linha e histograma</li>
+<li class="fragment">Comunicação de resultados com relatórios reproduzíveis</li>
+<li class="fragment">Projetos com dados reais e públicos</li>
+</ul>
+</section>
+<section id="estrutura-recomendada---fase-3" class="slide level2">
+<h2><strong>Estrutura recomendada - fase 3</strong></h2>
+<p>A terceira fase aprofunda técnicas e expande o repertório.</p>
+<ul>
+<li class="fragment">Estatística descritiva e inferencial</li>
+<li class="fragment">Modelagem: regressão linear, logística, árvores</li>
+<li class="fragment">Web scraping e consumo de APIs</li>
+<li class="fragment">SQL para acesso a bancos de dados</li>
+<li class="fragment">Integração entre linguagens e ferramentas</li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Referência</strong></p>
+</div>
+<div class="callout-content">
+<p>A fase 3 é o ponto em que aprender a segunda linguagem passa a fazer ainda mais sentido.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="recursos-para-aprender-r" class="slide level2">
+<h2><strong>Recursos para aprender R</strong></h2>
+<ul>
+<li class="fragment"><strong>R for Data Science</strong> - Hadley Wickham e Garrett Grolemund: <a href="https://r4ds.hadley.nz/">r4ds.hadley.nz</a></li>
+<li class="fragment"><strong>Hands-On Programming with R</strong> - Garrett Grolemund: gratuito online</li>
+<li class="fragment"><strong>Tidyverse documentation</strong>: <a href="https://www.tidyverse.org/">tidyverse.org</a></li>
+<li class="fragment"><strong>CRAN Task Views</strong>: lista de pacotes por área temática</li>
+<li class="fragment"><strong>Posit Community</strong>: fórum oficial com alta qualidade de resposta</li>
+<li class="fragment"><strong>Café com R</strong>: este projeto</li>
+</ul>
+</section>
+<section id="recursos-para-aprender-python" class="slide level2">
+<h2><strong>Recursos para aprender Python</strong></h2>
+<ul>
+<li class="fragment"><strong>Python for Data Analysis</strong> - Wes McKinney (criador do pandas): referência principal</li>
+<li class="fragment"><strong>pandas documentation</strong>: <a href="https://pandas.pydata.org/docs/">pandas.pydata.org/docs</a></li>
+<li class="fragment"><strong>Kaggle Learn</strong>: cursos gratuitos e práticos com notebooks</li>
+<li class="fragment"><strong>Google Colab</strong>: ambiente gratuito para praticar no navegador</li>
+<li class="fragment"><strong>Real Python</strong>: artigos técnicos de alta qualidade</li>
+<li class="fragment"><strong>NumPy documentation</strong>: <a href="https://numpy.org/doc/">numpy.org/doc</a></li>
+</ul>
+</section>
+<section id="onde-praticar-com-dados-reais" class="slide level2">
+<h2><strong>Onde praticar com dados reais</strong></h2>
+<ul>
+<li class="fragment"><strong>TidyTuesday (R)</strong> – desafios semanais com dados públicos:<br>
+<a href="https://github.com/rfordatascience/tidytuesday" class="uri">https://github.com/rfordatascience/tidytuesday</a></li>
+<li class="fragment"><strong>Kaggle Datasets</strong> – repositório com milhares de conjuntos de dados:<br>
+<a href="https://www.kaggle.com/datasets" class="uri">https://www.kaggle.com/datasets</a></li>
+<li class="fragment"><strong>IBGE x SIDRA</strong> – dados brasileiros sobre população, economia e território:<br>
+<a href="https://www.ibge.gov.br" class="uri">https://www.ibge.gov.br</a><br>
+<a href="https://sidra.ibge.gov.br" class="uri">https://sidra.ibge.gov.br</a></li>
+<li class="fragment"><strong>Portal da Transparência</strong> – dados governamentais abertos do Brasil:<br>
+<a href="https://portaldatransparencia.gov.br" class="uri">https://portaldatransparencia.gov.br</a></li>
+</ul>
+</section></section>
+<section>
+<section id="boas-práticas-desde-o-início" class="title-slide slide level1 center">
+<h1><strong>Boas práticas desde o início</strong></h1>
+
+</section>
+<section id="organização-de-projetos" class="slide level2">
+<h2><strong>Organização de projetos</strong></h2>
+<pre><code>projeto_dados/
+├── dados/
+│   ├── brutos/         # dados originais - nunca modificar
+│   └── processados/    # resultados de limpeza e transformação
+├── scripts/
+│   ├── 01_importacao.R
+│   ├── 02_limpeza.R
+│   └── 03_analise.R
+├── outputs/
+│   ├── graficos/
+│   └── tabelas/
+├── relatorio.qmd
+└── README.md</code></pre>
+</section>
+<section id="nomeação-de-arquivos-e-objetos" class="slide level2">
+<h2><strong>Nomeação de arquivos e objetos</strong></h2>
+<ul>
+<li class="fragment">Use nomes descritivos: <code>dados_populacao_2023</code> é melhor que <code>df1</code></li>
+<li class="fragment">Prefira letras minúsculas e underscore: <code>taxa_desemprego</code></li>
+<li class="fragment">Numere scripts em ordem de execução: <code>01_</code>, <code>02_</code>, <code>03_</code></li>
+<li class="fragment">Nunca use acentos ou espaços em nomes de arquivos</li>
+<li class="fragment">Seja consistente: escolha uma convenção e mantenha</li>
+</ul>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Em R, a convenção mais comum é <code>snake_case</code>. Em Python, a mesma convenção é recomendada pelo PEP 8, o guia de estilo oficial.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="versionamento-com-git" class="slide level2">
+<h2><strong>Versionamento com Git</strong></h2>
+<ul>
+<li class="fragment">Git registra o histórico completo de alterações no código</li>
+<li class="fragment">GitHub ou GitLab são plataformas para armazenar e compartilhar repositórios</li>
+<li class="fragment">Use desde o primeiro projeto, mesmo que simples</li>
+<li class="fragment">Commits frequentes com mensagens descritivas</li>
+<li class="fragment"><code>.gitignore</code> para excluir dados sensíveis e arquivos temporários</li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Comando básico</strong></p>
+</div>
+<div class="callout-content">
+<p><code>git init</code> cria um repositório local. <code>git add .</code> e <code>git commit -m "mensagem"</code> registram as alterações.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="código-limpo-e-comentado" class="slide level2">
+<h2><strong>Código limpo e comentado</strong></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="co"># -------------------------------------------------------</span></span>
+<span id="cb19-2"><a></a><span class="co"># Script: Análise de notas por turma</span></span>
+<span id="cb19-3"><a></a><span class="co"># Autor: Nome do analista</span></span>
+<span id="cb19-4"><a></a><span class="co"># Data: 2026-01-15</span></span>
+<span id="cb19-5"><a></a><span class="co"># Objetivo: calcular média, mediana e distribuição de notas</span></span>
+<span id="cb19-6"><a></a><span class="co"># -------------------------------------------------------</span></span>
+<span id="cb19-7"><a></a></span>
+<span id="cb19-8"><a></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb19-9"><a></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb19-10"><a></a></span>
+<span id="cb19-11"><a></a><span class="co"># Importando dados brutos</span></span>
+<span id="cb19-12"><a></a>notas <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"dados/brutos/notas_turma_a.csv"</span>)</span>
+<span id="cb19-13"><a></a></span>
+<span id="cb19-14"><a></a><span class="co"># Removendo registros sem nota registrada</span></span>
+<span id="cb19-15"><a></a>notas_validas <span class="ot">&lt;-</span> notas <span class="sc">|&gt;</span></span>
+<span id="cb19-16"><a></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(nota))</span>
+<span id="cb19-17"><a></a></span>
+<span id="cb19-18"><a></a><span class="co"># Calculando estatísticas por disciplina</span></span>
+<span id="cb19-19"><a></a>resumo <span class="ot">&lt;-</span> notas_validas <span class="sc">|&gt;</span></span>
+<span id="cb19-20"><a></a>  <span class="fu">group_by</span>(disciplina) <span class="sc">|&gt;</span></span>
+<span id="cb19-21"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb19-22"><a></a>    <span class="at">media   =</span> <span class="fu">mean</span>(nota),</span>
+<span id="cb19-23"><a></a>    <span class="at">mediana =</span> <span class="fu">median</span>(nota),</span>
+<span id="cb19-24"><a></a>    <span class="at">n       =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section></section>
+<section>
+<section id="conexão-com-o-mercado" class="title-slide slide level1 center">
+<h1><strong>Conexão com o mercado</strong></h1>
+
+</section>
+<section id="o-que-o-mercado-espera-de-quem-começa" class="slide level2">
+<h2><strong>O que o mercado espera de quem começa?</strong></h2>
+<ul>
+<li class="fragment">Capacidade de importar, limpar e transformar dados sem auxílio de ferramentas visuais</li>
+<li class="fragment">Produzir análises exploratórias com código reproduzível</li>
+<li class="fragment">Comunicar resultados de forma clara - tabelas, gráficos, relatórios</li>
+<li class="fragment">Trabalhar com dados reais: inconsistências, ausências, formatos variados</li>
+<li class="fragment">Versionamento e organização de projetos</li>
+</ul>
+</section>
+<section id="construindo-portfólio-desde-o-início" class="slide level2">
+<h2><strong>Construindo portfólio desde o início</strong></h2>
+<ul>
+<li class="fragment">Publique projetos no GitHub com <code>README.md</code> claro</li>
+<li class="fragment">Use dados públicos e brasileiros - isso demonstra contexto</li>
+<li class="fragment">Documente as decisões de análise, não apenas o código</li>
+<li class="fragment">Prefira projetos simples e bem explicados a projetos complexos e confusos</li>
+<li class="fragment">Contribua com comunidades: TidyTuesday, fóruns, grupos no LinkedIn</li>
+</ul>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Um repositório com três projetos bem documentados vale mais que dez notebooks incompletos.</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="resumo-e-próximos-passos" class="title-slide slide level1 center">
+<h1><strong>Resumo e próximos passos</strong></h1>
+
+</section>
+<section id="o-que-vimos-nesta-aula" class="slide level2">
+<h2><strong>O que vimos nesta aula</strong></h2>
+<ul>
+<li class="fragment">R e Python são linguagens complementares, não concorrentes</li>
+<li class="fragment">A escolha inicial depende do objetivo e da área de atuação</li>
+<li class="fragment">Ambas possuem ecossistemas maduros para análise de dados</li>
+<li class="fragment">A sintaxe é diferente, mas os conceitos subjacentes são os mesmos</li>
+<li class="fragment">Boas práticas de código e organização devem começar do primeiro dia</li>
+</ul>
+</section>
+<section id="próximos-passos-recomendados" class="slide level2">
+<h2><strong>Próximos passos recomendados</strong></h2>
+<ol type="1">
+<li class="fragment">Instalar R + RStudio ou Python + VS Code (ou usar Google Colab)</li>
+<li class="fragment">Executar os primeiros códigos desta aula em sua máquina</li>
+<li class="fragment">Escolher um dataset público e fazer uma análise exploratória simples</li>
+<li class="fragment">Criar um repositório no GitHub e publicar o primeiro projeto</li>
+<li class="fragment">Seguir a trilha de aprendizado indicada na fase 1</li>
+</ol>
+</section>
+<section id="use-r-e-python-no-positron" class="slide level2">
+<h2>Use R e Python no Positron</h2>
+<blockquote>
+<p>O Positron é uma IDE (Ambiente de Desenvolvimento Integrado) de última geração desenvolvida pela Posit, voltada para ciência de dados em Python e R.</p>
+</blockquote>
+<div class="callout callout-tip callout-style-simple">
+<div class="callout-body">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-content">
+<p><a href="https://jenniferlopes.quarto.pub/portifolio/projetos/posts/2025-12-01-curso%20positron.html"><strong>Acesse os materiais</strong></a> do curso que ministrei para R-Ladies Goiânia.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="obrigada" class="slide level2">
+<h2><strong>Obrigada!</strong></h2>
+
+<img data-src="imagens/comunidade.png" width="449" class="r-stretch quarto-figure-center"><p class="caption">Imagem: Allison Horst.</p><p><strong>Continue praticando e explorando!</strong></p>
+<p><strong><em>Esta apresentação é parte do projeto <code>Café com R!</code> É OPEN, USE, COMPARTILHE!</em></strong></p>
+</section>
+<section id="siga-o-café-com-r" class="slide level2">
+<h2><strong>Siga o café com R</strong></h2>
+<p><strong>Fique por dentro das aulas, conteúdos, newsletter!</strong></p>
+<blockquote>
+<p><strong>Que cada gole desperte uma nova ideia.</strong></p>
+<p><strong>Que cada script abra uma nova conversa.</strong></p>
+<p><strong>Que o Café com R, se torne um ponto de encontro nosso!</strong></p>
+</blockquote>
+
+
+
+<img data-src="imagens/qrcode.png" width="345" class="r-stretch quarto-figure-center"><p class="caption"><strong>Printa a tela e escaneia o qrcode. Café com R.</strong></p></section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="imagens/logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Jennifer Lopes | Café com R</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jenniferlopes\.quarto\.pub\/portifolio");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

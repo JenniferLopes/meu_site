@@ -24,9 +24,11 @@ Você também pode salvar esta apresentação diretamente em PDF usando o modo P
 
 Além disso, esta apresentação ficará disponível online no meu site, permitindo que você acesse quando quiser.
 
-### No GitHub em breve - até final de janeiro.
+### Aulas no GitHub
 
-Em breve, todo o material, incluindo o arquivo .qmd, o tema visual e os códigos utilizados estará no meu GitHub, para que você possa reproduzir, adaptar ou integrar às suas próprias aulas e projetos com total liberdade.
+Todo o material, incluindo o arquivo .qmd, o tema visual e os códigos utilizados está no meu GitHub, para que você possa reproduzir, adaptar ou integrar às suas próprias aulas e projetos com total liberdade.
+
+Acesse apresentações: <https://github.com/JenniferLopes/meu_site>
 
 <br>
 :::
