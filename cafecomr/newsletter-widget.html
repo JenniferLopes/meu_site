@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Café com R — Newsletter</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cafe-deep:    #3E2723;
+    --cafe-brown:   #5D4037;
+    --caramel:      #A1887F;
+    --beige:        #EFEBE9;
+    --cream:        #F5F5DC;
+    --verde:        #2E7D32;
+    --paper:        #FDFAF4;
+    --stain1:       rgba(93,64,55,0.18);
+    --stain2:       rgba(161,136,127,0.22);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .widget {
+    background: var(--paper);
+    border: 1.5px solid var(--caramel);
+    border-radius: 4px;
+    max-width: 500px;
+    width: 100%;
+    padding: 44px 40px 36px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 2px 0 var(--caramel),
+      0 6px 32px rgba(62,39,35,0.12);
+  }
+
+  .stain { position: absolute; border-radius: 50%; pointer-events: none; }
+  .stain-1 {
+    width: 64px; height: 64px; top: -18px; right: 28px;
+    background: radial-gradient(circle, var(--stain1) 40%, transparent 72%);
+    border: 1.5px solid rgba(93,64,55,0.12);
+  }
+  .stain-2 {
+    width: 38px; height: 38px; bottom: 32px; left: -10px;
+    background: radial-gradient(circle, var(--stain2) 45%, transparent 75%);
+    border: 1px solid rgba(161,136,127,0.15);
+  }
+  .stain-3 {
+    width: 22px; height: 22px; top: 60px; left: 24px;
+    background: radial-gradient(circle, var(--stain1) 50%, transparent 80%);
+    border: 1px solid rgba(93,64,55,0.10);
+  }
+
+  .widget::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--cafe-deep), var(--cafe-brown), var(--caramel), var(--cafe-brown), var(--cafe-deep));
+  }
+
+  .formula-deco {
+    position: absolute;
+    bottom: 14px; right: 16px;
+    font-family: 'Caveat', cursive;
+    font-size: 11px;
+    color: var(--caramel);
+    opacity: 0.55;
+    line-height: 1.4;
+    text-align: right;
+    pointer-events: none;
+  }
+
+  .brand-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; margin-bottom: 18px;
+  }
+  .brand-icon { font-size: 22px; line-height: 1; }
+  .brand-name {
+    font-family: 'Caveat', cursive;
+    font-size: 28px; font-weight: 700;
+    color: var(--cafe-deep); letter-spacing: 0.5px;
+  }
+
+  .eyebrow {
+    font-size: 10px; font-weight: 500; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--caramel);
+    margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: ''; width: 28px; height: 1px;
+    background: var(--caramel); opacity: 0.5;
+  }
+
+  h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 24px; font-weight: 700;
+    color: var(--cafe-deep); line-height: 1.35;
+    margin-bottom: 10px; text-align: center;
+  }
+
+  .subtitle {
+    font-size: 13px; color: var(--cafe-brown);
+    line-height: 1.65; text-align: center;
+    margin-bottom: 22px; font-weight: 300; opacity: 0.9;
+  }
+
+  .count-pill {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; margin-bottom: 20px;
+  }
+  .count-pill span {
+    display: inline-block;
+    background: var(--beige); border: 1px solid var(--caramel);
+    border-radius: 20px; padding: 4px 14px;
+    font-size: 11.5px; color: var(--cafe-brown);
+    font-weight: 500; letter-spacing: 0.3px;
+  }
+
+  .benefits {
+    background: var(--beige); border-radius: 4px;
+    padding: 14px 16px; margin-bottom: 22px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .benefit {
+    display: flex; align-items: flex-start; gap: 9px;
+    font-size: 12.5px; color: var(--cafe-brown); line-height: 1.4;
+  }
+  .benefit-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+
+  .form-group { margin-bottom: 12px; }
+
+  input[type="text"], input[type="email"] {
+    width: 100%; padding: 13px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 13.5px;
+    background: white; border: 1.5px solid #D7CCC8;
+    border-radius: 4px; color: var(--cafe-deep);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input:focus {
+    border-color: var(--cafe-brown);
+    box-shadow: 0 0 0 3px rgba(93,64,55,0.08);
+  }
+  input::placeholder { color: var(--caramel); opacity: 0.7; }
+
+  .btn {
+    width: 100%; padding: 14px 24px;
+    background: var(--cafe-deep); color: var(--cream);
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase;
+    border: none; border-radius: 4px; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    position: relative; overflow: hidden;
+  }
+  .btn:hover { background: var(--cafe-brown); }
+  .btn:active { transform: scale(0.99); }
+  .btn .btn-text { transition: opacity 0.2s; }
+  .btn.loading .btn-text { opacity: 0; }
+
+  .btn-spinner {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px; height: 18px;
+    border: 2px solid rgba(245,245,220,0.3);
+    border-top-color: var(--cream);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .btn.loading .btn-spinner { opacity: 1; }
+  @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+  .privacy {
+    text-align: center; font-size: 11px;
+    color: var(--caramel); margin-top: 12px;
+    letter-spacing: 0.2px; opacity: 0.8;
+  }
+  .privacy a { color: var(--verde); text-decoration: none; }
+
+  .success-overlay {
+    position: absolute; inset: 0;
+    background: var(--paper);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s; padding: 40px; text-align: center;
+  }
+  .success-overlay.show { opacity: 1; pointer-events: all; }
+
+  .success-icon {
+    font-size: 44px; margin-bottom: 16px;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .success-title {
+    font-family: 'Caveat', cursive;
+    font-size: 28px; color: var(--cafe-deep); margin-bottom: 10px;
+  }
+  .success-msg {
+    font-size: 13.5px; color: var(--cafe-brown);
+    line-height: 1.65; font-weight: 300;
+  }
+</style>
+</head>
+<body>
+
+<div class="widget" id="widget">
+  <div class="stain stain-1"></div>
+  <div class="stain stain-2"></div>
+  <div class="stain stain-3"></div>
+  <div class="formula-deco">μ = Σxᵢ/n<br>σ² · var(x)<br>H₀, H₁</div>
+
+  <div id="form-content">
+    <div class="brand-row">
+      <span class="brand-icon">🐱</span>
+      <span class="brand-name">Café com R</span>
+      <span class="brand-icon">☕</span>
+    </div>
+
+    <div class="eyebrow">Newsletter e Conteúdos — por Jeni</div>
+
+    <h1>R, dados e café<br>na sua caixa de entrada</h1>
+
+    <p class="subtitle">
+      Conteúdo prático de R e Ciência de Dados,<br>
+      do básico ao avançado. Toda semana.
+    </p>
+
+    <div class="count-pill">
+      <span>☕ 1.247 leitores</span>
+    </div>
+
+    <div class="benefits">
+      <div class="benefit">
+        <span class="benefit-icon">📅</span>
+        <span>Tutoriais e análises em R - do básico ao avançado</span>
+      </div>
+      <div class="benefit">
+        <span class="benefit-icon">📌</span>
+        <span>Dicas práticas de Ciência de Dados e Estatística</span>
+      </div>
+      <div class="benefit">
+        <span class="benefit-icon">🚫</span>
+        <span>Sem spam - cancele quando quiser</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <input type="text" id="name" placeholder="Seu primeiro nome" autocomplete="given-name" />
+    </div>
+    <div class="form-group">
+      <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" />
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="handleSubmit()">
+      <span class="btn-text">Quero aprender R com café ☕</span>
+      <div class="btn-spinner"></div>
+    </button>
+
+    <p class="privacy">
+      Seus dados estão seguros. &nbsp;·&nbsp;
+      <a href="#">Política de privacidade</a>
+    </p>
+  </div>
+
+  <div class="success-overlay" id="success">
+    <div class="success-icon">🐱☕</div>
+    <div class="success-title">Bem-vindo(a) ao Café com R!</div>
+    <p class="success-msg">
+      Inscrição confirmada, Jeni vai te ver em breve.<br>
+      Verifique seu e-mail e prepare o café! ☕
+    </p>
+  </div>
+</div>
+
+<script>
+  const WEBHOOK_URL = "https://n8n-production-c166.up.railway.app/webhook/bdb32c2e-a9d5-483c-885e-757394a7204a";
+
+  async function handleSubmit() {
+    const name  = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+
+    if (!email || !email.includes("@")) {
+      document.getElementById("email").style.borderColor = "#b5451b";
+      document.getElementById("email").focus();
+      return;
+    }
+
+    const btn = document.getElementById("submit-btn");
+    btn.classList.add("loading");
+    btn.disabled = true;
+
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, source: "newsletter-widget", ts: new Date().toISOString() })
+      });
+    } catch (e) {
+      console.warn("Webhook error:", e);
+    }
+
+    await new Promise(r => setTimeout(r, 900));
+    btn.classList.remove("loading");
+    document.getElementById("success").classList.add("show");
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jennifer Luz Lopes">
+<meta name="dcterms.date" content="2026-03-09">
+<meta name="description" content="Widget de captura + n8n + Google Sheets + Gmail, tudo gratuito">
+
+<title>Como automatizei minha newsletter do zero – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+<link rel="stylesheet" href="estilo_jeni.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../projetos/index.html"> 
+<span class="menu-text">Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#por-que-automação-importa-para-quem-trabalha-com-dados" id="toc-por-que-automação-importa-para-quem-trabalha-com-dados" class="nav-link active" data-scroll-target="#por-que-automação-importa-para-quem-trabalha-com-dados">Por que automação importa para quem trabalha com dados?</a></li>
+  <li><a href="#o-que-você-vai-construir-neste-tutorial" id="toc-o-que-você-vai-construir-neste-tutorial" class="nav-link" data-scroll-target="#o-que-você-vai-construir-neste-tutorial">O que você vai construir neste tutorial</a>
+  <ul class="collapse">
+  <li><a href="#o-que-você-vai-ter-ao-final" id="toc-o-que-você-vai-ter-ao-final" class="nav-link" data-scroll-target="#o-que-você-vai-ter-ao-final"><strong>O que você vai ter ao final:</strong></a></li>
+  </ul></li>
+  <li><a href="#o-que-é-o-n8n-e-por-que-ele-existe" id="toc-o-que-é-o-n8n-e-por-que-ele-existe" class="nav-link" data-scroll-target="#o-que-é-o-n8n-e-por-que-ele-existe">O que é o n8n e por que ele existe</a>
+  <ul class="collapse">
+  <li><a href="#por-que-não-usar-só-o-google-sheets" id="toc-por-que-não-usar-só-o-google-sheets" class="nav-link" data-scroll-target="#por-que-não-usar-só-o-google-sheets">Por que não usar só o Google Sheets?</a></li>
+  <li><a href="#o-que-você-pode-automatizar-com-o-n8n" id="toc-o-que-você-pode-automatizar-com-o-n8n" class="nav-link" data-scroll-target="#o-que-você-pode-automatizar-com-o-n8n">O que você pode automatizar com o n8n</a></li>
+  </ul></li>
+  <li><a href="#n8n-r-uma-combinação-que-faz-sentido" id="toc-n8n-r-uma-combinação-que-faz-sentido" class="nav-link" data-scroll-target="#n8n-r-uma-combinação-que-faz-sentido"><code>n8n</code> + <code>R</code>: uma combinação que faz sentido</a></li>
+  <li><a href="#visão-geral-do-fluxo" id="toc-visão-geral-do-fluxo" class="nav-link" data-scroll-target="#visão-geral-do-fluxo">Visão geral do fluxo</a></li>
+  <li><a href="#parte-1-subir-o-n8n-no-railway" id="toc-parte-1-subir-o-n8n-no-railway" class="nav-link" data-scroll-target="#parte-1-subir-o-n8n-no-railway">Parte 1: Subir o n8n no Railway</a>
+  <ul class="collapse">
+  <li><a href="#por-que-o-railway" id="toc-por-que-o-railway" class="nav-link" data-scroll-target="#por-que-o-railway">Por que o Railway</a></li>
+  <li><a href="#criar-conta-no-railway" id="toc-criar-conta-no-railway" class="nav-link" data-scroll-target="#criar-conta-no-railway">Criar conta no Railway</a></li>
+  <li><a href="#selecionar-o-template-correto" id="toc-selecionar-o-template-correto" class="nav-link" data-scroll-target="#selecionar-o-template-correto">Selecionar o template correto</a></li>
+  <li><a href="#gerar-a-url-pública" id="toc-gerar-a-url-pública" class="nav-link" data-scroll-target="#gerar-a-url-pública">Gerar a URL pública</a></li>
+  <li><a href="#criar-a-conta-no-n8n" id="toc-criar-a-conta-no-n8n" class="nav-link" data-scroll-target="#criar-a-conta-no-n8n">Criar a conta no n8n</a></li>
+  </ul></li>
+  <li><a href="#parte-2-criar-o-fluxo-no-n8n" id="toc-parte-2-criar-o-fluxo-no-n8n" class="nav-link" data-scroll-target="#parte-2-criar-o-fluxo-no-n8n">Parte 2: Criar o fluxo no n8n</a>
+  <ul class="collapse">
+  <li><a href="#conceito-o-que-é-um-webhook" id="toc-conceito-o-que-é-um-webhook" class="nav-link" data-scroll-target="#conceito-o-que-é-um-webhook">Conceito: o que é um webhook</a></li>
+  </ul></li>
+  <li><a href="#criar-o-fluxo-no-n8n" id="toc-criar-o-fluxo-no-n8n" class="nav-link" data-scroll-target="#criar-o-fluxo-no-n8n">Criar o fluxo no n8n</a>
+  <ul class="collapse">
+  <li><a href="#adicionar-o-nó-webhook" id="toc-adicionar-o-nó-webhook" class="nav-link" data-scroll-target="#adicionar-o-nó-webhook">Adicionar o nó Webhook</a></li>
+  <li><a href="#adicionar-o-nó-respond-to-webhook" id="toc-adicionar-o-nó-respond-to-webhook" class="nav-link" data-scroll-target="#adicionar-o-nó-respond-to-webhook">Adicionar o nó Respond to Webhook</a></li>
+  <li><a href="#configurar-o-google-sheets" id="toc-configurar-o-google-sheets" class="nav-link" data-scroll-target="#configurar-o-google-sheets">Configurar o Google Sheets</a></li>
+  <li><a href="#configurar-o-gmail" id="toc-configurar-o-gmail" class="nav-link" data-scroll-target="#configurar-o-gmail">Configurar o Gmail</a></li>
+  <li><a href="#publicar-o-fluxo" id="toc-publicar-o-fluxo" class="nav-link" data-scroll-target="#publicar-o-fluxo">Publicar o fluxo</a></li>
+  </ul></li>
+  <li><a href="#parte-3-formulário-html" id="toc-parte-3-formulário-html" class="nav-link" data-scroll-target="#parte-3-formulário-html">Parte 3: Formulário HTML</a>
+  <ul class="collapse">
+  <li><a href="#estrutura-do-formulário" id="toc-estrutura-do-formulário" class="nav-link" data-scroll-target="#estrutura-do-formulário">Estrutura do formulário</a></li>
+  <li><a href="#embeder-no-quarto" id="toc-embeder-no-quarto" class="nav-link" data-scroll-target="#embeder-no-quarto">Embeder no Quarto</a></li>
+  </ul></li>
+  <li><a href="#parte-4-erros-que-encontrei-e-como-resolvi" id="toc-parte-4-erros-que-encontrei-e-como-resolvi" class="nav-link" data-scroll-target="#parte-4-erros-que-encontrei-e-como-resolvi">Parte 4: Erros que encontrei e como resolvi</a>
+  <ul class="collapse">
+  <li><a href="#formulário-trava-no-estado-de-carregamento" id="toc-formulário-trava-no-estado-de-carregamento" class="nav-link" data-scroll-target="#formulário-trava-no-estado-de-carregamento">Formulário trava no estado de carregamento</a></li>
+  <li><a href="#erro-localstorage-no-console" id="toc-erro-localstorage-no-console" class="nav-link" data-scroll-target="#erro-localstorage-no-console">Erro <code>localStorage</code> no console</a></li>
+  <li><a href="#erro-403-access_denied-google" id="toc-erro-403-access_denied-google" class="nav-link" data-scroll-target="#erro-403-access_denied-google">Erro 403: access_denied (Google)</a></li>
+  <li><a href="#erro-oauth-414-ao-clicar-em-sign-in-with-google" id="toc-erro-oauth-414-ao-clicar-em-sign-in-with-google" class="nav-link" data-scroll-target="#erro-oauth-414-ao-clicar-em-sign-in-with-google">Erro OAuth 414 ao clicar em “Sign in with Google”</a></li>
+  <li><a href="#erro-de-origem-inválida-ao-cadastrar-url-no-google-cloud" id="toc-erro-de-origem-inválida-ao-cadastrar-url-no-google-cloud" class="nav-link" data-scroll-target="#erro-de-origem-inválida-ao-cadastrar-url-no-google-cloud">Erro de “Origem inválida” ao cadastrar URL no Google Cloud</a></li>
+  <li><a href="#dados-não-aparecem-na-planilha" id="toc-dados-não-aparecem-na-planilha" class="nav-link" data-scroll-target="#dados-não-aparecem-na-planilha">Dados não aparecem na planilha</a></li>
+  <li><a href="#template-errado-no-railway" id="toc-template-errado-no-railway" class="nav-link" data-scroll-target="#template-errado-no-railway">Template errado no Railway</a></li>
+  </ul></li>
+  <li><a href="#resumo-das-etapas" id="toc-resumo-das-etapas" class="nav-link" data-scroll-target="#resumo-das-etapas">Resumo das etapas</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Como automatizei minha newsletter do zero</h1>
+<p class="subtitle lead">Widget de captura + n8n + Google Sheets + Gmail, tudo gratuito</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Automatização</div>
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">n8n</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Widget de captura + n8n + Google Sheets + Gmail, tudo gratuito
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jennifer Luz Lopes </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 9, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;">
+<ul>
+<li><p><em>Que cada <strong>gole</strong> desperte uma nova ideia.</em></p></li>
+<li><p><em>Que cada <strong>script</strong> abra uma nova conversa.</em></p></li>
+<li><p><em>Que o <strong>Café com R</strong> se torne um ponto de encontro nosso.</em></p></li>
+</ul>
+</div>
+<section id="por-que-automação-importa-para-quem-trabalha-com-dados" class="level2">
+<h2 class="anchored" data-anchor-id="por-que-automação-importa-para-quem-trabalha-com-dados">Por que automação importa para quem trabalha com dados?</h2>
+<p><br></p>
+<p>Pensa comigo: quanto tempo você gasta por semana em tarefas repetitivas?</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/gif_5.gif" class="img-fluid figure-img"></p>
+<figcaption><strong>É de cansar os dedinhos repetindo, eu sei!</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+<p>Copiar dados de uma planilha para outra. Enviar o mesmo e-mail com pequenas variações. Baixar relatórios manualmente. Atualizar dashboards que poderiam se atualizar sozinhos.</p>
+<p>Se você trabalha com dados, seja na agricultura, no agronegócio, na academia ou em <strong>qualquer área que depende de análise</strong>, uma parte considerável do seu tempo provavelmente vai para tarefas que um script ou um fluxo automatizado poderia executar sozinho.</p>
+<blockquote class="blockquote">
+<p><strong>Automação</strong> não é assunto exclusivo de engenheiros de software ou de grandes empresas de tecnologia. É uma habilidade que todo profissional de dados pode e deveria desenvolver. <strong>E as ferramentas para isso nunca foram tão acessíveis</strong>.</p>
+</blockquote>
+</section>
+<section id="o-que-você-vai-construir-neste-tutorial" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-você-vai-construir-neste-tutorial">O que você vai construir neste tutorial</h2>
+<p>Este tutorial documenta o que eu construí e coloquei em produção para a newsletter do Café com R. É funcional, gratuito e, sobretudo, instrutivo sobre os fundamentos que você vai precisar para ir além deste caso de uso.</p>
+<section id="o-que-você-vai-ter-ao-final" class="level3">
+<h3 class="anchored" data-anchor-id="o-que-você-vai-ter-ao-final"><strong>O que você vai ter ao final:</strong></h3>
+<ul>
+<li>Um widget de coleta de e-mails embedado no seu site Quarto</li>
+<li>Um servidor n8n gratuito rodando 24h na nuvem via Railway</li>
+<li>Salvamento automático de cada inscrito no Google Sheets</li>
+<li>E-mail de agradecimento disparado automaticamente via Gmail</li>
+</ul>
+<p><strong>Ferramentas utilizadas:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 32%">
+<col style="width: 67%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Ferramenta</th>
+<th>Função</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Quarto</strong></td>
+<td>Site onde o widget é embedado</td>
+</tr>
+<tr class="even">
+<td><strong>HTML + JavaScript</strong></td>
+<td>Widget de coleta de e-mails</td>
+</tr>
+<tr class="odd">
+<td><strong>Railway</strong></td>
+<td>Servidor em nuvem para hospedar o n8n</td>
+</tr>
+<tr class="even">
+<td><strong>n8n</strong></td>
+<td>Orquestração visual (webhook + sheets + gmail)</td>
+</tr>
+<tr class="odd">
+<td><strong>Google Sheets</strong></td>
+<td>Base de dados dos inscritos</td>
+</tr>
+<tr class="even">
+<td><strong>Gmail API</strong></td>
+<td>Envio do e-mail de boas-vindas</td>
+</tr>
+<tr class="odd">
+<td><strong>Google Cloud</strong></td>
+<td>Credenciais OAuth para as APIs</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Custo-atenção aqui:</strong> O Railway oferece $5 de crédito gratuito por mês. O n8n em uso leve consome entre $1 e $2 mensais. Para volumes pequenos, o sistema opera sem custo.</p>
+</section>
+</section>
+<section id="o-que-é-o-n8n-e-por-que-ele-existe" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-o-n8n-e-por-que-ele-existe">O que é o n8n e por que ele existe</h2>
+<p>O <strong>n8n</strong> (pronuncia-se “nodemation”) é uma plataforma de automação de fluxos de trabalho de código aberto. A ideia central é a mesma de ferramentas como <strong>Zapier</strong> ou <strong>Make</strong>: você conecta serviços diferentes sem precisar escrever código de integração manualmente.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n.avif" class="img-fluid figure-img" width="505"></p>
+<figcaption><strong>Fonte da imagem:</strong> <a href="https://n8n.io/" class="uri">https://n8n.io/</a></figcaption>
+</figure>
+</div>
+<p>A diferença fundamental é que o <strong>n8n é self-hosted</strong>, ou seja, você instala e executa no seu próprio servidor. Isso significa que não há limites de execuções impostos por planos pagos, nenhum dado trafega por servidores de terceiros sem seu controle, e o custo de operação é o custo da infraestrutura que você escolher.</p>
+<p>A interface é visual, ou seja, você conecta <strong>blocos chamados d</strong>e <strong>nós</strong> como se estivesse desenhando um <strong>fluxograma</strong>. Cada <strong>nó representa uma ação</strong>, como receber dados via <strong>webhook</strong>, salvar em uma <strong>planilha</strong>, enviar um <strong>e-mail</strong>, fazer uma <strong>requisição HTTP</strong> ou executar uma <strong>query SQL</strong>.</p>
+<div style="background:#EFEBE9; border-left: 4px solid #3E2723; padding: 16px 20px; border-radius: 4px; margin: 20px 0;">
+<p>O n8n tem mais de 400 integrações nativas, incluindo Google Sheets, Gmail, Slack, WhatsApp, PostgreSQL, MySQL, GitHub, Notion, Airtable, OpenAI e dezenas de outras ferramentas.</p>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://n8n.io/"><img src="images/n8n2.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="616"></a></p>
+</figure>
+</div>
+<figcaption>Fonte da imagem: Acesse o site da n8n. Clique na imagem.</figcaption>
+</figure>
+</div>
+<section id="por-que-não-usar-só-o-google-sheets" class="level3">
+<h3 class="anchored" data-anchor-id="por-que-não-usar-só-o-google-sheets">Por que não usar só o Google Sheets?</h3>
+<p>Essa é a pergunta certa, e o o professor Thiago Marques da Comunidade de Estatística perguntou num post.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/thiago.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><strong>O que eu sei até aqui, explicando para vocês:</strong></p>
+<p>Se o objetivo fosse apenas coletar e-mails, você poderia usar um Google Form que já salva direto numa planilha. Mas há três limitações estruturais nessa abordagem que o n8n resolve.</p>
+<ul>
+<li><p><strong>Primeira: ausência de lógica entre etapas.</strong> O Google Forms salva os dados, mas não dispara ações posteriores de forma flexível. Para enviar um e-mail de boas-vindas personalizado logo após o cadastro, você precisaria de <strong>Google Apps Script</strong>, o que significa escrever e manter código dentro de um ambiente limitado, sem versionamento, sem logs estruturados, sem interface de depuração.</p></li>
+<li><p><strong>Segunda: acoplamento de ferramentas.</strong> Quando você conecta dois serviços diretamente (Forms + Gmail via Script), qualquer mudança em um afeta o outro. <strong>O n8n age como intermediário desacoplado, ou seja, ele recebe os dados, decide o que fazer com eles e pode ser reconfigurado sem tocar no formulário ou no destino.</strong></p></li>
+<li><p><strong>Terceira: portabilidade.</strong> O fluxo que você constrói no n8n para uma newsletter pode ser adaptado para coletar leads de um cliente, processar formulários de experimentos de campo ou disparar alertas a partir de leituras de sensor. A lógica é a mesma, só muda o conteúdo dos nós.</p></li>
+</ul>
+<blockquote class="blockquote">
+<p>Aqui busquei compreender mais para esse caso.</p>
+</blockquote>
+<p><br></p>
+</section>
+<section id="o-que-você-pode-automatizar-com-o-n8n" class="level3">
+<h3 class="anchored" data-anchor-id="o-que-você-pode-automatizar-com-o-n8n">O que você pode automatizar com o n8n</h3>
+<p>A lista é longa. Alguns exemplos para quem trabalha com dados e ciência aplicada:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Cenário</th>
+<th>Automação possível</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Coleta de dados de campo</td>
+<td>Formulário + Google Sheets + notificação por e-mail</td>
+</tr>
+<tr class="even">
+<td>Relatórios periódicos</td>
+<td>Trigger agendado + query no banco + PDF gerado + envio por e-mail</td>
+</tr>
+<tr class="odd">
+<td>Monitoramento de experimentos</td>
+<td>Leitura de sensor + alerta no WhatsApp se valor fora do limite</td>
+</tr>
+<tr class="even">
+<td>Pipeline de dados</td>
+<td>Arquivo CSV recebido + limpeza + inserção no banco + dashboard atualizado</td>
+</tr>
+<tr class="odd">
+<td>Gestão de clientes</td>
+<td>Novo contato no CRM + e-mail de boas-vindas + tarefa criada no Notion</td>
+</tr>
+<tr class="even">
+<td>Integração com APIs externas</td>
+<td>Dados climáticos via API + análise no R + resultado salvo na planilha</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="n8n-r-uma-combinação-que-faz-sentido" class="level2">
+<h2 class="anchored" data-anchor-id="n8n-r-uma-combinação-que-faz-sentido"><code>n8n</code> + <code>R</code>: uma combinação que faz sentido</h2>
+<p><strong>Aqui fica interessante para quem usa <code>R</code> no dia a dia.</strong></p>
+<p>O n8n possui um nó chamado <strong>Execute Command</strong>, que permite executar scripts diretamente no servidor onde ele está hospedado. <strong>Isso significa que você pode acionar scripts R como parte de um fluxo automatizado.</strong></p>
+<p><br></p>
+<p><strong>Imagine este cenário:</strong></p>
+<pre><code>Novo arquivo CSV chega via e-mail
+         |
+         v
+n8n salva o arquivo no servidor
+         |
+         v
+n8n executa: Rscript analise.R --input dados.csv
+         |
+         v
+Script R faz limpeza, análise e gera relatório PDF
+         |
+         v
+n8n envia o PDF por e-mail para o cliente</code></pre>
+<p><br></p>
+<p><strong>Ou ainda, usando a integração com APIs HTTP:</strong></p>
+<pre><code>Trigger agendado (todo dia às 7h)
+         |
+         v
+n8n faz requisição para uma API REST em R (Plumber)
+         |
+         v
+API R executa modelo preditivo com dados atualizados
+         |
+         v
+Resultado é salvo no Google Sheets
+         |
+         v
+Notificação automática no Slack ou WhatsApp</code></pre>
+<p><br></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+R + Plumber + n8n
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O pacote <strong><code>{plumber}</code></strong> transforma funções R em APIs REST com poucas linhas de código. Combinado com o <strong><code>n8n</code></strong>, você consegue criar pipelines completas onde o R executa a análise pesada e o n8n cuida de toda a orquestração, por exemplo: <strong>receber dados, acionar o modelo, distribuir os resultados.</strong></p>
+<p>Isso é o que muitos chamam de <strong>MLOps leve</strong>: colocar modelos e análises em produção sem precisar de infraestrutura complexa.</p>
+</div>
+</div>
+<p>Automatizar pipelines significa <strong>menos tempo operacional</strong> e mais tempo para interpretar resultados, menos erro humano em processos repetitivos de coleta e transformação, mais escalabilidade, pois o mesmo fluxo que processa 10 relatórios processa 100, e esses se geram automaticamente para clientes, sem retrabalho.</p>
+<blockquote class="blockquote">
+<p><strong>Não se trata de substituir o profissional. Trata-se de liberar ele para pensar, que é onde o valor está. (Aqui tem um contexto muito maior, não é papo para hoje.)</strong></p>
+</blockquote>
+<p><br></p>
+</section>
+<section id="visão-geral-do-fluxo" class="level2">
+<h2 class="anchored" data-anchor-id="visão-geral-do-fluxo">Visão geral do fluxo</h2>
+<pre><code>Visitante preenche o formulário no site
+              |
+              v
+   Widget HTML envia POST para o webhook
+              |
+              v
+       n8n recebe os dados
+         /              \
+        v                v
+Respond to Webhook    Google Sheets
+(responde ao          (salva o contato)
+ navegador)                |
+                           v
+                         Gmail
+                   (envia boas-vindas)</code></pre>
+<p>Os dados trafegados são: <code>name</code>, <code>email</code>, <code>source</code> e <code>ts</code> (timestamp ISO 8601).</p>
+<p><br></p>
+</section>
+<section id="parte-1-subir-o-n8n-no-railway" class="level2">
+<h2 class="anchored" data-anchor-id="parte-1-subir-o-n8n-no-railway">Parte 1: Subir o n8n no Railway</h2>
+<section id="por-que-o-railway" class="level3">
+<h3 class="anchored" data-anchor-id="por-que-o-railway">Por que o Railway</h3>
+<p>O n8n pode rodar localmente no seu computador, mas nesse caso o webhook só funciona enquanto o computador estiver ligado. Para funcionar 24h com uma URL pública acessível pelo site, ele precisa estar em um servidor na nuvem.</p>
+<p>O Railway é a opção mais direta: você sobe o n8n em minutos a partir de um template pronto, sem precisar configurar nada manualmente no servidor.</p>
+</section>
+<section id="criar-conta-no-railway" class="level3">
+<h3 class="anchored" data-anchor-id="criar-conta-no-railway">Criar conta no Railway</h3>
+<ol type="1">
+<li><p>Acesse <a href="https://railway.app">railway.app</a> e crie uma conta usando login com GitHub. Se não tiver conta no GitHub, crie primeiro em <a href="https://github.com">github.com</a>.</p></li>
+<li><p>Após criar a conta, você recebe <strong>30 dias e $5,00 de crédito gratuito</strong>. Esse valor é suficiente para manter o n8n rodando por 2 a 5 meses em uso leve de newsletter.</p></li>
+</ol>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/railway1.JPG" class="img-fluid figure-img" width="590"></p>
+<figcaption>Fonte da imagem: https://railway.com/</figcaption>
+</figure>
+</div>
+<p><br></p>
+</section>
+<section id="selecionar-o-template-correto" class="level3">
+<h3 class="anchored" data-anchor-id="selecionar-o-template-correto">Selecionar o template correto</h3>
+<p>No painel do Railway, clique em <strong>New Project</strong> e depois em <strong>Deploy a Template</strong>. Na busca, digite <code>n8n</code>.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/railway2.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img" width="640"></p>
+</figure>
+</div>
+<p>Vão aparecer mais de um resultado. Selecione o template chamado simplesmente <strong>n8n</strong>, aquele com <strong>1 ou 2 serviços</strong> (n8n + Postgres).</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/railway3.JPG" class="img-fluid figure-img"></p>
+<figcaption><strong>Digite n8n.</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Cuidado com o template errado
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Existe um template chamado <strong>“N8N With Workers”</strong> que instala 4 serviços (Primary, Worker, Redis, Postgres). Ele funciona, mas consome os créditos significativamente mais rápido. Para uma newsletter, o template leve é suficiente.</p>
+</div>
+</div>
+<p>Clique em <strong>Deploy Now</strong> e aguarde cerca de 3 minutos enquanto o Railway provisiona o ambiente.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/railway4.JPG" class="img-fluid figure-img"></p>
+<figcaption><strong>Após o dploy do n8n.</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+</section>
+<section id="gerar-a-url-pública" class="level3">
+<h3 class="anchored" data-anchor-id="gerar-a-url-pública">Gerar a URL pública</h3>
+<p>Após o deploy, acesse o projeto criado e clique no serviço do n8n. Vá na aba <strong>Settings</strong> &gt; <strong>Networking</strong> e clique em <strong>Generate Domain</strong>.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/railway5.JPG" class="img-fluid figure-img" width="557"></p>
+<figcaption><strong>Clique em cima do n8n e abrirá a aba ao lado.</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+<p><strong>O Railway vai gerar uma URL no formato:</strong></p>
+<pre><code>https://n8n-production-xxxx.up.railway.app</code></pre>
+<p><strong>Guarde essa URL, pois ela será usada em vários momentos ao longo da configuração.</strong></p>
+</section>
+<section id="criar-a-conta-no-n8n" class="level3">
+<h3 class="anchored" data-anchor-id="criar-a-conta-no-n8n">Criar a conta no n8n</h3>
+<p>Acesse a URL gerada no navegador. Na primeira vez, o n8n solicita a criação de uma conta de administrador. <strong>Preencha:</strong></p>
+<ul>
+<li><strong>Email:</strong> seu e-mail</li>
+<li><strong>First Name / Last Name:</strong> seu nome</li>
+<li><strong>Password:</strong> senha com no mínimo 8 caracteres, 1 número e 1 letra maiúscula</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Anote a senha em um gerenciador de senhas. Em um servidor self-hosted, não há recuperação automática.</strong></p>
+</div>
+</div>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n6.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><br></p>
+<p>Após o login, o n8n exibe um questionário de personalização, que você pode pular clicando em <strong>Comece agora</strong>.</p>
+<p>Em seguida, ele oferece uma <strong>licença gratuita</strong> com recursos extras de depuração e histórico de execuções. Vale aceitar: basta informar o e-mail e confirmar. Os recursos ficam disponíveis permanentemente.</p>
+</section>
+</section>
+<section id="parte-2-criar-o-fluxo-no-n8n" class="level2">
+<h2 class="anchored" data-anchor-id="parte-2-criar-o-fluxo-no-n8n">Parte 2: Criar o fluxo no n8n</h2>
+<section id="conceito-o-que-é-um-webhook" class="level3">
+<h3 class="anchored" data-anchor-id="conceito-o-que-é-um-webhook">Conceito: o que é um webhook</h3>
+<ul>
+<li><p>Um <strong>webhook</strong> é um endpoint HTTP que fica aguardando requisições externas. Ao contrário de uma API onde você faz uma pergunta e espera uma resposta, no webhook você registra uma URL e qualquer sistema que conhece essa URL pode enviar dados para ela a qualquer momento.</p></li>
+<li><p>No nosso fluxo, o formulário HTML do site envia um <code>POST</code> para o webhook do n8n assim que o visitante clica em “Inscrever”. O n8n recebe esse <code>POST</code>, extrai os dados do corpo da requisição e os processa.</p></li>
+</ul>
+</section>
+</section>
+<section id="criar-o-fluxo-no-n8n" class="level2">
+<h2 class="anchored" data-anchor-id="criar-o-fluxo-no-n8n">Criar o fluxo no n8n</h2>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n7.JPG" class="img-fluid figure-img"></p>
+<figcaption><strong>Depois daqui abre uma tela em branco para começar a criar o fluxo.</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+<section id="adicionar-o-nó-webhook" class="level3">
+<h3 class="anchored" data-anchor-id="adicionar-o-nó-webhook">Adicionar o nó Webhook</h3>
+<p>Dentro do n8n, clique em <strong>New Workflow</strong>. Clique no <strong>+</strong> e adicione o nó <strong>Webhook</strong>.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n8.JPG" class="img-fluid figure-img" width="564"></p>
+<figcaption><strong>Clique no + e digite Webhook.</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n9.JPG" class="img-fluid figure-img" width="572"></p>
+<figcaption><strong>Foi criado.</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+<p><strong>Na configuração do nó:</strong></p>
+<ul>
+<li><strong>HTTP Method:</strong> POST</li>
+<li><strong>Path:</strong> pode deixar o gerado automaticamente</li>
+<li><strong>Respond:</strong> selecione <strong>Using ‘Respond to Webhook’ Node</strong></li>
+</ul>
+<p>Após configurar, clique em <strong>Production URL</strong> e copie a URL exibida. Ela tem o formato:</p>
+<pre><code>https://n8n-production-xxxx.up.railway.app/webhook/[identificador]</code></pre>
+<p>Essa URL será colada no formulário HTML mais adiante.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n10.JPG" class="img-fluid figure-img" width="577"></p>
+<figcaption><strong>Configuração do nó.</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+</section>
+<section id="adicionar-o-nó-respond-to-webhook" class="level3">
+<h3 class="anchored" data-anchor-id="adicionar-o-nó-respond-to-webhook">Adicionar o nó Respond to Webhook</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Este nó é obrigatório
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sem ele, o navegador bloqueia a requisição do formulário por política de CORS. O botão de envio fica girando indefinidamente e nenhum dado chega ao n8n.</p>
+</div>
+</div>
+<p><strong>O que é CORS e por que ele importa aqui:</strong></p>
+<p>Quando um formulário em um site tenta enviar dados para outro domínio, no caso o Railway, o navegador executa uma verificação de segurança chamada <em>preflight</em>. Antes de enviar os dados de fato, ele envia uma requisição <code>OPTIONS</code> perguntando ao servidor se aquele domínio está autorizado a fazer a requisição. O servidor precisa responder com cabeçalhos HTTP específicos autorizando a origem. O nó <strong>Respond to Webhook</strong> é o mecanismo pelo qual o n8n responde a essa verificação.</p>
+<p>Clique no <strong>+</strong> saindo <strong>diretamente do nó Webhook</strong> e adicione o nó <strong>Respond to Webhook</strong>.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n11.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><br></p>
+<p><strong>Configure assim:</strong></p>
+<ul>
+<li><strong>Respond With:</strong> Text</li>
+<li><strong>Response Body:</strong> <code>OK</code></li>
+<li>Em <strong>Options</strong>, adicione <strong>Response Headers</strong> com três entradas:</li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Access-Control-Allow-Origin</code></td>
+<td><code>*</code></td>
+</tr>
+<tr class="even">
+<td><code>Access-Control-Allow-Methods</code></td>
+<td><code>POST, OPTIONS</code></td>
+</tr>
+<tr class="odd">
+<td><code>Access-Control-Allow-Headers</code></td>
+<td><code>Content-Type</code></td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n12.JPG" class="img-fluid figure-img" width="654"></p>
+<figcaption><strong>Configuração.</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+<p><strong>Atenção na topologia da conexão:</strong> o nó Respond to Webhook deve estar conectado diretamente ao Webhook, em paralelo com o Google Sheets, e não em sequência após ele. O Webhook deve ter duas saídas independentes:</p>
+<pre><code>Webhook ──► Respond to Webhook
+        └──► Append row in sheet ──► Send a message</code></pre>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Erro de conexão frequente
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Conectar o Respond to Webhook após o Google Sheets, em sequência, faz com que o fluxo não funcione corretamente. O navegador precisa receber a resposta CORS antes do processamento dos dados. Verifique sempre se o Webhook tem duas saídas independentes.</p>
+</div>
+</div>
+</section>
+<section id="configurar-o-google-sheets" class="level3">
+<h3 class="anchored" data-anchor-id="configurar-o-google-sheets">Configurar o Google Sheets</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/clipboard-563337319.gif" class="img-fluid figure-img" width="406"></p>
+<figcaption><strong>Estão por aí ainda?</strong></figcaption>
+</figure>
+</div>
+<section id="preparar-a-planilha" class="level4">
+<h4 class="anchored" data-anchor-id="preparar-a-planilha">Preparar a planilha</h4>
+<p><strong>Antes de configurar o nó, crie uma planilha no Google Sheets com as seguintes colunas na primeira linha:</strong></p>
+<pre><code>Nome | Email | Data</code></pre>
+<p>Os nomes das colunas precisam ser exatamente esses, pois o n8n mapeia os campos pelo nome.</p>
+</section>
+<section id="criar-as-credenciais-oauth-no-google-cloud" class="level4">
+<h4 class="anchored" data-anchor-id="criar-as-credenciais-oauth-no-google-cloud">Criar as credenciais OAuth no Google Cloud</h4>
+<p>O n8n acessa o Google Sheets via OAuth 2.0. <strong>OAuth 2.0</strong> é um protocolo de autorização que permite que uma aplicação acesse recursos em nome de um usuário sem que a aplicação precise conhecer a senha desse usuário. Em vez disso, o usuário autoriza a aplicação no próprio painel do Google, e o Google emite um token de acesso temporário.</p>
+<p>Para configurar isso, é preciso criar uma credencial no Google Cloud Console.</p>
+<p><strong>Passo 1: Criar o projeto</strong></p>
+<ol type="1">
+<li>Acesse <a href="https://console.cloud.google.com">console.cloud.google.com</a></li>
+<li>Clique em <strong>Selecionar projeto</strong> &gt; <strong>Novo projeto</strong></li>
+<li>Nome sugerido: <code>cafe-com-r</code>, clique em <strong>Criar</strong></li>
+</ol>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n13.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><br></p>
+<p><strong>Passo 2: Ativar as APIs</strong></p>
+<ol type="1">
+<li>Vá em <strong>APIs e serviços</strong> &gt; <strong>Biblioteca</strong></li>
+<li>Busque e ative: <strong>Google Sheets API</strong></li>
+<li>Busque e ative: <strong>Google Drive API</strong></li>
+<li>Busque e ative: <strong>Gmail API</strong></li>
+</ol>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n14.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n15.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><br></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Erro OAuth 414
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se as APIs não estiverem ativadas antes de tentar conectar, o n8n vai retornar um erro 414 (URI too long) ao tentar gerar a URL de autorização. Ative as três APIs antes de continuar.</p>
+</div>
+</div>
+<p><strong>Passo 3: Configurar a tela de consentimento</strong></p>
+<ol type="1">
+<li>Vá em <strong>APIs e serviços</strong> &gt; <strong>Google Auth Platform</strong> (ou Tela de consentimento OAuth)</li>
+<li>Configure com tipo <strong>Externo</strong></li>
+<li>Preencha apenas o nome do app, pois os outros campos são opcionais para uso pessoal</li>
+</ol>
+<p><strong>Passo 4: Criar a credencial OAuth</strong></p>
+<ol type="1">
+<li>Vá em <strong>Clientes</strong> &gt; <strong>Criar um cliente OAuth</strong></li>
+<li>Tipo de aplicativo: <strong>Aplicativo da Web</strong></li>
+<li>Em <strong>Origens JavaScript autorizadas</strong>, adicione apenas o domínio base:</li>
+</ol>
+<pre><code>https://n8n-production-xxxx.up.railway.app</code></pre>
+<ol start="4" type="1">
+<li>Em <strong>URIs de redirecionamento autorizados</strong>, adicione a URL completa:</li>
+</ol>
+<pre><code>https://n8n-production-xxxx.up.railway.app/rest/oauth2-credential/callback</code></pre>
+<ol start="5" type="1">
+<li>Clique em <strong>Criar</strong> e copie o <strong>ID do cliente</strong> e o <strong>Segredo do cliente</strong></li>
+</ol>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n16.JPG" class="img-fluid figure-img"></p>
+<figcaption><strong>Clique em Criar cliente e preencha os campos conforme o exemplo.</strong></figcaption>
+</figure>
+</div>
+<p><br></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Dois campos distintos: erro comum
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Origens JavaScript autorizadas</strong> aceita apenas o domínio base, sem caminho. Colocar a URL completa nesse campo gera um erro de “Origem inválida”.</p>
+<p><strong>URIs de redirecionamento autorizados</strong> é onde vai a URL completa com <code>/rest/oauth2-credential/callback</code>.</p>
+<p>São dois campos distintos na mesma tela. Confundi esses campos na primeira tentativa e fiquei meia hora tentando entender por que a autorização falhava.</p>
+</div>
+</div>
+<p><strong>Passo 5: Adicionar usuário de teste</strong></p>
+<p>Como o app está em modo de desenvolvimento, apenas e-mails cadastrados na lista de testadores conseguem autenticar.</p>
+<p>Vá em <strong>Google Auth Platform</strong> &gt; <strong>Público-alvo</strong> &gt; <strong>Usuários de teste</strong> e adicione o seu e-mail.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n17.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img" width="571"></p>
+</figure>
+</div>
+<p><br></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Erro 403: access_denied
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se aparecer a mensagem “Acesso bloqueado: o app não concluiu o processo de verificação do Google”, seu e-mail não está na lista de testadores. Adicione-o conforme descrito acima e tente novamente.</p>
+</div>
+</div>
+</section>
+<section id="conectar-o-google-sheets-no-n8n" class="level4">
+<h4 class="anchored" data-anchor-id="conectar-o-google-sheets-no-n8n">Conectar o Google Sheets no n8n</h4>
+<p>No nó <strong>Google Sheets</strong>, clique em <strong>Select Credential</strong> &gt; <strong>Add new credential</strong>. Cole o ID do cliente e o segredo nos campos correspondentes e clique em <strong>Sign in with Google</strong>.</p>
+<p>Após conectar, configure o nó:</p>
+<ul>
+<li><strong>Operation:</strong> Append Row</li>
+<li><strong>Document:</strong> selecione a planilha criada</li>
+<li><strong>Sheet:</strong> selecione a aba (ex: Página1)</li>
+</ul>
+<p>Nos campos de mapeamento, ative <strong>Expression</strong> em cada campo e use:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Campo na planilha</th>
+<th>Expression</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Nome</td>
+<td><code>{ $json.body.name }</code></td>
+</tr>
+<tr class="even">
+<td>Email</td>
+<td><code>{ $json.body.email }</code></td>
+</tr>
+<tr class="odd">
+<td>Data</td>
+<td><code>{ $json.body.ts }</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que <code>$json.body.name</code> e não <code>$json.name</code>?</strong></p>
+<p>Quando o formulário envia um <code>POST</code> com corpo JSON, o n8n estrutura os dados recebidos assim:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"body"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"Jennifer"</span><span class="fu">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"email"</span><span class="fu">:</span> <span class="st">"jennifer@exemplo.com"</span><span class="fu">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"newsletter-widget"</span><span class="fu">,</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"ts"</span><span class="fu">:</span> <span class="st">"2025-06-01T14:32:00.000Z"</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"headers"</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">...</span> <span class="fu">},</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"params"</span><span class="fu">:</span> <span class="fu">{</span> <span class="er">...</span> <span class="fu">}</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>O conteúdo que você enviou no corpo da requisição fica dentro de <code>.body</code>. Usar <code>$json.name</code> diretamente retorna <code>undefined</code> e a célula fica vazia. Fiz esse erro na primeira configuração, e você não precisa repetir.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n18.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img" width="660"></p>
+</figure>
+</div>
+<p><br></p>
+</section>
+</section>
+<section id="configurar-o-gmail" class="level3">
+<h3 class="anchored" data-anchor-id="configurar-o-gmail">Configurar o Gmail</h3>
+<p>Adicione o nó <strong>Gmail</strong> após o Google Sheets. Selecione a ação <strong>Send a message</strong>.</p>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n19.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><br></p>
+<p>Crie uma nova credencial usando o <strong>mesmo ID e segredo</strong> criados para o Google Sheets. A Gmail API já foi ativada anteriormente, então a conexão deve funcionar diretamente.</p>
+<p><strong>Preencha os campos:</strong></p>
+<p><strong>To</strong> (ative Expression):</p>
+<pre><code>{{ $('Webhook').item.json.body.email }}</code></pre>
+<p><strong>Subject</strong> (ative Expression):</p>
+<pre><code>Bem-vinda(o) ao Cafe com R, {{ $('Webhook').item.json.body.name }}!</code></pre>
+<p><strong>Email Type:</strong> HTML</p>
+<p><strong>Message</strong> (modo Fixed, não precisa de Expression):</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> style</span><span class="op">=</span><span class="st">"font-family:sans-serif;max-width:500px;margin:0 auto;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="st">            padding:32px;background:#FDFAF4;border:1px solid #A1887F;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h2</span><span class="ot"> style</span><span class="op">=</span><span class="st">"font-family:Georgia,serif;color:#3E2723;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    Ola, {{ $('Webhook').item.json.body.name }}!</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#5D4037;line-height:1.7;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    Que alegria ter voce no <span class="dt">&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Cafe com R<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;</span>!</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> style</span><span class="op">=</span><span class="st">"border-left:3px solid #A1887F;padding:12px 20px;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="st">              margin:24px 0;background:#EFEBE9;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#5D4037;font-style:italic;line-height:1.8;margin:0;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      Que cada <span class="dt">&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>gole<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;</span> desperte uma nova ideia.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>      Que cada <span class="dt">&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>script<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;</span> abra uma nova conversa.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>      Que o <span class="dt">&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Cafe com R<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;</span> se torne um ponto de encontro nosso.</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> style</span><span class="op">=</span><span class="st">"text-align:center;margin:24px 0;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"https://jenniferlopes.quarto.pub/portifolio"</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="ot">       style</span><span class="op">=</span><span class="st">"background:#3E2723;color:#F5F5DC;text-decoration:none;</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="st">              padding:12px 28px;border-radius:4px;font-size:13px;</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="st">              letter-spacing:1px;font-weight:500;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>      Visitar o Cafe com R</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#5D4037;line-height:1.7;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>    Prepare o cafe e ate a proxima edicao.</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">hr</span><span class="ot"> style</span><span class="op">=</span><span class="st">"border:none;border-top:1px solid #EFEBE9;margin:24px 0;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color:#A1887F;font-size:12px;"</span><span class="dt">&gt;</span></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>    Com carinho, <span class="dt">&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>Jeni<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"https://jenniferlopes.quarto.pub/portifolio"</span></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="ot">       style</span><span class="op">=</span><span class="st">"color:#2E7D32;"</span><span class="dt">&gt;</span>Cafe com R<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Em <strong>Options</strong>, adicione <strong>Sender Name</strong> e preencha com:</p>
+<pre><code>Jeni | Cafe com R</code></pre>
+<p><br></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/n8n20.JPG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p><br></p>
+</section>
+<section id="publicar-o-fluxo" class="level3">
+<h3 class="anchored" data-anchor-id="publicar-o-fluxo">Publicar o fluxo</h3>
+<p>Clique em <strong>Save</strong> (ou Ctrl+S) e depois em <strong>Publish</strong> no canto superior direito. O fluxo entra em produção imediatamente e começa a receber requisições na URL do webhook.</p>
+</section>
+</section>
+<section id="parte-3-formulário-html" class="level2">
+<h2 class="anchored" data-anchor-id="parte-3-formulário-html">Parte 3: Formulário HTML</h2>
+<section id="estrutura-do-formulário" class="level3">
+<h3 class="anchored" data-anchor-id="estrutura-do-formulário">Estrutura do formulário</h3>
+<p>O formulário é um arquivo HTML autônomo (<code>newsletter-widget.html</code>) embedado no site Quarto via iframe. Ele coleta nome e e-mail, envia os dados para o webhook via <code>fetch</code> e exibe uma confirmação de sucesso.</p>
+<p>O ponto central no código é a variável <code>WEBHOOK_URL</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> WEBHOOK_URL <span class="op">=</span> <span class="st">"https://n8n-production-xxxx.up.railway.app/webhook/[id]"</span><span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Substitua pelo valor copiado na configuração do nó Webhook. Use a <strong>Production URL</strong>, não a Test URL.</p>
+<p>A função de envio:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">handleSubmit</span>() {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> name  <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">"name"</span>)<span class="op">.</span><span class="at">value</span><span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> email <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">"email"</span>)<span class="op">.</span><span class="at">value</span><span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>email <span class="op">||</span> <span class="op">!</span>email<span class="op">.</span><span class="fu">includes</span>(<span class="st">"@"</span>)) {</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">"email"</span>)<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">borderColor</span> <span class="op">=</span> <span class="st">"#b5451b"</span><span class="op">;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">"email"</span>)<span class="op">.</span><span class="fu">focus</span>()<span class="op">;</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> btn <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">"submit-btn"</span>)<span class="op">;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  btn<span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">"loading"</span>)<span class="op">;</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  btn<span class="op">.</span><span class="at">disabled</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> {</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">fetch</span>(WEBHOOK_URL<span class="op">,</span> {</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">method</span><span class="op">:</span> <span class="st">"POST"</span><span class="op">,</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">headers</span><span class="op">:</span> { <span class="st">"Content-Type"</span><span class="op">:</span> <span class="st">"application/json"</span> }<span class="op">,</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>        name<span class="op">,</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>        email<span class="op">,</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">source</span><span class="op">:</span> <span class="st">"newsletter-widget"</span><span class="op">,</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>        <span class="dt">ts</span><span class="op">:</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">catch</span> (e) {</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">warn</span>(<span class="st">"Webhook error:"</span><span class="op">,</span> e)<span class="op">;</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="kw">new</span> <span class="bu">Promise</span>(r <span class="kw">=&gt;</span> <span class="pp">setTimeout</span>(r<span class="op">,</span> <span class="dv">900</span>))<span class="op">;</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>  btn<span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">remove</span>(<span class="st">"loading"</span>)<span class="op">;</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>  <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">"success"</span>)<span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">"show"</span>)<span class="op">;</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Por que <code>new Date().toISOString()</code>?</strong></p>
+<p>O método <code>toISOString()</code> retorna a data e hora no formato ISO 8601, que é um padrão internacional para representação de datas e horas: <code>2025-06-01T14:32:00.000Z</code>. Usar esse formato em vez de strings como “01/06/2025 14:32” garante que os dados possam ser ordenados, filtrados e parseados corretamente em qualquer sistema, inclusive em queries SQL ou em manipulações de data no R com <code>lubridate</code>.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nao use localStorage no formulário
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Se o formulário for embedado via iframe, o navegador pode carregar o HTML em contexto <code>data:</code> URL. Nesse caso, o acesso ao <code>localStorage</code> é bloqueado com o erro:</p>
+<pre><code>SecurityError: Failed to read the 'localStorage' property from 'Window':
+Storage is disabled inside 'data:' URLs.</code></pre>
+<p>O botão trava e nenhum dado é enviado. Remova qualquer uso de <code>localStorage</code> do código. Os dados já ficam persistidos no Google Sheets via webhook.</p>
+</div>
+</div>
+</section>
+<section id="embeder-no-quarto" class="level3">
+<h3 class="anchored" data-anchor-id="embeder-no-quarto">Embeder no Quarto</h3>
+<p>Salve o arquivo <code>newsletter-widget.html</code> na mesma pasta do arquivo <code>.qmd</code>. No <code>.qmd</code>, adicione o bloco abaixo onde quiser que o formulário apareça:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;iframe</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="in">  src="newsletter-widget.html"</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="in">  width="100%"</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="in">  height="600"</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="in">  frameborder="0"</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="in">  scrolling="no"</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="in">  style="border:none; display:block; margin: 0 auto;"&gt;</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/iframe&gt;</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O iframe só renderiza corretamente quando o site está sendo servido via <code>quarto preview</code> ou após publicação. O painel de preview interno do RStudio pode não exibir o widget, e esse é o comportamento esperado.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="parte-4-erros-que-encontrei-e-como-resolvi" class="level2">
+<h2 class="anchored" data-anchor-id="parte-4-erros-que-encontrei-e-como-resolvi">Parte 4: Erros que encontrei e como resolvi</h2>
+<section id="formulário-trava-no-estado-de-carregamento" class="level3">
+<h3 class="anchored" data-anchor-id="formulário-trava-no-estado-de-carregamento">Formulário trava no estado de carregamento</h3>
+<ul>
+<li><p><strong>Causa:</strong> O navegador está bloqueando a requisição por política de CORS.</p></li>
+<li><p><strong>Como confirmar:</strong> Abra o site, pressione <strong>F12</strong> &gt; aba <strong>Console</strong> &gt; tente enviar o formulário. Procure erros vermelhos com:</p></li>
+</ul>
+<pre><code>Access to fetch... has been blocked by CORS policy</code></pre>
+<ul>
+<li><strong>Solucao:</strong> Adicionar o nó <strong>Respond to Webhook</strong> com os cabeçalhos CORS corretos, conforme descrito na Parte 2. Verifique também se o workflow está publicado (botão <strong>Publish</strong> ativo).</li>
+</ul>
+</section>
+<section id="erro-localstorage-no-console" class="level3">
+<h3 class="anchored" data-anchor-id="erro-localstorage-no-console">Erro <code>localStorage</code> no console</h3>
+<ul>
+<li><p><strong>Causa:</strong> O formulário está sendo carregado em contexto <code>data:</code> URL.</p></li>
+<li><p><strong>Solucao:</strong> Remover todo uso de <code>localStorage</code> do código. Os dados são persistidos pelo webhook no Google Sheets.</p></li>
+</ul>
+</section>
+<section id="erro-403-access_denied-google" class="level3">
+<h3 class="anchored" data-anchor-id="erro-403-access_denied-google">Erro 403: access_denied (Google)</h3>
+<ul>
+<li><p><strong>Causa:</strong> O app está em modo de teste e o e-mail usado não está na lista de usuários autorizados.</p></li>
+<li><p><strong>Solucao:</strong> No Google Cloud Console, vá em <strong>Google Auth Platform</strong> &gt; <strong>Público-alvo</strong> &gt; <strong>Usuários de teste</strong> &gt; adicione o seu e-mail &gt; salve. Depois tente conectar novamente no n8n.</p></li>
+</ul>
+</section>
+<section id="erro-oauth-414-ao-clicar-em-sign-in-with-google" class="level3">
+<h3 class="anchored" data-anchor-id="erro-oauth-414-ao-clicar-em-sign-in-with-google">Erro OAuth 414 ao clicar em “Sign in with Google”</h3>
+<ul>
+<li><p><strong>Causa:</strong> As APIs do Google não estavam ativadas antes de tentar conectar.</p></li>
+<li><p><strong>Solucao:</strong> Ative <strong>Google Sheets API</strong>, <strong>Google Drive API</strong> e <strong>Gmail API</strong> no Google Cloud Console antes de criar a credencial OAuth.</p></li>
+</ul>
+</section>
+<section id="erro-de-origem-inválida-ao-cadastrar-url-no-google-cloud" class="level3">
+<h3 class="anchored" data-anchor-id="erro-de-origem-inválida-ao-cadastrar-url-no-google-cloud">Erro de “Origem inválida” ao cadastrar URL no Google Cloud</h3>
+<ul>
+<li><p><strong>Causa:</strong> A URL completa foi colada no campo <strong>Origens JavaScript autorizadas</strong>.</p></li>
+<li><p><strong>Solucao:</strong> São dois campos distintos:</p></li>
+<li><p><strong>Origens JavaScript autorizadas</strong>, apenas o domínio base:</p>
+<pre><code>https://n8n-production-xxxx.up.railway.app</code></pre></li>
+<li><p><strong>URIs de redirecionamento autorizados</strong>, URL completa:</p>
+<pre><code>https://n8n-production-xxxx.up.railway.app/rest/oauth2-credential/callback</code></pre></li>
+</ul>
+</section>
+<section id="dados-não-aparecem-na-planilha" class="level3">
+<h3 class="anchored" data-anchor-id="dados-não-aparecem-na-planilha">Dados não aparecem na planilha</h3>
+<ul>
+<li><p><strong>Causa 1:</strong> O fluxo não está publicado. O botão <strong>Publish</strong> precisa estar ativo no n8n.</p></li>
+<li><p><strong>Causa 2:</strong> O mapeamento dos campos usa <code>$json.name</code> em vez de <code>$json.body.name</code>. Como o webhook recebe os dados no corpo da requisição POST, o caminho correto é sempre <code>body.name</code>, <code>body.email</code> e <code>body.ts</code>.</p></li>
+<li><p><strong>Causa 3:</strong> O formulário está usando a <strong>Test URL</strong> do webhook em vez da <strong>Production URL</strong>. Na configuração do nó Webhook, clique em <strong>Production URL</strong> e copie essa URL.</p></li>
+</ul>
+</section>
+<section id="template-errado-no-railway" class="level3">
+<h3 class="anchored" data-anchor-id="template-errado-no-railway">Template errado no Railway</h3>
+<ul>
+<li><p><strong>Causa:</strong> Foi selecionado o template <strong>N8N With Workers</strong> (4 serviços) em vez do template simples.</p></li>
+<li><p><strong>Solucao:</strong> Delete o projeto no Railway e crie novamente usando o template com <strong>1 ou 2 serviços</strong>.</p></li>
+</ul>
+</section>
+</section>
+<section id="resumo-das-etapas" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-das-etapas">Resumo das etapas</h2>
+<ol type="1">
+<li>Criar conta no Railway e subir o template simples do n8n (1 ou 2 serviços)</li>
+<li>Gerar o domínio público e criar a conta de administrador no n8n</li>
+<li>Criar o fluxo com os nós: <strong>Webhook</strong> &gt; <strong>Respond to Webhook</strong> (paralelo) &gt; <strong>Google Sheets</strong> &gt; <strong>Gmail</strong></li>
+<li>Criar projeto no Google Cloud e ativar as APIs: Sheets, Drive e Gmail</li>
+<li>Criar credencial OAuth e adicionar o e-mail como usuário de teste</li>
+<li>Conectar Google Sheets e Gmail no n8n usando as credenciais OAuth</li>
+<li>Mapear os campos: <code>$json.body.name</code>, <code>$json.body.email</code>, <code>$json.body.ts</code></li>
+<li>Colar a <strong>Production URL</strong> do webhook no formulário HTML</li>
+<li>Remover uso de <code>localStorage</code> do formulário</li>
+<li>Publicar o fluxo no n8n e publicar o site Quarto</li>
+</ol>
+<p><strong>Uma vez configurado, o sistema não requer intervenção manual. Cada nova inscrição é registrada na planilha e dispara o e-mail de boas-vindas automaticamente.</strong></p>
+<div style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;">
+<p>Na semana que vem, vou complementar este material. Vou ensinar formas de envio e automação através do pacote <strong>Blastula</strong> e muito mais!!!</p>
+<p><strong>AGUARDEM QUE SEMANA QUE VEM TEM MAIS!</strong></p>
+</div>
+<div style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;">
+<p><strong>Gostou do tutorial?</strong> Assine o Café com R e receba conteúdo de R e Ciência de Dados toda semana.</p>
+<p><a href="https://jenniferlopes.quarto.pub/portifolio">jenniferlopes.quarto.pub/portifolio</a></p>
+</div>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniferlopes\.quarto\.pub\/portifolio");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2025 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

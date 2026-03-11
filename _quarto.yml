@@ -16,8 +16,6 @@ website:
       - text: "Conteúdos|Ensino"
         href: apresentações/index.qmd
     right:
-      - text: "Agenda 2026"
-        href: agenda_2026/index.qmd
       - text: "Sobre mim"
         href: about.qmd
 
@@ -30,7 +28,7 @@ format:
   html:
     theme:
       light: litera
-      dark: litera
+      dark: quartz
     css:
       - css/estilo_geral.scss
     include-after-body:
