@@ -1,0 +1,34 @@
+---
+title: "Editable Extension for Quarto Revealjs"
+subtitle: "Extensão editável para Quarto Revealjs"
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    logo: "logo.png"
+    preview-links: auto
+    css: "estilo_jeni.css"
+    footer: "Jennifer Lopes | Café com R | Editable Extension for Quarto Revealj"
+    revealjs-plugins:
+      - editable
+filters:
+  - editable
+editor:
+  markdown:
+    wrap: 72
+---
+
+# Teste adicionando 2 imagens e texto
+
+![](imagens/logo.png){.absolute width=296.4px height=276.3px left=33.1px top=495.5px}
+![](imagens/logo-quarto.png){.absolute width=200.4px height=239.1px left=337.3px top=508px}
+
+
+
+::: {.absolute width=480.2px height=110.5px left=64.7px top=358px}
+Teste - Escrevendo texto!!
+:::
+
+{{< arrow from="633.9,849.1" to="524.6,750.1" position="absolute" >}}

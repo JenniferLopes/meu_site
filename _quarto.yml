@@ -9,20 +9,22 @@ website:
 
   navbar:
     left:
-      - text: "Projetos"
-        href: projetos/index.qmd
       - text: "Newsletter - Café com R"
         href: cafecomr/index.qmd
       - text: "Conteúdos|Ensino"
         href: apresentações/index.qmd
+      - text: "Apostila de Estatística"
+        href: apostila.qmd
     right:
+      - text: "Serviços | Projetos"
+        href: servicos.qmd
       - text: "Sobre mim"
         href: about.qmd
 
   page-footer:
     center: |
       Site feito com 🤎 e [Quarto](https://quarto.org/docs/websites/)  
-      © 2025 Jennifer Luz Lopes
+      © 2026 Jennifer Luz Lopes
 
 format:
   html:

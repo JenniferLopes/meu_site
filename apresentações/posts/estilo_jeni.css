@@ -161,3 +161,31 @@
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
+
+/* ===== HEADER PARA QUARTO HTML ===== */
+
+#title-block-header {
+  background: linear-gradient(135deg, #F5E6D3 0%, #E5D3B3 100%);
+  border-left: 10px solid #6F4E37;
+  border-radius: 10px;
+  padding: 28px 32px;
+  margin-bottom: 30px;
+}
+
+#title-block-header .title {
+  color: #224573;
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+#title-block-header .subtitle {
+  color: #4B2E2B;
+  font-size: 1.2rem;
+  margin-top: 8px;
+}
+
+#title-block-header .quarto-title-meta {
+  border-top: 1px solid rgba(107, 79, 79, 0.3);
+  margin-top: 16px;
+  padding-top: 12px;
+}

@@ -1,0 +1,295 @@
+---
+title: "Apostila de Estatística com R"
+format:
+  html:
+    css: ["estilo_geral.scss"]
+    toc: false
+    embed-resources: true
+    code-fold: false
+---
+
+```{=html}
+<style>
+  :root {
+    --azul-escuro: #224573;
+    --azul-claro:  #4A6FA5;
+    --marrom:      #6B4F4F;
+    --bege:        #E5D3B3;
+    --bege-claro:  #F9F5EF;
+    --branco:      #FFFFFF;
+  }
+
+  /* ── Hero marrom ── */
+  .apostila-hero {
+    background-color: var(--marrom);
+    color: var(--branco);
+    border-radius: 14px;
+    padding: 2.4rem 2.2rem 2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .apostila-hero h2 {
+    color: var(--branco) !important;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    border: none !important;
+  }
+
+  .apostila-hero p {
+    color: rgba(255, 255, 255, 0.92) !important;
+    font-size: 1rem;
+    margin: 0 0 1.4rem;
+    line-height: 1.6;
+  }
+
+  .apostila-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: var(--branco) !important;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-right: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Botão destaque central ── */
+  .btn-destaque-wrapper {
+    text-align: center;
+    margin: 1.6rem 0 2.2rem;
+  }
+
+  .btn-destaque {
+    display: inline-block;
+    background-color: var(--marrom);
+    color: var(--branco) !important;
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 0.8rem 2.4rem;
+    border-radius: 8px;
+    text-decoration: none !important;
+    letter-spacing: 0.03em;
+    box-shadow: 0 4px 14px rgba(107, 79, 79, 0.35);
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .btn-destaque:hover {
+    opacity: 0.88;
+    transform: translateY(-2px);
+  }
+
+  /* ── Botões secundários ── */
+  .btn-group-apostila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin: 0.5rem 0 2rem;
+  }
+
+  .btn-apostila {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: opacity 0.2s, transform 0.15s;
+    border: none;
+  }
+
+  .btn-apostila:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    color: var(--azul-escuro) !important;
+    border: 1.5px solid var(--azul-escuro) !important;
+  }
+
+  /* ── Cards capítulos ── */
+  .cap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.9rem;
+    margin: 1.2rem 0 2rem;
+  }
+
+  .cap-card {
+    background: var(--bege-claro);
+    border: 1px solid rgba(229, 211, 179, 0.7);
+    border-left: 4px solid var(--azul-claro);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    text-decoration: none !important;
+    color: var(--azul-escuro) !important;
+    font-size: 0.87rem;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.15s;
+    display: block;
+  }
+
+  .cap-card:hover {
+    background: var(--bege);
+    transform: translateY(-2px);
+  }
+
+  .cap-card span {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--marrom) !important;
+    margin-top: 3px;
+  }
+
+  /* ── Seção título ── */
+  .secao-titulo {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--azul-escuro);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 2px solid var(--bege);
+    padding-bottom: 0.4rem;
+    margin: 2rem 0 1rem;
+  }
+
+  /* ── Botões finais ── */
+  .btn-group-final {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    justify-content: center;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .btn-final {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.8rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none !important;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  }
+
+  .btn-final:hover {
+    opacity: 0.88;
+    transform: translateY(-2px);
+  }
+
+  .btn-final-marrom {
+    background-color: var(--marrom);
+    color: var(--branco) !important;
+  }
+
+  .btn-final-azul {
+    background-color: var(--azul-escuro);
+    color: var(--branco) !important;
+  }
+
+  @media (max-width: 600px) {
+    .apostila-hero { padding: 1.6rem 1.2rem; }
+    .apostila-hero h2 { font-size: 1.3rem; }
+    .btn-group-apostila { flex-direction: column; }
+    .btn-apostila { justify-content: center; }
+    .btn-group-final { flex-direction: column; align-items: center; }
+  }
+</style>
+
+<!-- ── HERO ── -->
+<div class="apostila-hero">
+  <h2>Estatística com R</h2>
+  <p>Conceitos, aplicações e boas práticas, do zero ao diagnóstico de modelos.<br>
+  Material open source, construído para pesquisadores, analistas e estudantes.</p>
+  <span class="apostila-badge">V1</span>
+  <span class="apostila-badge">Open Source</span>
+  <span class="apostila-badge">Quarto Book</span>
+  <span class="apostila-badge">R</span>
+</div>
+
+<!-- ── BOTÃO CENTRAL DESTAQUE ── -->
+<div class="btn-destaque-wrapper">
+  <a href="https://apostilaestatisticacomr.netlify.app/"
+     target="_blank"
+     class="btn-destaque">
+    Acesse a versão já
+  </a>
+</div>
+
+<!-- ── BOTÕES SECUNDÁRIOS ── -->
+<div class="btn-group-apostila">
+  <a href="https://apostilaestatisticacomr.netlify.app/index.html"
+     target="_blank" class="btn-apostila btn-outline">
+    Bem-vinda(o)
+  </a>
+  <a href="https://apostilaestatisticacomr.netlify.app/summary.html"
+     target="_blank" class="btn-apostila btn-outline">
+    Resumo geral
+  </a>
+</div>
+
+<!-- ── CAPÍTULOS ── -->
+<div class="secao-titulo">Capítulos</div>
+
+<div class="cap-grid">
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap01_introducao.html" target="_blank">
+    01. Introdução <span>Conceitos e contexto</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap02_limpeza.html" target="_blank">
+    02. Limpeza de dados <span>Preparação e qualidade</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap03_descritiva.html" target="_blank">
+    03. Estatística descritiva <span>Tendência, dispersão, posição</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap04_distribuicoes.html" target="_blank">
+    04. Distribuições <span>Normalidade e probabilidade</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap05_nao_parametricos.html" target="_blank">
+    05. Testes não paramétricos <span>Mann-Whitney, Kruskal-Wallis</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap06_correlacao.html" target="_blank">
+    06. Correlação <span>Pearson, Spearman e causalidade</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap07_anova.html" target="_blank">
+    07. ANOVA <span>Análise de variância</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap08_regressao.html" target="_blank">
+    08. Regressão linear <span>Modelos e diagnóstico</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap09_tamanho_efeito.html" target="_blank">
+    09. Tamanho de efeito <span>Cohen's d, η², ω²</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap_pvalor.html" target="_blank">
+    10. Valor p <span>Conceito, limites e boas práticas</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap10_visualizacao.html" target="_blank">
+    11. Visualização avançada <span>ggplot2 e gráficos profissionais</span>
+  </a>
+  <a class="cap-card" href="https://apostilaestatisticacomr.netlify.app/cap11_comunicacao.html" target="_blank">
+    12. Comunicação <span>Resultados para diferentes públicos</span>
+  </a>
+</div>
+
+<!-- ── BOTÕES FINAIS ── -->
+<div class="btn-group-final" style="margin-top: 2rem;">
+  <a href="https://apostilaestatisticacomr.netlify.app/"
+     target="_blank" class="btn-final btn-final-marrom">
+    Ir para a apostila
+  </a>
+  <a href="https://jenniferlopesconsultoriamentoria.netlify.app/"
+     target="_blank" class="btn-final btn-final-azul">
+    Site de Serviços
+  </a>
+</div>
+```

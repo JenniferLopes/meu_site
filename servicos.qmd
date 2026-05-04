@@ -1,0 +1,59 @@
+---
+title: ""
+page-layout: full
+toc: false
+comments: false
+title-block-banner: false
+lang: pt-BR
+---
+
+```{=html}
+<section class="page-hero">
+  <div class="page-hero-logo">
+    <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="60,6 104,31 104,81 60,106 16,81 16,31" fill="#F5E6D3" stroke="#6F4E37" stroke-width="2.5"/>
+      <polygon points="60,14 96,35 96,77 60,98 24,77 24,35" fill="none" stroke="#D9B38C" stroke-width="1"/>
+      <text x="42" y="76" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#4B2E2B">J</text>
+      <text x="78" y="76" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#6F4E37">L</text>
+      <circle cx="100" cy="26" r="14" fill="#6F4E37" stroke="#F5E6D3" stroke-width="1.5"/>
+      <text x="100" y="31" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#F5E6D1">R</text>
+    </svg>
+    <span>Jennifer Lopes · Consultora e Instrutora</span>
+  </div>
+  <span class="section-label">Consultoria · Mentoria · Treinamento</span>
+  <h1>Serviços</h1>
+  <p>
+    Consultoria em dados, mentoria individualizada, cursos e treinamentos para equipes.
+    Todos os serviços desenvolvidos com R, Quarto e entrega técnica documentada.
+  </p>
+  <div class="hero-btns">
+    <a href="https://jenniferlopesconsultoriamentoria.netlify.app/" target="_blank" class="btn-primary-ccr">
+      Acesse já
+    </a>
+    <a href="https://jenniferagronomia.shinyapps.io/consultoria-jennifer/" target="_blank" class="btn-outline-ccr">
+      Formulário de contato
+    </a>
+  </div>
+</section>
+
+<div style="width:100%; background:var(--marrom-escuro); padding:24px 0 0 0; text-align:center;">
+  <p style="color:var(--cafe-leite); font-family:'Lato',sans-serif; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin:0 0 16px 0;">
+    Site completo
+  </p>
+  <a href="https://jenniferlopesconsultoriamentoria.netlify.app/" target="_blank"
+     style="display:inline-block; background:var(--creme); color:var(--marrom-escuro); font-family:'Lato',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:12px 32px; border-radius:4px; text-decoration:none; margin-bottom:20px; transition:all 0.25s;">
+    Acesse já
+  </a>
+</div>
+
+<div style="width:100%; margin:0; padding:0; line-height:0;">
+  <iframe
+    src="https://jenniferlopesconsultoriamentoria.netlify.app/"
+    width="100%"
+    height="900px"
+    style="border:none; display:block; width:100%;"
+    loading="lazy"
+    title="Site de Serviços - Jennifer Lopes">
+  </iframe>
+</div>
+```

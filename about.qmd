@@ -4,14 +4,29 @@ image: imagens/jeni.jpeg
 about:
   template: trestles
   links:
+    - text: Linktree
+      icon: link-45deg
+      url: "https://jenniferlopes.lovable.app/"
     - text: LinkedIn
+      icon: linkedin
       url: "https://www.linkedin.com/in/jennifer-luz-lopes/"
     - text: GitHub
       icon: github
       url: "https://github.com/JenniferLopes"
     - text: Portifólio
+      icon: briefcase
       url: "https://jenniferlopes.quarto.pub/portifolio/"
-
+    - text: YouTube
+      icon: youtube
+      url: "https://www.youtube.com/@jennifercafecomr"
+    
+    - text: Consultoria | Mentoria | Cursos - Site
+      icon: graph-up
+      url: "https://jenniferlopesconsultoriamentoria.netlify.app/"
+    - text: Curso - Ciência de Dados - do básico ao avançado com R
+      icon: book
+      url: "https://cursoscienciadedados.lovable.app/"
+    
 comments: false
 ---
 
@@ -35,6 +50,8 @@ Melhoramento Genético de Plantas \| Biotecnologia \| Genética quantitativa
 Experimentação Agrícola
 
 Estatística \| Análise de Dados \| Ciência de dados \| Machine Learning
+
+Engenharia de Dados
 
 Relatórios \| Sites \| Livros em Quarto
 

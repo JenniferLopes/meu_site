@@ -2,14 +2,11 @@
 title: "Jennifer Lopes"
 format: 
     html: 
-      css: ["estilo_geral.scss"] # Customização com css
+      css: ["estilo_geral.scss"]
       toc: false
-      embed-resources: true
-      code-fold: false # code-fold: true para "ocultar" o bloco de códigos
-      code-tools: true  #code-tools: true para ativar ferramentas de interação com os códigos
-  #    number-sections: true # Número de seções/subseções
-#title-block-banner: "#D8BFD8" # Pode ser 'true', uma cor ou imagem
-code-annotations: hover # Para anotações em códigos
+      code-fold: false
+      code-tools: true
+code-annotations: hover
 ---
 
 :::: {style="margin-bottom: 40px;"}
@@ -22,14 +19,12 @@ Sou Jennifer Luz Lopes, Gaúcha, Engenheira Agrônoma e Doutora em Melhoramento 
 
 Minha trajetória vem do campo, mas meu propósito está na ciência de dados aplicada à agricultura.
 
-> **Quatro valores que guiam tudo o que faço: `clareza`, `aprendizadocontínuo`, `colaboração` e `propósito`.** 🤎
+> **Quatro valores que guiam tudo o que faço: `clareza`, `aprendizado contínuo`, `colaboração` e `propósito`.** 🤎
 
 **Aqui você vai encontrar:**
 
 1.  Projetos de experimentação agrícola, análises estatísticas em R
-
 2.  Dashboards e automações com Quarto, Shiny e APIs
-
 3.  Reflexões sobre comunidade, aprendizado e dados abertos
 
 **No meu descanso:**
@@ -40,6 +35,17 @@ Ahh, amo ficar agarradinha nas minhas pets, Luna e Meguy! Este espaço é meu la
 :::
 ::::
 
+```{=html}
+<div class="listing-btn-group">
+  <a href="#" onclick="window.history.back(); return false;" class="btn-cafe">
+    ☕ Fique no blog
+  </a>
+  <a href="https://jenniferlopesconsultoriamentoria.netlify.app/" target="_blank" class="btn-cafe" style="background-color:#224573;">
+    🔗 Ir para os meus serviços
+  </a>
+</div>
+```
+
 ### ☕ Café com R
 
 > Que cada **gole** desperte uma nova ideia.
@@ -49,12 +55,11 @@ Ahh, amo ficar agarradinha nas minhas pets, Luna e Meguy! Este espaço é meu la
 > Que o **Café com R**, se torne um ponto de encontro nosso!
 
 ```{=html}
-<iframe 
-  src="newsletter-widget.html" 
-  width="100%" 
-  height="800" 
-  frameborder="0" 
-  scrolling="no"
-  style="border:none; display:block; margin: 0 auto;">
+<iframe
+  src="https://cafecomr-conteudos.lovable.app/"
+  width="100%"
+  height="900"
+  style="border:0; border-radius:16px;"
+  title="Newsletter Café com R">
 </iframe>
 ```

@@ -28,7 +28,7 @@ editor: visual
 
 ## Acompanhe o Café com R
 
-[![**Printa a tela e escaneia o QR Code.**](imagens/qrcode.png){fig-align="center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="422"}](https://jenniferlopes.quarto.pub/portifolio/)
+[![Printa a tela e escaneia o QR Code.](imagens/qrcode.png){fig-align="center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="422"}](https://jenniferlopes.quarto.pub/portifolio/)
 
 ------------------------------------------------------------------------
 
@@ -159,7 +159,7 @@ print(r.dados_r)
 
 **Tem `aulas` aqui no meu site:**
 
-[![**Clica aqui depois e confira!**](imagens/aulas.JPG){fig-align="center" width="486"}](https://jenniferlopes.quarto.pub/portifolio/apresenta%C3%A7%C3%B5es/)
+[![Clica aqui depois e confira!](imagens/aulas.JPG){fig-align="center" width="486"}](https://jenniferlopes.quarto.pub/portifolio/apresenta%C3%A7%C3%B5es/)
 
 ------------------------------------------------------------------------
 
@@ -201,13 +201,13 @@ print(r.dados_r)
 
 ## Integração 2 - Curso Positron
 
-[![**Clique aqui e vá para o Youtube da R-Ladies Goiânia.**](imagens/positron.jfif){fig-align="center" width="450"}](https://www.youtube.com/@rladiesgoiania/featured)
+[![Clique aqui e vá para o Youtube da R-Ladies Goiânia.](imagens/positron.jfif){fig-align="center" width="450"}](https://www.youtube.com/@rladiesgoiania/featured)
 
 **Slides - [Clique aqui](https://github.com/JenniferLopes/curso_positron_final).**
 
 ## Integração 2 - CHEATSHEET Positron
 
-[![**Clique aqui e acesse a folha de dicas. Está incrível.**](imagens/positron_cheat.JPG){fig-align="center" width="502"}](https://posit.co/resources/cheatsheets/)
+[![Clique aqui e acesse a folha de dicas. Está incrível.](imagens/positron_cheat.JPG){fig-align="center" width="502"}](https://posit.co/resources/cheatsheets/)
 
 ------------------------------------------------------------------------
 
@@ -263,9 +263,9 @@ quarto::quarto_render("meu_documento.qmd", output_format = "pdf")
 
 **Documentação oficial:** [quarto.org](https://quarto.org)
 
-## Integração 3 - Curso de Quarto  {.smaller}
+## Integração 3 - Curso de Quarto {.smaller}
 
-[![**Acesse aqui e vá para o Youtube da R-Ladies Goiânia.**](imagens/curso_quarto.JPG){fig-align="center" width="530"}](https://www.youtube.com/watch?v=XuxyzBhDvLg)
+[![Acesse aqui e vá para o Youtube da R-Ladies Goiânia.](imagens/curso_quarto.JPG){fig-align="center" width="530"}](https://www.youtube.com/watch?v=XuxyzBhDvLg)
 
 ------------------------------------------------------------------------
 
@@ -357,7 +357,7 @@ Sobre o pacote gert. [**Acesse a documentação**](https://docs.ropensci.org/ger
 
 **Por que existe:** Análises complexas têm muitas etapas. Reexecutar tudo do zero a cada mudança é ineficiente. O `targets` resolve isso de forma elegante e rastreável.
 
-[![**Clique aqui e acesse a documentação.**](imagens/pipeline.png){fig-align="center" width="510"}](https://github.com/ropensci-books/targets/)
+[![Clique aqui e acesse a documentação.](imagens/pipeline.png){fig-align="center" width="510"}](https://github.com/ropensci-books/targets/)
 
 ------------------------------------------------------------------------
 
@@ -413,7 +413,7 @@ tar_outdated()
 
 ## Integração 5 - Targets - Tutorial no GitHub {.smaller}
 
-[![**Acesse aqui um tutorial completo que desenvolvi.**](imagens/targts_jeni.JPG){fig-align="center" width="359"}](https://github.com/JenniferLopes/experimentacao_agricola_pipeline_automatizado)
+[![Acesse aqui um tutorial completo que desenvolvi.](imagens/targts_jeni.JPG){fig-align="center" width="359"}](https://github.com/JenniferLopes/experimentacao_agricola_pipeline_automatizado)
 
 ------------------------------------------------------------------------
 
@@ -506,7 +506,7 @@ docker run -p 3838:3838 minha-analise-r
 
 **Por que existe:** Dados em produção raramente estão em arquivos CSV. Eles vivem em bancos de dados. O **`DBI`** com `dbplyr` permite usar a sintaxe do **`dplyr`** para consultar qualquer banco.
 
-[![**Clique aqui e acesse a documentação.**](imagens/dbi.JPG){fig-align="center" width="552"}](https://dbi.r-dbi.org/index.html)
+[![Clique aqui e acesse a documentação.](imagens/dbi.JPG){fig-align="center" width="552"}](https://dbi.r-dbi.org/index.html)
 
 ------------------------------------------------------------------------
 
@@ -612,7 +612,7 @@ dbDisconnect(con_duck)
 
 **Por que existe:** Parquet é o formato padrão de armazenamento analítico em ambientes de nuvem e data lakes. É colunar, comprimido e muito mais eficiente que CSV para grandes volumes.
 
-[![**Acesse aqui a documentaçãop do pacote.**](imagens/arrow.png){fig-align="center" width="331"}](https://arrow.apache.org/docs/r/)
+[![Acesse aqui a documentaçãop do pacote.](imagens/arrow.png){fig-align="center" width="331"}](https://arrow.apache.org/docs/r/)
 
 ------------------------------------------------------------------------
 
@@ -686,7 +686,7 @@ vendas_jan <- open_dataset("dados/vendas/") |>
 
 **Por que existe:** Grande parte dos dados modernos são acessíveis via API - redes sociais, plataformas financeiras, sistemas internos, serviços de governo. O **`httr2`** é a porta de entrada do R para esse ecossistema.
 
-[![**Acesse aqui a documentação do pacote.**](imagens/httr2.png){fig-align="center" width="169"}](https://httr2.r-lib.org/reference/index.html)
+[![Acesse aqui a documentação do pacote.](imagens/httr2.png){fig-align="center" width="169"}](https://httr2.r-lib.org/reference/index.html)
 
 ------------------------------------------------------------------------
 
@@ -754,7 +754,7 @@ dados <- resposta |>
 
 ## Integração 9 - APIs REST - Aula {.smaller}
 
-[![**Acesse a aula do Café com R.**](imagens/api.png){fig-align="center" width="456"}](https://jenniferlopes.quarto.pub/portifolio/apresenta%C3%A7%C3%B5es/posts/api_R.html)
+[![Acesse a aula do Café com R.](imagens/api.png){fig-align="center" width="456"}](https://jenniferlopes.quarto.pub/portifolio/apresenta%C3%A7%C3%B5es/posts/api_R.html)
 
 ------------------------------------------------------------------------
 
@@ -768,7 +768,7 @@ dados <- resposta |>
 
 **Por que existe:** BigQuery é amplamente usado em empresas que trabalham com grandes volumes de dados. O **`bigrquery`** traz esses dados para o ambiente R sem precisar exportar arquivos.
 
-[![**Acesse a documentação.**](imagens/gc-bigquery-ready.png){fig-align="center" width="346"}](https://docs.cloud.google.com/bigquery/docs/bigquery-ready-overview?hl=pt-br)
+[![Acesse a documentação.](imagens/gc-bigquery-ready.png){fig-align="center" width="346"}](https://docs.cloud.google.com/bigquery/docs/bigquery-ready-overview?hl=pt-br)
 
 ------------------------------------------------------------------------
 
@@ -842,7 +842,7 @@ dbDisconnect(con)
 
 ## Integração 10 - Google Cloud Platform via bigrquery- Projeto no GitHub {.smaller}
 
-[![**Acesse um projeto que desenvolvi.**](imagens/bigq.JPG){fig-align="center" width="553"}](https://github.com/JenniferLopes/bigquery_pam)
+[![Acesse um projeto que desenvolvi.](imagens/bigq.JPG){fig-align="center" width="553"}](https://github.com/JenniferLopes/bigquery_pam)
 
 ------------------------------------------------------------------------
 
@@ -852,11 +852,11 @@ dbDisconnect(con)
 
 **Por que existe:** Empresas com grandes volumes de dados usam Databricks como plataforma central de analytics e ML. Integrar R com Databricks significa levar análises R para a escala corporativa.
 
-[![**Acesse a documentação.**](imagens/adbc.png){fig-align="center" width="215"}](https://odbc.r-dbi.org/reference/databricks.html)
+[![Acesse a documentação.](imagens/adbc.png){fig-align="center" width="215"}](https://odbc.r-dbi.org/reference/databricks.html)
 
 ## Integração 11 - Databricks via odbc {.smaller}
 
-[![**Acesse o GitHub.**](imagens/whole-game.png){fig-align="center"}](https://github.com/r-dbi/odbc)
+[![Acesse o GitHub.](imagens/whole-game.png){fig-align="center"}](https://github.com/r-dbi/odbc)
 
 ------------------------------------------------------------------------
 
@@ -935,7 +935,7 @@ dbDisconnect(con)
 
 ## Integração 12 - Spark via sparklyr {.smaller}
 
-[![**Acesse aqui a documentação e comece já!**](imagens/spark.JPG){fig-align="center" width="550"}](https://spark.posit.co/)
+[![Acesse aqui a documentação e comece já!](imagens/spark.JPG){fig-align="center" width="550"}](https://spark.posit.co/)
 
 ------------------------------------------------------------------------
 
@@ -1018,7 +1018,7 @@ dados_hdfs |>
 
 **Por que existe:** Modelos e análises em R precisam ser consumidos por outros sistemas - aplicações web, dashboards externos, pipelines de dados. O Plumber é a ponte entre o R e esses sistemas.
 
-[![**Acesse aqui a documentação.**](imagens/plum.png){fig-align="center" width="425"}](https://www.rplumber.io/)
+[![Acesse aqui a documentação.](imagens/plum.png){fig-align="center" width="425"}](https://www.rplumber.io/)
 
 ------------------------------------------------------------------------
 
@@ -1099,7 +1099,7 @@ request("http://localhost:8000/prever") |>
 
 **Por que existe:** Análises em R precisam chegar a quem toma decisões. Shiny transforma scripts R em interfaces navegáveis, sem exigir que o usuário final conheça programação.
 
-[![**Acesse a documentação.**](imagens/logo-shiny.png){fig-align="center" width="195"}](https://rstudio.github.io/cheatsheets/html/shiny.html)
+[![Acesse a documentação.](imagens/logo-shiny.png){fig-align="center" width="195"}](https://rstudio.github.io/cheatsheets/html/shiny.html)
 
 ------------------------------------------------------------------------
 
@@ -1182,7 +1182,7 @@ CMD ["/usr/bin/shiny-server"]
 
 ## Integração 14 - Shiny em produção - **Cheatsheet** {.smaller}
 
-[![**Acesse aqui a folha de dicas.**](imagens/dicas_shiny.JPG){fig-align="center" width="524"}](https://rstudio.github.io/cheatsheets/html/shiny.html)
+[![Acesse aqui a folha de dicas.](imagens/dicas_shiny.JPG){fig-align="center" width="524"}](https://rstudio.github.io/cheatsheets/html/shiny.html)
 
 ------------------------------------------------------------------------
 

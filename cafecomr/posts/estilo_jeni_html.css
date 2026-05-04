@@ -1,0 +1,473 @@
+/* ============================================================
+   ESTILO JENNIFER LOPES - HTML / NEWSLETTER
+   Café com R | Consultoria, Mentoria e Treinamentos
+   ============================================================ */
+
+/* Variáveis da paleta */
+:root {
+  --azul-escuro:   #224573;
+  --marrom:        #6B4F4F;
+  --marrom-escuro: #4B2E2B;
+  --azul-claro:    #4A6FA5;
+  --bege:          #E5D3B3;
+  --bege-suave:    #FAF6F0;
+  --creme:         #F5E6D3;
+  --cinza-texto:   #3D3D3D;
+  --cinza-suave:   #F2F2F2;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+body {
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--cinza-texto);
+  background-color: var(--bege-suave);
+}
+
+/* Área principal do conteúdo */
+#quarto-content main {
+  background-color: #ffffff;
+  padding: 2.5rem 3rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(34, 69, 115, 0.07);
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* ============================================================
+   CABEÇALHO DO DOCUMENTO (título, subtítulo, autor, data)
+   ============================================================ */
+
+#title-block-header {
+  background-color: var(--marrom-escuro);
+  color: var(--creme);
+  padding: 2.5rem 3rem 2rem 3rem;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 0;
+}
+
+#title-block-header .title {
+  color: var(--creme) !important;
+  font-size: 2.1em;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 0.4em;
+}
+
+#title-block-header .subtitle {
+  color: var(--bege) !important;
+  font-size: 1.05em;
+  font-style: italic;
+  margin-bottom: 1em;
+}
+
+#title-block-header .quarto-title-meta {
+  color: var(--bege) !important;
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+
+#title-block-header .quarto-title-meta-heading {
+  color: var(--bege) !important;
+  font-size: 0.75em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   SUMÁRIO (TOC)
+   ============================================================ */
+
+#TOC {
+  background-color: var(--creme);
+  border-left: 4px solid var(--marrom);
+  border-radius: 6px;
+  padding: 1.2rem 1.4rem;
+  font-size: 0.9em;
+}
+
+#TOC .toc-title {
+  color: var(--marrom-escuro);
+  font-weight: 700;
+  font-size: 0.9em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.8em;
+}
+
+#TOC a {
+  color: var(--azul-escuro);
+  text-decoration: none;
+  display: block;
+  padding: 3px 0;
+  border-bottom: none;
+}
+
+#TOC a:hover {
+  color: var(--marrom);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+#TOC .active {
+  color: var(--marrom) !important;
+  font-weight: 600;
+}
+
+/* ============================================================
+   TIPOGRAFIA
+   ============================================================ */
+
+h1, h2, h3, h4 {
+  font-family: 'Georgia', serif;
+  color: var(--azul-escuro);
+}
+
+h2 {
+  font-size: 1.55em;
+  font-weight: 700;
+  border-left: 5px solid var(--marrom);
+  padding-left: 14px;
+  margin-top: 2.8em;
+  margin-bottom: 0.6em;
+  color: var(--azul-escuro);
+}
+
+h3 {
+  font-size: 1.15em;
+  font-weight: 700;
+  color: var(--marrom);
+  margin-top: 1.8em;
+  margin-bottom: 0.5em;
+  border-bottom: 1px solid var(--bege);
+  padding-bottom: 4px;
+}
+
+h4 {
+  font-size: 1em;
+  color: var(--marrom-escuro);
+  font-weight: 700;
+  margin-top: 1.4em;
+}
+
+p {
+  margin-bottom: 1.1em;
+  color: var(--cinza-texto);
+}
+
+/* Negrito */
+strong, b {
+  color: var(--marrom);
+  font-weight: 700;
+}
+
+/* Links */
+a {
+  color: var(--azul-claro);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--marrom);
+}
+
+/* Separadores */
+hr {
+  border: none;
+  border-top: 2px solid var(--bege);
+  margin: 2.5em 0;
+}
+
+/* ============================================================
+   LISTAS
+   ============================================================ */
+
+ul, ol {
+  color: var(--cinza-texto);
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+ul li, ol li {
+  margin-bottom: 0.4em;
+  line-height: 1.75;
+}
+
+ul li::marker {
+  color: var(--marrom);
+}
+
+ol li::marker {
+  color: var(--azul-escuro);
+  font-weight: 700;
+}
+
+/* ============================================================
+   BLOCKQUOTE
+   ============================================================ */
+
+blockquote {
+  border-left: 5px solid var(--marrom);
+  background-color: var(--creme);
+  padding: 1rem 1.4rem;
+  margin: 1.5em 0;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  color: var(--marrom-escuro);
+}
+
+blockquote p {
+  color: var(--marrom-escuro);
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   CÓDIGO
+   ============================================================ */
+
+/* Código inline */
+code {
+  background-color: var(--creme);
+  color: var(--marrom-escuro);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+/* Blocos de código */
+pre {
+  background-color: #E9ECEF !important; /* cinza médio elegante */
+  border-left: 5px solid var(--azul-claro);
+  border-radius: 6px;
+  padding: 1.2rem 1.4rem;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(34, 69, 115, 0.08);
+}
+
+pre code {
+  background-color: transparent !important;
+  color: #2d2d2d !important;
+}
+
+/* Botão de code-fold */
+.code-fold-btn-row button {
+  background-color: var(--creme);
+  color: var(--marrom);
+  border: 1px solid var(--bege);
+  border-radius: 4px;
+  font-size: 0.82em;
+  padding: 3px 10px;
+}
+
+.code-fold-btn-row button:hover {
+  background-color: var(--bege);
+}
+
+/* ============================================================
+   CALLOUTS
+   ============================================================ */
+
+/* Callout Note */
+.callout-note {
+  border-left-color: var(--azul-claro) !important;
+  background-color: rgba(74, 111, 165, 0.07) !important;
+}
+
+.callout-note .callout-title {
+  color: var(--azul-escuro) !important;
+  background-color: rgba(74, 111, 165, 0.12) !important;
+}
+
+/* Callout Tip */
+.callout-tip {
+  border-left-color: var(--marrom) !important;
+  background-color: rgba(107, 79, 79, 0.07) !important;
+}
+
+.callout-tip .callout-title {
+  color: var(--marrom-escuro) !important;
+  background-color: var(--creme) !important;
+}
+
+/* Callout Warning */
+.callout-warning {
+  border-left-color: var(--bege) !important;
+  background-color: rgba(229, 211, 179, 0.25) !important;
+}
+
+.callout-warning .callout-title {
+  color: var(--marrom) !important;
+  background-color: rgba(229, 211, 179, 0.4) !important;
+}
+
+/* Callout Important */
+.callout-important {
+  border-left-color: var(--azul-escuro) !important;
+  background-color: rgba(34, 69, 115, 0.07) !important;
+}
+
+.callout-important .callout-title {
+  color: var(--azul-escuro) !important;
+  background-color: rgba(34, 69, 115, 0.1) !important;
+}
+
+/* Texto dentro de callouts */
+.callout-body p {
+  color: var(--cinza-texto);
+}
+
+.callout-body strong {
+  color: var(--marrom-escuro);
+}
+
+/* ============================================================
+   TABELAS
+   ============================================================ */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5em 0;
+  font-size: 0.93em;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(34, 69, 115, 0.08);
+}
+
+thead {
+  background-color: var(--azul-escuro);
+  color: white;
+}
+
+th {
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9em;
+  letter-spacing: 0.03em;
+}
+
+td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--bege);
+  color: var(--cinza-texto);
+}
+
+tr:nth-child(even) {
+  background-color: rgba(229, 211, 179, 0.2);
+}
+
+tr:hover {
+  background-color: rgba(74, 111, 165, 0.07);
+}
+
+/* ============================================================
+   CLASSES UTILITÁRIAS
+   ============================================================ */
+
+/* Bloco de destaque bege */
+.destaque {
+  background-color: var(--creme);
+  border-left: 4px solid var(--marrom);
+  padding: 1.1rem 1.4rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.5em 0;
+  color: var(--marrom-escuro);
+}
+
+.destaque p {
+  color: var(--marrom-escuro);
+  margin-bottom: 0;
+}
+
+/* Bloco de destaque azul */
+.destaque-azul {
+  background-color: rgba(74, 111, 165, 0.08);
+  border-left: 4px solid var(--azul-claro);
+  padding: 1.1rem 1.4rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.5em 0;
+}
+
+.destaque-azul p {
+  color: var(--azul-escuro);
+  margin-bottom: 0;
+}
+
+/* Caixa de pergunta provocativa */
+.pergunta {
+  background-color: var(--creme);
+  border-left: 4px solid var(--marrom);
+  padding: 1.1rem 1.4rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.5em 0;
+  color: var(--marrom-escuro);
+  font-style: italic;
+}
+
+.pergunta p {
+  color: var(--marrom-escuro);
+  margin-bottom: 0;
+}
+
+/* Rodapé da newsletter */
+.rodape-newsletter {
+  background-color: var(--marrom-escuro);
+  color: var(--bege);
+  padding: 1.4rem 2rem;
+  border-radius: 6px;
+  text-align: center;
+  margin-top: 3em;
+  font-size: 0.9em;
+}
+
+.rodape-newsletter a {
+  color: var(--bege);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.rodape-newsletter p {
+  color: var(--bege);
+  margin-bottom: 0.3em;
+}
+
+/* ============================================================
+   FIGURAS E CAPTIONS
+   ============================================================ */
+
+figure {
+  margin: 1.5em 0;
+}
+
+figcaption, .figure-caption {
+  color: #888888;
+  font-size: 0.85em;
+  text-align: center;
+  margin-top: 0.5em;
+  font-style: italic;
+}
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+
+@media (max-width: 1200px) {
+  #quarto-content main {
+    padding: 1.5rem 1.2rem;
+  }
+
+  #title-block-header {
+    padding: 1.8rem 1.4rem 1.4rem 1.4rem;
+  }
+
+  h2 {
+    font-size: 1.3em;
+  }
+}

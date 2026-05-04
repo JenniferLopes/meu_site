@@ -1,0 +1,379 @@
+---
+title: "Do Zero ao Portfólio Publicado - Parte 1/5"
+subtitle: "Como escolher e preparar o projeto certo para publicar?"
+author: "Jennifer Lopes"
+lang: pt
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    toc-title: "Nesta edição"
+    toc-location: left
+    number-sections: false
+    code-fold: true
+    code-tools: true
+    code-summary: "Ver código R"
+    fig-align: center
+    fig-width: 9
+    fig-height: 6
+    df-print: paged
+    smooth-scroll: true
+    highlight-style: github
+    embed-resources: true
+    css: estilo_jeni_html.css
+execute:
+  echo: true
+  warning: false
+  message: false
+  cache: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(kableExtra)
+library(scales)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+```
+
+::: {.destaque-azul}
+Esta newsletter é parte 1 de uma série sobre como publicar o que você já sabe fazer. O foco desta edição é uma pergunta específica: como escolher e preparar o projeto certo para publicar primeiro. Ao final, você encontra o link para o **Manual de Perguntas Essenciais para Projetos de Dados**, material de aprofundamento que complementa esta série com os 9 blocos que toda análise precisa considerar antes de começar.
+:::
+
+## Por que a maioria dos projetos nunca é publicada {#sec-porque}
+
+Na semana passada, uma aluna iniciou a mentoria comigo com dois projetos prontos. Código funcionando. Análise completa. Tudo revisado. Nenhum publicado.
+
+Perguntei o que estava impedindo. A resposta foi: "Acho que ainda não está bom o suficiente."
+
+Esse não é um problema de qualidade técnica. É um problema de **critério**. Quando não existe um critério claro do que significa "pronto para publicar", qualquer projeto parece incompleto indefinidamente.
+
+O que acontece na prática:
+
+- O projeto fica parado esperando uma última revisão que nunca termina
+- A pessoa começa um projeto novo achando que ele será mais fácil de publicar
+- Os projetos se acumulam no computador sem nunca serem vistos por ninguém
+
+::: {.callout-important}
+Portfólio não é prova de perfeição. É prova de como você pensa e resolve problemas. Um projeto publicado com uma decisão bem justificada comunica mais do que dez projetos guardados esperando o momento certo.
+:::
+
+## O critério para escolher o projeto certo agora {#sec-criterio}
+
+O primeiro projeto publicado não precisa ser o mais complexo. Precisa ser o mais **explicável**.
+
+Antes de escolher qual projeto publicar, responda estas quatro perguntas. Elas vêm do **Bloco 1 do Manual de Perguntas Essenciais**, que trata de problema e objetivo:
+
+**1. Você consegue escrever o objetivo em uma frase mensurável?**
+
+"Analisar dados de produtividade agrícola" não é um objetivo. "Identificar quais estados brasileiros apresentaram maior crescimento no rendimento de soja entre 2018 e 2022 usando dados da PAM/IBGE" é um objetivo. A diferença está na **métrica de sucesso** e no **critério de encerramento**: você sabe quando a análise está feita porque a pergunta tem resposta.
+
+Se o objetivo exige mais de uma frase para ser explicado, o escopo está largo demais. Reduza o recorte antes de continuar.
+
+**2. Você sabe de onde vieram os dados e consegue documentar isso?**
+
+Além da fonte, documente a **granularidade** dos dados (nível de detalhe), o período coberto e se a amostra representa a **população de interesse** ou apenas um subconjunto. Projetos com fontes opacas ou dados que não podem ser compartilhados criam barreiras para quem tenta reproduzir a análise.
+
+**3. O código roda do início ao fim sem intervenção manual?**
+
+Se alguém clonar o repositório e rodar os scripts em ordem, o resultado deve ser reproduzível. Isso exige caminhos relativos, dependências registradas e ausência de etapas não documentadas.
+
+**4. Você consegue escrever uma conclusão em três parágrafos?**
+
+O primeiro responde o que foi encontrado. O segundo conecta o resultado ao problema original. O terceiro nomeia os **limites da análise**: o que ela não responde, quais dados não estavam disponíveis, o que seria feito diferente com mais tempo ou recursos.
+
+::: {.callout-tip}
+Se você respondeu sim às quatro perguntas, o projeto está pronto para publicar. Se nenhum projeto atual passa nesse filtro, a solução não é esperar. É reduzir o escopo de um projeto existente até que ele passe. Um projeto menor bem documentado é publicável. Um projeto grande mal documentado não é.
+:::
+
+## Hipóteses antes dos dados {#sec-hipoteses}
+
+Um dos pontos que mais diferencia um portfólio de qualidade é a prática de registrar hipóteses **antes** de explorar os dados. Isso vem do **Bloco 7 do Manual**, que trata de formulação de hipóteses.
+
+Formular hipóteses após ver os resultados e apresentá-las como se fossem anteriores é uma prática conhecida como **HARKing** (*Hypothesizing After Results are Known*). É uma das principais causas de resultados não reproduzíveis e de análises que parecem mais conclusivas do que são.
+
+Na prática, antes de rodar qualquer código de análise, documente no README:
+
+- Qual é a **hipótese principal** do projeto?
+- A hipótese é **falsificável**? É possível testá-la e encontrar evidência contrária?
+- Qual resultado contradiria a hipótese e o que você faria se ele aparecesse?
+
+Isso não precisa ser formal. Um parágrafo antes de os dados serem explorados já é suficiente. O que importa é que o registro existe antes da análise.
+
+::: {.callout-warning}
+Evite o **viés de confirmação**: a tendência de buscar nos dados apenas o que confirma o que você já acredita. Uma forma de proteger a análise é nomear, antes de começar, qual resultado contradiria sua hipótese.
+:::
+
+## O que transforma um script em projeto publicável {#sec-elementos}
+
+Três elementos fazem a diferença entre um script e um projeto que outra pessoa consegue entender e reproduzir.
+
+### Estrutura de pastas com função clara
+
+```r
+meu_projeto/
+├── data/       # dados brutos: nunca modificar manualmente
+├── R/          # scripts numerados por etapa
+├── output/     # gráficos e tabelas gerados pelos scripts
+├── index.qmd   # análise com narrativa
+└── README.md   # contexto, decisões e instruções de reprodução
+```
+
+Dentro de `R/`, os scripts são numerados para comunicar a sequência lógica:
+
+```r
+R/
+├── 01_importacao.R
+├── 02_limpeza.R
+├── 03_analise.R
+└── 04_visualizacao.R
+```
+
+### Controle de caminhos e dependências
+
+**`here`** elimina caminhos absolutos que funcionam só na sua máquina:
+
+```r
+library(here)
+
+# Em vez de:
+read_csv("C:/Usuarios/Jennifer/Documentos/projeto/data/dados.csv")
+
+# Use:
+read_csv(here("data", "dados.csv"))
+```
+
+**`renv`** registra quais pacotes e versões o projeto usa. Do **Bloco 8 do Manual**, que trata de ferramentas e infraestrutura: o ambiente de desenvolvimento precisa estar isolado e **reproduzível**. Sem isso, diferenças de versão de pacotes produzem resultados diferentes ou erros que não existiam na sua máquina.
+
+```r
+renv::init()       # inicializa o controle de dependências
+renv::snapshot()   # registra os pacotes usados
+renv::restore()    # restaura o ambiente em outra máquina
+```
+
+### Narrativa das decisões
+
+O código mostra o que você fez. A narrativa mostra como você pensa. As duas precisam estar no projeto.
+
+Para cada etapa da análise, responda em texto quatro perguntas que vêm do **Bloco 6 do Manual**, sobre comunicação e impacto:
+
+- **Por que essa fonte de dados?** Explique a cobertura, o período e o que ela permite responder que outras fontes não permitem.
+- **Por que esse método?** Uma linha justificando a escolha vale mais do que páginas de código sem contexto. Você usou média? Por que não mediana? Você usou regressão linear? Por que não uma alternativa?
+- **O que o resultado indica?** Conecte o número ao problema. Não escreva apenas o valor estatístico. Escreva o que aquele resultado significa para quem vai tomar uma decisão com base nele.
+- **Quais são os limites?** Nomear os limites do próprio trabalho é sinal de maturidade analítica. Todo projeto tem limitações. Documentá-las demonstra que você entende o alcance da análise.
+
+::: {.callout-important}
+O código não é o portfólio. A **narrativa das decisões** é. Qualquer pessoa consegue copiar código que funciona. O que não é possível copiar é o raciocínio sobre por que aquele código faz sentido para aquele problema específico.
+:::
+
+## Como comunicar para quem vai ler {#sec-comunicacao}
+
+Um projeto publicado tem sempre dois públicos: quem tem formação técnica e consegue ler o código, e quem não tem e precisa entender os resultados a partir da narrativa.
+
+Antes de publicar, defina:
+
+**Quem é o público-alvo?**
+
+Se for técnico, o código documentado e as decisões metodológicas são suficientes. Se for misto ou não técnico, cada seção precisa de um parágrafo em linguagem acessível explicando o que foi feito e o que foi encontrado, antes de qualquer gráfico ou tabela.
+
+**As incertezas estão visíveis?**
+
+Resultados apresentados sem limites parecem mais sólidos do que são. Um **intervalo de confiança**, uma nota sobre o tamanho da amostra ou uma frase sobre o que os dados não cobrem tornam a análise mais honesta e mais útil para quem vai tomar decisões com base nela.
+
+**O resultado responde a pergunta original?**
+
+Releia o objetivo que você escreveu no início. A conclusão responde diretamente aquela pergunta? Se a conclusão responde uma pergunta diferente, o texto precisa deixar claro o que mudou e por quê.
+
+## A estrutura mínima na prática {#sec-pratica}
+
+O exemplo abaixo mostra como um projeto de produtividade agrícola fica estruturado com os três elementos aplicados.
+
+```{r}
+#| label: fig-exemplo
+#| fig-cap: "Produtividade média por cultura com desvio padrão. Dados simulados para demonstração."
+
+set.seed(2026)
+
+dados_ex <- data.frame(
+  cultura = factor(
+    rep(c("Soja", "Milho", "Café", "Algodão"), each = 40)),
+  produtividade = c(
+    rnorm(40, 3200, 400),
+    rnorm(40, 5800, 600),
+    rnorm(40, 1800, 300),
+    rnorm(40, 1500, 250)))
+
+dados_ex |>
+  group_by(cultura) |>
+  summarise(
+    media   = mean(produtividade),
+    dp      = sd(produtividade),
+    .groups = "drop") |>
+  ggplot(aes(x = reorder(cultura, media), y = media, fill = cultura)) +
+  geom_col(width = 0.65, alpha = 0.9) +
+  geom_errorbar(
+    aes(ymin = media - dp, ymax = media + dp),
+    width     = 0.25,
+    color     = "#4B2E2B",
+    linewidth = 0.7) +
+  scale_fill_manual(values = unname(cores_cafe)) +
+  scale_y_continuous(labels = label_number(big.mark = ".")) +
+  labs(
+    title    = "Produtividade média por cultura (kg/ha)",
+    subtitle = "Barras de erro representam desvio padrão",
+    x        = NULL,
+    y        = "Produtividade (kg/ha)",
+    caption  = "Jennifer Lopes | Café com R") +
+  theme_classic(base_size = 13) +
+  theme(
+    legend.position = "none",
+    plot.title      = element_text(face = "bold", color = "#224573"),
+    plot.subtitle   = element_text(color = "#5A5A5A"),
+    plot.caption    = element_text(color = "#888888", size = 9))
+```
+
+Abaixo do gráfico, a narrativa acompanha o resultado:
+
+> **Decisão metodológica:** a cana-de-açúcar foi excluída desta comparação porque a unidade de medida do rendimento é incompatível com as demais culturas: toneladas por hectare versus quilogramas por hectare. Incluí-la sem transformação produziria uma escala que distorceria a leitura das demais culturas. Essa decisão reduz o escopo da análise mas preserva a **comparabilidade** entre os grupos apresentados.
+
+Esse parágrafo não existe no código. É o que diferencia o projeto.
+
+## O README que o projeto precisa {#sec-readme}
+
+O README é o primeiro documento que qualquer pessoa lê ao acessar o repositório. Ele precisa responder cinco perguntas sem exigir que o leitor abra nenhum outro arquivo.
+
+```markdown
+# Nome do Projeto
+
+## O que este projeto analisa
+Uma ou duas frases descrevendo a pergunta central e o resultado encontrado.
+
+## Fonte dos dados
+De onde vêm os dados, qual o período coberto e como acessá-los.
+
+## Como reproduzir
+renv::restore()
+quarto render index.qmd
+
+## Estrutura do projeto
+Descrição das pastas e o que cada uma contém.
+
+## Autora
+Nome e link para o LinkedIn ou portfólio.
+```
+
+Crie o arquivo com:
+
+```r
+usethis::use_readme_md()
+```
+
+::: {.callout-tip}
+Escreva o README antes de publicar, não depois. O processo de preencher as cinco perguntas identifica os pontos que ainda precisam de atenção no projeto.
+:::
+
+## Checklist de publicação {#sec-checklist}
+
+Antes de publicar, confirme cada item:
+
+- O projeto roda do início ao fim sem intervenção manual
+- Os caminhos usam `here::here()` e não caminhos absolutos
+- O `renv.lock` está atualizado com `renv::snapshot()`
+- O objetivo do projeto está escrito em uma frase com **métrica de sucesso** definida
+- As hipóteses foram registradas antes da exploração dos dados
+- O **viés de confirmação** foi considerado: existe registro do que contradiria a hipótese
+- O README responde as cinco perguntas da seção anterior
+- Cada seção do documento tem pelo menos uma frase de narrativa explicando a decisão tomada
+- As **limitações da análise** estão documentadas
+- A conclusão responde diretamente a pergunta original do projeto
+- O **público-alvo** está claro e a linguagem do documento é adequada para ele
+
+## Bases de dados abertas para o portfólio {#sec-dados}
+
+Projetos com dados abertos e documentados são mais fáceis de publicar e mais úteis para quem lê. O Brasil tem fontes de qualidade acessíveis diretamente pelo R.
+
+```{r}
+#| label: tbl-dados
+#| tbl-cap: "Principais fontes de dados abertos brasileiros acessíveis via R."
+#| echo: false
+
+data.frame(
+  Fonte   = c(
+    "IBGE/SIDRA", "Base dos Dados", "DATASUS",
+    "INMET", "Portal Transparência"),
+  Pacote  = c(
+    "sidrar", "basedosdados", "microdatasus",
+    "inmetr", "httr2"),
+  Conteudo = c(
+    "Censo, PNAD, produção agrícola, PIB municipal",
+    "Consolidação de dezenas de bases padronizadas",
+    "Mortalidade, internações, nascimentos",
+    "Temperatura, precipitação, umidade histórica",
+    "Gastos públicos, contratos, servidores")) |>
+  kable(col.names = c("Fonte", "Pacote R", "O que contém")) |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width        = TRUE) |>
+  row_spec(0, bold = TRUE, color = "white", background = "#224573")
+```
+
+Exemplo de acesso à PAM via `sidrar`:
+
+```r
+library(sidrar)
+
+rendimento <- get_sidra(
+  x         = 1612,
+  variable  = 214,
+  geo       = "State",
+  period    = "2022",
+  classific = "c81",
+  category  = list(c81 = 2713))
+```
+
+## Material de aprofundamento {#sec-manual}
+
+Esta newsletter cobre o essencial para você publicar o primeiro projeto. Para ir além, o **Manual de Perguntas Essenciais para Projetos de Dados** detalha os 9 blocos que toda análise precisa considerar antes de começar:
+
+| Bloco | Foco |
+|---|---|
+| 1. Problema e Objetivo | O objetivo está claro e mensurável? |
+| 2. Dados | Os dados existem, são acessíveis e têm qualidade? |
+| 3. Contexto e Domínio | Você entende o domínio e os fatores externos? |
+| 4. Metodologia | A metodologia é adequada e reproduzível? |
+| 5. Ética e Vieses | Há **viés de seleção**, **viés de confirmação** ou riscos éticos? |
+| 6. Comunicação e Impacto | O resultado será interpretado e usado corretamente? |
+| 7. Hipóteses | As hipóteses foram registradas antes de ver os dados? Há risco de **HARKing**? |
+| 8. Ferramentas e Infraestrutura | O ambiente está definido, isolado e documentado? |
+| 9. Gestão do Projeto | O projeto tem ciclos de entrega e revisão definidos? |
+
+O manual inclui um case completo de detecção de churn em uma fintech brasileira mostrando como cada bloco foi aplicado na prática, com as decisões tomadas, os problemas encontrados nos dados e o que teria dado errado sem o checklist. É um documento de uso livre, desenvolvido para ser adaptado ao seu contexto.
+
+## O que vem nas próximas edições {#sec-proximas}
+
+Esta foi a parte 1. O foco foi preparar o projeto antes de publicar.
+
+- **Parte 2:** onde e como publicar com Quarto Pub, GitHub Pages e Netlify
+- **Parte 3:** como construir um site de portfólio completo com Quarto
+- **Parte 4:** como documentar modelos estatísticos no portfólio
+- **Parte 5:** como automatizar a publicação com GitHub Actions
+
+::: {.callout-note}
+Se você chegou até aqui, o próximo passo não é ler mais uma newsletter. É abrir o RStudio, escolher um projeto existente e responder as quatro perguntas da seção de critério. Quando publicar, me marca no LinkedIn. Quero ver o resultado.
+:::
+
+---
+
+::: {.rodape-newsletter}
+**Jennifer Lopes | Consultoria, Mentoria e Treinamentos**
+
+[jenniferlopesconsultoriamentoria.netlify.app](https://jenniferlopesconsultoriamentoria.netlify.app)
+:::

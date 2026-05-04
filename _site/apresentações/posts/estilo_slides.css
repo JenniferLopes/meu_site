@@ -1,0 +1,304 @@
+/* ===========================================================
+   ESTILO SLIDES REVEALJS - JENNIFER LOPES
+   Café com R | Mentoria Personalizada
+   Paleta: Azul #224573 | Marrom #6B4F4F | Azul claro #4A6FA5
+=========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&family=Poppins:wght@600;700&display=swap');
+
+:root {
+  --cor-azul-escuro: #224573;
+  --cor-marrom:      #6B4F4F;
+  --cor-azul-claro:  #4A6FA5;
+  --cor-bege:        #E5D3B3;
+  --cor-cinza-claro: #F2F2F2;
+}
+
+/* -----------------------------------------------------------
+   FONTE BASE
+----------------------------------------------------------- */
+.reveal {
+  background-color: var(--cor-cinza-claro);
+  color: var(--cor-azul-escuro);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 28px;
+}
+
+/* -----------------------------------------------------------
+   CABECALHOS
+----------------------------------------------------------- */
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  color: var(--cor-azul-escuro);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  margin-bottom: 0.3em;
+}
+
+.reveal h1 {
+  border-bottom: 4px solid var(--cor-azul-claro);
+  padding-bottom: 10px;
+  font-size: 1.2em;
+}
+
+.reveal h2 {
+  border-bottom: 2px solid var(--cor-marrom);
+  padding-bottom: 6px;
+  margin-bottom: 0.4em;
+  font-size: 1.1em;
+}
+
+.reveal h3 {
+  font-size: 1.0em;
+}
+
+/* -----------------------------------------------------------
+   LINKS
+----------------------------------------------------------- */
+.reveal a {
+  color: var(--cor-azul-claro);
+  font-weight: 500;
+}
+
+.reveal a:hover {
+  color: var(--cor-marrom);
+}
+
+/* -----------------------------------------------------------
+   CODIGO INLINE
+----------------------------------------------------------- */
+.reveal code {
+  background-color: var(--cor-bege);
+  color: var(--cor-azul-escuro);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+/* -----------------------------------------------------------
+   BLOCOS DE CODIGO
+----------------------------------------------------------- */
+.reveal pre {
+  border-left: 5px solid var(--cor-azul-claro);
+  background-color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(34, 69, 115, 0.1);
+  margin: 0.4em 0;
+}
+
+.reveal pre code {
+  background-color: transparent;
+  color: var(--cor-azul-escuro);
+  font-size: 0.82em;
+  line-height: 1.4;
+}
+
+/* -----------------------------------------------------------
+   TABELAS
+----------------------------------------------------------- */
+.reveal table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px auto;
+  box-shadow: 0 2px 8px rgba(34, 69, 115, 0.1);
+  font-size: 0.88em;
+}
+
+.reveal thead {
+  background-color: var(--cor-azul-escuro);
+  color: white;
+}
+
+.reveal th {
+  padding: 6px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.reveal td {
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--cor-bege);
+  color: var(--cor-azul-escuro);
+}
+
+.reveal tr:nth-child(even) {
+  background-color: rgba(229, 211, 179, 0.3);
+}
+
+.reveal tr:hover {
+  background-color: rgba(74, 111, 165, 0.1);
+}
+
+/* -----------------------------------------------------------
+   NEGRITO
+----------------------------------------------------------- */
+.reveal strong,
+.reveal b {
+  color: var(--cor-marrom);
+  font-weight: 700;
+}
+
+/* -----------------------------------------------------------
+   LISTAS
+----------------------------------------------------------- */
+.reveal ul,
+.reveal ol {
+  color: var(--cor-azul-escuro);
+  line-height: 1.35;
+  margin: 0.3em 0;
+}
+
+.reveal ul li,
+.reveal ol li {
+  margin-bottom: 0.2em;
+}
+
+/* -----------------------------------------------------------
+   BLOCKQUOTES
+----------------------------------------------------------- */
+.reveal blockquote {
+  border-left: 5px solid var(--cor-marrom);
+  background-color: rgba(229, 211, 179, 0.3);
+  padding: 8px 14px;
+  font-style: italic;
+  color: var(--cor-azul-escuro);
+  margin: 0.4em 0;
+}
+
+/* -----------------------------------------------------------
+   CALLOUTS
+----------------------------------------------------------- */
+.reveal .callout-tip {
+  border-left: 5px solid var(--cor-marrom) !important;
+  background-color: #fdf6f0 !important;
+  padding: 8px 14px !important;
+  margin: 0.4em 0 !important;
+}
+
+.reveal .callout-tip .callout-title {
+  color: var(--cor-marrom) !important;
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+
+.reveal .callout-note {
+  border-left: 5px solid var(--cor-azul-claro) !important;
+  background-color: #eef3fa !important;
+  padding: 8px 14px !important;
+  margin: 0.4em 0 !important;
+}
+
+.reveal .callout-note .callout-title {
+  color: var(--cor-azul-claro) !important;
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+
+.reveal .callout-important {
+  border-left: 5px solid var(--cor-azul-escuro) !important;
+  background-color: #e8eef6 !important;
+  padding: 8px 14px !important;
+  margin: 0.4em 0 !important;
+}
+
+.reveal .callout-caution {
+  border-left: 5px solid #c55a00 !important;
+  background-color: #fff4ec !important;
+  padding: 8px 14px !important;
+  margin: 0.4em 0 !important;
+}
+
+.reveal .callout-warning {
+  border-left: 5px solid #b8860b !important;
+  background-color: #fffbe6 !important;
+  padding: 8px 14px !important;
+  margin: 0.4em 0 !important;
+}
+
+.reveal .callout-body {
+  font-size: 0.9em;
+  line-height: 1.35;
+}
+
+/* -----------------------------------------------------------
+   RODAPE
+----------------------------------------------------------- */
+.reveal .footer {
+  color: var(--cor-azul-claro);
+  font-size: 0.75em;
+}
+
+/* -----------------------------------------------------------
+   LOGO
+----------------------------------------------------------- */
+.reveal .slide-logo {
+  display: block !important;
+  position: fixed !important;
+  top: 15px !important;
+  right: 25px !important;
+  left: auto !important;
+  transform: none !important;
+  max-height: 80px !important;
+  width: auto !important;
+  z-index: 9999 !important;
+  opacity: 0.95;
+}
+
+/* -----------------------------------------------------------
+   NUMERO DOS SLIDES
+----------------------------------------------------------- */
+.reveal .slide-number {
+  bottom: 10px !important;
+  right: 10px !important;
+  left: auto !important;
+  top: auto !important;
+  font-size: 0.5em !important;
+  color: var(--cor-azul-escuro) !important;
+  background: rgba(242, 242, 242, 0.7);
+  padding: 4px 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* -----------------------------------------------------------
+   SLIDES MENORES
+----------------------------------------------------------- */
+.reveal .smaller {
+  font-size: 0.75em;
+}
+
+/* -----------------------------------------------------------
+   IMAGENS
+----------------------------------------------------------- */
+.reveal img {
+  max-width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  display: block;
+  margin: 0.3em auto;
+}
+
+/* -----------------------------------------------------------
+   PARAGRAFO
+----------------------------------------------------------- */
+.reveal p {
+  margin: 0.3em 0;
+  line-height: 1.45;
+}
+
+/* -----------------------------------------------------------
+   IMAGENS
+----------------------------------------------------------- */
+.reveal img {
+  max-width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  display: block;
+  margin: 0.3em auto;
+  border: 3px solid #6B4F4F;
+  border-radius: 15px;
+}
+
