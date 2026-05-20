@@ -1,0 +1,592 @@
+---
+title: "Aula 21. Como limpar seus dados no R em 9 passos"
+subtitle: "Tutorial completo com o pacote janitor, abre o R e vem praticar"
+categories: [R, janitor, Limpeza de Dados, Tidyverse]
+image: "imagens/capa_aula21.png"
+description: "Aprenda a limpar dados sujos de forma rápida e reproduzível com o pacote janitor."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(janitor)
+library(tidyverse)
+library(kableExtra)
+```
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula foi construída para que você resolva em minutos o que antes tomava horas. Os dados usados são simulados para fins didáticos. Todo o código está funcional e pronto para reproduzir.
+
+![](imagens/meguy.jpg){fig-align="center" width="320"}
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+[![Escaneia o QR Code e acesse o blog.](imagens/qrcode.png){fig-align="center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="312"}](https://jenniferlopes.quarto.pub/portifolio/)
+
+------------------------------------------------------------------------
+
+## Projetos no YouTube
+
+![](imagens/17.png){fig-align="center" width="514"}
+
+**Inscreva-se já no canal [Link](https://www.youtube.com/@jennifercafecomr/featured).**
+
+## Objetivos da aula
+
+::: incremental
+-   Criar um dataset sujo que representa situações reais do dia a dia
+-   Aplicar **9 passos de limpeza** com o pacote `janitor`
+-   Ver o output de cada passo para entender exatamente o que muda
+-   Sair com um fluxo de limpeza reproduzível para qualquer projeto
+:::
+
+------------------------------------------------------------------------
+
+## O pacote janitor
+
+![](imagens/janitor.png){fig-align="center"}
+
+**janitor** foi criado por **Sam Firke** com o objetivo de simplificar tarefas de limpeza que aparecem em praticamente todo projeto de análise de dados.
+
+-   Disponível no CRAN
+-   Integrado ao tidyverse com suporte ao pipe `|>`
+-   Documentação: [sfirke.github.io/janitor](https://sfirke.github.io/janitor/)
+
+------------------------------------------------------------------------
+
+## Instalação
+
+```{r}
+#| eval: false
+
+install.packages("janitor")
+```
+
+```{r}
+#| eval: false
+
+library(janitor)
+library(tidyverse)
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Os dados sujos
+
+## Conheça o problema antes da solução
+:::
+
+------------------------------------------------------------------------
+
+## Criando o dataset sujo
+
+-   Este dataset simula uma planilha de recursos humanos exportada de um sistema legado.
+
+-   Problemas clássicos: nomes de colunas com espaço e acento, linhas duplicadas, valores inconsistentes, coluna vazia e linha totalizadora no final.
+
+```{r}
+#| label: dados-sujos
+
+dados_sujos <- tibble(
+  `Nome Completo`        = c("Ana Silva", "ana silva", "Carlos Mendes",
+                              "CARLOS MENDES", "Beatriz Santos",
+                              "Fernanda Lima", "Fernanda Lima",
+                              "Rodrigo Costa", NA, "TOTAL"),
+  `Departamento `        = c("RH", "rh", "TI", "ti", "Financeiro",
+                              "Marketing", "Marketing", "TI", "RH", NA),
+  `Salário (R$)`         = c(4500, 4500, 7200, 7200, 5800,
+                              6100, 6100, 8300, NA, 49900),
+  `Data de Admissão`     = c("2020-03-15", "2020-03-15", "2019-07-22",
+                              "2019-07-22", "2021-11-01",
+                              "2022-05-10", "2022-05-10", "2018-01-30",
+                              "2023-08-14", NA),
+  `% Avaliação`          = c(87, 87, 92, 92, 78, 95, 95, 88, NA, NA),
+  `Coluna Vazia`         = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+  `status`               = c("Ativo", "ativo", "Ativo", "ATIVO",
+                              "Inativo", "Ativo", "ativo", "Ativo",
+                              "Ativo", NA))
+```
+
+------------------------------------------------------------------------
+
+## O dataset antes de qualquer limpeza
+
+```{r}
+#| label: view-sujo
+
+dados_sujos
+```
+
+------------------------------------------------------------------------
+
+## O que está errado nesse dataset
+
+-   **Nomes de colunas** com espaço, acento, parênteses e símbolo `%`
+-   **Uma coluna inteiramente vazia** (`Coluna Vazia`)
+-   **Linhas duplicadas** (Ana Silva e Carlos Mendes aparecem duas vezes)
+-   **Linha totalizadora** no final que não é uma observação real
+-   **Valores inconsistentes** em `Departamento` e `status` (variações de maiúsculas)
+-   **Linha com NA** em `Nome Completo`
+
+Esses são exatamente os problemas que o `janitor` resolve.
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Os 9 passos
+:::
+
+------------------------------------------------------------------------
+
+## Passo 1 - Padronizar nomes de colunas com clean_names()
+
+-   **Problema:** nomes com espaço, acento, parênteses e símbolo `%` quebram pipelines e exigem aspas em todo acesso.
+
+```{r}
+#| label: passo1-codigo
+
+# clean_names() converte todos os nomes para snake_case minúsculo
+# remove acentos, espaços, parênteses e caracteres especiais
+dados_p1 <- dados_sujos |>
+  clean_names()
+```
+
+------------------------------------------------------------------------
+
+## Passo 1 - Resultado
+
+```{r}
+#| label: passo1-output
+
+names(dados_p1)
+```
+
+-   Antes: `Nome Completo`, `Salário (R$)`, `% Avaliação`
+
+-   Depois: `nome_completo`, `salario_r`, `percent_avaliacao`
+
+> **Todos os nomes são agora válidos como variáveis R sem necessidade de aspas ou backticks.**
+
+------------------------------------------------------------------------
+
+## Passo 2 - Remover colunas completamente vazias com remove_empty()
+
+-   **Problema:** colunas sem nenhum valor ocupam espaço, geram confusão e podem causar erro em funções que iteram sobre colunas.
+
+```{r}
+#| label: passo2-codigo
+
+# remove_empty() elimina colunas e/ou linhas 100% NA
+# "cols" remove colunas, "rows" remove linhas, c("rows","cols") remove ambas
+dados_p2 <- dados_p1 |>
+  remove_empty(which = "cols")
+```
+
+------------------------------------------------------------------------
+
+## Passo 2 - Resultado
+
+```{r}
+#| label: passo2-output
+
+names(dados_p2)
+```
+
+-   A coluna `coluna_vazia` foi removida.
+
+-   O dataset passou de 7 para 6 colunas.
+
+------------------------------------------------------------------------
+
+## Passo 3 - Remover linhas completamente vazias com remove_empty()
+
+-   **Problema:** linhas sem nenhuma informação precisam ser identificadas e eliminadas antes de qualquer análise.
+
+```{r}
+#| label: passo3-codigo
+
+# "rows" remove linhas onde todos os valores são NA
+dados_p3 <- dados_p2 |>
+  remove_empty(which = "rows")
+```
+
+------------------------------------------------------------------------
+
+## Passo 3 - Resultado
+
+```{r}
+#| label: passo3-output
+
+nrow(dados_p2)
+nrow(dados_p3)
+```
+
+**Uma linha foi removida. O dataset passou de 10 para 9 linhas.**
+
+------------------------------------------------------------------------
+
+## Passo 4 - Remover linha totalizadora com row_to_names() e filter()
+
+-   **Problema:** planilhas exportadas de sistemas frequentemente incluem uma linha de totais no final.
+
+-   Essa linha não é uma observação e distorce cálculos.
+
+```{r}
+#| label: passo4-codigo
+
+# Identificar e remover a linha onde nome_completo == "TOTAL"
+# Esse padrão varia: pode ser "Total", "TOTAL", "Grand Total"
+dados_p4 <- dados_p3 |>
+  filter(!str_to_upper(nome_completo) == "TOTAL")
+```
+
+------------------------------------------------------------------------
+
+## Passo 4 - Resultado
+
+```{r}
+#| label: passo4-output
+
+dados_p4 |> select(nome_completo, salario_r)
+```
+
+-   A linha "TOTAL" foi removida.
+
+-   O salário de R\$ 49.900 que distorceria qualquer média não está mais no dataset.
+
+------------------------------------------------------------------------
+
+## Passo 5 - Remover duplicatas com get_dupes() e distinct()
+
+-   **Problema:** linhas duplicadas inflam contagens, distorcem médias e podem gerar erros em joins.
+
+-   O `janitor` oferece `get_dupes()` para investigar as duplicatas antes de removê-las.
+
+```{r}
+#| label: passo5-diagnostico
+
+# get_dupes() identifica e exibe as linhas duplicadas com contagem
+dados_p4 |>
+  get_dupes(nome_completo)
+```
+
+------------------------------------------------------------------------
+
+## Passo 5 - Removendo as duplicatas
+
+```{r}
+#| label: passo5-codigo
+
+# distinct() mantém apenas a primeira ocorrência de cada combinação
+# .keep_all = TRUE mantém todas as colunas
+dados_p5 <- dados_p4 |>
+  distinct(nome_completo, .keep_all = TRUE)
+```
+
+```{r}
+#| label: passo5-output
+
+nrow(dados_p4)
+nrow(dados_p5)
+```
+
+-   O dataset passou de 8 para 6 linhas.
+
+-   Ana Silva e Carlos Mendes agora aparecem uma única vez.
+
+------------------------------------------------------------------------
+
+## Passo 6 - Padronizar texto com str_to_title() e str_squish()
+
+-   **Problema:** o mesmo valor registrado de formas diferentes (`RH`, `rh`, `Ativo`, `ATIVO`, `ativo`) impede agrupamentos, joins e filtros corretos.
+
+```{r}
+#| label: passo6-codigo
+
+# str_to_title() capitaliza a primeira letra de cada palavra
+# str_squish() remove espaços extras no início, fim e entre palavras
+dados_p6 <- dados_p5 |>
+  mutate(
+    nome_completo  = str_to_title(str_squish(nome_completo)),
+    departamento   = str_to_title(str_squish(departamento)),
+    status         = str_to_title(str_squish(status)))
+```
+
+------------------------------------------------------------------------
+
+## Passo 6 - Resultado
+
+```{r}
+#| label: passo6-output
+
+dados_p6 |> select(nome_completo, departamento, status)
+```
+
+-   `rh` e `RH` agora são `Rh`. `ativo` e `ATIVO` agora são `Ativo`.
+
+-   Os valores estão padronizados para permitir agrupamentos corretos.
+
+------------------------------------------------------------------------
+
+## Passo 7 - Converter tipos com convert() e as.Date()
+
+-   **Problema:** colunas importadas de CSV ou planilhas frequentemente chegam como `character` mesmo quando deveriam ser numéricas ou de data.
+
+-   Isso impede cálculos e ordenações.
+
+```{r}
+#| label: passo7-codigo
+
+# Verificar tipos antes da conversão
+glimpse(dados_p6)
+```
+
+------------------------------------------------------------------------
+
+## Passo 7 - Convertendo os tipos
+
+```{r}
+#| label: passo7-conversao
+
+dados_p7 <- dados_p6 |>
+  mutate(
+    # Converter data de character para Date
+    data_de_admissao = as.Date(data_de_admissao),
+    # Garantir que salário é numérico
+    salario_r        = as.numeric(salario_r),
+    # Converter status para fator ordenado
+    status = factor(status, levels = c("Inativo", "Ativo")))
+```
+
+```{r}
+#| label: passo7-output
+
+glimpse(dados_p7)
+```
+
+------------------------------------------------------------------------
+
+## Passo 8 - Verificar e tratar NA com tabyl() e replace_na()
+
+-   **Problema:** valores ausentes em variáveis-chave comprometem análises.
+
+-   Antes de remover ou imputar, é preciso entender onde estão os NA e em qual proporção.
+
+```{r}
+#| label: passo8-diagnostico
+
+# tabyl() cria tabelas de frequência com percentuais automáticos
+# Útil para auditar distribuição de categorias e identificar NA
+dados_p7 |>
+  tabyl(departamento) |>
+  adorn_pct_formatting()
+```
+
+------------------------------------------------------------------------
+
+## Passo 8 - Auditando NA por coluna
+
+```{r}
+#| label: passo8-na
+
+# Verificar quantidade de NA por coluna
+dados_p7 |>
+  summarise(across(everything(), ~ sum(is.na(.)))) |>
+  pivot_longer(everything(),
+               names_to  = "coluna",
+               values_to = "qtd_na") |>
+  filter(qtd_na > 0)
+```
+
+------------------------------------------------------------------------
+
+## Passo 9 - Tabela de frequência final com tabyl()
+
+-   **Problema:** após a limpeza, é necessário validar que a distribuição dos dados faz sentido.
+
+-   O `tabyl()` faz isso em uma linha e já retorna percentuais.
+
+```{r}
+#| label: passo9-codigo
+
+# tabyl() + adorn_ para formatação profissional da tabela
+dados_p7 |>
+  tabyl(departamento, status) |>
+  adorn_totals(where = c("row", "col")) |>
+  adorn_percentages("row") |>
+  adorn_pct_formatting(digits = 1) |>
+  adorn_ns()
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# O dataset antes e depois
+:::
+
+------------------------------------------------------------------------
+
+## Antes: dataset sujo
+
+```{r}
+#| label: antes-final
+#| echo: false
+
+dados_sujos |>
+  kable(caption = "Dataset original - antes da limpeza") |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = TRUE, font_size = 11)
+```
+
+------------------------------------------------------------------------
+
+## Depois: dataset limpo
+
+```{r}
+#| label: depois-final
+#| echo: false
+
+dados_p7 |>
+  kable(caption = "Dataset limpo - após os 9 passos") |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover"),
+    full_width = TRUE, font_size = 11)
+```
+
+------------------------------------------------------------------------
+
+## O pipeline completo em um bloco
+
+```{r}
+#| label: pipeline-completo
+#| eval: false
+
+dados_limpos <- dados_sujos |>
+
+  # Passo 1: padronizar nomes de colunas
+  clean_names() |>
+
+  # Passos 2 e 3: remover colunas e linhas completamente vazias
+  remove_empty(which = c("cols", "rows")) |>
+
+  # Passo 4: remover linha totalizadora
+  filter(!str_to_upper(nome_completo) == "TOTAL") |>
+
+  # Passo 5: remover linhas duplicadas
+  distinct(nome_completo, .keep_all = TRUE) |>
+
+  # Passo 6: padronizar texto
+  mutate(
+    nome_completo = str_to_title(str_squish(nome_completo)),
+    departamento  = str_to_title(str_squish(departamento)),
+    status        = str_to_title(str_squish(status))) |>
+
+  # Passo 7: converter tipos
+  mutate(
+    data_de_admissao = as.Date(data_de_admissao),
+    salario_r        = as.numeric(salario_r),
+    status           = factor(status, levels = c("Inativo", "Ativo")))
+```
+
+------------------------------------------------------------------------
+
+## Resumo dos 9 passos
+
+| Passo | Função                            | O que resolve              |
+|-------|-----------------------------------|----------------------------|
+| 1     | `clean_names()`                   | Nomes de colunas inválidos |
+| 2     | `remove_empty("cols")`            | Colunas 100% NA            |
+| 3     | `remove_empty("rows")`            | Linhas 100% NA             |
+| 4     | `filter()`                        | Linha totalizadora         |
+| 5     | `get_dupes()` + `distinct()`      | Linhas duplicadas          |
+| 6     | `str_to_title()` + `str_squish()` | Texto inconsistente        |
+| 7     | `as.Date()` + `as.numeric()`      | Tipos incorretos           |
+| 8     | `tabyl()`                         | Diagnóstico de NA          |
+| 9     | `tabyl()` + `adorn_*()`           | Validação da limpeza       |
+
+------------------------------------------------------------------------
+
+## Boas práticas
+
+-   **Nunca sobrescreva o dataset original.**
+-   Sempre crie um objeto novo a cada passo durante o desenvolvimento
+-   **Use `get_dupes()` antes de `distinct()`** para entender o que está sendo removido, não apenas remover às cegas
+-   **Registre as decisões de limpeza** como comentários no código: por que aquela linha foi removida, qual foi o critério
+-   **`tabyl()` no início e no final** de qualquer limpeza: antes para diagnosticar, depois para validar
+
+------------------------------------------------------------------------
+
+## Erros comuns
+
+| Situação | Problema | Solução |
+|----|----|----|
+| `clean_names()` gerou nomes iguais | Colunas tinham nomes distintos mas que resultaram no mesmo snake_case | Renomear manualmente após `clean_names()` |
+| `remove_empty()` removeu coluna com dados | Coluna tinha quase todos NA mas não todos | Usar `remove_constant()` ou filtrar manualmente |
+| `distinct()` removeu linha errada | Duplicatas com valores diferentes | Especificar todas as colunas-chave em `distinct()` |
+
+------------------------------------------------------------------------
+
+## Conexão com o mercado
+
+-   Limpeza de dados consome entre **60% e 80% do tempo** de um projeto de análise segundo pesquisas da área.
+
+-   O `janitor` não elimina esse tempo, mas reduz o esforço de tarefas repetitivas e torna o processo rastreável e reproduzível.
+
+## Referências
+
+-   Documentação do janitor: [sfirke.github.io/janitor](https://sfirke.github.io/janitor)
+-   R for Data Science - Tidy Data: [r4ds.hadley.nz/data-tidy](https://r4ds.hadley.nz/data-tidy)
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center"}
+
+**Continue praticando e explorando!**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> Que cada gole desperte uma nova ideia.
+>
+> Que cada script abra uma nova conversa.
+>
+> Que o Café com R se torne um ponto de encontro nosso.
+
+[![](imagens/qrcode.png){style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" fig-align="center" width="300"}](https://jenniferlopes.quarto.pub/portifolio/)

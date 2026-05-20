@@ -1,0 +1,106 @@
+---
+title: "Projetos YouTube"
+description: "Materiais dos projetos, aulas e newsletter do Café com R, vou usar sempre essa página para divulgar os projetos do canal."
+page-layout: full
+toc: false
+---
+
+```{=html}
+<style>
+  .newsletter-banner {
+    background-color: #f2f2f2;
+    border-left: 5px solid #4A6FA5;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 0 auto 2rem auto;
+    max-width: 900px;
+  }
+
+  .newsletter-banner p {
+    margin: 0 0 12px 0;
+    color: #224573;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .newsletter-banner a {
+    display: inline-block;
+    background-color: #224573;
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 10px 22px;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+  }
+
+  .newsletter-banner a:hover {
+    background-color: #4A6FA5;
+  }
+
+  .iframe-wrapper {
+    width: 100%;
+    max-width: 900px;
+    margin: 1rem auto 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(34, 69, 115, 0.12);
+  }
+
+  .iframe-wrapper iframe {
+    width: 100%;
+    height: 780px;
+    border: none;
+    display: block;
+  }
+</style>
+```
+
+<br>\
+**Cadastre para receber os Materiais dos Projetos**
+
+```{=html}
+<div class="newsletter-banner">
+  <p>
+    Você recebe os materiais dos projetos, a newsletter e as aulas do Café com R.
+    Conteúdo organizado por tema, com código reproduzível e contexto de aplicação.
+  </p>
+  <a href="https://cafecomr-conteudos.lovable.app/" target="_blank" rel="noopener noreferrer">
+    Cadastre e receba de primeira sempre
+  </a>
+</div>
+```
+
+<br>
+
+## Canal YouTube - Café com R
+
+Tutoriais em R, projetos completos do zero ao resultado final, explicações de conceitos estatísticos e muito mais do universo do R. Todos os vídeos com foco em aplicação prática e reprodutibilidade.
+
+<br>
+
+**Acesse o site completo clicando [`aqui`](https://cafecomr-youtube.lovable.app/).**
+
+<br>
+
+```{=html}
+<div class="iframe-wrapper">
+  <iframe
+    src="https://cafecomr-youtube.lovable.app/"
+    title="Canal YouTube Café com R"
+    loading="lazy"
+    allowfullscreen>
+  </iframe>
+</div>
+```
+
+<br>
+
+# Projeto 1: **Do Zero ao site no ar com Quarto**
+
+1.  **Repositório no GitHub com todos os projetos que serão desenvolvidos:** <https://github.com/JenniferLopes/projetos_YouTube>
+2.  **Repositório da Apostila no GitHub:** <https://github.com/JenniferLopes/projeto1_portifolio>
+3.  **Link da Apostila:** <https://projetoportifolio-nor.netlify.app/>
+4.  **Repositório do site criado:** No final das gravações estará disponível

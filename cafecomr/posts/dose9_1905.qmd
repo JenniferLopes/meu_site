@@ -1,0 +1,379 @@
+---
+title: "Café com R"
+subtitle: "Edição 09: across(): quando você percebe que está repetindo código, já é tarde demais"
+author: "Jennifer Luz Lopes"
+date: "2026-05-19"
+categories: [Newsletter, Técnica, Tidyverse, dplyr]
+image: ../imagens/cafe9.png
+image-alt: ""
+description: "O across() não é só uma função. É o sinal de que você parou de escrever código e começou a pensar em código. Esta edição mostra o problema que ele resolve, como funciona e onde faz diferença com exemplos em mutate(), summarise() e filter()."
+css: estilo_jeni.css
+---
+
+::: {style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;"}
+- *Que cada **gole** desperte uma nova ideia.*
+- *Que cada **script** abra uma nova conversa.*
+- *Que o **Café com R** se torne um ponto de encontro nosso.*
+:::
+
+<br>
+
+## O gole da semana
+
+<br>
+
+> **Você já se pegou escrevendo a mesma linha de código quatro vezes seguidas, mudando apenas o nome da coluna?**
+
+**Se já passou por isso, sabe exatamente como é.**
+
+O código funciona. **Ufa**
+
+Os resultados estão certos. **Que beleza**!
+
+**Mas há algo incômodo naquele bloco, uma sensação de que existe uma forma melhor de fazer aquilo, e que você ainda não chegou lá.** 😬
+
+::: callout-important
+Esse incômodo tem **nome**.
+
+Chama-se **reconhecimento de padrão**.
+
+**E é um dos sinais mais confiáveis de que você está avançando.**
+:::
+
+**`IMPORTANTE`**
+
+- Quem está começando reproduz código. **Isso é normal, faz parte do processo**.
+
+- Quem está avançando percebe padrões no código que reproduz.
+
+- Quem está mais avançado ainda aprende a abstrair esses padrões em estruturas que escalam, que funcionam para cinco colunas da mesma forma que funcionam para cinquenta, sem que você precise alterar nada.
+
+::: callout-tip
+O **`across()`** é uma dessas estruturas.
+
+Ele não resolve um problema novo.
+
+**Ele resolve um problema antigo de uma forma que muda a forma como você pensa sobre transformação de dados.**
+:::
+
+**Esta edição é sobre esse momento de mudança.**
+
+<br>
+
+------------------------------------------------------------------------
+
+## A dose técnica
+
+<br>
+
+### O problema que você provavelmente já teve
+
+- Imagine que você tem um conjunto de dados com várias colunas numéricas e precisa arredondar todas elas para duas casas decimais.
+
+- Ou calcular a média de cada uma.
+
+- Ou substituir os valores ausentes por zero.
+
+***Como você faria?***
+
+**Se você aprendeu `mutate()` antes de conhecer `across()`, a resposta mais provável é esta:**
+
+``` r
+library(tidyverse)
+
+airquality |>
+  mutate(
+    Ozone   = round(Ozone,   2),
+    Solar.R = round(Solar.R, 2),
+    Wind    = round(Wind,    2),
+    Temp    = round(Temp,    2))
+```
+
+**O código funciona.**
+
+::: callout-caution
+**Mas repare no que está acontecendo:** você está escrevendo **`round(..., 2)`** quatro vezes.
+:::
+
+A única coisa que muda entre uma linha e a próxima é o nome da coluna.
+
+**Agora pense no que acontece quando o conjunto de dados muda.** Atenção aqui.
+
+- Uma coluna nova é adicionada.
+
+- **Outra é removida. Você precisa lembrar de atualizar o `mutate()` manualmente e se esquecer, o código continua rodando sem erro, mas sem processar a coluna nova.**
+
+::: callout-caution
+Esse é o problema. Vejo muito nos scripts que chegam até mim.
+
+Não é a repetição em si.
+
+**É a fragilidade que a repetição cria.**
+:::
+
+<br>
+
+### O que o `across()` faz
+
+- O `across()` permite aplicar uma ou mais funções a múltiplas colunas de uma vez, dentro de `mutate()`, `summarise()` ou `filter()`.
+
+- Em vez de repetir a mesma operação coluna por coluna, você descreve o padrão uma única vez.
+
+**A estrutura é simples, vejam:**
+
+``` r
+across(.cols, .fns, .names)
+```
+
+Três argumentos:
+
+- **`.cols`**: quais colunas selecionar. Aceita nomes diretos, helpers de seleção como **`where()`**, **`starts_with()`**, **`ends_with()`**, ou vetores de nomes.
+- **`.fns`**: qual função aplicar. Pode ser uma função simples, uma função anônima com `\(x)`, ou uma lista nomeada de funções.
+- **`.names`**: como nomear as colunas resultantes. Opcional, mas importante quando você aplica múltiplas funções.
+
+**O mesmo código anterior, reescrito com `across()`:**
+
+``` r
+airquality |>
+  mutate(across(c(Ozone, Solar.R, Wind, Temp), ~ round(.x, 2)))
+```
+
+**O resultado é idêntico.**
+
+> **Mas a lógica agora mudou:** você declarou o que quer fazer, arredondar para duas casas e quais colunas recebem essa operação.
+>
+> **Se uma coluna nova aparecer no conjunto de dados, basta incluí-la na seleção.**
+
+<br>
+
+### Seleção dinâmica com `where()` e `starts_with()`
+
+Aqui é onde o `across()` ganha o seu **coraçãozinho**!
+
+**Você percebe o que está acontecendo no exemplo anterior?**
+
+- Ainda estamos listando os nomes das colunas manualmente. Se o conjunto de dados mudar, ainda precisamos lembrar de atualizar a lista.
+
+- A solução é usar seleção dinâmica, deixar o R descobrir quais colunas aplicar a função, com base em uma condição. 🤭
+
+**`where()`** seleciona colunas que satisfazem uma condição lógica:
+
+``` r
+# Arredondar todas as colunas numéricas - sem listar nenhuma pelo nome
+airquality |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+::: callout-tip
+**Agora o código não depende mais dos nomes das colunas.**
+
+Se amanhã o conjunto de dados ganhar três colunas numéricas novas, o **`across()`** as incluirá automaticamente.
+
+Se uma coluna for removida, nenhum erro será gerado.
+:::
+
+**Isso é o que significa código que escala.**
+
+**`starts_with()`** e seus equivalentes selecionam colunas pelo padrão do nome:
+
+``` r
+# Selecionar apenas colunas cujo nome começa com "S"
+airquality |>
+  summarise(across(starts_with("S"), mean, na.rm = TRUE))
+```
+
+**Outros helpers úteis na mesma lógica:**
+
+| Helper                  | O que seleciona                                  |
+|--------------------------|----------------------------------------------|
+| `starts_with("x")`      | Colunas cujo nome começa com "x"                 |
+| `ends_with("_id")`      | Colunas cujo nome termina com "\_id"             |
+| `contains("data")`      | Colunas cujo nome contém "data"                  |
+| `matches("^col_[0-9]")` | Colunas que correspondem a uma expressão regular |
+| `where(is.numeric)`     | Colunas numéricas                                |
+| `where(is.character)`   | Colunas de texto                                 |
+
+<br>
+
+### `across()` dentro de `mutate()`
+
+**O caso mais comum.**
+
+**Você quer transformar várias colunas ao mesmo tempo.**
+
+- O dataset `airquality` tem valores ausentes nas colunas `Ozone` e `Solar.R`. Suponha que você queira substituir todos os valores ausentes nas colunas numéricas por zero, **uma decisão analítica discutível, mas útil para ilustrar o padrão**:
+
+``` r
+# Substituir NA por 0 em todas as colunas numéricas
+airquality |>
+  mutate(across(where(is.numeric), ~ replace_na(.x, 0)))
+```
+
+**Ou normalizar todas as colunas numéricas para a escala de 0 a 1:**
+
+``` r
+# Normalização min-max em todas as colunas numéricas
+airquality |>
+  mutate(across(
+    where(is.numeric),
+    ~ (.x - min(.x, na.rm = TRUE)) /
+      (max(.x, na.rm = TRUE) - min(.x, na.rm = TRUE))))
+```
+
+- Repare na função anônima `\(x)` - ou na notação `~ .x` do tidyverse.
+
+- Quando a transformação não é uma função simples, você escreve a lógica inline. O `.x` representa cada coluna que o `across()` está processando.
+
+::: callout-tip
+Uma pergunta que ajuda a decidir quando usar **`across()`** no **`mutate()`**:
+
+> se eu precisar aplicar essa mesma transformação em uma coluna nova amanhã, vou precisar alterar o código?
+>
+> Se a resposta for sim, **`across()`** com seleção dinâmica provavelmente resolve.
+:::
+
+<br>
+
+### `across()` dentro de `summarise()`
+
+- Aqui o `across()` é ótimo. Vejam só:
+
+- Calcular estatísticas resumidas para múltiplas colunas é um dos padrões mais frequentes em análise exploratória e sem `across()`, o código cresce de forma proporcional ao número de colunas.
+
+``` r
+# Média de todas as colunas numéricas, removendo ausentes
+airquality |>
+  summarise(across(where(is.numeric), mean, na.rm = TRUE))
+```
+
+- Mas o que torna o `across()` dentro de `summarise()` ainda mais poderoso é a possibilidade de aplicar múltiplas funções ao mesmo tempo, com nomes controlados:
+
+``` r
+# Média e desvio padrão de todas as colunas numéricas
+airquality |>
+  summarise(across(
+    where(is.numeric),
+    list(media = ~ mean(.x, na.rm = TRUE),
+         dp    = ~ sd(.x,   na.rm = TRUE)),
+    .names = "{.col}_{.fn}"))
+```
+
+::: callout-tip
+O argumento `.names = "{.col}_{.fn}"` controla como as colunas resultantes são nomeadas: `{.col}` é substituído pelo nome da coluna original e `{.fn}` pelo nome da função na lista.
+
+O resultado será colunas como `Ozone_media`, `Ozone_dp`, `Wind_media`, `Wind_dp` e assim por diante.
+:::
+
+- Você consegue ver o que aconteceria sem `across()` aqui? Seriam oito linhas de `summarise()`, uma para cada combinação de coluna e estatística. E se uma coluna nova aparecesse, seriam mais duas linhas. Com `across()`, o código não muda.
+
+**Combinado com `group_by()`, o padrão fica ainda melhor:**
+
+``` r
+# Média de todas as colunas numéricas por mês
+airquality |>
+  group_by(Month) |>
+  summarise(across(
+    where(is.numeric),
+    ~ mean(.x, na.rm = TRUE),
+    .names = "{.col}_media"))
+```
+
+<br>
+
+### `across()` dentro de `filter()`
+
+**Esse uso é menos conhecido e por isso vale atenção.**
+
+- O `filter()` normalmente recebe uma condição lógica sobre uma coluna.
+
+- Mas e quando você quer filtrar linhas onde qualquer coluna numérica tem valor ausente? Ou onde todas as colunas de um determinado grupo satisfazem uma condição?
+
+- Para isso existe o `if_any()` e o `if_all()` - dois helpers que trabalham junto com `across()` dentro de `filter()`.
+
+- **`if_any()`** retorna verdadeiro se a condição for satisfeita em pelo menos uma das colunas selecionadas:
+
+``` r
+# Remover linhas onde qualquer coluna numérica tem valor ausente
+airquality |>
+  filter(!if_any(where(is.numeric), is.na))
+```
+
+- **`if_all()`** retorna verdadeiro apenas se a condição for satisfeita em todas as colunas selecionadas:
+
+``` r
+# Manter apenas linhas onde todas as colunas numéricas têm valor
+airquality |>
+  filter(if_all(where(is.numeric), ~ !is.na(.x)))
+```
+
+- **Para ver um exemplo com mais colunas, o dataset `storms` do dplyr tem dados de tempestades tropicais com várias variáveis meteorológicas numéricas:**
+
+``` r
+# Tempestades onde vento, pressão e diâmetro têm valores registrados
+storms |>
+  filter(if_all(c(wind, pressure, tropicalstorm_force_diameter),
+                ~ !is.na(.x))) |>
+  select(name, year, wind, pressure, tropicalstorm_force_diameter)
+```
+
+::: callout-important
+A pergunta que vale fazer aqui: antes de conhecer `if_any()` e `if_all()`, como você resolveria isso?
+
+Provavelmente com múltiplos `filter()` encadeados, um por coluna.
+
+O código funcionaria, mas não escalaria para dez colunas da mesma forma que uma linha com `if_all()` escala.
+:::
+
+<br>
+
+### O que muda quando você adota `across()`
+
+**Não é só o código que fica mais limpo. É a forma como você pensa sobre o problema.**
+
+- Quando você escreve `mutate()` coluna por coluna, está pensando em cada coluna individualmente. Quando você escreve **`across(where(is.numeric), ...)`**, está pensando em uma propriedade do conjunto de dados "**todas as colunas numéricas**" e aplicando uma operação a essa propriedade.
+
+Essa mudança de perspectiva tem consequências práticas. Código que opera sobre propriedades em vez de nomes específicos é mais robusto a mudanças nos dados. É mais fácil de revisar porque a intenção está explícita. E é mais fácil de reutilizar porque não está acoplado à estrutura específica de um conjunto de dados.
+
+Você vai continuar usando `mutate()` sem `across()` para transformações simples em colunas específicas e está certo fazê-lo. O `across()` não substitui o `mutate()` coluna a coluna. Ele complementa, para os casos onde o padrão de repetição aparece.
+
+**A habilidade está em reconhecer quando esse padrão aparece. E agora que você sabe o que ele parece, vai começar a vê-lo em todo lugar.**
+
+<br>
+
+------------------------------------------------------------------------
+
+## O que estou acompanhando
+
+<br>
+
+**Documentação oficial do `across()` - dplyr** A documentação do dplyr tem exemplos detalhados de `across()`, `if_any()` e `if_all()`, incluindo os casos de uso menos óbvios. Vale manter aberta enquanto pratica: [dplyr.tidyverse.org/reference/across.html](https://dplyr.tidyverse.org/reference/across.html)
+
+<br>
+
+------------------------------------------------------------------------
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;"}
+**Próxima edição - Cafezinho 10 - 26 de maio**
+
+**O que reportar em conjunto/alternativa ao p-valor?**
+:::
+
+<br>
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;"}
+**Tem projeto no Youtube!!**
+
+Os vídeos estão sendo lançados, **mas já temos 5 disponíveis**.
+
+[Clique aqui, acesse os materiais](https://jenniferlopes.quarto.pub/portifolio/youtube.html)
+:::
+
+<br>
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;"}
+**Gostou desta edição?**
+
+Assine o Café com R e receba conteúdo de R e Ciência de Dados.
+
+[**Clique aqui**](https://cafecomr-conteudos.lovable.app/)
+:::

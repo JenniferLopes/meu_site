@@ -1,0 +1,194 @@
+---
+title: "Café com R"
+subtitle: "Por que comecei o Café com R e o que aprendi até aqui"
+author: "Jennifer Luz Lopes"
+date: "2026-05-12"
+categories: [Newsletter, Vivência, Café com R]
+image: ../imagens/cafe8.png
+image-alt: ""
+description: "Mais uma edição da newsletter do Café com R. Sobre o que motivou este projeto, o que ensino porque domino, o que estudo enquanto ensino e para onde vai."
+css: estilo_jeni.css
+---
+
+::: {style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;"}
+-   *Que cada **gole** desperte uma nova ideia.*
+-   *Que cada **script** abra uma nova conversa.*
+-   *Que o **Café com R** se torne um ponto de encontro nosso.*
+:::
+
+<br>
+
+## O gole da semana
+
+<br>
+
+**Há `duas` formas de ensinar.**
+
+1.  **A primeira é ensinar o que você já domina.**
+
+Você conhece o caminho, sabe onde estão as armadilhas, consegue antecipar a dúvida antes que ela apareça. O conteúdo sai com mais fluidez porque passou por você muitas vezes antes de chegar ao papel.
+
+2.  **A segunda é ensinar enquanto aprende.**
+
+Você escolhe um assunto que ainda está construindo, mergulha nele com o compromisso de explicar para alguém, e descobre que esse compromisso força um nível de compreensão que a leitura passiva nunca alcança. Quando você precisa explicar, é obrigado a entender de verdade.
+
+**O Café com R vive das duas formas ao mesmo tempo.**
+
+Há conteúdo que ensino porque domino - manipulação de dados com tidyverse, visualização com ggplot2, estrutura de projetos, fluxos de análise, estatística que aplico há anos. Esses temas saem com segurança porque já foram testados, revisados e aplicados em contextos reais repetidas vezes.
+
+E há conteúdo que estudo enquanto ensino - modelagem com tidymodels, aqui eu usava o pacote Caret, integração de ferramentas de engenhria. Esses temas chegam às aulas porque estou aprendendo ativamente, colocando em prática, errando e ajustando. .
+
+Essa distinção importa porque define o tom do que você vai encontrar aqui.
+
+> **Não é um canal de quem chegou ao destino e está explicando o mapa. É o registro de uma jornada em andamento, com os trechos que já conheço bem e os que ainda estou percorrendo pela primeira vez.**
+
+<br>
+
+------------------------------------------------------------------------
+
+## A dose técnica
+
+<br>
+
+### O que é o Café com R
+
+**O Café com R é um projeto de democratização do R.**
+
+**Essa palavra, democratização, carrega um compromisso específico:** o conteúdo é aberto, gratuito e produzido com o cuidado de ser acessível para quem está **começando** sem deixar de ser relevante para quem já **avançou**.
+
+**Isso não é fácil de equilibrar. Confesso para vocês.**
+
+Conteúdo muito introdutório perde quem já tem base.
+
+Conteúdo muito avançado afasta quem está chegando agora.
+
+> A solução que encontrei foi não tentar resolver esse equilíbrio dentro de cada peça de conteúdo, mas **distribuí-lo ao longo do projeto**. Algumas aulas são de fundamentos. Outras pressupõem que você já sabe o básico.
+>
+> **A newsletter vai funcionar da mesma forma.**
+
+**O projeto nasceu de uma necessidade pessoal.**
+
+Eu aprendia R de forma fragmentada, um tutorial aqui, uma documentação ali, um código que funcionava sem eu entender exatamente por quê. Sentia falta de um lugar que tratasse os conceitos com profundidade, que não pulasse as partes difíceis e que usasse dados com contexto real, não apenas exemplos didáticos desconectados de qualquer problema.
+
+**Quando não encontrei esse lugar, decidi construir.**
+
+<br>
+
+### O que o projeto cobre hoje
+
+**O Café com R tem três frentes principais que se complementam:**
+
+1.  **As aulas abertas** são o núcleo técnico. Cada aula é um documento Quarto em formato de apresentação, com código reproduzível, outputs e dados simulados, públicos ou abertos.
+
+-   As aulas já cobrem estatística descritiva e inferencial, modelagem estatística com o fluxo completo e muito mais. Cada aula tem código com `eval: false` para mostrar a sintaxe e código com `echo: false` para mostrar o output - o leitor vê o que escrever e o que esperar.
+
+2.  **Os tutoriais** são documentos mais longos, com narrativa mais densa. O tutorial de automação da newsletter - que documenta como construí o sistema de captura de inscritos com n8n, Google Sheets e Gmail, é um exemplo do que esse formato propõe: não apenas o passo a passo técnico, mas os erros que cometi, as decisões que tomei e os conceitos que precisei entender para chegar ao resultado.
+3.  **A newsletter** é o espaço da reflexão. Não é onde ensino um pacote do início ao fim. É onde trago um recorte, uma observação, uma conexão entre conceitos que me pareceu importante. A diferença entre a aula e a newsletter é a mesma diferença entre uma aula e uma conversa de corredor depois da aula, o conteúdo é relacionado, mas o formato e o propósito são diferentes.
+
+<br>
+
+### Como eu aprendo o que ensino
+
+**Esse ponto merece atenção porque define algo importante sobre a natureza do conteúdo que produzo.**
+
+1.  Há temas que domino porque trabalhei com eles por anos. Estatística, manipulação de dados com dplyr e tidyr, visualização com ggplot2, organização de projetos, documentação com Quarto - esses conteúdos foram testados em projetos reais, revisados muitas vezes e chegam às aulas com uma segurança que só o tempo e a prática constroem.
+
+-   Há outros temas que aprendo enquanto preparo as aulas. Quando decidi incluir tidymodels na sequência de modelagem, li a documentação, testei os workflows, errei na configuração das receitas, corrigi e depois documentei. A aula é o resultado desse processo - não o ponto de partida.
+
+> Esse modo de aprender tem um nome na literatura educacional: aprendizagem pela transmissão, ou *learning by teaching*. A evidência de que explicar um conceito para outra pessoa consolida a compreensão de quem explica é robusta.
+>
+> **Mas além do efeito cognitivo, há um efeito de responsabilidade:** quando você vai publicar o que está aprendendo, a tolerância para o vago e o impreciso cai. Você é obrigado a resolver as lacunas antes de colocar o conteúdo no mundo kskskskksks!
+
+**Isso significa que o que você encontra aqui foi testado.**
+
+<br>
+
+### O que funcionou até aqui
+
+**Duas escolhas produziram resultados consistentes desde o início do projeto.**
+
+1.  **A primeira foi a decisão de documentar erros**. As seções de erros que encontrei e como resolvi, que aparecem nos tutoriais e nos blocos de diagnóstico das aulas, são as partes mais lidas.
+
+Isso não é surpresa. Erros documentados têm valor porque são honestos e porque economizam horas de quem está no mesmo caminho.
+
+Um erro de configuração OAuth que me custou meia hora de depuração, registrado com clareza, pode poupar essa mesma meia hora para dezenas de pessoas.
+
+2.  **A segunda foi a decisão de escrever com precisão técnica sem perder a acessibilidade.** Isso significou, entre outras coisas, não usar atalhos de linguagem que disfarçam imprecisão conceitual.
+
+Quando você não pode escrever **"basicamente é assim que funciona"**, é obrigado a explicar como realmente funciona. Esse compromisso com a precisão tornou o conteúdo melhor.
+
+<br>
+
+### O que não funcionou
+
+**A irregularidade foi o problema.**
+
+**Publicar quando o conteúdo estava pronto, sem um ciclo definido, criou dois problemas distintos.**
+
+1.  O leitor não sabia quando esperar o próximo conteúdo e sem expectativa, o hábito de leitura não se forma. E eu não tinha a pressão estruturada que um prazo impõe, o que tornava mais fácil adiar sem consequência visível.
+
+> **A newsletter semanal com data fixa é a resposta direta a esse problema. Um prazo, uma estrutura definida, um compromisso público.**
+
+2.  O segundo problema foi a ausência de separação clara entre os formatos. Quando aula e newsletter tentavam ocupar o mesmo espaço, o resultado era um híbrido que não servia completamente a nenhum dos dois propósitos. A aula é densa, técnica, com código e output. A newsletter é reflexiva, com um recorte específico e profundidade argumentativa. São formatos distintos que se complementam mas precisam ser tratados como distintos para funcionar.
+
+<br>
+
+### A estrutura desta newsletter
+
+**Cada edição semanal tem três partes fixas.**
+
+1.  **O gole da semana abre a edição com uma reflexão curta.**
+
+-   Não é tutorial, não tem código.
+
+-   É uma observação sobre dados, análise, estatística, carreira ou processo.
+
+-   <div>
+
+    > **O objetivo é criar um ponto de entrada que qualquer leitor consiga acessar, independentemente do nível técnico.**
+
+    </div>
+
+3.  **A dose técnica é o conteúdo principal.**
+
+-   Um recorte específico tratado com profundidade. Quando o assunto pede código, tem código.
+
+-   Quando pede argumento conceitual, tem argumento.
+
+-   **A diferença em relação às aulas é o escopo:** enquanto a aula cobre um tema completo do início ao fim, a newsletter escolhe um ângulo e vai fundo nele.
+
+3.  **O que estou acompanhando:** fecha a edição com dois ou três itens de curadoria um link com uma linha explicando por que vale a atenção.
+
+-   Essa seção só sai quando há algo genuinamente relevante para compartilhar.
+
+-   **Não existe cota mínima de links por edição.**
+
+<br>
+
+------------------------------------------------------------------------
+
+## O que estou acompanhando
+
+<br>
+
+**posit::conf(2025) - palestras disponíveis** Mais de 100 palestras e workshops da conferência anual da Posit estão disponíveis gratuitamente. O nível vai de intermediário a avançado, com conteúdo sobre R, Python, Quarto, Shiny e ferramentas de produção: [posit.co/blog/talks-and-workshops-from-posit-conf-2025](https://posit.co/blog/talks-and-workshops-from-posit-conf-2025/)
+
+**TidyTuesday** Desafio semanal de visualização de dados com datasets reais e documentados. O valor está menos nos dados em si e mais em ver como pessoas diferentes resolvem o mesmo problema, as soluções publicadas pela comunidade são uma fonte consistente de aprendizado sobre ggplot2 e tidyverse aplicados: [github.com/rfordatascience/tidytuesday](https://github.com/rfordatascience/tidytuesday)
+
+<br>
+
+------------------------------------------------------------------------
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;"}
+**Próxima edição - 19 de maio**
+
+**`across()`** - por que essa função mudou a forma como escrevo transformações de dados e quando ela faz diferença de verdade.
+:::
+
+<br>
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;"}
+**Gostou desta edição?** Assine o Café com R e receba conteúdo de R e Ciência de Dados a toda semana.
+
+[**Clique aqui**](https://cafecomr-conteudos.lovable.app/)
+:::

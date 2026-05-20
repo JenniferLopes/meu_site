@@ -1,0 +1,17 @@
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+lubridate
+janitor
+rstatix
+gtsummary
+kableExtra
+skimr
+patchwork
+scales

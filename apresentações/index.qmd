@@ -41,8 +41,7 @@ Acesse apresentações: <https://github.com/JenniferLopes/meu_site>
 >
 > Que o **Café com R**, se torne um ponto de encontro nosso!
 
-<br>
-<br>
+<br> <br>
 
 ```{=html}
 <iframe
@@ -54,5 +53,4 @@ Acesse apresentações: <https://github.com/JenniferLopes/meu_site>
 </iframe>
 ```
 
-<br>
-<br>
+<br> <br>

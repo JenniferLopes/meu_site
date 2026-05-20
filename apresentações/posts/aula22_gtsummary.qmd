@@ -1,0 +1,693 @@
+---
+title: "Aula 22. Como fazer tabelas profissionais no R"
+subtitle: "Tutorial completo com o pacote gtsummary"
+categories: [R, gtsummary, Tabelas, Estatística Descritiva, Regressão]
+image: "imagens/capa_aula22.png"
+description: "Aprenda a criar tabelas descritivas e de regressão prontas para publicação com o pacote gtsummary."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(gtsummary)
+library(tidyverse)
+```
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula foi construída para que você produza tabelas prontas para relatórios, artigos e apresentações com poucas linhas de código. Os dados usados são o conjunto `CO2`, disponível no R base. Todo o código está funcional e pronto para reproduzir.
+
+![](imagens/meguy.jpg){fig-align="center" width="420"}
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+[![Escaneia o QR Code e acessa o portfólio.](imagens/qrcode.png){style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" fig-align="center" width="380"}](https://jenniferlopes.quarto.pub/portifolio/)
+
+## Projetos no YouTube
+
+![](imagens/17.png){fig-align="center" width="514"}
+
+**Inscreva-se já no canal [Link](https://www.youtube.com/@jennifercafecomr/featured).**
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+-   Compreender o que é o pacote `gtsummary` e quando usá-lo
+-   Criar tabelas descritivas com `tbl_summary()`
+-   Comparar grupos com `add_p()` e `add_difference()`
+-   Apresentar resultados de modelos de regressão com `tbl_regression()`
+-   Combinar tabelas com `tbl_merge()` e `tbl_stack()`
+-   Exportar tabelas para Word, PDF e HTML
+:::
+
+------------------------------------------------------------------------
+
+## O pacote gtsummary
+
+[![Clique na imagem e acesse a documentação.](imagens/logogt.png){fig-align="center" width="220"}](https://www.danieldsjoberg.com/gtsummary/)
+
+**gtsummary** foi criado por **Daniel D. Sjoberg** e colaboradores. Produz tabelas descritivas e de resultados de modelos prontas para publicação.
+
+-   Versão atual: **2.5.0**
+-   Detecta automaticamente variáveis contínuas, categóricas e dicotômicas
+-   Integrado ao ecossistema `{gt}`, `{broom}` e `{labelled}`
+-   Documentação: [danieldsjoberg.com/gtsummary](https://www.danieldsjoberg.com/gtsummary/)
+
+------------------------------------------------------------------------
+
+## Instalação
+
+```{r}
+#| eval: false
+
+install.packages("gtsummary")
+```
+
+```{r}
+#| eval: false
+
+library(gtsummary)
+library(tidyverse)
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# O conjunto de dados CO2
+:::
+
+------------------------------------------------------------------------
+
+## Conhecendo os dados
+
+-   O dataset `CO2` está disponível no R base. Registra um experimento de absorção de CO2 em plantas de capim-bermuda submetidas a diferentes tratamentos e concentrações de dióxido de carbono.
+
+```{r}
+#| label: dados-estrutura
+
+glimpse(CO2)
+```
+
+------------------------------------------------------------------------
+
+## Variáveis do dataset CO2
+
+```{r}
+#| label: dados-preview
+
+CO2 |>
+  head(10)
+```
+
+------------------------------------------------------------------------
+
+## Dicionário das variáveis
+
+| Variável    | Tipo     | Descrição                                            |
+|-------------|----------|------------------------------------------------------|
+| `Plant`     | Fator    | Identificador da planta (84 observações, 12 plantas) |
+| `Type`      | Fator    | Origem da planta: Quebec ou Mississippi              |
+| `Treatment` | Fator    | Tratamento aplicado: nonchilled ou chilled           |
+| `conc`      | Numérica | Concentração de CO2 no ambiente (mL/L)               |
+| `uptake`    | Numérica | Absorção de CO2 pela planta (umol/m²/s)              |
+
+------------------------------------------------------------------------
+
+## Preparação dos dados
+
+```{r}
+#| label: preparacao
+
+# Selecionar variáveis de análise e traduzir rótulos
+co2 <- CO2 |>
+  as_tibble() |>
+  select(Type, Treatment, conc, uptake) |>
+  mutate(
+    Type      = factor(Type,
+                       levels = c("Quebec", "Mississippi")),
+    Treatment = factor(Treatment,
+                       levels = c("nonchilled", "chilled"),
+                       labels = c("Sem resfriamento", "Com resfriamento")))
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Tabela descritiva com tbl_summary()
+:::
+
+------------------------------------------------------------------------
+
+## Passo 1 - Tabela descritiva básica: código
+
+```{r}
+#| label: tbl-basica-codigo
+#| eval: false
+
+# tbl_summary() detecta automaticamente o tipo de cada variável
+# e aplica as estatísticas adequadas: mediana e IQR para contínuas,
+# frequência e percentual para categóricas
+co2 |>
+  tbl_summary()
+```
+
+------------------------------------------------------------------------
+
+## Passo 1 - Tabela descritiva básica: output
+
+```{r}
+#| label: tbl-basica-output
+#| echo: false
+
+co2 |>
+  tbl_summary()
+```
+
+------------------------------------------------------------------------
+
+## Passo 2 - Personalizando estatísticas: código
+
+```{r}
+#| label: tbl-stats-codigo
+#| eval: false
+
+# statistic: define qual estatística usar por tipo de variável
+# digits: controla casas decimais
+# missing: "no" remove a linha de missing da tabela
+co2 |>
+  tbl_summary(
+    statistic = list(
+      all_continuous()  ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} ({p}%)"),
+    digits    = list(all_continuous() ~ 1),
+    missing   = "no") |>
+  bold_labels()
+```
+
+------------------------------------------------------------------------
+
+## Passo 2 - Personalizando estatísticas: output
+
+```{r}
+#| label: tbl-stats-output
+#| echo: false
+
+co2 |>
+  tbl_summary(
+    statistic = list(
+      all_continuous()  ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} ({p}%)"),
+    digits    = list(all_continuous() ~ 1),
+    missing   = "no") |>
+  bold_labels()
+```
+
+------------------------------------------------------------------------
+
+## Passo 3 - Adicionando rótulos: código
+
+```{r}
+#| label: tbl-labels-codigo
+#| eval: false
+
+# label: renomeia variáveis na tabela sem alterar o dataset
+co2 |>
+  tbl_summary(
+    label = list(
+      Type      ~ "Origem",
+      Treatment ~ "Tratamento",
+      conc      ~ "Concentração de CO2 (mL/L)",
+      uptake    ~ "Absorção de CO2 (umol/m²/s)"),
+    statistic = list(
+      all_continuous()  ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} ({p}%)"),
+    missing = "no") |>
+  bold_labels()
+```
+
+------------------------------------------------------------------------
+
+## Passo 3 - Adicionando rótulos: output
+
+```{r}
+#| label: tbl-labels-output
+#| echo: false
+
+co2 |>
+  tbl_summary(
+    label = list(
+      Type      ~ "Origem",
+      Treatment ~ "Tratamento",
+      conc      ~ "Concentração de CO2 (mL/L)",
+      uptake    ~ "Absorção de CO2 (umol/m²/s)"),
+    statistic = list(
+      all_continuous()  ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} ({p}%)"),
+    missing = "no") |>
+  bold_labels()
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Comparação entre grupos
+:::
+
+------------------------------------------------------------------------
+
+## Passo 4 - Comparando grupos com by=: código
+
+```{r}
+#| label: tbl-by-codigo
+#| eval: false
+
+# by: estratifica a tabela por uma variável categórica
+# add_n(): adiciona coluna com total de observações não ausentes
+# add_p(): realiza teste estatístico e adiciona coluna de p-valor
+# add_overall(): adiciona coluna com estatísticas gerais
+co2 |>
+  tbl_summary(
+    by      = Type,
+    label   = list(
+      Treatment ~ "Tratamento",
+      conc      ~ "Concentração de CO2 (mL/L)",
+      uptake    ~ "Absorção de CO2 (umol/m²/s)"),
+    statistic = list(
+      all_continuous()  ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} ({p}%)"),
+    missing = "no") |>
+  add_n() |>
+  add_p() |>
+  add_overall() |>
+  bold_labels() |>
+  modify_header(label = "**Variável**")
+```
+
+------------------------------------------------------------------------
+
+## Passo 4 - Comparando grupos com by=: output
+
+```{r}
+#| label: tbl-by-output
+#| echo: false
+
+co2 |>
+  tbl_summary(
+    by      = Type,
+    label   = list(
+      Treatment ~ "Tratamento",
+      conc      ~ "Concentração de CO2 (mL/L)",
+      uptake    ~ "Absorção de CO2 (umol/m²/s)"),
+    statistic = list(
+      all_continuous()  ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} ({p}%)"),
+    missing = "no") |>
+  add_n() |>
+  add_p() |>
+  add_overall() |>
+  bold_labels() |>
+  modify_header(label = "**Variável**")
+```
+
+------------------------------------------------------------------------
+
+## Passo 5 - Diferença entre grupos com add_difference(): código
+
+```{r}
+#| label: tbl-diff-codigo
+#| eval: false
+
+# add_difference(): calcula a diferença entre grupos e seu IC 95%
+# Complementa o p-valor com a magnitude da diferença
+co2 |>
+  select(Type, conc, uptake) |>
+  tbl_summary(
+    by      = Type,
+    label   = list(
+      conc   ~ "Concentração de CO2 (mL/L)",
+      uptake ~ "Absorção de CO2 (umol/m²/s)"),
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})"),
+    missing = "no") |>
+  add_difference() |>
+  bold_labels()
+```
+
+------------------------------------------------------------------------
+
+## Passo 5 - Diferença entre grupos: output
+
+```{r}
+#| label: tbl-diff-output
+#| echo: false
+
+co2 |>
+  select(Type, conc, uptake) |>
+  tbl_summary(
+    by      = Type,
+    label   = list(
+      conc   ~ "Concentração de CO2 (mL/L)",
+      uptake ~ "Absorção de CO2 (umol/m²/s)"),
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})"),
+    missing = "no") |>
+  add_difference() |>
+  bold_labels()
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Resultados de modelos com tbl_regression()
+:::
+
+------------------------------------------------------------------------
+
+## Passo 6 - Modelo de regressão linear: código
+
+```{r}
+#| label: tbl-reg-codigo
+#| eval: false
+
+# Modelo: absorção de CO2 explicada por origem, tratamento e concentração
+modelo_linear <- lm(
+  uptake ~ Type + Treatment + conc,
+  data = co2)
+
+# tbl_regression() detecta automaticamente o tipo de modelo
+# e formata coeficientes, IC 95% e p-valores
+tbl_regression(
+  modelo_linear,
+  label = list(
+    Type      ~ "Origem",
+    Treatment ~ "Tratamento",
+    conc      ~ "Concentração de CO2 (mL/L)")) |>
+  bold_labels() |>
+  bold_p(t = 0.05)
+```
+
+------------------------------------------------------------------------
+
+## Passo 6 - Regressão linear: output
+
+```{r}
+#| label: tbl-reg-output
+#| echo: false
+
+modelo_linear <- lm(
+  uptake ~ Type + Treatment + conc,
+  data = co2)
+
+tbl_regression(
+  modelo_linear,
+  label = list(
+    Type      ~ "Origem",
+    Treatment ~ "Tratamento",
+    conc      ~ "Concentração de CO2 (mL/L)")) |>
+  bold_labels() |>
+  bold_p(t = 0.05)
+```
+
+------------------------------------------------------------------------
+
+## Passo 7 - Adicionando estatísticas do modelo: código
+
+```{r}
+#| label: tbl-reg-stats-codigo
+#| eval: false
+
+# add_glance_source_note(): adiciona R², AIC e outras métricas do modelo
+# no rodapé da tabela
+tbl_regression(
+  modelo_linear,
+  label = list(
+    Type      ~ "Origem",
+    Treatment ~ "Tratamento",
+    conc      ~ "Concentração de CO2 (mL/L)")) |>
+  add_glance_source_note(
+    label    = list(r.squared ~ "R²", p.value ~ "p do modelo"),
+    include  = c(r.squared, AIC, p.value)) |>
+  bold_labels() |>
+  bold_p(t = 0.05)
+```
+
+------------------------------------------------------------------------
+
+## Passo 7 - Métricas do modelo: output
+
+```{r}
+#| label: tbl-reg-stats-output
+#| echo: false
+
+tbl_regression(
+  modelo_linear,
+  label = list(
+    Type      ~ "Origem",
+    Treatment ~ "Tratamento",
+    conc      ~ "Concentração de CO2 (mL/L)")) |>
+  add_glance_source_note(
+    label   = list(r.squared ~ "R²", p.value ~ "p do modelo"),
+    include = c(r.squared, AIC, p.value)) |>
+  bold_labels() |>
+  bold_p(t = 0.05)
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Combinando tabelas
+:::
+
+------------------------------------------------------------------------
+
+## Passo 8 - Modelos lado a lado com tbl_merge(): código
+
+```{r}
+#| label: tbl-merge-codigo
+#| eval: false
+
+# Dois modelos: um para Quebec, outro para Mississippi
+mod_quebec <- lm(uptake ~ Treatment + conc,
+                 data = filter(co2, Type == "Quebec"))
+
+mod_miss   <- lm(uptake ~ Treatment + conc,
+                 data = filter(co2, Type == "Mississippi"))
+
+# tbl_merge() apresenta os dois modelos em colunas separadas
+list(
+  tbl_regression(mod_quebec,
+                 label = list(Treatment ~ "Tratamento",
+                              conc      ~ "Concentração (mL/L)")),
+  tbl_regression(mod_miss,
+                 label = list(Treatment ~ "Tratamento",
+                              conc      ~ "Concentração (mL/L)"))) |>
+  tbl_merge(
+    tab_spanner = c("**Quebec**", "**Mississippi**")) |>
+  bold_labels()
+```
+
+------------------------------------------------------------------------
+
+## Passo 8 - Modelos lado a lado: output
+
+```{r}
+#| label: tbl-merge-output
+#| echo: false
+
+mod_quebec <- lm(uptake ~ Treatment + conc,
+                 data = filter(co2, Type == "Quebec"))
+
+mod_miss   <- lm(uptake ~ Treatment + conc,
+                 data = filter(co2, Type == "Mississippi"))
+
+list(
+  tbl_regression(mod_quebec,
+                 label = list(Treatment ~ "Tratamento",
+                              conc      ~ "Concentração (mL/L)")),
+  tbl_regression(mod_miss,
+                 label = list(Treatment ~ "Tratamento",
+                              conc      ~ "Concentração (mL/L)"))) |>
+  tbl_merge(
+    tab_spanner = c("**Quebec**", "**Mississippi**")) |>
+  bold_labels()
+```
+
+------------------------------------------------------------------------
+
+## Passo 9 - Exportando a tabela: código
+
+```{r}
+#| label: tbl-export-codigo
+#| eval: false
+
+library(flextable)
+
+# Criar a tabela
+tabela_final <- co2 |>
+  tbl_summary(
+    by      = Type,
+    label   = list(
+      Treatment ~ "Tratamento",
+      conc      ~ "Concentração de CO2 (mL/L)",
+      uptake    ~ "Absorção de CO2 (umol/m²/s)"),
+    missing = "no") |>
+  add_p() |>
+  bold_labels()
+
+# Exportar para Word (.docx)
+tabela_final |>
+  as_flex_table() |>
+  flextable::save_as_docx(path = "tabela_co2.docx")
+
+# Exportar para HTML
+tabela_final |>
+  as_gt() |>
+  gt::gtsave(filename = "tabela_co2.html")
+```
+
+------------------------------------------------------------------------
+
+## Passo 9 - Formatos de exportação
+
+| Formato      | Função                               | Pacote necessário |
+|--------------|--------------------------------------|-------------------|
+| Word (.docx) | `as_flex_table()` + `save_as_docx()` | `flextable`       |
+| HTML         | `as_gt()` + `gtsave()`               | `gt`              |
+| PDF (LaTeX)  | `as_kable_extra()`                   | `kableExtra`      |
+| RTF          | `as_flex_table()` + `save_as_rtf()`  | `flextable`       |
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# tbl_summary() x tbl_regression()
+:::
+
+------------------------------------------------------------------------
+
+## Quando usar cada função
+
+| Situação                             | Função indicada                  |
+|--------------------------------------|----------------------------------|
+| Descrever as variáveis do dataset    | `tbl_summary()`                  |
+| Comparar dois ou mais grupos         | `tbl_summary(by = )` + `add_p()` |
+| Apresentar coeficientes de regressão | `tbl_regression()`               |
+| Comparar dois modelos lado a lado    | `tbl_merge()`                    |
+| Empilhar tabelas de subgrupos        | `tbl_stack()`                    |
+| Reportar estatísticas no texto       | `inline_text()`                  |
+
+------------------------------------------------------------------------
+
+## Funções de formatação mais usadas
+
+| Função                     | O que faz                                     |
+|----------------------------|-----------------------------------------------|
+| `bold_labels()`            | Negrito nos rótulos das variáveis             |
+| `bold_levels()`            | Negrito nos níveis das variáveis categóricas  |
+| `bold_p()`                 | Negrito nos p-valores significativos          |
+| `italicize_labels()`       | Itálico nos rótulos                           |
+| `modify_header()`          | Renomeia cabeçalhos das colunas               |
+| `add_overall()`            | Adiciona coluna com estatísticas gerais       |
+| `add_n()`                  | Adiciona coluna com total de observações      |
+| `add_p()`                  | Adiciona coluna de p-valor com teste adequado |
+| `add_difference()`         | Adiciona diferença entre grupos com IC 95%    |
+| `add_glance_source_note()` | Adiciona métricas do modelo no rodapé         |
+
+------------------------------------------------------------------------
+
+## Boas práticas
+
+-   **Sempre rotule as variáveis** com `label =` antes de compartilhar a tabela. Nomes de variáveis como `conc` ou `uptake` não comunicam para o leitor
+-   **Use `add_p()` com consciência**: o p-valor informa sobre significância, não sobre magnitude. Combine com `add_difference()` para reportar os dois
+-   **Documente as escolhas de estatística**: se você usou média em vez de mediana, registre o motivo nos comentários do código
+-   **Exporte para o formato do seu relatório**: Word para relatórios corporativos, HTML para Quarto, PDF via LaTeX para artigos
+
+------------------------------------------------------------------------
+
+## Erros comuns
+
+| Situação | Problema | Solução |
+|----|----|----|
+| Tabela não aparece no Quarto | Output não compatível com o formato | Usar `as_gt()` para HTML e `as_flex_table()` para Word |
+| `add_p()` retorna aviso de tamanho de amostra | Grupos pequenos para o teste padrão | Especificar `test = list(all_continuous() ~ "wilcox.test")` |
+| Rótulos não aparecem | Argumento `label` com nome errado | Verificar se o nome da variável está correto dentro de `list()` |
+
+------------------------------------------------------------------------
+
+## Resumo dos 9 passos
+
+| Passo | Função                               | O que produz                |
+|-------|--------------------------------------|-----------------------------|
+| 1     | `tbl_summary()`                      | Tabela descritiva básica    |
+| 2     | `statistic =` + `digits =`           | Estatísticas personalizadas |
+| 3     | `label =` + `bold_labels()`          | Rótulos profissionais       |
+| 4     | `by =` + `add_p()` + `add_overall()` | Comparação entre grupos     |
+| 5     | `add_difference()`                   | Diferença com IC 95%        |
+| 6     | `tbl_regression()`                   | Tabela de regressão         |
+| 7     | `add_glance_source_note()`           | Métricas do modelo          |
+| 8     | `tbl_merge()`                        | Modelos lado a lado         |
+| 9     | `as_flex_table()` + `as_gt()`        | Exportação                  |
+
+------------------------------------------------------------------------
+
+## Referências
+
+-   Documentação oficial: [danieldsjoberg.com/gtsummary](https://www.danieldsjoberg.com/gtsummary/)
+-   Tutorial `tbl_summary()`: [danieldsjoberg.com/gtsummary/articles/tbl_summary.html](https://www.danieldsjoberg.com/gtsummary/articles/tbl_summary.html)
+-   Tutorial `tbl_regression()`: [danieldsjoberg.com/gtsummary/articles/tbl_regression.html](https://www.danieldsjoberg.com/gtsummary/articles/tbl_regression.html)
+-   Galeria de exemplos: [danieldsjoberg.com/gtsummary/articles/gallery.html](https://www.danieldsjoberg.com/gtsummary/articles/gallery.html)
+-   Cheat sheet: [raw.githubusercontent.com/rstudio/cheatsheets/main/gtsummary.pdf](https://raw.githubusercontent.com/rstudio/cheatsheets/main/gtsummary.pdf)
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando!**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> Que cada gole desperte uma nova ideia. Que cada script abra uma nova conversa. Que o Café com R se torne um ponto de encontro nosso.
+
+[![](imagens/qrcode.png){style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" fig-align="center" width="300"}](https://jenniferlopes.quarto.pub/portifolio/)
