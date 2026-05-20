@@ -1,0 +1,46 @@
+[
+  {
+    "listing": "/apresentações/index.html",
+    "items": [
+      "/apresentações/posts/para_2026.html",
+      "/apresentações/posts/guia_inicial.html",
+      "/apresentações/posts/funções_jeni.html",
+      "/apresentações/posts/manipulacao.html",
+      "/apresentações/posts/visualizacao.html",
+      "/apresentações/posts/sql.html",
+      "/apresentações/posts/sql_comandos.html",
+      "/apresentações/posts/api_R.html",
+      "/apresentações/posts/tidymodels.html",
+      "/apresentações/posts/tidymodels_documentacao.html",
+      "/apresentações/posts/estatistica_basica.html",
+      "/apresentações/posts/apresentacao_tidy_eda.html",
+      "/apresentações/posts/dplyr_atualizacoes.html",
+      "/apresentações/posts/aula_r_python_iniciantes.html",
+      "/apresentações/posts/aula14_integracoes_r.html",
+      "/apresentações/posts/aula15_git_github_rstudio.html",
+      "/apresentações/posts/aula16_estatistica_descritiva.html",
+      "/apresentações/posts/aula17_docker_para_dados_em_R.html",
+      "/apresentações/posts/aula18_github_actions_para_dados_em_R.html",
+      "/apresentações/posts/aula19_pacotes_experimentacao_agricola.html",
+      "/apresentações/posts/aula20_blastula.html",
+      "/apresentações/posts/aula21_janitor.html",
+      "/apresentações/posts/aula22_gtsummary.html",
+      "/apresentações/posts/apresentacao_r_python.html"
+    ]
+  },
+  {
+    "listing": "/cafecomr/index.html",
+    "items": [
+      "/cafecomr/posts/dose9_1905.html",
+      "/cafecomr/posts/dose8_12_05.html",
+      "/cafecomr/posts/09_03_tutorial_newsletter_automacao.html",
+      "/cafecomr/posts/06_01_dose6.html",
+      "/cafecomr/posts/09_12_dose5.html",
+      "/cafecomr/posts/02_12_dose4.html",
+      "/cafecomr/posts/25_11_dose3.html",
+      "/cafecomr/posts/18_11-resenhalivro.html",
+      "/cafecomr/posts/13_11_R_AI.html",
+      "/cafecomr/posts/10_11_dose1.html"
+    ]
+  }
+]

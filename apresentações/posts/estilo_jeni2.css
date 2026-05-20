@@ -1,0 +1,160 @@
+/* Paleta de cores */
+:root {
+  --cor-azul-escuro: #224573;
+  --cor-marrom: #6B4F4F;
+  --cor-azul-claro: #4A6FA5;
+  --cor-bege: #E5D3B3;
+  --cor-cinza-claro: #F2F2F2;
+}
+
+/* Fundo e texto base */
+.reveal {
+  background-color: var(--cor-cinza-claro);
+  color: var(--cor-azul-escuro);
+}
+
+/* Cabeçalhos */
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  color: var(--cor-azul-escuro);
+  font-weight: 600;
+}
+
+.reveal h1 {
+  border-bottom: 4px solid var(--cor-azul-claro);
+  padding-bottom: 15px;
+}
+
+/* Links */
+.reveal a {
+  color: var(--cor-azul-claro);
+  font-weight: 500;
+}
+
+.reveal a:hover {
+  color: var(--cor-marrom);
+}
+
+/* Código inline */
+.reveal code {
+  background-color: var(--cor-bege);
+  color: var(--cor-azul-escuro);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* Blocos de código */
+.reveal pre {
+  border-left: 5px solid var(--cor-azul-claro);
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(34, 69, 115, 0.1);
+}
+
+.reveal pre code {
+  background-color: transparent;
+  color: var(--cor-azul-escuro);
+}
+
+/* Tabelas */
+.reveal table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px auto;
+  box-shadow: 0 2px 8px rgba(34, 69, 115, 0.1);
+}
+
+.reveal thead {
+  background-color: var(--cor-azul-escuro);
+  color: white;
+}
+
+.reveal th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.reveal td {
+  padding: 10px;
+  border-bottom: 1px solid var(--cor-bege);
+}
+
+.reveal tr:nth-child(even) {
+  background-color: rgba(229, 211, 179, 0.3);
+}
+
+.reveal tr:hover {
+  background-color: rgba(74, 111, 165, 0.1);
+}
+
+/* Strong/Bold */
+.reveal strong,
+.reveal b {
+  color: var(--cor-marrom);
+  font-weight: 700;
+}
+
+/* Listas */
+.reveal ul,
+.reveal ol {
+  color: var(--cor-azul-escuro);
+}
+
+/* Blockquotes */
+.reveal blockquote {
+  border-left: 5px solid var(--cor-marrom);
+  background-color: rgba(229, 211, 179, 0.3);
+  padding: 15px 20px;
+  font-style: italic;
+  color: var(--cor-azul-escuro);
+}
+
+/* Rodapé */
+.reveal .footer {
+  color: var(--cor-azul-claro);
+  font-size: 0.8em;
+}
+
+/* Slides com .smaller */
+.reveal .smaller {
+  font-size: 0.75em;
+}
+
+/* Número dos slides */
+.reveal .slide-number {
+  bottom: 10px !important;
+  right: 10px !important;
+  left: auto !important;
+  top: auto !important;
+  font-size: 0.5em !important;
+  color: var(--cor-azul-escuro) !important;
+  background: rgba(242, 242, 242, 0.7);
+  padding: 4px 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* Logo fixo no topo à direita */
+.reveal .slide-logo {
+  display: block !important;
+  position: fixed !important;
+  top: 15px !important;
+  right: 25px !important;
+  left: auto !important;
+  transform: none !important;
+  max-height: 140px !important;
+  width: auto !important;
+  z-index: 9999 !important;
+  opacity: 0.95;
+}
+
+/* Ajustes para slides com background escuro */
+.reveal section[data-background-color="#224573"] h2,
+.reveal section[data-background-color="#6B4F4F"] h2,
+.reveal section[data-background-color="#4A6FA5"] h2 {
+  color: white !important;
+}
