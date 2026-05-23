@@ -1,0 +1,322 @@
+---
+title: "Café com R"
+subtitle: "Edição 10: O que reportar em alternativa/junto do p-valor"
+author: "Jennifer Luz Lopes"
+date: "2026-05-25"
+categories: [Newsletter, Estatística, Inferência, easystats]
+image: ../imagens/cafe10.png
+image-alt: ""
+description: "Em edições anteriores expliquei o que o p-valor não diz.Esta edição responde a pergunta seguinte: o que você coloca no lugar? Tamanho do efeito, intervalo de confiança e como reportar os três juntos com código."
+css: estilo_jeni.css
+---
+
+::: {style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;"}
+- *Que cada **gole** desperte uma nova ideia.*
+- *Que cada **script** abra uma nova conversa.*
+- *Que o **Café com R** se torne um ponto de encontro nosso.*
+:::
+
+<br>
+
+## O gole da semana
+
+<br>
+
+**Imagine que alguém te pede para remover todos os p-valores do seu próximo relatório.**
+
+> **Sem p \< 0,05. Sem asteriscos de significância. Sem aquela coluna que todo mundo olha primeiro e, muitas vezes, olha por último também.**
+
+**O que sobra?**
+
+Se a resposta vier devagar, com hesitação, esse é exatamente o sinal que esta edição quer trabalhar. Não porque o p-valor seja inútil `ele não é`. Mas porque, ao longo de décadas, ele foi tratado como o destino da análise quando deveria ser apenas uma parada no caminho.
+
+**A edição de novembro de 2025 do Café com R cobriu a teoria:** o que o p-valor mede, o que ele não mede, por que a dicotomia significativo e não significativo empobrece a interpretação. Se você ainda não leu, vale voltar, o link está no rodapé desta edição.
+
+Esta edição avança para a prática. A pergunta agora não é mais o que o p-valor não diz.
+
+> **A pergunta é: o que você coloca no relatório junto com ele, ou no lugar dele, para que a análise comunique o que realmente importa?**
+
+<br>
+
+------------------------------------------------------------------------
+
+## A dose técnica
+
+<br>
+
+### Onde paramos
+
+A edição anterior estabeleceu três pontos fundamentais que vale recuperar antes de seguir.
+
+O p-valor mede a probabilidade de observar resultados tão extremos quanto os obtidos, assumindo que a hipótese nula é verdadeira. Ele responde a uma pergunta muito específica, quão surpreendentes são os dados sob H₀? e apenas essa pergunta.
+
+Ele não informa a magnitude do efeito. Não diz se a diferença encontrada é grande ou pequena, relevante ou trivial. Não informa a precisão da estimativa. E não diz nada sobre a probabilidade de a hipótese nula ser verdadeira, que é justamente o que a maioria das pessoas quer saber quando olha para ele.
+
+**A ASA foi explícita em dois posicionamentos históricos, em 2016 e em 2019: inferência confiável exige combinar o p-valor com outras medidas. Tamanho do efeito. Intervalo de confiança. Plausibilidade teórica. Poder amostral.**
+
+**Entendido o que o p-valor não faz, a pergunta que fica é: o que você colocaria no lugar se precisasse?**
+
+<br>
+
+### Tamanho do efeito: o número que faltava, né?
+
+**O tamanho do efeito responde à pergunta que o p-valor não consegue responder: quanto?**
+
+Não "há diferença?" o p-valor já tenta responder isso. Mas "a diferença é grande o suficiente para importar?" Essa é outra pergunta, e exige outra medida.
+
+Pense num exemplo. Você compara a temperatura média de dois grupos no dataset `airquality`, dias com vento abaixo e acima da mediana. O teste t retorna **p = 0,003**. Há evidência estatística de diferença. Mas qual é a magnitude dessa diferença? 0,5°F? 8°F?
+
+**Esses dois cenários têm implicações completamente diferentes, e o p-valor não distingue um do outro.**
+
+O **Cohen's *d*** é o índice mais usado para comparar duas médias. Ele expressa a diferença em unidades de desvio padrão:
+
+$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_{pooled}}$$
+
+**As convenções propostas por Cohen (1988) e amplamente adotadas desde então, organizam a interpretação assim:**
+
+| Valor de \|d\| | Magnitude |
+|----------------|-----------|
+| 0,20           | Pequeno   |
+| 0,50           | Médio     |
+| 0,80           | Grande    |
+
+::: callout-important
+**Atenção:** essas convenções são referências gerais, não regras absolutas.
+
+Um efeito classificado como "pequeno" pode ser altamente relevante dependendo do contexto.
+
+Um ganho de 0,2 desvios padrão em produtividade agrícola aplicado em larga escala tem peso diferente de um ganho equivalente num experimento de laboratório.
+
+**A relevância prática é uma decisão substantiva, não estatística.**
+:::
+
+**Agora, como calcular isso no R?**
+
+```{r}
+#| label: cohens-d-codigo
+#| eval: false
+
+library(tidyverse)
+library(easystats)
+
+# Criar grupo de vento: abaixo e acima da mediana
+airquality_grupos <- airquality |>
+  mutate(grupo_vento = if_else(
+    Wind < median(Wind, na.rm = TRUE),
+    "Vento baixo",
+    "Vento alto"))
+
+# Cohen's d com IC 95%
+cohens_d(Temp ~ grupo_vento,
+         data = airquality_grupos)
+```
+
+```{r}
+#| label: cohens-d-output
+#| echo: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(easystats)
+
+airquality_grupos <- airquality |>
+  mutate(grupo_vento = if_else(
+    Wind < median(Wind, na.rm = TRUE),
+    "Vento baixo",
+    "Vento alto"))
+
+cohens_d(Temp ~ grupo_vento,
+         data = airquality_grupos)
+```
+
+- **O output retorna o coeficiente, o IC 95% e a classificação da magnitude. Três números que juntos dizem muito mais do que o p-valor sozinho.**
+
+**Além do Cohen's *d*, o ecossistema `effectsize` oferece índices para outros contextos:**
+
+| Índice | Contexto | Função |
+|------------------------|------------------------|------------------------|
+| Cohen's *d* | Diferença entre duas médias | `cohens_d()` |
+| $\eta^2$ (eta²) | Proporção de variância explicada - ANOVA | `eta_squared()` |
+| $\omega^2$ (omega²) | Versão menos viesada do $\eta^2$ | `omega_squared()` |
+| $r$ de correlação | Associação linear entre duas variáveis | `cor_to_d()` |
+
+::: callout-note
+Você já usa algum desses índices nos seus relatórios?
+
+Se não usa, qual seria o mais útil para o tipo de análise que você faz com mais frequência?
+:::
+
+<br>
+
+### Intervalo de confiança - precisão
+
+O p-valor diz se há evidência de efeito. O tamanho do efeito diz quanto. O intervalo de confiança diz **com que precisão você sabe isso**.
+
+Essa distinção é importante e frequentemente ignorada.
+
+> **Um IC estreito significa que a estimativa é precisa, os dados são suficientemente informativos para localizar o efeito numa faixa pequena de valores.**
+>
+> **Um IC largo significa incerteza elevada, você sabe a direção, talvez, mas não sabe o tamanho com muita confiança.**
+
+::: callout-tip
+Dois estudos podem ter o mesmo tamanho de efeito estimado e p-valores similares, mas ICs completamente diferentes.
+
+1.  O primeiro com IC \[0,3 ; 0,7\] e o segundo com IC \[-0,1 ; 1,1\].
+2.  O primeiro permite afirmações precisas. O segundo, não.
+:::
+
+Isso tem consequências diretas para a tomada de decisão. Um IC que inclui zero é um sinal de que o efeito pode ser nulo, independentemente do p-valor. Um IC que exclui zero mas é muito amplo é um sinal de que você detectou algo, mas ainda não sabe bem o quê.
+
+**Como extrair IC junto com os coeficientes no R?**
+
+```{r}
+#| label: ic-codigo
+#| eval: false
+
+# Modelo linear simples
+modelo <- lm(Temp ~ Wind + Solar.R, data = airquality)
+
+# model_parameters() extrai coeficientes com IC 95%
+model_parameters(modelo, ci = 0.95)
+```
+
+```{r}
+#| label: ic-output
+#| echo: false
+#| warning: false
+#| message: false
+
+modelo <- lm(Temp ~ Wind + Solar.R, data = airquality)
+
+model_parameters(modelo, ci = 0.95)
+```
+
+Repare que a tabela retornada por `model_parameters()` já inclui o coeficiente, os limites do IC, a estatística t e o p-valor, tudo junto, na mesma linha. Não é preciso buscar essas informações em lugares separados.
+
+Agora olhe para os limites do IC de cada variável. `Wind` tem intervalo que não inclui zero, o efeito é distinguível de zero com 95% de confiança. `Solar.R` também.
+
+**Mas o que o IC te diz sobre a precisão de cada estimativa? Qual das duas variáveis tem estimativa mais estreita?**
+
+> **Essas são as perguntas que o IC responde e que o p-valor não consegue.**
+
+<br>
+
+### Reportar os três juntos - como fica na prática?
+
+**Até aqui você tem três peças de informação:**
+
+- O **p-valor**: compatibilidade dos dados com H₀
+- O **tamanho do efeito**: magnitude da diferença ou associação
+- O **intervalo de confiança**: precisão da estimativa
+
+**A orientação da ASA é: as três peças devem aparecer juntas.**
+
+Um relatório que reporta apenas o p-valor está incompleto. Um que reporta apenas o tamanho do efeito sem IC está incompleto. A análise confiável combina os três.
+
+**Como isso fica no código?**
+
+```{r}
+#| label: report-codigo
+#| eval: false
+
+# report() gera descrição textual seguindo as convenções científicas
+report(modelo)
+```
+
+```{r}
+#| label: report-output
+#| echo: false
+#| warning: false
+#| message: false
+
+report(modelo)
+```
+
+::: callout-warning
+O `report()` do pacote `report`, parte do easystats gera automaticamente um parágrafo descrevendo o modelo com p-valor exato, tamanho do efeito e IC, seguindo as convenções de redação científica.
+
+O texto gerado é um ponto de partida, não um produto final, você precisa revisar, adaptar ao contexto e complementar com interpretação substantiva.
+:::
+
+**Para ver os resultados em formato tabular, mais fácil de incluir em documentos Quarto:**
+
+```{r}
+#| label: report-table-codigo
+#| eval: false
+
+report_table(modelo)
+```
+
+```{r}
+#| label: report-table-output
+#| echo: false
+#| warning: false
+#| message: false
+
+report_table(modelo)
+```
+
+**Agora compare mentalmente dois cenários.**
+
+1.  No primeiro, você recebe um relatório com uma tabela de coeficientes e uma coluna de asteriscos indicando p \< 0,05.
+
+2.  No segundo, você recebe coeficientes com IC 95%, tamanho do efeito padronizado e p-valor exato para cada parâmetro.
+
+- Qual dos dois te dá mais informação para tomar uma decisão?
+
+- Qual dos dois você consegue criticar com mais profundidade?
+
+- Qual dos dois resiste melhor a uma revisão por pares?
+
+**A resposta para as três perguntas é a mesma.**
+
+<br>
+
+### O que muda quando você adota essa prática?
+
+Adotar o hábito de reportar p-valor, tamanho do efeito e IC juntos não é apenas uma questão de rigor metodológico, embora seja isso também. É uma mudança na forma como você pensa sobre o que está analisando.
+
+Quando o p-valor é o único número que importa, a pergunta que guia a análise é binária: há efeito ou não há? Quando você inclui tamanho do efeito e IC, a pergunta se torna: qual é a magnitude do efeito, e com que precisão eu sei isso?
+
+A segunda pergunta é mais difícil de responder. Exige que você conheça o contexto, que saiba o que constitui um efeito relevante no seu campo, que interprete a incerteza em vez de ignorá-la. Mas é também a pergunta que produz análises mais honestas, mais úteis e mais resistentes ao tempo.
+
+**O p-valor não vai desaparecer dos relatórios, nem deveria. Mas ele é uma peça de um conjunto, não o conjunto inteiro.**
+
+<br>
+
+------------------------------------------------------------------------
+
+## O que estou acompanhando
+
+<br>
+
+**ASA (2019) - Moving to a World Beyond "p \< 0,05"**: O posicionamento mais influente da última década sobre p-valor. Wasserstein, Schirm e Lazar argumentam com clareza por que o uso dicotômico de significância precisa ser abandonado e o que colocar no lugar: [doi.org/10.1080/00031305.2019.1583913](https://doi.org/10.1080/00031305.2019.1583913)
+
+**Documentação do `effectsize:`** Referência completa para Cohen's *d*, eta², omega² e outros índices, com exemplos e convenções de interpretação: [easystats.github.io/effectsize](https://easystats.github.io/effectsize/)
+
+**Documentação do `parameters:`** Como extrair coeficientes, IC e tamanho do efeito de qualquer modelo com uma interface consistente: [easystats.github.io/parameters](https://easystats.github.io/parameters/)
+
+<br>
+
+------------------------------------------------------------------------
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:16px 20px; border-radius:4px; margin-top:24px;"}
+**Edição anterior sobre p-valor** Se você ainda não leu a edição de novembro de 2025 que cobre a teoria por trás do que discutimos aqui, vale voltar: [jenniferlopes.quarto.pub/portifolio/cafecomr/posts/25_11_dose3.html](https://jenniferlopes.quarto.pub/portifolio/cafecomr/posts/25_11_dose3.html)
+:::
+
+<br>
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;"}
+**Próxima edição - cafezinho 11 - 01 de junho**
+
+O que separa um script de uma análise e por que essa diferença define a qualidade do que você entrega.
+:::
+
+<br>
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;"}
+**Gostou desta edição?** Assine o Café com R e receba conteúdo de R e Ciência de Dados a cada quinze dias.
+
+[**Clique aqui**](https://cafecomr-conteudos.lovable.app/)
+:::

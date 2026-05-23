@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jennifer Luz Lopes">
+<meta name="dcterms.date" content="2026-05-25">
+<meta name="description" content="Em edições anteriores expliquei o que o p-valor não diz.Esta edição responde a pergunta seguinte: o que você coloca no lugar? Tamanho do efeito, intervalo de confiança e como reportar os três juntos com código.">
+
+<title>Café com R – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+<link rel="stylesheet" href="estilo_jeni.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#o-gole-da-semana" id="toc-o-gole-da-semana" class="nav-link active" data-scroll-target="#o-gole-da-semana">O gole da semana</a></li>
+  <li><a href="#a-dose-técnica" id="toc-a-dose-técnica" class="nav-link" data-scroll-target="#a-dose-técnica">A dose técnica</a>
+  <ul class="collapse">
+  <li><a href="#onde-paramos" id="toc-onde-paramos" class="nav-link" data-scroll-target="#onde-paramos">Onde paramos</a></li>
+  <li><a href="#tamanho-do-efeito-o-número-que-faltava-né" id="toc-tamanho-do-efeito-o-número-que-faltava-né" class="nav-link" data-scroll-target="#tamanho-do-efeito-o-número-que-faltava-né">Tamanho do efeito: o número que faltava, né?</a></li>
+  <li><a href="#intervalo-de-confiança---precisão" id="toc-intervalo-de-confiança---precisão" class="nav-link" data-scroll-target="#intervalo-de-confiança---precisão">Intervalo de confiança - precisão</a></li>
+  <li><a href="#reportar-os-três-juntos---como-fica-na-prática" id="toc-reportar-os-três-juntos---como-fica-na-prática" class="nav-link" data-scroll-target="#reportar-os-três-juntos---como-fica-na-prática">Reportar os três juntos - como fica na prática?</a></li>
+  <li><a href="#o-que-muda-quando-você-adota-essa-prática" id="toc-o-que-muda-quando-você-adota-essa-prática" class="nav-link" data-scroll-target="#o-que-muda-quando-você-adota-essa-prática">O que muda quando você adota essa prática?</a></li>
+  </ul></li>
+  <li><a href="#o-que-estou-acompanhando" id="toc-o-que-estou-acompanhando" class="nav-link" data-scroll-target="#o-que-estou-acompanhando">O que estou acompanhando</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Café com R</h1>
+<p class="subtitle lead">Edição 10: O que reportar em alternativa/junto do p-valor</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Newsletter</div>
+    <div class="quarto-category">Estatística</div>
+    <div class="quarto-category">Inferência</div>
+    <div class="quarto-category">easystats</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Em edições anteriores expliquei o que o p-valor não diz.Esta edição responde a pergunta seguinte: o que você coloca no lugar? Tamanho do efeito, intervalo de confiança e como reportar os três juntos com código.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jennifer Luz Lopes </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 25, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;">
+<ul>
+<li><em>Que cada <strong>gole</strong> desperte uma nova ideia.</em></li>
+<li><em>Que cada <strong>script</strong> abra uma nova conversa.</em></li>
+<li><em>Que o <strong>Café com R</strong> se torne um ponto de encontro nosso.</em></li>
+</ul>
+</div>
+<p><br></p>
+<section id="o-gole-da-semana" class="level2">
+<h2 class="anchored" data-anchor-id="o-gole-da-semana">O gole da semana</h2>
+<p><br></p>
+<p><strong>Imagine que alguém te pede para remover todos os p-valores do seu próximo relatório.</strong></p>
+<blockquote class="blockquote">
+<p><strong>Sem p &lt; 0,05. Sem asteriscos de significância. Sem aquela coluna que todo mundo olha primeiro e, muitas vezes, olha por último também.</strong></p>
+</blockquote>
+<p><strong>O que sobra?</strong></p>
+<p><strong>Se a resposta vier devagar, com hesitação, esse é exatamente o sinal que esta edição quer trabalhar. Não porque o p-valor seja inútil <code>ele não é</code>. Mas porque, ao longo de décadas, ele foi tratado como o destino da análise quando deveria ser apenas uma parada no caminho.</strong></p>
+<p><strong>A edição de novembro de 2025 do Café com R cobriu a teoria:</strong> o que o p-valor mede, o que ele não mede, por que a dicotomia significativo e não significativo empobrece a interpretação. Se você ainda não leu, vale voltar, o link está no rodapé desta edição.</p>
+<p>Esta edição avança para a prática. A pergunta agora não é mais o que o p-valor não diz.</p>
+<blockquote class="blockquote">
+<p><strong>A pergunta é: o que você coloca no relatório junto com ele, ou no lugar dele, para que a análise comunique o que realmente importa?</strong></p>
+</blockquote>
+<p><br></p>
+<hr>
+</section>
+<section id="a-dose-técnica" class="level2">
+<h2 class="anchored" data-anchor-id="a-dose-técnica">A dose técnica</h2>
+<p><br></p>
+<section id="onde-paramos" class="level3">
+<h3 class="anchored" data-anchor-id="onde-paramos">Onde paramos</h3>
+<p>A edição anterior estabeleceu três pontos fundamentais que vale recuperar antes de seguir.</p>
+<p>O p-valor mede a probabilidade de observar resultados tão extremos quanto os obtidos, assumindo que a hipótese nula é verdadeira. Ele responde a uma pergunta muito específica, quão surpreendentes são os dados sob H₀? e apenas essa pergunta.</p>
+<p>Ele não informa a magnitude do efeito. Não diz se a diferença encontrada é grande ou pequena, relevante ou trivial. Não informa a precisão da estimativa. E não diz nada sobre a probabilidade de a hipótese nula ser verdadeira, que é justamente o que a maioria das pessoas quer saber quando olha para ele.</p>
+<p><strong>A ASA foi explícita em dois posicionamentos históricos, em 2016 e em 2019: inferência confiável exige combinar o p-valor com outras medidas. Tamanho do efeito. Intervalo de confiança. Plausibilidade teórica. Poder amostral.</strong></p>
+<p><strong>Entendido o que o p-valor não faz, a pergunta que fica é: o que você colocaria no lugar se precisasse?</strong></p>
+<p><br></p>
+</section>
+<section id="tamanho-do-efeito-o-número-que-faltava-né" class="level3">
+<h3 class="anchored" data-anchor-id="tamanho-do-efeito-o-número-que-faltava-né">Tamanho do efeito: o número que faltava, né?</h3>
+<p><strong>O tamanho do efeito responde à pergunta que o p-valor não consegue responder: quanto?</strong></p>
+<p>Não “há diferença?” o p-valor já tenta responder isso. Mas “a diferença é grande o suficiente para importar?” Essa é outra pergunta, e exige outra medida.</p>
+<p>Pense num exemplo. Você compara a temperatura média de dois grupos no dataset <code>airquality</code>, dias com vento abaixo e acima da mediana. O teste t retorna <strong>p = 0,003</strong>. Há evidência estatística de diferença. Mas qual é a magnitude dessa diferença? 0,5°F? 8°F?</p>
+<p><strong>Esses dois cenários têm implicações completamente diferentes, e o p-valor não distingue um do outro.</strong></p>
+<p>O <strong>Cohen’s <em>d</em></strong> é o índice mais usado para comparar duas médias. Ele expressa a diferença em unidades de desvio padrão:</p>
+<p><span class="math display">\[d = \frac{\bar{x}_1 - \bar{x}_2}{s_{pooled}}\]</span></p>
+<p><strong>As convenções propostas por Cohen (1988) e amplamente adotadas desde então, organizam a interpretação assim:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Valor de |d|</th>
+<th>Magnitude</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0,20</td>
+<td>Pequeno</td>
+</tr>
+<tr class="even">
+<td>0,50</td>
+<td>Médio</td>
+</tr>
+<tr class="odd">
+<td>0,80</td>
+<td>Grande</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Atenção:</strong> essas convenções são referências gerais, não regras absolutas.</p>
+<p>Um efeito classificado como “pequeno” pode ser altamente relevante dependendo do contexto.</p>
+<p>Um ganho de 0,2 desvios padrão em produtividade agrícola aplicado em larga escala tem peso diferente de um ganho equivalente num experimento de laboratório.</p>
+<p><strong>A relevância prática é uma decisão substantiva, não estatística.</strong></p>
+</div>
+</div>
+<p><strong>Agora, como calcular isso no R?</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(easystats)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar grupo de vento: abaixo e acima da mediana</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>airquality_grupos <span class="ot">&lt;-</span> airquality <span class="sc">|&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">grupo_vento =</span> <span class="fu">if_else</span>(</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    Wind <span class="sc">&lt;</span> <span class="fu">median</span>(Wind, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Vento baixo"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Vento alto"</span>))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Cohen's d com IC 95%</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cohens_d</span>(Temp <span class="sc">~</span> grupo_vento,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">data =</span> airquality_grupos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Cohen's d |         95% CI
+--------------------------
+-0.83     | [-1.16, -0.50]
+
+- Estimated using pooled SD.</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>O output retorna o coeficiente, o IC 95% e a classificação da magnitude. Três números que juntos dizem muito mais do que o p-valor sozinho.</strong></li>
+</ul>
+<p><strong>Além do Cohen’s <em>d</em>, o ecossistema <code>effectsize</code> oferece índices para outros contextos:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Índice</th>
+<th>Contexto</th>
+<th>Função</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cohen’s <em>d</em></td>
+<td>Diferença entre duas médias</td>
+<td><code>cohens_d()</code></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\eta^2\)</span> (eta²)</td>
+<td>Proporção de variância explicada - ANOVA</td>
+<td><code>eta_squared()</code></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\omega^2\)</span> (omega²)</td>
+<td>Versão menos viesada do <span class="math inline">\(\eta^2\)</span></td>
+<td><code>omega_squared()</code></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r\)</span> de correlação</td>
+<td>Associação linear entre duas variáveis</td>
+<td><code>cor_to_d()</code></td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Você já usa algum desses índices nos seus relatórios?</p>
+<p>Se não usa, qual seria o mais útil para o tipo de análise que você faz com mais frequência?</p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="intervalo-de-confiança---precisão" class="level3">
+<h3 class="anchored" data-anchor-id="intervalo-de-confiança---precisão">Intervalo de confiança - precisão</h3>
+<p>O p-valor diz se há evidência de efeito. O tamanho do efeito diz quanto. O intervalo de confiança diz <strong>com que precisão você sabe isso</strong>.</p>
+<p>Essa distinção é importante e frequentemente ignorada.</p>
+<blockquote class="blockquote">
+<p><strong>Um IC estreito significa que a estimativa é precisa, os dados são suficientemente informativos para localizar o efeito numa faixa pequena de valores.</strong></p>
+<p><strong>Um IC largo significa incerteza elevada, você sabe a direção, talvez, mas não sabe o tamanho com muita confiança.</strong></p>
+</blockquote>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Dois estudos podem ter o mesmo tamanho de efeito estimado e p-valores similares, mas ICs completamente diferentes.</p>
+<ol type="1">
+<li>O primeiro com IC [0,3 ; 0,7] e o segundo com IC [-0,1 ; 1,1].</li>
+<li>O primeiro permite afirmações precisas. O segundo, não.</li>
+</ol>
+</div>
+</div>
+<p>Isso tem consequências diretas para a tomada de decisão. Um IC que inclui zero é um sinal de que o efeito pode ser nulo, independentemente do p-valor. Um IC que exclui zero mas é muito amplo é um sinal de que você detectou algo, mas ainda não sabe bem o quê.</p>
+<p><strong>Como extrair IC junto com os coeficientes no R?</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo linear simples</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>modelo <span class="ot">&lt;-</span> <span class="fu">lm</span>(Temp <span class="sc">~</span> Wind <span class="sc">+</span> Solar.R, <span class="at">data =</span> airquality)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># model_parameters() extrai coeficientes com IC 95%</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">model_parameters</span>(modelo, <span class="at">ci =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Parameter   | Coefficient |       SE |         95% CI | t(143) |      p
+-----------------------------------------------------------------------
+(Intercept) |       84.90 |     2.48 | [80.00, 89.80] |  34.28 | &lt; .001
+Wind        |       -1.16 |     0.19 | [-1.53, -0.78] |  -6.14 | &lt; .001
+Solar R     |        0.03 | 7.34e-03 | [ 0.01,  0.04] |   3.50 | &lt; .001</code></pre>
+</div>
+</div>
+<p>Repare que a tabela retornada por <code>model_parameters()</code> já inclui o coeficiente, os limites do IC, a estatística t e o p-valor, tudo junto, na mesma linha. Não é preciso buscar essas informações em lugares separados.</p>
+<p>Agora olhe para os limites do IC de cada variável. <code>Wind</code> tem intervalo que não inclui zero, o efeito é distinguível de zero com 95% de confiança. <code>Solar.R</code> também.</p>
+<p><strong>Mas o que o IC te diz sobre a precisão de cada estimativa? Qual das duas variáveis tem estimativa mais estreita?</strong></p>
+<blockquote class="blockquote">
+<p><strong>Essas são as perguntas que o IC responde e que o p-valor não consegue.</strong></p>
+</blockquote>
+<p><br></p>
+</section>
+<section id="reportar-os-três-juntos---como-fica-na-prática" class="level3">
+<h3 class="anchored" data-anchor-id="reportar-os-três-juntos---como-fica-na-prática">Reportar os três juntos - como fica na prática?</h3>
+<p><strong>Até aqui você tem três peças de informação:</strong></p>
+<ul>
+<li>O <strong>p-valor</strong>: compatibilidade dos dados com H₀</li>
+<li>O <strong>tamanho do efeito</strong>: magnitude da diferença ou associação</li>
+<li>O <strong>intervalo de confiança</strong>: precisão da estimativa</li>
+</ul>
+<p><strong>A orientação da ASA é: as três peças devem aparecer juntas.</strong></p>
+<p>Um relatório que reporta apenas o p-valor está incompleto. Um que reporta apenas o tamanho do efeito sem IC está incompleto. A análise confiável combina os três.</p>
+<p><strong>Como isso fica no código?</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># report() gera descrição textual seguindo as convenções científicas</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(modelo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>We fitted a linear model (estimated using OLS) to predict Temp with Wind and
+Solar.R (formula: Temp ~ Wind + Solar.R). The model explains a statistically
+significant and substantial proportion of variance (R2 = 0.27, F(2, 143) =
+26.27, p &lt; .001, adj. R2 = 0.26). The model's intercept, corresponding to Wind
+= 0 and Solar.R = 0, is at 84.90 (95% CI [80.00, 89.80], t(143) = 34.28, p &lt;
+.001). Within this model:
+
+  - The effect of Wind is statistically significant and negative (beta = -1.16,
+95% CI [-1.53, -0.78], t(143) = -6.14, p &lt; .001; Std. beta = -0.44, 95% CI
+[-0.58, -0.30])
+  - The effect of Solar R is statistically significant and positive (beta = 0.03,
+95% CI [0.01, 0.04], t(143) = 3.50, p &lt; .001; Std. beta = 0.25, 95% CI [0.11,
+0.39])
+
+Standardized parameters were obtained by fitting the model on a standardized
+version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+computed using a Wald t-distribution approximation.</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O <code>report()</code> do pacote <code>report</code>, parte do easystats gera automaticamente um parágrafo descrevendo o modelo com p-valor exato, tamanho do efeito e IC, seguindo as convenções de redação científica.</p>
+<p>O texto gerado é um ponto de partida, não um produto final, você precisa revisar, adaptar ao contexto e complementar com interpretação substantiva.</p>
+</div>
+</div>
+<p><strong>Para ver os resultados em formato tabular, mais fácil de incluir em documentos Quarto:</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">report_table</span>(modelo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Parameter   | Coefficient |         95% CI | t(143) |      p | Std. Coef.
+-------------------------------------------------------------------------
+(Intercept) |       84.90 | [80.00, 89.80] |  34.28 | &lt; .001 |   3.87e-16
+Wind        |       -1.16 | [-1.53, -0.78] |  -6.14 | &lt; .001 |      -0.44
+Solar R     |        0.03 | [ 0.01,  0.04] |   3.50 | &lt; .001 |       0.25
+            |             |                |        |        |           
+AIC         |             |                |        |        |           
+AICc        |             |                |        |        |           
+BIC         |             |                |        |        |           
+R2          |             |                |        |        |           
+R2 (adj.)   |             |                |        |        |           
+Sigma       |             |                |        |        |           
+
+Parameter   | Std. Coef. 95% CI |     Fit
+-----------------------------------------
+(Intercept) |    [-0.14,  0.14] |        
+Wind        |    [-0.58, -0.30] |        
+Solar R     |    [ 0.11,  0.39] |        
+            |                   |        
+AIC         |                   | 1024.43
+AICc        |                   | 1024.71
+BIC         |                   | 1036.36
+R2          |                   |    0.27
+R2 (adj.)   |                   |    0.26
+Sigma       |                   |    7.94</code></pre>
+</div>
+</div>
+<p><strong>Agora compare mentalmente dois cenários.</strong></p>
+<ol type="1">
+<li><p>No primeiro, você recebe um relatório com uma tabela de coeficientes e uma coluna de asteriscos indicando p &lt; 0,05.</p></li>
+<li><p>No segundo, você recebe coeficientes com IC 95%, tamanho do efeito padronizado e p-valor exato para cada parâmetro.</p></li>
+</ol>
+<ul>
+<li><p>Qual dos dois te dá mais informação para tomar uma decisão?</p></li>
+<li><p>Qual dos dois você consegue criticar com mais profundidade?</p></li>
+<li><p>Qual dos dois resiste melhor a uma revisão por pares?</p></li>
+</ul>
+<p><strong>A resposta para as três perguntas é a mesma.</strong></p>
+<p><br></p>
+</section>
+<section id="o-que-muda-quando-você-adota-essa-prática" class="level3">
+<h3 class="anchored" data-anchor-id="o-que-muda-quando-você-adota-essa-prática">O que muda quando você adota essa prática?</h3>
+<p>Adotar o hábito de reportar p-valor, tamanho do efeito e IC juntos não é apenas uma questão de rigor metodológico, embora seja isso também. É uma mudança na forma como você pensa sobre o que está analisando.</p>
+<p>Quando o p-valor é o único número que importa, a pergunta que guia a análise é binária: há efeito ou não há? Quando você inclui tamanho do efeito e IC, a pergunta se torna: qual é a magnitude do efeito, e com que precisão eu sei isso?</p>
+<p>A segunda pergunta é mais difícil de responder. Exige que você conheça o contexto, que saiba o que constitui um efeito relevante no seu campo, que interprete a incerteza em vez de ignorá-la. Mas é também a pergunta que produz análises mais honestas, mais úteis e mais resistentes ao tempo.</p>
+<p><strong>O p-valor não vai desaparecer dos relatórios, nem deveria. Mas ele é uma peça de um conjunto, não o conjunto inteiro.</strong></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="o-que-estou-acompanhando" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-estou-acompanhando">O que estou acompanhando</h2>
+<p><br></p>
+<p><strong>ASA (2019) - Moving to a World Beyond “p &lt; 0,05”</strong>: O posicionamento mais influente da última década sobre p-valor. Wasserstein, Schirm e Lazar argumentam com clareza por que o uso dicotômico de significância precisa ser abandonado e o que colocar no lugar: <a href="https://doi.org/10.1080/00031305.2019.1583913">doi.org/10.1080/00031305.2019.1583913</a></p>
+<p><strong>Documentação do <code>effectsize:</code></strong> Referência completa para Cohen’s <em>d</em>, eta², omega² e outros índices, com exemplos e convenções de interpretação: <a href="https://easystats.github.io/effectsize/">easystats.github.io/effectsize</a></p>
+<p><strong>Documentação do <code>parameters:</code></strong> Como extrair coeficientes, IC e tamanho do efeito de qualquer modelo com uma interface consistente: <a href="https://easystats.github.io/parameters/">easystats.github.io/parameters</a></p>
+<p><br></p>
+<hr>
+<div style="background:#EFEBE9; border:1px solid #A1887F; padding:16px 20px; border-radius:4px; margin-top:24px;">
+<p><strong>Edição anterior sobre p-valor</strong> Se você ainda não leu a edição de novembro de 2025 que cobre a teoria por trás do que discutimos aqui, vale voltar: <a href="https://jenniferlopes.quarto.pub/portifolio/cafecomr/posts/25_11_dose3.html">jenniferlopes.quarto.pub/portifolio/cafecomr/posts/25_11_dose3.html</a></p>
+</div>
+<p><br></p>
+<div style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;">
+<p><strong>Próxima edição - cafezinho 11 - 26 de maio</strong></p>
+<p>O que separa um script de uma análise e por que essa diferença define a qualidade do que você entrega.</p>
+</div>
+<p><br></p>
+<div style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;">
+<p><strong>Gostou desta edição?</strong> Assine o Café com R e receba conteúdo de R e Ciência de Dados a cada quinze dias.</p>
+<p><a href="https://cafecomr-conteudos.lovable.app/"><strong>Clique aqui</strong></a></p>
+</div>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

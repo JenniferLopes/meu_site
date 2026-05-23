@@ -13,19 +13,15 @@ about:
     - text: GitHub
       icon: github
       url: "https://github.com/JenniferLopes"
-    - text: Portifólio
+    - text: Aulas | Newsletter - Café com R
       icon: briefcase
-      url: "https://jenniferlopes.quarto.pub/portifolio/"
+      url: "https://jenniferlopes.github.io/meu_site/"
     - text: YouTube
       icon: youtube
       url: "https://www.youtube.com/@jennifercafecomr"
-    
     - text: Consultoria | Mentoria | Cursos - Site
       icon: graph-up
       url: "https://jenniferlopesconsultoriamentoria.netlify.app/"
-    - text: Curso - Ciência de Dados - do básico ao avançado com R
-      icon: book
-      url: "https://cursoscienciadedados.lovable.app/"
     
 comments: false
 ---
