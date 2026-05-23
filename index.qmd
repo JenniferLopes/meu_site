@@ -36,11 +36,13 @@ Ahh, amo ficar agarradinha nas minhas pets, Luna e Meguy! Este espaço é meu la
 ::::
 
 ```{=html}
-<div class="listing-btn-group">
-  <a href="#" onclick="window.history.back(); return false;" class="btn-cafe">
+<div class="listing-btn-group" style="display: flex; gap: 12px; margin-top: 16px;">
+  <a href="#" onclick="window.history.back(); return false;" 
+     style="background-color:#A1887F; color:#fff; padding:10px 20px; border-radius:4px; text-decoration:none; font-size:14px; font-weight:500;">
     ☕ Fique no blog
   </a>
-  <a href="https://jenniferlopesconsultoriamentoria.netlify.app/" target="_blank" class="btn-cafe" style="background-color:#224573;">
+  <a href="https://jenniferlopesconsultoriamentoria.netlify.app/" target="_blank" 
+     style="background-color:#A1887F; color:#fff; padding:10px 20px; border-radius:4px; text-decoration:none; font-size:14px; font-weight:500;">
     🔗 Ir para os meus serviços
   </a>
 </div>
