@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jennifer Lopes">
+<meta name="description" content="Livros, pacotes, cheatsheets, comunidades, datasets, cursos e trilhas organizadas para apoiar a sua jornada em R.">
+
+<title>Recursos para aprender R - Em contrução – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-cc63fce9873912f1bbbccf05079cc9ea.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="css/estilo_geral.scss">
+<link rel="stylesheet" href="estilo_jeni.css">
+</head>
+
+<body class="floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./recursos_para_iniciar_no_r.html" aria-current="page"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Nesta página</h2>
+   
+  <ul>
+  <li><a href="#por-que-aprender-r" id="toc-por-que-aprender-r" class="nav-link active" data-scroll-target="#por-que-aprender-r">Por que aprender R?</a></li>
+  <li><a href="#instalação-por-onde-começar" id="toc-instalação-por-onde-começar" class="nav-link" data-scroll-target="#instalação-por-onde-começar">Instalação: por onde começar</a></li>
+  <li><a href="#trilha-de-aprendizado" id="toc-trilha-de-aprendizado" class="nav-link" data-scroll-target="#trilha-de-aprendizado">Trilha de Aprendizado</a>
+  <ul class="collapse">
+  <li><a href="#fundamentos-da-linguagem" id="toc-fundamentos-da-linguagem" class="nav-link" data-scroll-target="#fundamentos-da-linguagem">Fundamentos da Linguagem</a></li>
+  <li><a href="#trabalhando-com-dados" id="toc-trabalhando-com-dados" class="nav-link" data-scroll-target="#trabalhando-com-dados">Trabalhando com Dados</a></li>
+  <li><a href="#programação-básica" id="toc-programação-básica" class="nav-link" data-scroll-target="#programação-básica">Programação Básica</a></li>
+  <li><a href="#visualização-de-dados" id="toc-visualização-de-dados" class="nav-link" data-scroll-target="#visualização-de-dados">Visualização de Dados</a></li>
+  <li><a href="#trilha-resumida-por-etapas" id="toc-trilha-resumida-por-etapas" class="nav-link" data-scroll-target="#trilha-resumida-por-etapas">Trilha resumida por etapas</a></li>
+  </ul></li>
+  <li><a href="#livros-e-documentações-oficiais" id="toc-livros-e-documentações-oficiais" class="nav-link" data-scroll-target="#livros-e-documentações-oficiais">Livros e Documentações Oficiais</a>
+  <ul class="collapse">
+  <li><a href="#livros-para-começar" id="toc-livros-para-começar" class="nav-link" data-scroll-target="#livros-para-começar">Livros para começar</a>
+  <ul class="collapse">
+  <li><a href="#r-para-ciência-de-dados" id="toc-r-para-ciência-de-dados" class="nav-link" data-scroll-target="#r-para-ciência-de-dados">R para Ciência de Dados</a></li>
+  <li><a href="#hands-on-programming-with-r" id="toc-hands-on-programming-with-r" class="nav-link" data-scroll-target="#hands-on-programming-with-r">Hands-On Programming with R</a></li>
+  <li><a href="#fundamentos-de-ciência-de-dados-com-r" id="toc-fundamentos-de-ciência-de-dados-com-r" class="nav-link" data-scroll-target="#fundamentos-de-ciência-de-dados-com-r">Fundamentos de Ciência de Dados com R</a></li>
+  <li><a href="#advanced-r" id="toc-advanced-r" class="nav-link" data-scroll-target="#advanced-r">Advanced R</a></li>
+  <li><a href="#tidy-modeling-with-r" id="toc-tidy-modeling-with-r" class="nav-link" data-scroll-target="#tidy-modeling-with-r">Tidy Modeling with R</a></li>
+  <li><a href="#mastering-shiny" id="toc-mastering-shiny" class="nav-link" data-scroll-target="#mastering-shiny">Mastering Shiny</a></li>
+  <li><a href="#the-r-inferno" id="toc-the-r-inferno" class="nav-link" data-scroll-target="#the-r-inferno">The R Inferno</a></li>
+  <li><a href="#o-grande-livro-de-r---big-book-of-r" id="toc-o-grande-livro-de-r---big-book-of-r" class="nav-link" data-scroll-target="#o-grande-livro-de-r---big-book-of-r">O Grande Livro de R - Big Book of R</a></li>
+  </ul></li>
+  <li><a href="#livros-de-visualização" id="toc-livros-de-visualização" class="nav-link" data-scroll-target="#livros-de-visualização">Livros de Visualização</a></li>
+  <li><a href="#documentações-e-fontes-de-referência" id="toc-documentações-e-fontes-de-referência" class="nav-link" data-scroll-target="#documentações-e-fontes-de-referência">Documentações e Fontes de Referência</a></li>
+  </ul></li>
+  <li><a href="#pacotes-essenciais-com-links" id="toc-pacotes-essenciais-com-links" class="nav-link" data-scroll-target="#pacotes-essenciais-com-links">Pacotes Essenciais com Links</a>
+  <ul class="collapse">
+  <li><a href="#importação-de-dados" id="toc-importação-de-dados" class="nav-link" data-scroll-target="#importação-de-dados">Importação de Dados</a></li>
+  <li><a href="#manipulação-de-dados" id="toc-manipulação-de-dados" class="nav-link" data-scroll-target="#manipulação-de-dados">Manipulação de Dados</a></li>
+  <li><a href="#visualização-de-dados-1" id="toc-visualização-de-dados-1" class="nav-link" data-scroll-target="#visualização-de-dados-1">Visualização de Dados</a></li>
+  <li><a href="#modelagem-e-estatística" id="toc-modelagem-e-estatística" class="nav-link" data-scroll-target="#modelagem-e-estatística">Modelagem e Estatística</a></li>
+  <li><a href="#publicação-e-reprodutibilidade" id="toc-publicação-e-reprodutibilidade" class="nav-link" data-scroll-target="#publicação-e-reprodutibilidade">Publicação e Reprodutibilidade</a></li>
+  <li><a href="#aplicações-e-dashboards" id="toc-aplicações-e-dashboards" class="nav-link" data-scroll-target="#aplicações-e-dashboards">Aplicações e Dashboards</a></li>
+  <li><a href="#dados-brasileiros" id="toc-dados-brasileiros" class="nav-link" data-scroll-target="#dados-brasileiros">Dados Brasileiros</a></li>
+  </ul></li>
+  <li><a href="#cheatsheets-e-folhas-de-referência" id="toc-cheatsheets-e-folhas-de-referência" class="nav-link" data-scroll-target="#cheatsheets-e-folhas-de-referência">Cheatsheets e Folhas de Referência</a></li>
+  <li><a href="#cursos-gratuitos" id="toc-cursos-gratuitos" class="nav-link" data-scroll-target="#cursos-gratuitos">Cursos Gratuitos</a>
+  <ul class="collapse">
+  <li><a href="#aulas-do-café-com-r" id="toc-aulas-do-café-com-r" class="nav-link" data-scroll-target="#aulas-do-café-com-r">Aulas do Café com R</a></li>
+  <li><a href="#newsletter-café-com-r" id="toc-newsletter-café-com-r" class="nav-link" data-scroll-target="#newsletter-café-com-r">Newsletter Café com R</a></li>
+  </ul></li>
+  <li><a href="#explorando-as-possibilidades-de-r" id="toc-explorando-as-possibilidades-de-r" class="nav-link" data-scroll-target="#explorando-as-possibilidades-de-r">Explorando as Possibilidades de R</a>
+  <ul class="collapse">
+  <li><a href="#gráficos-e-visualização" id="toc-gráficos-e-visualização" class="nav-link" data-scroll-target="#gráficos-e-visualização">Gráficos e Visualização</a></li>
+  <li><a href="#mapas-e-dados-espaciais" id="toc-mapas-e-dados-espaciais" class="nav-link" data-scroll-target="#mapas-e-dados-espaciais">Mapas e Dados Espaciais</a></li>
+  <li><a href="#tabelas" id="toc-tabelas" class="nav-link" data-scroll-target="#tabelas">Tabelas</a></li>
+  <li><a href="#relatórios-e-publicação" id="toc-relatórios-e-publicação" class="nav-link" data-scroll-target="#relatórios-e-publicação">Relatórios e Publicação</a></li>
+  <li><a href="#aplicações-shiny" id="toc-aplicações-shiny" class="nav-link" data-scroll-target="#aplicações-shiny">Aplicações Shiny</a></li>
+  <li><a href="#web-scraping" id="toc-web-scraping" class="nav-link" data-scroll-target="#web-scraping">Web Scraping</a></li>
+  <li><a href="#inteligência-artificial-e-llms" id="toc-inteligência-artificial-e-llms" class="nav-link" data-scroll-target="#inteligência-artificial-e-llms">Inteligência Artificial e LLMs</a></li>
+  <li><a href="#processamento-avançado" id="toc-processamento-avançado" class="nav-link" data-scroll-target="#processamento-avançado">Processamento Avançado</a></li>
+  </ul></li>
+  <li><a href="#comunidades-e-fóruns" id="toc-comunidades-e-fóruns" class="nav-link" data-scroll-target="#comunidades-e-fóruns">Comunidades e Fóruns</a>
+  <ul class="collapse">
+  <li><a href="#comunidades-brasileiras" id="toc-comunidades-brasileiras" class="nav-link" data-scroll-target="#comunidades-brasileiras">Comunidades Brasileiras</a></li>
+  <li><a href="#comunidades-internacionais" id="toc-comunidades-internacionais" class="nav-link" data-scroll-target="#comunidades-internacionais">Comunidades Internacionais</a></li>
+  <li><a href="#newsletters-para-acompanhar" id="toc-newsletters-para-acompanhar" class="nav-link" data-scroll-target="#newsletters-para-acompanhar">Newsletters para Acompanhar</a></li>
+  </ul></li>
+  <li><a href="#datasets-para-praticar" id="toc-datasets-para-praticar" class="nav-link" data-scroll-target="#datasets-para-praticar">Datasets para Praticar</a>
+  <ul class="collapse">
+  <li><a href="#dados-nativos-do-r" id="toc-dados-nativos-do-r" class="nav-link" data-scroll-target="#dados-nativos-do-r">Dados Nativos do R</a></li>
+  <li><a href="#dados-brasileiros-1" id="toc-dados-brasileiros-1" class="nav-link" data-scroll-target="#dados-brasileiros-1">Dados Brasileiros</a></li>
+  <li><a href="#repositórios-internacionais" id="toc-repositórios-internacionais" class="nav-link" data-scroll-target="#repositórios-internacionais">Repositórios Internacionais</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content column-page-right" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Recursos para aprender R - Em contrução</h1>
+<p class="subtitle lead">Uma curadoria completa para quem quer começar com a linguagem R - do zero ao avançado</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Recursos</div>
+    <div class="quarto-category">Aprendizado</div>
+    <div class="quarto-category">Dados</div>
+    <div class="quarto-category">Iniciantes</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Livros, pacotes, cheatsheets, comunidades, datasets, cursos e trilhas organizadas para apoiar a sua jornada em R.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-page-right">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jennifer Lopes </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<blockquote class="blockquote">
+<p><strong>Esta página reúne os recursos mais relevantes para quem deseja aprender R com base sólida. O conteúdo foi selecionado com critério técnico e está organizado por categoria para facilitar a navegação.</strong></p>
+<p><strong><code>Ainda estou adicionando imagens aos poucos.</code></strong></p>
+</blockquote>
+<hr>
+<section id="por-que-aprender-r" class="level1">
+<h1>Por que aprender R?</h1>
+<p>R é uma linguagem <strong>projetada para análise de dados</strong>, criada para pessoas de diversas disciplinas, com uma comunidade global ativa e completamente gratuita.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Característica</th>
+<th>Detalhe</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Gratuito</strong></td>
+<td>Linguagem de código aberto, sem custos de licença</td>
+</tr>
+<tr class="even">
+<td><strong>Reproduzível</strong></td>
+<td>Todo o processo de análise fica registrado em código, auditável e reutilizável</td>
+</tr>
+<tr class="odd">
+<td><strong>Ecossistema maduro</strong></td>
+<td>Mais de 20.000 pacotes no CRAN para as mais diversas aplicações</td>
+</tr>
+<tr class="even">
+<td><strong>Comunidade ativa</strong></td>
+<td>Conferências, grupos, fóruns e materiais em múltiplos idiomas</td>
+</tr>
+<tr class="odd">
+<td><strong>Integração</strong></td>
+<td>Conecta com Python, SQL, APIs, bancos de dados e sistemas de publicação</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Planilhas não escalam. Código escala.
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Excel é uma ferramenta legítima para exploração inicial. O problema é quando ele se torna o único instrumento de análise. Código é auditável, versionável, reutilizável e automatizável.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="instalação-por-onde-começar" class="level1">
+<h1>Instalação: por onde começar</h1>
+<p>Três ferramentas formam a base obrigatória.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Ferramenta</th>
+<th>Descrição</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>R</strong></td>
+<td>Motor da linguagem. Deve ser instalado primeiro.</td>
+<td><a href="https://cran.r-project.org/">cran.r-project.org</a></td>
+</tr>
+<tr class="even">
+<td><strong>RStudio</strong></td>
+<td>IDE mais popular para R. Interface completa com console, editor, ambiente e painel de plots.</td>
+<td><a href="https://posit.co/download/rstudio-desktop/">posit.co/download/rstudio-desktop</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Positron</strong></td>
+<td>Nova IDE da Posit, com suporte nativo a R e Python. Alternativa moderna ao RStudio.</td>
+<td><a href="https://posit.co/products/ide/positron/">posit.co/products/ide/positron</a></td>
+</tr>
+<tr class="even">
+<td><strong>Quarto</strong></td>
+<td>Sistema de publicação científica e técnica. Integra código, texto e resultados.</td>
+<td><a href="https://quarto.org/">quarto.org</a></td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ordem correta de instalação
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Instale sempre nesta sequência: <strong>R primeiro</strong>, depois <strong>RStudio ou Positron</strong>, depois <strong>Quarto</strong>. O RStudio detecta automaticamente a versão do R instalada no sistema.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Alternativa sem instalação
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Você pode usar R diretamente no navegador via <a href="https://posit.cloud">Posit Cloud</a>, sem instalar nada. É gratuito para uso básico e ideal para os primeiros experimentos.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="trilha-de-aprendizado" class="level1">
+<h1>Trilha de Aprendizado</h1>
+<p>Esta trilha segue uma progressão técnica estruturada. Cada etapa prepara para a próxima.</p>
+<section id="fundamentos-da-linguagem" class="level2">
+<h2 class="anchored" data-anchor-id="fundamentos-da-linguagem">Fundamentos da Linguagem</h2>
+<p>Antes de trabalhar com dados, é necessário entender como R funciona como linguagem.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Conceito</th>
+<th>O que aprender</th>
+<th>Onde consultar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Interface RStudio</strong></td>
+<td>Painéis, console, editor, ambiente e atalhos</td>
+<td><a href="https://docs.posit.co/ide/user/">Documentação RStudio</a></td>
+</tr>
+<tr class="even">
+<td><strong>Projetos</strong></td>
+<td>Como organizar o trabalho com projetos R</td>
+<td><a href="https://r4ds.hadley.nz/workflow-scripts.html">R for Data Science - cap. 6</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Operações básicas</strong></td>
+<td>Tipos de dados, operações aritméticas e lógicas</td>
+<td><a href="https://rstudio-education.github.io/hopr/">Hands-On Programming with R</a></td>
+</tr>
+<tr class="even">
+<td><strong>Vetores</strong></td>
+<td>Sequências de dados, o objeto fundamental do R</td>
+<td><a href="https://rstudio-education.github.io/hopr/basics.html">Hands-On Programming with R - cap. 2</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Funções</strong></td>
+<td>Como funções recebem dados e retornam resultados</td>
+<td><a href="https://r4ds.hadley.nz/functions.html">R for Data Science - cap. 25</a></td>
+</tr>
+<tr class="even">
+<td><strong>Pipe</strong></td>
+<td>Encadeamento de operações com <code>\|&gt;</code> e <code>%&gt;%</code></td>
+<td><a href="https://r4ds.hadley.nz/workflow-style.html">R for Data Science - cap. 4</a></td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Conceitos fundamentais em R</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Atribuição de valores</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">25</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Vetor: sequência de dados</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>idades <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">35</span>, <span class="dv">28</span>, <span class="dv">41</span>, <span class="dv">19</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Função aplicada a um vetor</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(idades)     <span class="co"># média</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(idades)      <span class="co"># soma</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(idades)   <span class="co"># quantidade de elementos</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Pipe: encadeamento lógico de operações</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>idades <span class="sc">|&gt;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="at">digits =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="trabalhando-com-dados" class="level2">
+<h2 class="anchored" data-anchor-id="trabalhando-com-dados">Trabalhando com Dados</h2>
+<p>Manipulação de tabelas com o pacote <code>dplyr</code>, o principal verbo da análise de dados em R.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operação</th>
+<th>Função</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Explorar</strong></td>
+<td><code>glimpse()</code>, <code>head()</code>, <code>summary()</code></td>
+<td>Inspeciona a estrutura e conteúdo da tabela</td>
+</tr>
+<tr class="even">
+<td><strong>Filtrar linhas</strong></td>
+<td><code>filter()</code></td>
+<td>Extrai subconjuntos de linhas por condição</td>
+</tr>
+<tr class="odd">
+<td><strong>Selecionar colunas</strong></td>
+<td><code>select()</code></td>
+<td>Escolhe quais colunas manter ou remover</td>
+</tr>
+<tr class="even">
+<td><strong>Criar variáveis</strong></td>
+<td><code>mutate()</code></td>
+<td>Calcula novas colunas a partir das existentes</td>
+</tr>
+<tr class="odd">
+<td><strong>Resumir</strong></td>
+<td><code>group_by()</code> + <code>summarise()</code></td>
+<td>Agrega dados por grupo</td>
+</tr>
+<tr class="even">
+<td><strong>Cruzar tabelas</strong></td>
+<td><code>left_join()</code></td>
+<td>Une duas tabelas por uma coluna em comum</td>
+</tr>
+<tr class="odd">
+<td><strong>Pivotar</strong></td>
+<td><code>pivot_longer()</code> / <code>pivot_wider()</code></td>
+<td>Transforma entre formatos largo e longo</td>
+</tr>
+<tr class="even">
+<td><strong>Limpar</strong></td>
+<td><code>drop_na()</code>, <code>distinct()</code>, <code>rename()</code></td>
+<td>Remove duplicatas, ausentes e renomeia</td>
+</tr>
+</tbody>
+</table>
+<p>Documentações oficiais:</p>
+<ul>
+<li><a href="https://dplyr.tidyverse.org/">Documentação do dplyr</a></li>
+<li><a href="https://tidyr.tidyverse.org/">Documentação do tidyr</a></li>
+<li><a href="https://r4ds.hadley.nz/data-transform.html">R for Data Science - Transformação de dados</a></li>
+<li><a href="https://r4ds.hadley.nz/joins.html">R for Data Science - Joins</a></li>
+<li><a href="https://r4ds.hadley.nz/data-tidy.html">R for Data Science - Dados organizados</a></li>
+</ul>
+<hr>
+</section>
+<section id="programação-básica" class="level2">
+<h2 class="anchored" data-anchor-id="programação-básica">Programação Básica</h2>
+<p>Etapa opcional mas recomendada. Funções, condicionais e loops permitem automatizar trabalho.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Conceito</th>
+<th>O que aprender</th>
+<th>Onde consultar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Funções</strong></td>
+<td>Como criar funções reutilizáveis</td>
+<td><a href="https://r4ds.hadley.nz/functions.html">R for Data Science - cap. 25</a></td>
+</tr>
+<tr class="even">
+<td><strong>Condicionais</strong></td>
+<td><code>if</code>, <code>else</code>, <code>ifelse()</code>, <code>case_when()</code></td>
+<td><a href="https://r4ds.hadley.nz/functions.html">R for Data Science - cap. 25</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Loops</strong></td>
+<td><code>for</code>, <code>while</code> e alternativas com <code>purrr</code></td>
+<td><a href="https://r4ds.hadley.nz/iteration.html">R for Data Science - cap. 26</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="visualização-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="visualização-de-dados">Visualização de Dados</h2>
+<p><code>ggplot2</code> é a biblioteca de visualização mais expressiva e completa disponível em R.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Recurso</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Documentação oficial do ggplot2</td>
+<td><a href="https://ggplot2.tidyverse.org/">ggplot2.tidyverse.org</a></td>
+</tr>
+<tr class="even">
+<td>R for Data Science - Visualização</td>
+<td><a href="https://r4ds.hadley.nz/data-visualize.html">r4ds.hadley.nz/data-visualize.html</a></td>
+</tr>
+<tr class="odd">
+<td>ggplot2: Elegant Graphics for Data Analysis</td>
+<td><a href="https://ggplot2-book.org">ggplot2-book.org</a></td>
+</tr>
+<tr class="even">
+<td>R Graphics Cookbook</td>
+<td><a href="https://r-graphics.org">r-graphics.org</a></td>
+</tr>
+<tr class="odd">
+<td>Galeria de tipos de gráfico</td>
+<td><a href="https://r-graph-gallery.com">r-graph-gallery.com</a></td>
+</tr>
+<tr class="even">
+<td>Documentação do patchwork</td>
+<td><a href="https://patchwork.data-imaginist.com/">patchwork.data-imaginist.com</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="trilha-resumida-por-etapas" class="level2">
+<h2 class="anchored" data-anchor-id="trilha-resumida-por-etapas">Trilha resumida por etapas</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Etapa</th>
+<th>Conteúdo</th>
+<th>Material principal</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1</strong></td>
+<td>Instalação e interface do RStudio</td>
+<td><a href="https://docs.posit.co/ide/user/">Documentação RStudio</a></td>
+</tr>
+<tr class="even">
+<td><strong>2</strong></td>
+<td>Tipos de dados, vetores e data frames</td>
+<td><a href="https://rstudio-education.github.io/hopr/">Hands-On Programming with R</a></td>
+</tr>
+<tr class="odd">
+<td><strong>3</strong></td>
+<td>Importação de arquivos CSV e Excel</td>
+<td><a href="https://readr.tidyverse.org/">Documentação readr</a></td>
+</tr>
+<tr class="even">
+<td><strong>4</strong></td>
+<td>Manipulação com dplyr</td>
+<td><a href="https://r4ds.hadley.nz/data-transform.html">R for Data Science - cap. 3 a 5</a></td>
+</tr>
+<tr class="odd">
+<td><strong>5</strong></td>
+<td>Visualização com ggplot2</td>
+<td><a href="https://r4ds.hadley.nz/data-visualize.html">R for Data Science - cap. 9 a 11</a></td>
+</tr>
+<tr class="even">
+<td><strong>6</strong></td>
+<td>Organização de dados com tidyr</td>
+<td><a href="https://r4ds.hadley.nz/data-tidy.html">R for Data Science - cap. 6</a></td>
+</tr>
+<tr class="odd">
+<td><strong>7</strong></td>
+<td>Funções e programação funcional</td>
+<td><a href="https://r4ds.hadley.nz/functions.html">R for Data Science - cap. 25 a 27</a></td>
+</tr>
+<tr class="even">
+<td><strong>8</strong></td>
+<td>Relatórios reproduzíveis com Quarto</td>
+<td><a href="https://quarto.org/docs/guide/">Documentação oficial do Quarto</a></td>
+</tr>
+<tr class="odd">
+<td><strong>9</strong></td>
+<td>Controle de versão com Git e GitHub</td>
+<td><a href="https://happygitwithr.com/">Happy Git with R</a></td>
+</tr>
+<tr class="even">
+<td><strong>10</strong></td>
+<td>Modelagem com tidymodels</td>
+<td><a href="https://www.tmwr.org/">Tidy Modeling with R</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="livros-e-documentações-oficiais" class="level1">
+<h1>Livros e Documentações Oficiais</h1>
+<section id="livros-para-começar" class="level2">
+<h2 class="anchored" data-anchor-id="livros-para-começar">Livros para começar</h2>
+<hr>
+<section id="r-para-ciência-de-dados" class="level3">
+<h3 class="anchored" data-anchor-id="r-para-ciência-de-dados">R para Ciência de Dados</h3>
+<p><strong>Autores:</strong> Hadley Wickham, Mine Çetinkaya-Rundel e Garrett Grolemund</p>
+<p>O livro central para aprender a usar R. Cobre toda a cadeia de análise: importação, transformação, visualização, modelagem e comunicação de resultados.</p>
+<ul>
+<li><p>Versão em inglês (2ª edição): <a href="https://r4ds.hadley.nz/">r4ds.hadley.nz</a></p></li>
+<li><p>Versão em espanhol traduzida pela comunidade: <a href="https://es.r4ds.hadley.nz">es.r4ds.hadley.nz</a></p>
+<p><img src="apresentações/posts/imagens/cover.jpg" class="img-fluid" width="330"></p></li>
+</ul>
+<hr>
+</section>
+<section id="hands-on-programming-with-r" class="level3">
+<h3 class="anchored" data-anchor-id="hands-on-programming-with-r">Hands-On Programming with R</h3>
+<p><strong>Autor:</strong> Garrett Grolemund</p>
+<p>Foco na base da linguagem: objetos, vetores, funções e estruturas de controle. Ideal para quem precisa entender o R antes de partir para o Tidyverse.</p>
+<ul>
+<li><p>Disponível gratuitamente: <a href="https://rstudio-education.github.io/hopr/">rstudio-education.github.io/hopr</a></p>
+<p><img src="apresentações/posts/imagens/cover2.png" class="img-fluid"></p></li>
+</ul>
+<hr>
+</section>
+<section id="fundamentos-de-ciência-de-dados-com-r" class="level3">
+<h3 class="anchored" data-anchor-id="fundamentos-de-ciência-de-dados-com-r">Fundamentos de Ciência de Dados com R</h3>
+<p>Parte do básico e avança por temas como estatística, modelagem, dados espaciais e redes neurais.</p>
+<ul>
+<li>Disponível gratuitamente: <a href="https://cdr-book.github.io">cdr-book.github.io</a></li>
+</ul>
+<hr>
+</section>
+<section id="advanced-r" class="level3">
+<h3 class="anchored" data-anchor-id="advanced-r">Advanced R</h3>
+<p><strong>Autor:</strong> Hadley Wickham</p>
+<p>Para quem quer aprofundar o entendimento da linguagem: ambientes, metaprogramação, programação funcional e orientação a objetos. Não indicado para iniciantes.</p>
+<ul>
+<li>Disponível gratuitamente: <a href="https://adv-r.hadley.nz/">adv-r.hadley.nz</a></li>
+</ul>
+<hr>
+</section>
+<section id="tidy-modeling-with-r" class="level3">
+<h3 class="anchored" data-anchor-id="tidy-modeling-with-r">Tidy Modeling with R</h3>
+<p><strong>Autores:</strong> Max Kuhn e Julia Silge</p>
+<p>Introdução ao ecossistema <code>tidymodels</code> para modelagem estatística e machine learning em R.</p>
+<ul>
+<li>Disponível gratuitamente: <a href="https://www.tmwr.org/">tmwr.org</a></li>
+<li></li>
+</ul>
+<hr>
+</section>
+<section id="mastering-shiny" class="level3">
+<h3 class="anchored" data-anchor-id="mastering-shiny">Mastering Shiny</h3>
+<p><strong>Autor:</strong> Hadley Wickham</p>
+<p>Guia completo para desenvolver aplicações web interativas com R, do básico ao avançado.</p>
+<ul>
+<li>Disponível gratuitamente: <a href="https://mastering-shiny.org">mastering-shiny.org</a></li>
+</ul>
+<hr>
+</section>
+<section id="the-r-inferno" class="level3">
+<h3 class="anchored" data-anchor-id="the-r-inferno">The R Inferno</h3>
+<p><strong>Autor:</strong> Patrick Burns</p>
+<p>Livro sobre as dificuldades e curiosidades de R como linguagem de programação. Recomendado após dominar o básico.</p>
+<ul>
+<li>Disponível gratuitamente: <a href="https://www.burns-stat.com/documents/books/the-r-inferno/">burns-stat.com/documents/books/the-r-inferno</a></li>
+</ul>
+<hr>
+</section>
+<section id="o-grande-livro-de-r---big-book-of-r" class="level3">
+<h3 class="anchored" data-anchor-id="o-grande-livro-de-r---big-book-of-r">O Grande Livro de R - Big Book of R</h3>
+<p><strong>Organizador:</strong> Oscar Baruffa</p>
+<p>Repositório curado com mais de 300 livros gratuitos sobre R organizados por tema.</p>
+<ul>
+<li>Acesse em: <a href="https://www.bigbookofr.com/">bigbookofr.com</a></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="livros-de-visualização" class="level2">
+<h2 class="anchored" data-anchor-id="livros-de-visualização">Livros de Visualização</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Livro</th>
+<th>Descrição</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>ggplot2: Elegant Graphics for Data Analysis</strong></td>
+<td>Teoria da Grammar of Graphics que fundamenta o ggplot2</td>
+<td><a href="https://ggplot2-book.org">ggplot2-book.org</a></td>
+</tr>
+<tr class="even">
+<td><strong>R Graphics Cookbook</strong></td>
+<td>Mais de 150 receitas para criar gráficos com R</td>
+<td><a href="https://r-graphics.org">r-graphics.org</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="documentações-e-fontes-de-referência" class="level2">
+<h2 class="anchored" data-anchor-id="documentações-e-fontes-de-referência">Documentações e Fontes de Referência</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Recurso</th>
+<th>Descrição</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>CRAN</strong></td>
+<td>Repositório oficial de pacotes R</td>
+<td><a href="https://cran.r-project.org/">cran.r-project.org</a></td>
+</tr>
+<tr class="even">
+<td><strong>CRAN Task Views</strong></td>
+<td>Pacotes organizados por área temática</td>
+<td><a href="https://cran.r-project.org/web/views/">cran.r-project.org/web/views</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Tidyverse</strong></td>
+<td>Documentação oficial do ecossistema</td>
+<td><a href="https://www.tidyverse.org/">tidyverse.org</a></td>
+</tr>
+<tr class="even">
+<td><strong>Posit Docs</strong></td>
+<td>Documentação de produtos Posit</td>
+<td><a href="https://docs.posit.co/">docs.posit.co</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Quarto</strong></td>
+<td>Documentação oficial do sistema de publicação</td>
+<td><a href="https://quarto.org/docs/guide/">quarto.org/docs</a></td>
+</tr>
+<tr class="even">
+<td><strong>R-bloggers</strong></td>
+<td>Agrega posts técnicos de usuários de R</td>
+<td><a href="https://www.r-bloggers.com/">r-bloggers.com</a></td>
+</tr>
+<tr class="odd">
+<td><strong>R Weekly</strong></td>
+<td>Curadoria semanal de notícias e posts sobre R</td>
+<td><a href="https://rweekly.org">rweekly.org</a></td>
+</tr>
+<tr class="even">
+<td><strong>RWorks</strong></td>
+<td>Curadoria de funcionalidades e pacotes de R</td>
+<td><a href="https://rworks.dev/">rworks.dev</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="pacotes-essenciais-com-links" class="level1">
+<h1>Pacotes Essenciais com Links</h1>
+<section id="importação-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="importação-de-dados">Importação de Dados</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Pacote</th>
+<th>Função principal</th>
+<th>Documentação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>readr</code></td>
+<td>Importação de CSV e arquivos de texto</td>
+<td><a href="https://readr.tidyverse.org/">readr.tidyverse.org</a></td>
+</tr>
+<tr class="even">
+<td><code>readxl</code></td>
+<td>Importação de arquivos Excel</td>
+<td><a href="https://readxl.tidyverse.org/">readxl.tidyverse.org</a></td>
+</tr>
+<tr class="odd">
+<td><code>haven</code></td>
+<td>Importação de SPSS, Stata e SAS</td>
+<td><a href="https://haven.tidyverse.org/">haven.tidyverse.org</a></td>
+</tr>
+<tr class="even">
+<td><code>httr2</code></td>
+<td>Requisições HTTP e consumo de APIs</td>
+<td><a href="https://httr2.r-lib.org/">httr2.r-lib.org</a></td>
+</tr>
+<tr class="odd">
+<td><code>jsonlite</code></td>
+<td>Leitura e escrita de JSON</td>
+<td><a href="https://cran.r-project.org/package=jsonlite">CRAN: jsonlite</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="manipulação-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="manipulação-de-dados">Manipulação de Dados</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Pacote</th>
+<th>Função principal</th>
+<th>Documentação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>dplyr</code></td>
+<td>Manipulação de tabelas com verbos consistentes</td>
+<td><a href="https://dplyr.tidyverse.org/">dplyr.tidyverse.org</a></td>
+</tr>
+<tr class="even">
+<td><code>tidyr</code></td>
+<td>Organização e pivotagem de dados</td>
+<td><a href="https://tidyr.tidyverse.org/">tidyr.tidyverse.org</a></td>
+</tr>
+<tr class="odd">
+<td><code>stringr</code></td>
+<td>Manipulação de texto e expressões regulares</td>
+<td><a href="https://stringr.tidyverse.org/">stringr.tidyverse.org</a></td>
+</tr>
+<tr class="even">
+<td><code>lubridate</code></td>
+<td>Manipulação de datas e horários</td>
+<td><a href="https://lubridate.tidyverse.org/">lubridate.tidyverse.org</a></td>
+</tr>
+<tr class="odd">
+<td><code>forcats</code></td>
+<td>Manipulação de variáveis categóricas</td>
+<td><a href="https://forcats.tidyverse.org/">forcats.tidyverse.org</a></td>
+</tr>
+<tr class="even">
+<td><code>purrr</code></td>
+<td>Programação funcional e iteração</td>
+<td><a href="https://purrr.tidyverse.org/">purrr.tidyverse.org</a></td>
+</tr>
+<tr class="odd">
+<td><code>janitor</code></td>
+<td>Limpeza de nomes e dados</td>
+<td><a href="https://cran.r-project.org/package=janitor">CRAN: janitor</a></td>
+</tr>
+<tr class="even">
+<td><code>skimr</code></td>
+<td>Resumo estatístico rápido de data frames</td>
+<td><a href="https://docs.ropensci.org/skimr/">docs.ropensci.org/skimr</a></td>
+</tr>
+<tr class="odd">
+<td><code>data.table</code></td>
+<td>Manipulação de grandes volumes com alta performance</td>
+<td><a href="https://rdatatable.gitlab.io/data.table/">rdatatable.gitlab.io/data.table</a></td>
+</tr>
+<tr class="even">
+<td><code>pointblank</code></td>
+<td>Validação e verificação da qualidade dos dados</td>
+<td><a href="https://cran.r-project.org/package=pointblank">CRAN: pointblank</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="visualização-de-dados-1" class="level2">
+<h2 class="anchored" data-anchor-id="visualização-de-dados-1">Visualização de Dados</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Pacote</th>
+<th>Função principal</th>
+<th>Documentação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ggplot2</code></td>
+<td>Visualização por camadas (Grammar of Graphics)</td>
+<td><a href="https://ggplot2.tidyverse.org/">ggplot2.tidyverse.org</a></td>
+</tr>
+<tr class="even">
+<td><code>plotly</code></td>
+<td>Gráficos interativos a partir de ggplot2</td>
+<td><a href="https://plotly.com/r/">plotly.com/r</a></td>
+</tr>
+<tr class="odd">
+<td><code>ggiraph</code></td>
+<td>Gráficos ggplot2 interativos com tooltips e cliques</td>
+<td><a href="https://davidgohel.github.io/ggiraph/">davidgohel.github.io/ggiraph</a></td>
+</tr>
+<tr class="even">
+<td><code>patchwork</code></td>
+<td>Combinação de múltiplos gráficos ggplot2</td>
+<td><a href="https://patchwork.data-imaginist.com/">patchwork.data-imaginist.com</a></td>
+</tr>
+<tr class="odd">
+<td><code>ggthemes</code></td>
+<td>Temas adicionais para ggplot2</td>
+<td><a href="https://cran.r-project.org/package=ggthemes">CRAN: ggthemes</a></td>
+</tr>
+<tr class="even">
+<td><code>gt</code></td>
+<td>Tabelas estáticas e formatadas para publicação</td>
+<td><a href="https://gt.rstudio.com/">gt.rstudio.com</a></td>
+</tr>
+<tr class="odd">
+<td><code>DT</code></td>
+<td>Tabelas interativas com filtros e busca</td>
+<td><a href="https://rstudio.github.io/DT/">rstudio.github.io/DT</a></td>
+</tr>
+<tr class="even">
+<td><code>sf</code></td>
+<td>Dados espaciais e geográficos, mapas e operações geométricas</td>
+<td><a href="https://r-spatial.github.io/sf">r-spatial.github.io/sf</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="modelagem-e-estatística" class="level2">
+<h2 class="anchored" data-anchor-id="modelagem-e-estatística">Modelagem e Estatística</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Pacote</th>
+<th>Função principal</th>
+<th>Documentação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>tidymodels</code></td>
+<td>Framework completo para machine learning tidy</td>
+<td><a href="https://www.tidymodels.org/">tidymodels.org</a></td>
+</tr>
+<tr class="even">
+<td><code>broom</code></td>
+<td>Organiza resultados de modelos em tibbles</td>
+<td><a href="https://broom.tidymodels.org/">broom.tidymodels.org</a></td>
+</tr>
+<tr class="odd">
+<td><code>easystats</code></td>
+<td>Ecossistema para análise e comunicação de modelos</td>
+<td><a href="https://easystats.github.io/easystats/">easystats.github.io/easystats</a></td>
+</tr>
+<tr class="even">
+<td><code>infer</code></td>
+<td>Inferência estatística com sintaxe tidy</td>
+<td><a href="https://infer.tidymodels.org/">infer.tidymodels.org</a></td>
+</tr>
+<tr class="odd">
+<td><code>lme4</code></td>
+<td>Modelos mistos e hierárquicos</td>
+<td><a href="https://cran.r-project.org/package=lme4">CRAN: lme4</a></td>
+</tr>
+<tr class="even">
+<td><code>survival</code></td>
+<td>Análise de sobrevivência</td>
+<td><a href="https://cran.r-project.org/package=survival">CRAN: survival</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="publicação-e-reprodutibilidade" class="level2">
+<h2 class="anchored" data-anchor-id="publicação-e-reprodutibilidade">Publicação e Reprodutibilidade</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Pacote</th>
+<th>Função principal</th>
+<th>Documentação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>rmarkdown</code></td>
+<td>Documentos reproduzíveis com código R</td>
+<td><a href="https://rmarkdown.rstudio.com/">rmarkdown.rstudio.com</a></td>
+</tr>
+<tr class="even">
+<td><code>knitr</code></td>
+<td>Motor de execução de blocos de código</td>
+<td><a href="https://yihui.org/knitr/">yihui.org/knitr</a></td>
+</tr>
+<tr class="odd">
+<td><code>renv</code></td>
+<td>Controle de versão de pacotes por projeto</td>
+<td><a href="https://rstudio.github.io/renv/">rstudio.github.io/renv</a></td>
+</tr>
+<tr class="even">
+<td><code>here</code></td>
+<td>Gerenciamento de caminhos relativos</td>
+<td><a href="https://here.r-lib.org/">here.r-lib.org</a></td>
+</tr>
+<tr class="odd">
+<td><code>usethis</code></td>
+<td>Automação de tarefas de criação de projetos</td>
+<td><a href="https://usethis.r-lib.org/">usethis.r-lib.org</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="aplicações-e-dashboards" class="level2">
+<h2 class="anchored" data-anchor-id="aplicações-e-dashboards">Aplicações e Dashboards</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Pacote</th>
+<th>Função principal</th>
+<th>Documentação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>shiny</code></td>
+<td>Criação de aplicações web interativas com R</td>
+<td><a href="https://shiny.posit.co">shiny.posit.co</a></td>
+</tr>
+<tr class="even">
+<td><code>bslib</code></td>
+<td>Temas modernos e componentes UI para Shiny</td>
+<td><a href="https://rstudio.github.io/bslib/">rstudio.github.io/bslib</a></td>
+</tr>
+<tr class="odd">
+<td><code>plumber</code></td>
+<td>Criação de APIs REST com R</td>
+<td><a href="https://www.rplumber.io/">rplumber.io</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="dados-brasileiros" class="level2">
+<h2 class="anchored" data-anchor-id="dados-brasileiros">Dados Brasileiros</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Pacote</th>
+<th>Função principal</th>
+<th>Documentação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>sidrar</code></td>
+<td>Acesso direto a tabelas do SIDRA/IBGE</td>
+<td><a href="https://cran.r-project.org/package=sidrar">CRAN: sidrar</a></td>
+</tr>
+<tr class="even">
+<td><code>basedosdados</code></td>
+<td>Acesso a dados públicos tratados</td>
+<td><a href="https://basedosdados.org/">basedosdados.org</a></td>
+</tr>
+<tr class="odd">
+<td><code>BETS</code></td>
+<td>Séries temporais do Banco Central</td>
+<td><a href="https://cran.r-project.org/package=BETS">CRAN: BETS</a></td>
+</tr>
+<tr class="even">
+<td><code>electionsBR</code></td>
+<td>Dados eleitorais do TSE</td>
+<td><a href="https://cran.r-project.org/package=electionsBR">CRAN: electionsBR</a></td>
+</tr>
+<tr class="odd">
+<td><code>microdatasus</code></td>
+<td>Microdados do SUS (DATASUS)</td>
+<td><a href="https://cran.r-project.org/package=microdatasus">CRAN: microdatasus</a></td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Como instalar pacotes em R
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalação de um pacote do CRAN</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalação de múltiplos pacotes de uma vez</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"renv"</span>, <span class="st">"here"</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalação via pacman (recomendado para projetos)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, renv, here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="cheatsheets-e-folhas-de-referência" class="level1">
+<h1>Cheatsheets e Folhas de Referência</h1>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Como usar cheatsheets
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use como material de consulta <strong>durante</strong> a prática, não como leitura linear. Mantenha abertas em uma segunda tela enquanto escreve código.</p>
+</div>
+</div>
+<p>Todas as cheatsheets oficiais estão disponíveis em: <a href="https://posit.co/resources/cheatsheets/">posit.co/resources/cheatsheets</a></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 72%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Cheatsheet</th>
+<th>Conteúdo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Base R</strong></td>
+<td>Conceitos básicos para usar R na prática</td>
+</tr>
+<tr class="even">
+<td><strong>RStudio IDE</strong></td>
+<td>Aspectos principais do ambiente de desenvolvimento</td>
+</tr>
+<tr class="odd">
+<td><strong>dplyr</strong></td>
+<td>filter, select, mutate, group_by, summarise, joins</td>
+</tr>
+<tr class="even">
+<td><strong>ggplot2</strong></td>
+<td>geoms, aes, scales, themes, facets</td>
+</tr>
+<tr class="odd">
+<td><strong>tidyr</strong></td>
+<td>pivot_longer, pivot_wider, unnest, separate</td>
+</tr>
+<tr class="even">
+<td><strong>Importar dados</strong></td>
+<td>CSV, Excel e Google Drive</td>
+</tr>
+<tr class="odd">
+<td><strong>forcats</strong></td>
+<td>Variáveis categóricas</td>
+</tr>
+<tr class="even">
+<td><strong>stringr</strong></td>
+<td>Manipulação de texto e regex</td>
+</tr>
+<tr class="odd">
+<td><strong>lubridate</strong></td>
+<td>Dados em formato data e hora</td>
+</tr>
+<tr class="even">
+<td><strong>purrr</strong></td>
+<td>map, map2, walk, imap, reduce</td>
+</tr>
+<tr class="odd">
+<td><strong>R Markdown</strong></td>
+<td>YAML, chunks, código inline, formatos de saída</td>
+</tr>
+<tr class="even">
+<td><strong>Quarto</strong></td>
+<td>Estrutura de documentos, chunks, YAML, formatos</td>
+</tr>
+<tr class="odd">
+<td><strong>Shiny</strong></td>
+<td>Desenvolvimento de aplicações web interativas</td>
+</tr>
+<tr class="even">
+<td><strong>tidymodels</strong></td>
+<td>recipe, parsnip, workflow, tune</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="cursos-gratuitos" class="level1">
+<h1>Cursos Gratuitos</h1>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Curso</th>
+<th>Descrição</th>
+<th>Nível</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Café com R</strong></td>
+<td>Aulas abertas em Quarto cobrindo R do básico ao avançado, com dados brasileiros</td>
+<td>Básico a avançado</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/">Acessar</a></td>
+</tr>
+<tr class="even">
+<td><strong>posit::conf(2025)</strong></td>
+<td>Mais de 100 palestras e workshops da conferência anual da Posit</td>
+<td>Intermediário a avançado</td>
+<td><a href="https://posit.co/blog/talks-and-workshops-from-posit-conf-2025/">Acessar</a></td>
+</tr>
+</tbody>
+</table>
+<section id="aulas-do-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="aulas-do-café-com-r">Aulas do Café com R</h2>
+<p>Todo o material é aberto, produzido em Quarto, com código reproduzível e disponível no GitHub.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Aula</th>
+<th>Tópico</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Primeiros passos com R</td>
+<td>Estruturas, objetos e operações fundamentais</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/guia_inicial.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Funções em R</td>
+<td>Como criar e usar funções reutilizáveis</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/funções_jeni.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Manipulação de dados com dplyr</td>
+<td>Verbos principais do Tidyverse</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/manipulacao.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Atualizações do dplyr</td>
+<td>Novidades da versão mais recente, incluindo <code>across()</code></td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/dplyr_atualizacoes.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Visualização com ggplot2</td>
+<td>Grammar of Graphics na prática</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/visualizacao.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Como fazer tabelas profissionais no R</td>
+<td>gtsummary para tabelas descritivas e de regressão</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula22_gtsummary.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Como limpar seus dados no R em 9 passos</td>
+<td>Limpeza de dados com janitor</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula21_janitor.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Tidy data e análise exploratória</td>
+<td>Estrutura e exploração de dados</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/apresentacao_tidy_eda.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Estatística com R</td>
+<td>Descritiva e inferencial</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/estatistica_basica.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Estatística Descritiva</td>
+<td>Medidas de posição, dispersão e distribuição</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula16_estatistica_descritiva.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>SQL para R com dbplyr</td>
+<td>Consultas SQL dentro do R</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/sql.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>SQL x R: comparativo de comandos</td>
+<td>Equivalências entre SQL e dplyr</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/sql_comandos.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Consumo de APIs RESTful no R</td>
+<td>httr2 e autenticação</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/api_R.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Tidymodels para regressão</td>
+<td>Machine learning com sintaxe tidy</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/tidymodels.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Documentação: Tidymodels para regressão</td>
+<td>Material de referência complementar</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/tidymodels_documentacao.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>R e Python para iniciantes</td>
+<td>Comparação e estratégia de aprendizado</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula_r_python_iniciantes.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Integração R e Python com Reticulate</td>
+<td>Combinando os dois mundos</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/apresentacao_r_python.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>14 integrações do R e RStudio</td>
+<td>Ferramentas e conexões do ecossistema</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula14_integracoes_r.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Git e GitHub no RStudio</td>
+<td>Controle de versão integrado</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula15_git_github_rstudio.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>GitHub Actions para projetos de dados</td>
+<td>Automação de pipelines em R</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula18_github_actions_para_dados_em_R.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Docker para pesquisadores e analistas</td>
+<td>Reprodutibilidade com containers</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula17_docker_para_dados_em_R.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Envio de e-mails com blastula</td>
+<td>Automação de relatórios por e-mail</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula20_blastula.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Pacotes R para Experimentação Agrícola</td>
+<td>Análise de experimentos com R</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/apresentações/posts/aula19_pacotes_experimentacao_agricola.html">Acessar</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="newsletter-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="newsletter-café-com-r">Newsletter Café com R</h2>
+<p>Edições com reflexões, tutoriais e novidades do universo R e da estatística.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Edição</th>
+<th>Tema</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dose 3</td>
+<td>Desmistificando o valor-p</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/cafecomr/posts/25_11_dose3.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Dose 10</td>
+<td>O que colocar no lugar do p-valor: tamanho do efeito e IC</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/cafecomr/posts/dose10_2505.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Resenha</td>
+<td>Quando a ciência aprende a perguntar</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/cafecomr/posts/18_11-resenhalivro.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Tutorial</td>
+<td>Como automatizei minha newsletter do zero (n8n + Google Sheets + Gmail)</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/cafecomr/posts/09_03_tutorial_newsletter_automacao.html">Acessar</a></td>
+</tr>
+<tr class="odd">
+<td>Dose 6</td>
+<td>Boas práticas em projetos de R</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/cafecomr/posts/06_01_dose6.html">Acessar</a></td>
+</tr>
+<tr class="even">
+<td>Dose 9</td>
+<td>across() no dplyr: quando você para de escrever código e começa a pensar em código</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/cafecomr/posts/dose9_1905.html">Acessar</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="explorando-as-possibilidades-de-r" class="level1">
+<h1>Explorando as Possibilidades de R</h1>
+<p>Após dominar os fundamentos, R abre um conjunto amplo de especializações.</p>
+<section id="gráficos-e-visualização" class="level2">
+<h2 class="anchored" data-anchor-id="gráficos-e-visualização">Gráficos e Visualização</h2>
+<ul>
+<li><a href="https://ggplot2.tidyverse.org/">Documentação oficial do ggplot2</a></li>
+<li><a href="https://r-graph-gallery.com">Galeria de tipos de gráfico com instruções</a></li>
+<li><a href="https://ggplot2-book.org">ggplot2: Elegant Graphics for Data Analysis</a></li>
+<li><a href="https://patchwork.data-imaginist.com/">Documentação do patchwork</a></li>
+<li><a href="https://davidgohel.github.io/ggiraph/">Documentação do ggiraph</a></li>
+</ul>
+</section>
+<section id="mapas-e-dados-espaciais" class="level2">
+<h2 class="anchored" data-anchor-id="mapas-e-dados-espaciais">Mapas e Dados Espaciais</h2>
+<ul>
+<li><a href="https://r-spatial.github.io/sf/">Documentação do pacote sf</a></li>
+<li><a href="https://r-graph-gallery.com/map.html">Tutoriais de mapas - R Graph Gallery</a></li>
+</ul>
+</section>
+<section id="tabelas" class="level2">
+<h2 class="anchored" data-anchor-id="tabelas">Tabelas</h2>
+<ul>
+<li><a href="https://gt.rstudio.com/">Documentação do pacote gt</a></li>
+<li><a href="https://posit.co/blog/2025-table-contest-winners/">Galeria de tabelas - competição Posit 2025</a></li>
+<li><a href="https://r-graph-gallery.com/table.html">Tutoriais de tabelas em R - R Graph Gallery</a></li>
+</ul>
+</section>
+<section id="relatórios-e-publicação" class="level2">
+<h2 class="anchored" data-anchor-id="relatórios-e-publicação">Relatórios e Publicação</h2>
+<ul>
+<li><a href="https://quarto.org/docs/guide/">Documentação oficial do Quarto</a></li>
+<li><a href="https://quarto.org/docs/computations/parameters.html">Quarto - relatórios parametrizados</a></li>
+<li><a href="https://quarto.org/docs/websites/">Quarto - sites e blogs</a></li>
+<li><a href="https://happygitwithr.com/">Happy Git with R - publicar no GitHub</a></li>
+</ul>
+</section>
+<section id="aplicações-shiny" class="level2">
+<h2 class="anchored" data-anchor-id="aplicações-shiny">Aplicações Shiny</h2>
+<ul>
+<li><a href="https://shiny.posit.co/">Documentação oficial do Shiny</a></li>
+<li><a href="https://posit.co/blog/winners-of-the-2024-shiny-contest/">Galeria de apps Shiny - ganhadores 2024</a></li>
+<li><a href="https://shiny.posit.co/blog/posts/shiny-assistant/">Shiny Assistant - criação de apps com IA</a></li>
+</ul>
+</section>
+<section id="web-scraping" class="level2">
+<h2 class="anchored" data-anchor-id="web-scraping">Web Scraping</h2>
+<ul>
+<li><a href="https://rvest.tidyverse.org/">Documentação do pacote rvest</a></li>
+<li><a href="https://r4ds.hadley.nz/webscraping.html">R for Data Science - Web scraping</a></li>
+</ul>
+</section>
+<section id="inteligência-artificial-e-llms" class="level2">
+<h2 class="anchored" data-anchor-id="inteligência-artificial-e-llms">Inteligência Artificial e LLMs</h2>
+<ul>
+<li><a href="https://ellmer.tidyverse.org/">Documentação do pacote ellmer</a></li>
+<li><a href="https://www.tidymodels.org/">Machine learning com tidymodels</a></li>
+<li><a href="https://www.tmwr.org/">Tidy Modeling with R</a></li>
+</ul>
+</section>
+<section id="processamento-avançado" class="level2">
+<h2 class="anchored" data-anchor-id="processamento-avançado">Processamento Avançado</h2>
+<ul>
+<li><a href="https://docs.ropensci.org/targets/">Documentação do pacote targets</a></li>
+<li><a href="https://rstudio.github.io/renv/">Documentação do pacote renv</a></li>
+<li><a href="https://arrow.apache.org/docs/r/">Documentação do pacote arrow</a></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="comunidades-e-fóruns" class="level1">
+<h1>Comunidades e Fóruns</h1>
+<section id="comunidades-brasileiras" class="level2">
+<h2 class="anchored" data-anchor-id="comunidades-brasileiras">Comunidades Brasileiras</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Comunidade</th>
+<th>Descrição</th>
+<th>Acesso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Café com R</strong></td>
+<td>Projeto de democratização do R com aulas abertas e newsletter</td>
+<td><a href="https://jenniferlopes.github.io/meu_site/">jenniferlopes.github.io/meu_site</a></td>
+</tr>
+<tr class="even">
+<td><strong>R-Ladies Brasil</strong></td>
+<td>Rede global com capítulos em São Paulo, Goiânia, BH, Vitória, Porto Alegre e mais</td>
+<td><a href="https://rladies.org/">rladies.org</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Latin R</strong></td>
+<td>Conferência latino-americana de R com apresentações em português e espanhol</td>
+<td><a href="https://latinr.org">latinr.org</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comunidades-internacionais" class="level2">
+<h2 class="anchored" data-anchor-id="comunidades-internacionais">Comunidades Internacionais</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Comunidade</th>
+<th>Descrição</th>
+<th>Acesso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Posit Community</strong></td>
+<td>Fórum oficial da Posit com alta qualidade técnica</td>
+<td><a href="https://community.rstudio.com/">community.rstudio.com</a></td>
+</tr>
+<tr class="even">
+<td><strong>Stack Overflow - R</strong></td>
+<td>Maior repositório de perguntas e respostas técnicas</td>
+<td><a href="https://stackoverflow.com/questions/tagged/r">stackoverflow.com/questions/tagged/r</a></td>
+</tr>
+<tr class="odd">
+<td><strong>R for Data Science Community</strong></td>
+<td>Comunidade ligada ao livro R4DS, com grupos de estudo</td>
+<td><a href="https://www.rfordatasci.com/">rfordatasci.com</a></td>
+</tr>
+<tr class="even">
+<td><strong>rainbowR</strong></td>
+<td>Comunidade de usuários LGBTIQ+ de R</td>
+<td><a href="https://rainbowr.org">rainbowr.org</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="newsletters-para-acompanhar" class="level2">
+<h2 class="anchored" data-anchor-id="newsletters-para-acompanhar">Newsletters para Acompanhar</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Newsletter</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>R-bloggers</strong></td>
+<td><a href="https://www.r-bloggers.com/">r-bloggers.com</a></td>
+</tr>
+<tr class="even">
+<td><strong>R Weekly</strong></td>
+<td><a href="https://rweekly.org">rweekly.org</a></td>
+</tr>
+<tr class="odd">
+<td><strong>R for the Rest of Us</strong></td>
+<td><a href="https://rfortherestofus.com/whatsnew/">rfortherestofus.com</a></td>
+</tr>
+<tr class="even">
+<td><strong>posit::glimpse</strong></td>
+<td><a href="https://posit.co/about/subscription-management/">posit.co</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+</section>
+<section id="datasets-para-praticar" class="level1">
+<h1>Datasets para Praticar</h1>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Critério de escolha
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Escolha um dataset com relevância para a sua área de atuação. Dados sem contexto dificultam a interpretação dos resultados.</p>
+</div>
+</div>
+<section id="dados-nativos-do-r" class="level2">
+<h2 class="anchored" data-anchor-id="dados-nativos-do-r">Dados Nativos do R</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Listar todos os datasets disponíveis no R base</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Principais datasets para iniciantes</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mtcars)     <span class="co"># Carros: consumo, cilindros, potência</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iris)       <span class="co"># Medições de flores: referência clássica em classificação</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Pacote gapminder: população e expectativa de vida por país</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"gapminder"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Pacote dados: datasets traduzidos para o português/espanhol</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"dados"</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dados)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="dados-brasileiros-1" class="level2">
+<h2 class="anchored" data-anchor-id="dados-brasileiros-1">Dados Brasileiros</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Fonte</th>
+<th>Descrição</th>
+<th>Acesso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>IBGE - SIDRA</strong></td>
+<td>Censo, PNAD, produção agrícola e mais</td>
+<td><a href="https://sidra.ibge.gov.br/">sidra.ibge.gov.br</a></td>
+</tr>
+<tr class="even">
+<td><strong>IBGE - API</strong></td>
+<td>Acesso programático via API REST</td>
+<td><a href="https://servicodados.ibge.gov.br/api/docs/">servicodados.ibge.gov.br/api/docs</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Base dos Dados</strong></td>
+<td>Mais de 1.100 conjuntos de dados brasileiros tratados</td>
+<td><a href="https://basedosdados.org/">basedosdados.org</a></td>
+</tr>
+<tr class="even">
+<td><strong>Portal da Transparência</strong></td>
+<td>Gastos, servidores e contratos federais</td>
+<td><a href="https://portaldatransparencia.gov.br/">portaldatransparencia.gov.br</a></td>
+</tr>
+<tr class="odd">
+<td><strong>DATASUS</strong></td>
+<td>Saúde pública: SIM, SINASC, SIHSUS</td>
+<td><a href="https://datasus.saude.gov.br/">datasus.saude.gov.br</a></td>
+</tr>
+<tr class="even">
+<td><strong>Banco Central</strong></td>
+<td>IPCA, SELIC, câmbio e séries temporais</td>
+<td><a href="https://www.bcb.gov.br/estatisticas">bcb.gov.br/estatisticas</a></td>
+</tr>
+<tr class="odd">
+<td><strong>TSE</strong></td>
+<td>Candidatos, resultados e financiamento eleitoral</td>
+<td><a href="https://dadosabertos.tse.jus.br/">dadosabertos.tse.jus.br</a></td>
+</tr>
+<tr class="even">
+<td><strong>ANS</strong></td>
+<td>Dados do setor de saúde suplementar</td>
+<td><a href="https://www.ans.gov.br/anstabnet/">ans.gov.br/anstabnet</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="repositórios-internacionais" class="level2">
+<h2 class="anchored" data-anchor-id="repositórios-internacionais">Repositórios Internacionais</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Fonte</th>
+<th>Descrição</th>
+<th>Acesso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>TidyTuesday</strong></td>
+<td>Desafio semanal com dados reais. Mais de 200 datasets documentados</td>
+<td><a href="https://github.com/rfordatascience/tidytuesday">github.com/rfordatascience/tidytuesday</a></td>
+</tr>
+<tr class="even">
+<td><strong>Kaggle Datasets</strong></td>
+<td>Milhares de conjuntos de dados em diversas áreas</td>
+<td><a href="https://www.kaggle.com/datasets">kaggle.com/datasets</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Our World in Data</strong></td>
+<td>Dados globais: saúde, economia, educação e meio ambiente</td>
+<td><a href="https://ourworldindata.org/">ourworldindata.org</a></td>
+</tr>
+<tr class="even">
+<td><strong>World Bank Open Data</strong></td>
+<td>Indicadores econômicos e sociais por país</td>
+<td><a href="https://data.worldbank.org/">data.worldbank.org</a></td>
+</tr>
+<tr class="odd">
+<td><strong>UCI Machine Learning Repository</strong></td>
+<td>Datasets clássicos de machine learning</td>
+<td><a href="https://archive.ics.uci.edu/">archive.ics.uci.edu</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<blockquote class="blockquote">
+<p><strong>Esta página é parte do projeto Café com R. O conteúdo é aberto e pode ser compartilhado livremente com a devida referência.</strong></p>
+<p><strong>Jennifer Lopes | Café com R</strong></p>
+</blockquote>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
