@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jennifer Luz Lopes">
+<meta name="dcterms.date" content="2026-06-12">
+<meta name="description" content="Resenha do capítulo 2 de Uma senhora toma chá, de David Salsburg. Sobre como Galton descobriu a regressão à média medindo altura de famílias, e como Karl Pearson transformou isso numa nova forma de enxergar a ciência.">
+
+<title>Resenha do Livro: Uma Senhora Toma Chá - Capítulo 2 – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+<link rel="stylesheet" href="estilo_jeni.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#o-gole-da-semana" id="toc-o-gole-da-semana" class="nav-link active" data-scroll-target="#o-gole-da-semana">O gole da semana</a></li>
+  <li><a href="#a-resenha" id="toc-a-resenha" class="nav-link" data-scroll-target="#a-resenha">A resenha</a>
+  <ul class="collapse">
+  <li><a href="#o-capítulo" id="toc-o-capítulo" class="nav-link" data-scroll-target="#o-capítulo">O capítulo</a></li>
+  <li><a href="#francis-galton-e-o-laboratório-biométrico" id="toc-francis-galton-e-o-laboratório-biométrico" class="nav-link" data-scroll-target="#francis-galton-e-o-laboratório-biométrico">Francis Galton e o laboratório biométrico</a></li>
+  <li><a href="#a-descoberta-da-regressão-à-média" id="toc-a-descoberta-da-regressão-à-média" class="nav-link" data-scroll-target="#a-descoberta-da-regressão-à-média">A descoberta da regressão à média</a></li>
+  <li><a href="#karl-pearson-e-a-ideia-revolucionária" id="toc-karl-pearson-e-a-ideia-revolucionária" class="nav-link" data-scroll-target="#karl-pearson-e-a-ideia-revolucionária">Karl Pearson e a ideia revolucionária</a></li>
+  <li><a href="#o-problema-que-pearson-não-viu" id="toc-o-problema-que-pearson-não-viu" class="nav-link" data-scroll-target="#o-problema-que-pearson-não-viu">O problema que Pearson não viu</a></li>
+  <li><a href="#o-que-fica-do-capítulo-2" id="toc-o-que-fica-do-capítulo-2" class="nav-link" data-scroll-target="#o-que-fica-do-capítulo-2">O que fica do capítulo 2</a></li>
+  </ul></li>
+  <li><a href="#o-que-estou-acompanhando" id="toc-o-que-estou-acompanhando" class="nav-link" data-scroll-target="#o-que-estou-acompanhando">O que estou acompanhando</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Resenha do Livro: Uma Senhora Toma Chá - Capítulo 2</h1>
+<p class="subtitle lead">Edição especial: Uma senhora toma chá - resenha do capítulo 2</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Newsletter</div>
+    <div class="quarto-category">Resenha</div>
+    <div class="quarto-category">Estatística</div>
+    <div class="quarto-category">Leitura</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Resenha do capítulo 2 de Uma senhora toma chá, de David Salsburg. Sobre como Galton descobriu a regressão à média medindo altura de famílias, e como Karl Pearson transformou isso numa nova forma de enxergar a ciência.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jennifer Luz Lopes </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 12, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;">
+<ul>
+<li><em>Que cada <strong>gole</strong> desperte uma nova ideia.</em></li>
+<li><em>Que cada <strong>script</strong> abra uma nova conversa.</em></li>
+<li><em>Que o <strong>Café com R</strong> se torne um ponto de encontro nosso.</em></li>
+</ul>
+</div>
+<p><br></p>
+<section id="o-gole-da-semana" class="level2">
+<h2 class="anchored" data-anchor-id="o-gole-da-semana">O gole da semana</h2>
+<p><br></p>
+<p><strong>Pessoal, você já se perguntou de onde vêm a correlação e a regressão?</strong></p>
+<p>Não a fórmula. A ideia. O momento em que alguém percebeu que duas coisas podiam ser matematicamente relacionadas e que essa relação dizia algo sobre o mundo.</p>
+<blockquote class="blockquote">
+<p><strong>Esse momento aconteceu num laboratório em Londres, no final do século XIX, com um homem medindo a altura de famílias inteiras.</strong></p>
+</blockquote>
+<p>O homem era Francis Galton. O que ele encontrou nos dados mudou a estatística para sempre. E o que seu discípulo Karl Pearson fez com esse achado mudou a forma como a ciência entende a realidade.</p>
+<p>O capítulo 2 de <em>Uma senhora toma chá</em> conta essa história.</p>
+<p><br></p>
+</section>
+<section id="a-resenha" class="level2">
+<h2 class="anchored" data-anchor-id="a-resenha">A resenha</h2>
+<p><br></p>
+<section id="o-capítulo" class="level3">
+<h3 class="anchored" data-anchor-id="o-capítulo">O capítulo</h3>
+<p>O capítulo 2 tem um título que parece técnico <em>As distribuições assimétricas</em> mas conta uma história que começa bem antes de qualquer fórmula. Começa com um homem rico e curioso que queria entender se a inteligência era hereditária e que, por não ter como medir inteligência, decidiu medir altura.</p>
+<p><strong>Salsburg usa esse capítulo para apresentar dois dos personagens mais importantes da estatística moderna: Francis Galton e Karl Pearson.</strong> Um descobriu um fenômeno. O outro transformou esse fenômeno numa nova filosofia da ciência.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O capítulo 2 é onde a estatística deixa de ser uma ferramenta de cálculo e passa a ser uma forma diferente de enxergar o mundo. <strong>Pearson propôs que a realidade que a ciência estuda não são os objetos observáveis, mas as distribuições probabilísticas que os descrevem.</strong> Essa ideia, radical em sua época, é o fundamento de quase toda a estatística que usamos hoje.</p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="francis-galton-e-o-laboratório-biométrico" class="level3">
+<h3 class="anchored" data-anchor-id="francis-galton-e-o-laboratório-biométrico">Francis Galton e o laboratório biométrico</h3>
+<p>Francis Galton era primo de Charles Darwin e compartilhava com ele a fascinação pela herança biológica. A maioria das pessoas que ouviu falar de Galton o conhece pelo trabalho com impressões digitais. Mas ele fez muito mais.</p>
+<p>Rico e independente, Galton instalou um laboratório biométrico em Londres e divulgou-o, convidando famílias a comparecer para ser medidas. <strong>Coletou altura, peso, medidas de ossos e outras características de membros dessas famílias</strong> e passou anos tabulando e examinando esses dados à procura de uma fórmula matemática que permitisse prever as medidas transmitidas de pais para filhos.</p>
+<blockquote class="blockquote">
+<p><strong>A pergunta que ele fazia era simples: se um pai é muito alto, qual será a altura do filho?</strong></p>
+</blockquote>
+<p>Era óbvio que pais altos tendiam a ter filhos altos. Mas havia algo mais. Algo que os dados mostravam com insistência e que Galton demorou para nomear.</p>
+<p><br></p>
+</section>
+<section id="a-descoberta-da-regressão-à-média" class="level3">
+<h3 class="anchored" data-anchor-id="a-descoberta-da-regressão-à-média">A descoberta da regressão à média</h3>
+<p>Os filhos de pais muito altos tendiam a ser mais baixos que seus pais. Os filhos de pais muito baixos tendiam a ser mais altos que seus pais. Era como se uma força invisível puxasse tudo em direção ao centro, à média de todos os homens.</p>
+<p>Galton chamou esse fenômeno de <strong>regressão à média</strong>.</p>
+<blockquote class="blockquote">
+<p><strong>E percebeu que isso não era peculiaridade da altura humana. Quase todas as observações científicas apresentam regressão à média.</strong></p>
+</blockquote>
+<p>Ele também compreendeu que o fenômeno tinha de ser verdadeiro que poderia ter sido previsto antes de qualquer observação. Se os filhos de pais altos fossem, em média, tão altos quanto os pais, alguns seriam ainda mais altos. E os filhos desses, mais altos ainda. Em poucas gerações, a espécie humana consistiria em pessoas cada vez mais altas em um extremo e cada vez mais baixas no outro.</p>
+<p><strong>Isso não acontece. A regressão à média é o que mantém a estabilidade de uma espécie ao longo das gerações.</strong></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Pessoal, a regressão à média aparece em todo lugar não só na biologia.</p>
+<ul>
+<li><p>Em dados de desempenho, em resultados de testes, em avaliações de qualquer tipo.</p></li>
+<li><p><strong>Quando um resultado é muito extremo numa medição, a próxima medição tende a ser menos extrema não porque algo mudou, mas porque o extremo era em parte aleatoriedade.</strong></p></li>
+</ul>
+<p><strong>Ignorar isso leva a conclusões erradas sobre causas e efeitos.</strong></p>
+</div>
+</div>
+<p>A partir desse achado, Galton elaborou uma medida matemática da relação entre as alturas de pais e filhos. Chamou essa medida de <strong>coeficiente de correlação</strong> e foi a primeira vez que essa palavra foi usada com o significado matemático preciso que tem hoje.</p>
+<p><br></p>
+</section>
+<section id="karl-pearson-e-a-ideia-revolucionária" class="level3">
+<h3 class="anchored" data-anchor-id="karl-pearson-e-a-ideia-revolucionária">Karl Pearson e a ideia revolucionária</h3>
+<p>Galton estava próximo de algo maior do que conseguia ver. Foi seu discípulo Karl Pearson quem deu o passo seguinte.</p>
+<p><strong>Pearson era uma figura singular.</strong> Filho de advogado, estudou matemática em Cambridge, fez doutorado em ciência política na Alemanha, publicou obra influente sobre a filosofia da ciência e fundou um clube de discussão para jovens em Londres onde conheceu a esposa. Seu desprezo pela tradição estabelecida era total e foi exatamente esse desprezo que o permitiu ver o que outros não viam.</p>
+<p>Observando os dados acumulados em biologia, Pearson chegou a uma conclusão que soou radical na época:</p>
+<blockquote class="blockquote">
+<p><strong><em>Os resultados de experimentos individuais são aleatórios. O que de fato queremos determinar em uma investigação científica são os parâmetros da distribuição que descreve essa aleatoriedade.</em></strong></p>
+</blockquote>
+<p>Não os números medidos em si. As distribuições que os descrevem.</p>
+<p><strong>Pearson descobriu uma família de funções matemáticas que chamou de distribuições assimétricas</strong>, e afirmou que elas seriam capazes de descrever qualquer tipo de dispersão que um cientista pudesse encontrar nos dados. Cada distribuição nessa família é identificada por quatro números:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parâmetro</th>
+<th>O que descreve</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Média</strong></td>
+<td>O valor central a partir do qual as medições se dispersam</td>
+</tr>
+<tr class="even">
+<td><strong>Desvio padrão</strong></td>
+<td>O quanto a maioria das medições se dispersa em torno da média</td>
+</tr>
+<tr class="odd">
+<td><strong>Simetria</strong></td>
+<td>O grau em que as medições se acumulam em apenas um lado da média</td>
+</tr>
+<tr class="even">
+<td><strong>Curtose</strong></td>
+<td>O quanto as medições raras se afastam da média</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Essa mudança de perspectiva é mais profunda do que parece.</strong></p>
+<p>Antes de Pearson, a ciência lidava com coisas reais e palpáveis: planetas, sangue, elementos químicos. Pearson propôs que esses fenômenos observáveis fossem considerados reflexos aleatórios de algo mais fundamental <strong>a distribuição probabilística que os descreve.</strong></p>
+<p>As “coisas” reais da ciência não eram mais os objetos observáveis. Eram funções matemáticas que descreviam a aleatoriedade do que podemos observar. Os parâmetros dessa distribuição eram o que de fato queríamos determinar. E eles nunca podem ser conhecidos com certeza apenas estimados, por meio dos dados.</p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="o-problema-que-pearson-não-viu" class="level3">
+<h3 class="anchored" data-anchor-id="o-problema-que-pearson-não-viu">O problema que Pearson não viu</h3>
+<p>Pearson acreditava que, se coletássemos dados suficientes, as estimativas dos parâmetros nos forneceriam os valores verdadeiros. <strong>Essa crença tinha uma falha que ele não reconhecia.</strong></p>
+<p>Foi Ronald Fisher quem mostrou, anos depois, que muitos dos métodos de estimativa de Pearson eram menos que ótimos que havia formas melhores de extrair informação dos dados. E foi <strong>Jerzy Neyman</strong>, um brilhante matemático polonês, quem mostrou que o sistema de distribuições assimétricas de Pearson não cobria o universo das possíveis distribuições. Muitos problemas relevantes não poderiam ser solucionados com ele.</p>
+<blockquote class="blockquote">
+<p><strong>Salsburg descreve o velho Karl Pearson de 1934 como um homem abandonado pelas ideias que ele mesmo havia criado superado pelos desenvolvimentos que seu próprio trabalho havia tornado possíveis.</strong></p>
+</blockquote>
+<p>Há algo de melancólico nessa imagem. E algo de familiar para quem trabalha em qualquer campo que avança rápido.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Pessoal, eu penso nessa parte do capítulo quando encontro métodos que foram padrão por décadas e hoje são questionados.</strong> Pearson construiu algo genuinamente importante. E ainda assim estava errado em partes fundamentais. A ciência não é a história de quem chegou ao destino. É a história de quem abriu o caminho para que o próximo pudesse ir além.</p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="o-que-fica-do-capítulo-2" class="level3">
+<h3 class="anchored" data-anchor-id="o-que-fica-do-capítulo-2">O que fica do capítulo 2</h3>
+<p>O capítulo começa com um homem medindo famílias em Londres e termina com uma nova filosofia da ciência.</p>
+<p>O que Galton descobriu medindo altura ainda está presente em qualquer análise de regressão que fazemos hoje. O coeficiente de correlação que ele nomeou aparece em todo relatório de análise de dados. Os quatro parâmetros que Pearson identificou para descrever uma distribuição são os mesmos que calculamos quando exploramos qualquer conjunto de dados.</p>
+<blockquote class="blockquote">
+<p><strong>O que Galton e Pearson construíram não era apenas um conjunto de ferramentas. Era uma nova maneira de perguntar: o que podemos conhecer sobre o mundo quando tudo o que temos são dados incompletos e ruidosos?</strong></p>
+</blockquote>
+<p>Essa pergunta continua sendo a pergunta central de quem trabalha com dados.</p>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="o-que-estou-acompanhando" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-estou-acompanhando">O que estou acompanhando</h2>
+<p><br></p>
+<p><strong>Uma senhora toma chá de David Salsburg:</strong> A série de resenhas continua. Se você ainda não leu o capítulo 1, começa por lá, a história da senhora e o experimento de Fisher é o ponto de partida de tudo.</p>
+<p><strong>The Grammar of Science de Karl Pearson:</strong> O livro de 1892 onde Pearson desenvolveu sua filosofia da ciência. Salsburg menciona que, mais de 100 anos depois, as ideias ainda são pertinentes. Disponível gratuitamente: <a href="https://archive.org/details/grammarofscience00pear">archive.org</a></p>
+<p><br></p>
+<hr>
+<div style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;">
+<p><strong>Próxima edição - 22 de junho</strong></p>
+<p>Capítulo 3 - Querido senhor Gosset</p>
+<p>O nascimento do “Student” e do teste t a história de um estatístico que trabalhava numa cervejaria e precisava tomar decisões com amostras pequenas.</p>
+</div>
+<p><br></p>
+<div style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;">
+<p><strong>Gostou desta edição?</strong></p>
+<p>Assine o Café com R e receba conteúdo de R, Estatística e Ciência de Dados toda semana.</p>
+<p><a href="https://cafecomr-conteudos.lovable.app/"><strong>Clique aqui</strong></a></p>
+</div>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>
