@@ -25,12 +25,22 @@
       "/apresentações/posts/aula20_blastula.html",
       "/apresentações/posts/aula21_janitor.html",
       "/apresentações/posts/aula22_gtsummary.html",
+      "/apresentações/posts/aula23_renv.html",
+      "/apresentações/posts/aula24_distribuicoes.html",
+      "/apresentações/posts/aula25_plotly.html",
+      "/apresentações/posts/aula26_inferencia.html",
+      "/apresentações/posts/aula27_descritiva_inferencial.html",
+      "/apresentações/posts/aula28_modelagem_estatistica.html",
       "/apresentações/posts/apresentacao_r_python.html"
     ]
   },
   {
     "listing": "/cafecomr/index.html",
     "items": [
+      "/cafecomr/posts/cha_cap2.html",
+      "/cafecomr/posts/dose12.html",
+      "/cafecomr/posts/dose11.html",
+      "/cafecomr/posts/cha_cap1.html",
       "/cafecomr/posts/dose10_2505.html",
       "/cafecomr/posts/dose9_1905.html",
       "/cafecomr/posts/dose8_12_05.html",

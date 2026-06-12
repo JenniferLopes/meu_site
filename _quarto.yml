@@ -17,6 +17,8 @@ website:
         href: apostila.qmd
       - text: "Projetos YouTube"
         href: youtube.qmd
+      - text: "Iniciando no R - Links"
+        href: recursos_para_iniciar_no_r.qmd
     right:
       - text: "Serviços | Projetos"
         href: servicos.qmd
@@ -32,7 +34,7 @@ format:
   html:
     theme:
       light: litera
-      dark: quartz
+      dark: Quartz
     css:
       - css/estilo_geral.scss
     include-after-body:

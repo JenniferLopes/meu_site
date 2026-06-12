@@ -1,0 +1,263 @@
+---
+title: "Café com R"
+subtitle: "Edição 11: O que separa um script de uma análise?"
+author: "Jennifer Luz Lopes"
+date: "2026-06-05"
+categories: [Newsletter, Carreira, Análise de dados]
+image: ../imagens/cafe11.png
+image-alt: ""
+description: "Todo script executa. Nem toda análise é bem pensada. Esta edição explora a diferença entre as duas coisas e o que muda quando você começa a escrever seu código com uma visão de análise."
+css: estilo_jeni.css
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+::: {style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;"}
+-   *Que cada **gole** desperte uma nova ideia.*
+-   *Que cada **script** abra uma nova conversa.*
+-   *Que o **Café com R** se torne um ponto de encontro nosso.*
+:::
+
+<br>
+
+## O gole da semana
+
+<br>
+
+**Você já abriu um script seu de seis meses atrás e não conseguiu
+entender o que estava fazendo?**
+
+Não o código em si. O código talvez até rode sem erro. Torcemos, né?
+
+Mas a intenção por trás dele. Por que aquela variável foi **transformada
+daquela forma**. Por que aquele **filtro existe**. O que aquela análise
+**tentava responder** e se ela chegou a alguma **resposta**.
+
+> Esse momento de estranhamento diante do próprio trabalho não é falta
+> de memória.
+>
+> **É o sinal de que o que foi escrito era um script, não uma análise.**
+
+A diferença entre os dois não está no volume de código, nem na
+complexidade das operações, nem nas ferramentas usadas. Pode ter certeza
+disso!
+
+Está em algo anterior ao código: **a presença ou ausência de uma
+pergunta que organiza tudo o que vem depois**.
+
+**Esta edição é sobre essa diferença e sobre o que realmente muda quando
+você começa trabalhar com análises.**
+
+<br>
+
+------------------------------------------------------------------------
+
+## A dose técnica
+
+<br>
+
+### Uma situação que reconheço
+
+Havia um projeto que eu considerava concluído. Tinha limpeza de dados,
+cruzamento de tabelas, visualizações, um modelo ajustado. Tudo rodava.
+Os gráficos eram legíveis. O modelo convergia.
+
+> **Isso não faz tanto tempo kskskskskksksk! Faz parte**
+
+Quando precisei retomar o projeto três meses depois para adicionar uma
+variável nova, percebi que não sabia por onde começar. Não porque o
+código fosse desorganizado estava razoavelmente estruturado. Mas porque
+em nenhum lugar estava registrado o que aquele projeto tentava
+descobrir. Qual era a pergunta central. Por que aquele conjunto de
+variáveis e não outro. O que o modelo deveria responder e para quem.
+
+**O que eu tinha era uma sequência de operações tecnicamente corretas
+sem nenhum argumento que as conectasse. Era um script longo. Não era uma
+análise.**
+
+Esse tipo de situação é mais comum do que parece. E o problema não
+aparece enquanto você está no meio do trabalho, aparece quando você
+precisa sair e voltar, quando precisa explicar para alguém, quando
+precisa revisar ou estender.
+
+**Você já passou por isso? Em qual momento percebeu que o que tinha era
+código funcionando, mas não uma análise que se sustentava por si
+mesma?**
+
+<br>
+
+### O que define um script
+
+**Um script executa operações em sequência.**
+
+Ele importa dados, limpa colunas, cria variáveis, ajusta modelos, gera
+gráficos, exporta resultados. Cada linha faz algo. O conjunto das linhas
+produz um output.
+
+O script pode estar tecnicamente correto em cada uma dessas etapas e
+ainda assim ser completamente vazio quanto ao raciocínio. Ele não
+precisa ter uma pergunta formulada para rodar. Não precisa registrar por
+que uma decisão foi tomada em vez de outra. Não precisa ter conclusão,
+tem output.
+
+**Três características definem um script que nunca se tornou análise:**
+
+1.  **Ausência de pergunta explícita.** O script começa com a importação
+    dos dados, não com a **formulação do problema**. O que se quer
+    descobrir está implícito ou nunca foi definido com clareza.
+
+> Aqui eu debato muito com meus alunos, hoje em dia fazemos as
+> perguntas, formulamos as hipóteses e objetivos juntos, para que eles
+> tenham uma clareza maior em cada análise.
+
+2.  **Decisões sem justificativa.** Por que esse filtro e não aquele?
+    Por que transformação logarítmica nessa variável? Por que esse
+    modelo e não outro? Essas escolhas existem no código, mas o
+    raciocínio que as motivou não está registrado em nenhum lugar.
+
+3.  **Output sem interpretação.** O script termina quando o último
+    gráfico é salvo ou a última tabela é exportada. O que aqueles
+    resultados significam no contexto do problema, para quem vai
+    usá-los, não faz parte do arquivo.
+
+> Isso não significa que scripts são ruins. Para tarefas repetitivas,
+> para automações, para processamento de dados que não requer
+> argumentação, o script é o formato correto. O problema está em tratar
+> como análise algo que é, estruturalmente, um script.
+
+<br>
+
+### O que define uma análise
+
+**Uma análise parte de uma pergunta.**
+
+Não de **dados**.
+
+Não de um **modelo**.
+
+**De uma pergunta que organiza todas as decisões que vêm depois, quais
+dados são relevantes, quais transformações fazem sentido, qual método
+responde ao que se quer saber, o que o resultado significa no contexto
+do problema.**
+
+Essa distinção tem consequências diretas na forma como o trabalho é
+produzido e na forma como pode ser avaliado por outra pessoa.
+
+> **Quando a pergunta está explícita, cada decisão de código pode ser
+> justificada ou questionada em relação a ela. Quando não está, as
+> decisões flutuam sem ancoragem e quem revisa o trabalho não tem como
+> saber se as escolhas feitas foram as mais adequadas ou se foram as
+> primeiras que apareceram.**
+
+O Quarto é o ambiente onde essa distinção se torna estrutural. Não
+porque seja obrigatório usar Quarto para escrever análises, mas porque
+ele torna natural a coexistência do texto e código no mesmo documento.
+
+A pergunta aparece antes do código. As decisões são explicadas no texto
+que precede cada bloco.
+
+**A interpretação aparece depois do output, não em arquivo separado.**
+
+<br>
+
+### **Um exemplo mínimo da diferença em termos práticos:**
+
+**Um script:**
+
+``` r
+modelo <- lm(Temp ~ Wind + Solar.R, data = airquality)
+summary(modelo)
+```
+
+**Uma análise o mesmo código, mas com contexto:**
+
+```` markdown
+A hipótese central é que a temperatura diária é influenciada
+pela velocidade do vento e pela radiação solar. Espera-se
+relação negativa com o vento, dias mais ventosos tendem a
+ser mais frios - e positiva com a radiação solar.
+
+```r
+modelo <- lm(Temp ~ Wind + Solar.R, data = airquality)
+model_parameters(modelo, ci = 0.95)
+```
+
+O coeficiente de Wind é negativo e estatisticamente
+distinguível de zero, o que é consistente com a hipótese.
+O IC 95% indica que o efeito está entre X e Y, uma
+magnitude relevante para o contexto.
+````
+
+<br>
+
+### Três perguntas que transformam um script em análise
+
+Não é necessário reescrever tudo. É necessário responder três perguntas,
+antes de começar, durante e ao revisar.
+
+1.  **Antes de escrever a primeira linha:** Qual é a pergunta que este
+    trabalho tenta responder? Se você não consegue formular essa
+    pergunta em uma frase, o problema não está no código, está na
+    definição do problema. **Vale parar aqui antes de seguir**, tá bem?
+
+2.  **Durante, a cada decisão relevante:** Por que estou fazendo esta
+    escolha e não outra? Isso não significa comentar cada linha.
+    Significa registrar, em texto, as decisões que têm alternativas
+    possíveis e que afetam os resultados, qual variável foi incluída e
+    por quê, qual transformação foi aplicada e com que justificativa,
+    qual método foi escolhido entre os disponíveis.
+
+3.  **Ao revisar, antes de considerar concluído:** Se eu enviasse este
+    documento para alguém que não conhece os dados e não participou do
+    projeto, essa pessoa conseguiria entender o que estava sendo
+    investigado, as escolhas que foram feitas e o que os resultados
+    significam?
+
+**Se a resposta for não, o trabalho ainda não é uma análise. É um script
+com outputs.**
+
+Essa última pergunta é a mais útil porque simula exatamente a situação
+que revela o problema: alguém de fora ou você mesmo, seis meses depois
+tentando entender um trabalho que faz sentido apenas para quem estava
+presente quando foi feito.
+
+<br>
+
+------------------------------------------------------------------------
+
+## O que estou acompanhando
+
+<br>
+
+**Uma senhora toma chá - Livro maravilhoso!**
+
+*Uma senhora toma chá* foi escrito por David Salsburg e publicado
+originalmente em inglês em 2001, com o título *The Lady Tasting Tea: How
+Statistics Revolutionized Science in the Twentieth Century*. A edição
+brasileira foi publicada pela Zahar em 2009.
+
+**Recomendo a leitura e terá resenha para vocês!**
+
+<br>
+
+------------------------------------------------------------------------
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;"}
+**Próxima edição - 12 de junho**
+
+**Fazer o que faz sentido -** Sobre medir o próprio progresso com a
+régua certa, o que o doutorado ensina e não ensina sobre carreira e o
+que ficou de uma trajetória que mudou de forma.
+:::
+
+<br>
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;"}
+**Gostou desta edição?**
+
+Assine o Café com R e receba conteúdo de R, Estaística e Ciência de
+Dados.
+
+[**Clique aqui**](https://cafecomr-conteudos.lovable.app/)
+:::

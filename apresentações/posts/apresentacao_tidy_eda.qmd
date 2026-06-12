@@ -81,7 +81,7 @@ pacman::p_load(
   naniar,         # Análise de dados ausentes
   scales,         # Formatação de escalas
   knitr,          # Geração de relatórios
-  here)           # Gerenciamento de caminhos
+  here, corrplot)           # Gerenciamento de caminhos
 
 ```
 

@@ -1,0 +1,151 @@
+---
+title: "Café com R - Newsletter"
+subtitle: "Edição 12 - Fazer o que faz sentido"
+author: "Jennifer Luz Lopes"
+date: "2026-06-12"
+categories: [Newsletter, Vivência, Carreira]
+image: ../imagens/cafe12.png
+image-alt: ""
+description: "Sobre medir o próprio progresso com a régua certa, o que o doutorado ensina e não ensina sobre carreira e o que ficou de uma trajetória que mudou de forma."
+css: estilo_jeni.css
+---
+
+::: {style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;"}
+- *Que cada **gole** desperte uma nova ideia.*
+- *Que cada **script** abra uma nova conversa.*
+- *Que o **Café com R** se torne um ponto de encontro nosso.*
+:::
+
+<br>
+
+## O gole da semana
+
+<br>
+
+**Você já mediu seu progresso com a régua de outra pessoa?**
+
+Não a sua. A de alguém que você respeita, acompanha de longe ou simplesmente observa sem perceber que está observando. A régua do colega que publicou mais, do profissional que chegou antes, da trajetória que parece mais consistente do que a sua.
+
+**Essa régua tem uma característica específica: ela nunca marca o lugar certo. Porque não foi feita para você.**
+
+Parar de usá-la não é indiferença ao próprio desenvolvimento. É a decisão de definir, com clareza, o que constitui progresso para a sua trajetória e seguir medindo por aí.
+
+**Esta edição é sobre isso.**
+
+<br>
+
+------------------------------------------------------------------------
+
+## A dose técnica
+
+<br>
+
+### O que o doutorado ensina e o que ele não ensina
+
+O doutorado oferece uma formação técnica densa. Você aprende a formular perguntas com rigor, a escolher métodos com critério, a sustentar argumentos com evidência. Aprende a conviver com a incerteza de um processo longo cujo resultado não é garantido. Aprende a trabalhar sozinho(a) durante períodos que testam qualquer nível de disciplina.
+
+**O que o doutorado raramente ensina é que existe mais de uma forma legítima de usar tudo isso.**
+
+A academia tem uma régua própria. Publicação, pesquisa, posição institucional, volume de citações. Essa régua é coerente dentro do sistema que a criou e é válida para quem quer seguir exatamente esse caminho.
+
+O problema não está na régua em si.
+
+Está em aplicá-la a trajetórias que têm outra lógica, outro tempo, outros critérios de valor.
+
+Quando você sai de um doutorado com uma visão única do que constitui uma carreira legítima em uma determina área, qualquer desvio desse caminho parece uma perda.
+
+**Uma escolha menor. Um recuo.**
+
+**Não é. É apenas um caminho diferente sendo medido com a régua errada.**
+
+::: callout-warning
+**Você já sentiu isso?**
+
+O peso de uma trajetória que parecia desviar do que deveria ser não porque estivesse errada, mas porque a régua disponível não conseguia medir o que estava sendo construído?
+:::
+
+<br>
+
+### O que acontece quando você para de olhar para o lado
+
+**Hoje trabalho como consultora, mentora e ministrando treinamentos. Nenhuma dessas três frentes estava no mapa que eu tinha quando terminei o doutorado.**
+
+O que estava no mapa era um caminho mais estreito. Mais legível para quem vinha de fora. Mais fácil de explicar numa linha de apresentação.
+
+O que veio no lugar foi construído a partir de uma habilidade que existia antes do título e que o doutorado apenas aprofundou: analisar dados. Entender o problema antes de abrir o código. Saber o que os números dizem e, tão importante quanto, o que eles não dizem. Comunicar resultados para pessoas que precisam tomar decisões com base neles.
+
+**Essa habilidade tem valor fora da academia.**
+
+Tem valor na consultoria, onde o problema do cliente raramente vem formulado com clareza e parte do trabalho é formular a pergunta certa antes de qualquer análise. Tem valor na mentoria, onde a experiência de ter errado, corrigido e aprendido é o que torna a orientação útil. Tem valor nos treinamentos, onde a capacidade de explicar com profundidade sem perder acessibilidade é o que define se o conteúdo chega ou não chega.
+
+**Nada disso aparece quando você está olhando para o lado, comparando sua trajetória com a de quem seguiu o caminho mais legível.**
+
+> **Aparece quando você para de olhar para o lado e começa a olhar para o que está construindo.**
+
+<br>
+
+### Aspiração não é o mesmo que comparação
+
+**Tenho aspirações de carreira. Isso não mudou.**
+
+O que mudou foi entender a diferença entre aspiração e comparação porque as duas podem parecer a mesma coisa por fora e são completamente diferentes por dentro.
+
+- **Aspiração** é movimento em direção ao que faz sentido para você. É saber onde quer chegar e trabalhar para isso com critério, sem pressa que não seja a sua. É um processo orientado por valores próprios, por escolhas conscientes, por uma ideia clara do que constitui progresso na sua trajetória específica.
+
+- **Comparação** é movimento em direção ao que faz sentido para outra pessoa. É ajustar o próprio ritmo ao ritmo de quem está ao lado. É definir sucesso pelo que a outra pessoa já alcançou. É uma corrida cujo percurso você não escolheu e cujo destino não é necessariamente o seu.
+
+As duas geram **movimento**. Mas só uma gera **direção**.
+
+Parar de medir o próprio sucesso com a régua errada não é resignação. Não é abrir mão de ambição. É a decisão de construir uma régua que seja sua que meça o que importa para a trajetória que você está de fato percorrendo, não a trajetória que alguém esperava que você percorresse.
+
+<br>
+
+### O que ficou
+
+**O que fica de uma mudança que parecia incerta é, quase sempre, mais do que o que existia antes.**
+
+- Fica a capacidade de analisar que veio do doutorado, mas aplicada em contextos que o doutorado não imaginava.
+
+- Fica a habilidade técnica em dados que virou ferramenta de trabalho, não só de pesquisa.
+
+- Fica a prática de ensinar, que começa como pré-requisto e, para quem tem vocação, vira algo que se escolhe ativamente.
+
+> E fica, principalmente, a clareza de que fazer o que faz sentido não é uma concessão ao que poderia ter sido. É uma escolha, consciente, revisada e refeita com frequência de construir uma trajetória que você consegue habitar com integridade.
+
+**Antes de fechar esta edição, uma pergunta para você levar:**
+
+> **Com qual régua você está medindo o seu próprio progresso agora?**
+>
+> **Ela foi feita para a sua trajetória ou você a pegou emprestada de alguém e esqueceu de devolver?**
+
+<br>
+
+------------------------------------------------------------------------
+
+## O que estou acompanhando
+
+<br>
+
+**Livro:** A coragem de ser imperfeito: Como aceitar a própria vulnerabilidade, vencer a vergonha e ousar ser quem você é. <https://www.amazon.com.br/coragem-ser-imperfeito-Bren%C3%A9-Brown/dp/8543104335>
+
+Depois dessa recomendação, posso encerrar por aqui.
+
+<br>
+
+------------------------------------------------------------------------
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;"}
+**Próxima edição**
+
+O que a IA não consegue fazer por você.
+
+Sobre o movimento de profissionais que estão recuando do uso de IA por sentirem que o pensamento está ficando mais raso. Como aprender de verdade quando a resposta está sempre a um prompt de distância.
+:::
+
+<br>
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;"}
+**Gostou desta edição?** Assine o Café com R e receba conteúdo de R e Ciência de Dados toda semana!!
+
+[**Clique aqui**](https://cafecomr-conteudos.lovable.app/)
+:::

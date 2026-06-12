@@ -1,0 +1,826 @@
+---
+title: "Aula 23. 9 passos para controlar seus pacotes com renv"
+subtitle: "Reprodutibilidade e isolamento de ambientes no R"
+categories: [R, renv, Reprodutibilidade, Projetos, GitHub]
+image: "imagens/capa_aula23.png"
+description: "Aprenda a usar o renv para garantir que seus projetos rodem da mesma forma em qualquer computador e em qualquer momento."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+```
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula foi construída para que você entenda como proteger seus projetos de quebras causadas por atualizações de pacotes e incompatibilidades de ambiente. Todo o código está funcional e pronto para reproduzir.
+
+![](imagens/meguy.jpg){fig-align="center" width="420"}
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+[![Escaneia o QR Code e acessa o portfólio.](imagens/qrcodenovo){style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" fig-align="center"}](https://jenniferlopes.quarto.pub/portifolio/)
+
+## Projetos no YouTube
+
+![](imagens/17.png){fig-align="center" width="514"}
+
+**Inscreva-se já no canal [Link](https://www.youtube.com/@jennifercafecomr/featured).**
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Compreender o problema de reprodutibilidade que o `renv` resolve
+- Entender os conceitos de biblioteca isolada e arquivo de bloqueio
+- Aplicar os **9 passos** do fluxo de trabalho com `renv`
+- Integrar o `renv` com Git e GitHub
+- Identificar e resolver os erros mais comuns
+:::
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# O problema que o renv resolve
+:::
+
+------------------------------------------------------------------------
+
+## A cena que você já viveu
+
+1.  Você termina uma análise, compartilha o script com um **colega** e ele retorna com um ***erro que você nunca viu***.
+
+2.  Ou você volta a um projeto de seis meses atrás, roda o código e tudo quebra, porque algum pacote foi atualizado e a função mudou de nome, de argumento ou de comportamento.
+
+3.  Ou você sobe o projeto no **GitHub** e o **GitHub** **Actions** falha porque a versão do pacote no servidor é diferente da sua máquina.
+
+4.  Esses três cenários têm a mesma causa: **o ambiente R não está registrado junto com o código**.
+
+------------------------------------------------------------------------
+
+## O que é um ambiente R
+
+**Ambiente R** é o conjunto de pacotes e versões instalados na sua máquina que o R usa quando executa um script.
+
+**Dois computadores com R instalado podem ter ambientes completamente diferentes:**
+
+- Versões **distintas** dos mesmos pacotes
+- Pacotes presentes em um e ausentes no outro
+- Dependências instaladas em versões **incompatíveis** entre si
+
+> **Quando um script depende implicitamente de um ambiente específico e esse ambiente não está documentado, o script deixa de ser reproduzível.**
+
+------------------------------------------------------------------------
+
+## O que é reprodutibilidade
+
+**Reprodutibilidade** é a capacidade de um script produzir exatamente o mesmo resultado quando executado em condições idênticas, inclusive por outra pessoa em outro computador.
+
+Para que um projeto seja reproduzível, três coisas precisam estar registradas:
+
+- O **código** (controlado pelo Git)
+- Os **dados** (controlados pelo Git ou por um repositório de dados)
+- O **ambiente** com pacotes e versões (controlado pelo `renv`)
+
+**O `renv` é responsável pela terceira parte.**
+
+------------------------------------------------------------------------
+
+## O que é o renv
+
+- **renv** é um pacote R desenvolvido pela Posit que cria **bibliotecas de pacotes isoladas por projeto** e registra as versões exatas de cada pacote em um arquivo chamado `renv.lock`.
+
+<!-- -->
+
+- Criado por **Kevin Ushey**
+- Disponível no CRAN
+- Documentação: [rstudio.github.io/renv](https://rstudio.github.io/renv)
+- Substitui o `packrat`, que era a solução anterior para o mesmo problema
+
+------------------------------------------------------------------------
+
+## Biblioteca global - biblioteca isolada
+
+- **Biblioteca global** é a pasta onde o R instala pacotes por padrão. Todos os projetos do seu computador compartilham a mesma biblioteca global.
+
+- **Biblioteca isolada** é uma pasta criada pelo `renv` dentro do projeto. Cada projeto tem a sua. Pacotes instalados em um projeto não afetam outros projetos.
+
+::: callout-important
+**Por que isso importa:** se você atualiza o `ggplot2` na biblioteca global para usar em um novo projeto, todos os seus projetos anteriores que dependem de uma versão específica do **`ggplot2`** podem parar de funcionar. Com o **`renv`**, cada projeto usa sua própria versão registrada.
+:::
+
+------------------------------------------------------------------------
+
+## O arquivo renv.lock
+
+- O **renv.lock** é um arquivo **JSON** gerado pelo **`renv`** que registra:
+
+<!-- -->
+
+- Nome de cada pacote usado no projeto
+- Versão exata de cada pacote
+- Repositório de onde foi instalado (CRAN, GitHub, Bioconductor)
+- Hash de verificação para confirmar integridade
+
+``` json
+{
+  "R": {
+    "Version": "4.4.0",
+    "Repositories": [{"Name": "CRAN", "URL": "https://cloud.r-project.org"}]
+  },
+  "Packages": {
+    "dplyr": {
+      "Package": "dplyr",
+      "Version": "1.1.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "fedd9d00c2944ff00a0e2696ccf048ec"
+    }
+  }
+}
+```
+
+------------------------------------------------------------------------
+
+## O renv.lock e o Git
+
+- O `renv.lock` deve ser **versionado no Git**.
+
+- Ele é o equivalente ao `requirements.txt` do Python ou ao `package.json` do Node.js.
+
+> Quando outra pessoa clona o repositório e roda `renv::restore()`, o `renv` lê o `renv.lock` e instala exatamente os mesmos pacotes e versões que você usou.
+
+::: callout-tip
+**Regra:** versione o **`renv.lock`**, nunca versione a pasta **`renv/library/`**.
+
+- A biblioteca de pacotes é gerada localmente pelo **`renv::restore()`** e não precisa estar no repositório.
+:::
+
+------------------------------------------------------------------------
+
+## Instalação
+
+```{r}
+#| eval: false
+
+install.packages("renv")
+```
+
+- O `renv` só precisa ser instalado uma vez na biblioteca global.
+
+- A partir daí, ele gerencia as bibliotecas isoladas de cada projeto.
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Os 9 passos
+:::
+
+------------------------------------------------------------------------
+
+## Passo 1 - Inicializar o renv com renv::init()
+
+- **Conceito:** `renv::init()` ativa o `renv` em um projeto existente ou novo.
+
+- **Ele realiza quatro ações em sequência:**
+
+1.  Cria a pasta `renv/` dentro do projeto
+2.  Cria a biblioteca isolada em `renv/library/`
+3.  Copia os pacotes já em uso no projeto para a biblioteca isolada
+4.  Gera o `renv.lock` com os pacotes detectados
+
+```{r}
+#| eval: false
+
+renv::init()
+```
+
+------------------------------------------------------------------------
+
+## Passo 1 - Output do renv::init()
+
+```         
+* Initializing project ...
+* Discovering package dependencies ... Done!
+* Copying packages into the cache ... Done!
+
+The following package(s) will be updated in the lockfile:
+
+# CRAN --------------------------------------------------------------
+- dplyr        [* -> 1.1.4]
+- ggplot2      [* -> 3.5.0]
+- tidyr        [* -> 1.3.1]
+- readr        [* -> 2.1.5]
+
+* Lockfile written to '~/meu_projeto/renv.lock'.
+```
+
+- O asterisco `[*]` indica que o pacote não estava no lockfile antes.
+
+- A seta `->` mostra a versão que foi registrada.
+
+------------------------------------------------------------------------
+
+## Passo 1 - Estrutura criada pelo init()
+
+- Após o **`renv::init()`**, o projeto terá essa estrutura adicional:
+
+```         
+meu_projeto/
+├── renv/
+│   ├── activate.R      # script de ativação automática
+│   ├── library/        # biblioteca isolada (não versionar)
+│   └── settings.json   # configurações do renv
+├── renv.lock           # arquivo de bloqueio (versionar)
+└── .Rprofile           # ativa o renv automaticamente ao abrir o projeto
+```
+
+- O `.Rprofile` contém uma linha que carrega o `renv` toda vez que o projeto é aberto no RStudio:
+
+``` r
+source("renv/activate.R")
+```
+
+------------------------------------------------------------------------
+
+## Passo 2 - Verificar o estado com renv::status()
+
+- **Conceito:** **`renv::status()`** compara três fontes de informação:
+
+<!-- -->
+
+- Os pacotes **usados** no código (detectados por `library()` e `require()`)
+- Os pacotes **instalados** na biblioteca isolada
+- Os pacotes **registrados** no `renv.lock`
+
+**Quando as três fontes estão sincronizadas, o projeto está em estado consistente.**
+
+```{r}
+#| eval: false
+
+renv::status()
+```
+
+------------------------------------------------------------------------
+
+## Passo 2 - Output: projeto sincronizado
+
+```         
+* The project is already synchronized with the lockfile.
+```
+
+- Esse é o estado desejado.
+
+- Significa que o que está no código, na biblioteca e no lockfile é idêntico.
+
+------------------------------------------------------------------------
+
+## Passo 2 - Output: projeto fora de sincronia
+
+```         
+The following package(s) are installed but not recorded in the lockfile:
+             _
+  lubridate   [1.9.3]
+
+The following package(s) are used in the project but are not installed:
+             _
+  patchwork   [*]
+
+Use `renv::snapshot()` to save the state of your project.
+Use `renv::restore()` to install the packages recorded in the lockfile.
+```
+
+- O **`renv`** identifica três situações distintas:
+
+- pacote instalado mas não registrado;
+
+- pacote registrado mas não instalado;
+
+- e pacote usado no código mas não instalado.
+
+------------------------------------------------------------------------
+
+## Passo 3 - Registrar pacotes com renv::snapshot()
+
+- **Conceito:** `renv::snapshot()` atualiza o `renv.lock` com o estado atual da biblioteca isolada.
+
+- Deve ser executado sempre que você instalar, atualizar ou remover um pacote.
+
+- O `snapshot()` detecta automaticamente quais pacotes são usados no projeto percorrendo todos os arquivos `.R`, `.Rmd` e `.qmd` em busca de chamadas `library()` e `require()`.
+
+```{r}
+#| eval: false
+
+renv::snapshot()
+```
+
+------------------------------------------------------------------------
+
+## Passo 3 - Output do renv::snapshot()
+
+```         
+The following package(s) will be updated in the lockfile:
+
+# CRAN -----------------------------------------------------------------------
+- lubridate   [* -> 1.9.3]
+- patchwork   [* -> 1.2.0]
+
+Do you want to proceed? [Y/n]: Y
+
+* Lockfile written to '~/meu_projeto/renv.lock'.
+```
+
+- O `renv` pede confirmação antes de sobrescrever o lockfile.
+
+- Isso evita atualizações acidentais.
+
+------------------------------------------------------------------------
+
+## Passo 3 - Tipos de snapshot
+
+- O `renv` oferece diferentes estratégias de snapshot controladas por `renv::settings$snapshot.type()`:
+
+| Tipo                  | Comportamento                                      |
+|-----------------------|-------------------------------------------------|
+| `"implicit"` (padrão) | Registra apenas pacotes usados no código           |
+| `"explicit"`          | Registra apenas pacotes listados no `DESCRIPTION`  |
+| `"all"`               | Registra todos os pacotes instalados na biblioteca |
+
+- O tipo `"implicit"` é o mais indicado para projetos de análise porque mantém o lockfile enxuto.
+
+------------------------------------------------------------------------
+
+## Passo 4 - Restaurar o ambiente com renv::restore()
+
+- **Conceito:** `renv::restore()` lê o `renv.lock` e instala exatamente as versões registradas.
+
+- É o comando que outra pessoa executa ao clonar seu repositório.
+
+- O `restore()` não altera pacotes que já estão instalados com a versão correta.
+
+- Ele instala apenas o que está ausente ou em versão diferente.
+
+```{r}
+#| eval: false
+
+renv::restore()
+```
+
+------------------------------------------------------------------------
+
+## Passo 4 - Output do renv::restore()
+
+```         
+The following package(s) will be updated:
+
+# CRAN -----------------------------------------------------------------------
+- dplyr        [1.1.2 -> 1.1.4]
+- ggplot2      [3.4.4 -> 3.5.0]
+
+Do you want to proceed? [Y/n]: Y
+
+* Restoring library ... Done!
+
+* The project has been restored.
+```
+
+- **O `restore()` mostra a versão atual e a versão do lockfile para cada pacote que será alterado.**
+
+------------------------------------------------------------------------
+
+## Passo 4 - Quando usar renv::restore()
+
+**Quatro situações em que `renv::restore()` é o primeiro comando a executar:**
+
+1.  Você clonou um repositório com `renv.lock` e precisa instalar os pacotes
+2.  Você voltou a um projeto antigo e a biblioteca está desatualizada
+3.  O `renv::status()` indicou que há pacotes ausentes
+4.  Você está configurando um servidor ou pipeline de CI/CD
+
+------------------------------------------------------------------------
+
+## Passo 5 - Instalar pacotes com renv::install()
+
+- **Conceito:** `renv::install()` instala um pacote diretamente na biblioteca isolada do projeto.
+
+- É preferível a `install.packages()` dentro de um projeto com `renv` ativo porque já atualiza o cache interno do `renv`.
+
+```{r}
+#| eval: false
+
+# Instalar do CRAN
+renv::install("janitor")
+
+# Instalar versão específica
+renv::install("dplyr@1.1.4")
+
+# Instalar do GitHub
+renv::install("tidyverse/dplyr")
+
+# Instalar do Bioconductor
+renv::install("bioc::DESeq2")
+```
+
+------------------------------------------------------------------------
+
+## Passo 5 - Output do renv::install()
+
+```         
+Retrieving 'https://cloud.r-project.org/src/contrib/janitor_2.2.0.tar.gz' ...
+  OK [downloaded 293.5 Kb in 1.2s]
+
+Installing janitor [2.2.0] ...
+  OK [built from source in 8.3s]
+
+* Run `renv::snapshot()` to update the project lockfile.
+```
+
+- **Após instalar, o `renv` lembra de executar `renv::snapshot()` para registrar o novo pacote no lockfile.**
+
+------------------------------------------------------------------------
+
+## Passo 6 - Atualizar pacotes com renv::update()
+
+- **Conceito:** `renv::update()` atualiza pacotes para versões mais recentes dentro da biblioteca isolada. A atualização não é automática - você decide quando e quais pacotes atualizar.
+
+```{r}
+#| eval: false
+
+# Verificar quais pacotes têm versões mais recentes disponíveis
+renv::update(check = TRUE)
+
+# Atualizar um pacote específico
+renv::update("ggplot2")
+
+# Atualizar todos os pacotes do projeto
+renv::update()
+```
+
+------------------------------------------------------------------------
+
+## Passo 6 - Output do renv::update()
+
+```         
+The following package(s) will be updated:
+
+# CRAN -----------------------------------------------------------------------
+- ggplot2   [3.4.4 -> 3.5.1]
+
+Do you want to proceed? [Y/n]: Y
+
+* Updating packages ...
+  OK [installed ggplot2 3.5.1 in 12.4s]
+
+* Run `renv::snapshot()` to save these changes to the lockfile.
+```
+
+Após atualizar, execute `renv::snapshot()` para registrar a nova versão no lockfile. Se a atualização causar problemas, use `renv::restore()` para voltar ao estado anterior.
+
+------------------------------------------------------------------------
+
+## Passo 7 - Remover pacotes com renv::remove()
+
+**Conceito:** `renv::remove()` remove um pacote da biblioteca isolada e do lockfile. Útil quando um pacote deixou de ser utilizado no projeto e você quer manter o ambiente enxuto.
+
+```{r}
+#| eval: false
+
+# Remover um pacote
+renv::remove("janitor")
+
+# Após remover, executar snapshot para atualizar o lockfile
+renv::snapshot()
+```
+
+------------------------------------------------------------------------
+
+## Passo 7 - Output do renv::remove()
+
+```         
+The following packages will be removed:
+
+  janitor
+
+Do you want to proceed? [Y/n]: Y
+
+* Removing package 'janitor' ... Done!
+
+* Run `renv::snapshot()` to update the project lockfile.
+```
+
+::: callout-note
+**Importante:** **`renv::remove()`** remove o pacote da biblioteca isolada do projeto, não da biblioteca global nem do cache interno do `renv`.
+
+O pacote continua disponível para outros projetos.
+:::
+
+------------------------------------------------------------------------
+
+## Passo 8 - O que versionar e o que ignorar
+
+- **Conceito:** nem tudo que o `renv` cria deve ser versionado no Git.
+
+- O `renv` gera automaticamente um `.gitignore` dentro da pasta `renv/` com as exclusões corretas.
+
+```         
+# Conteúdo de renv/.gitignore gerado automaticamente
+
+library/
+local/
+lock/
+python/
+staging/
+```
+
+------------------------------------------------------------------------
+
+## Passo 8 - Regra de versionamento
+
+| Arquivo ou pasta | Versionar? | Motivo |
+|----|----|----|
+| `renv.lock` | Sim | Registro das versões - deve ser compartilhado |
+| `.Rprofile` | Sim | Ativa o `renv` ao abrir o projeto |
+| `renv/activate.R` | Sim | Script de ativação |
+| `renv/settings.json` | Sim | Configurações do projeto |
+| `renv/library/` | Não | Gerada localmente pelo `restore()` |
+| `renv/staging/` | Não | Temporária, gerada durante operações |
+
+------------------------------------------------------------------------
+
+## Passo 8 - .gitignore recomendado
+
+```         
+# renv
+renv/library/
+renv/local/
+renv/staging/
+
+# R
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user
+```
+
+- A pasta `renv/library/` pode conter centenas de megabytes.
+
+- Versioná-la tornaria o repositório inutilizável e não teria nenhum benefício, já que qualquer pessoa pode regenerá-la com `renv::restore()`.
+
+------------------------------------------------------------------------
+
+## Passo 9 - Fluxo colaborativo
+
+- **Conceito:** o fluxo de trabalho com `renv` em equipe segue uma sequência bem definida que garante que todos os colaboradores trabalhem com o mesmo ambiente.
+
+```{r}
+#| eval: false
+
+# --- Colaborador A (quem criou o projeto) ---
+
+# 1. Inicializa o renv
+renv::init()
+
+# 2. Instala os pacotes necessários
+renv::install(c("tidyverse", "janitor", "gtsummary"))
+
+# 3. Registra no lockfile
+renv::snapshot()
+
+# 4. Versiona e compartilha
+# git add renv.lock .Rprofile renv/activate.R
+# git commit -m "feat: inicializa renv com pacotes do projeto"
+# git push
+```
+
+------------------------------------------------------------------------
+
+## Passo 9 - Fluxo do colaborador B
+
+```{r}
+#| eval: false
+
+# --- Colaborador B (quem clonou o projeto) ---
+
+# 1. Clona o repositório
+# git clone https://github.com/usuario/projeto.git
+
+# 2. Abre o projeto no RStudio
+# O .Rprofile ativa o renv automaticamente
+
+# 3. Restaura o ambiente
+renv::restore()
+# Instala exatamente os mesmos pacotes e versões do lockfile
+
+# 4. Trabalha normalmente
+# library(tidyverse)
+# source("R/01_analise.R")
+```
+
+------------------------------------------------------------------------
+
+## Passo 9 - Fluxo quando um pacote é atualizado
+
+```{r}
+#| eval: false
+
+# Colaborador A atualiza um pacote e registra
+
+renv::update("ggplot2")
+renv::snapshot()
+
+# git add renv.lock
+# git commit -m "chore: atualiza ggplot2 para 3.5.1"
+# git push
+
+# ---
+
+# Colaborador B puxa as mudanças e restaura o ambiente
+
+# git pull
+renv::restore()
+# Instala ggplot2 3.5.1 para ficar igual ao lockfile atualizado
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# O cache do renv
+:::
+
+------------------------------------------------------------------------
+
+## Como o cache do renv funciona
+
+- O `renv` mantém um **cache global** de pacotes no seu computador, separado das bibliotecas isoladas de cada projeto.
+
+**Quando você instala um pacote em um projeto, o `renv`:**
+
+1.  Baixa o pacote e o instala no cache global
+2.  Cria um **link simbólico** da biblioteca isolada do projeto para o cache
+
+- O resultado é que dois projetos que usam a mesma versão de um pacote **compartilham o mesmo arquivo no cache**, sem duplicar espaço em disco.
+
+------------------------------------------------------------------------
+
+## Localização do cache
+
+```{r}
+#| eval: false
+
+# Ver o caminho do cache global
+renv::paths$cache()
+```
+
+```         
+[1] "/Users/jennifer/Library/Caches/org.R-project.R/R/renv/cache/v5/R-4.4/x86_64-apple-darwin20"
+```
+
+- O cache é organizado por versão do R e arquitetura do sistema.
+
+- Isso garante compatibilidade entre diferentes versões do R instaladas no mesmo computador.
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Boas práticas e erros comuns
+:::
+
+------------------------------------------------------------------------
+
+## Boas práticas
+
+- **Execute `renv::status()` antes de fazer commit** para garantir que o lockfile está sincronizado com o código
+- **Execute `renv::snapshot()` imediatamente após instalar ou remover pacotes**, não acumule mudanças antes de registrar
+- **Versione o `renv.lock` em todo commit que modifica dependências** com uma mensagem descritiva: `chore: atualiza janitor para 2.2.0`
+- **Nunca edite o `renv.lock` manualmente**. O arquivo é gerado pelo `renv` e editá-lo manualmente pode corromper as referências de hash
+- **Use `renv::install()` em vez de `install.packages()`** dentro de projetos com `renv` ativo
+
+------------------------------------------------------------------------
+
+## Erros comuns - Parte 1
+
+| Situação | Causa | Solução |
+|------------------------|------------------------|------------------------|
+| `renv::status()` mostra pacotes fora de sincronia | Pacote instalado sem `renv::snapshot()` | Executar `renv::snapshot()` |
+| `renv::restore()` falha com erro de compilação | Dependências do sistema ausentes | Instalar libs do sistema (ex: `libcurl`, `openssl`) |
+| Pacote instalado não é detectado pelo `status()` | Pacote não está sendo chamado com `library()` no código | Adicionar `library()` ou usar tipo `"all"` no snapshot |
+
+------------------------------------------------------------------------
+
+## Erros comuns - Parte 2
+
+| Situação | Causa | Solução |
+|------------------------|------------------------|------------------------|
+| Projeto abre sem ativar o `renv` | `.Rprofile` ausente ou não versionado | Verificar se `.Rprofile` está no repositório |
+| `renv::restore()` instala versão errada | `renv.lock` desatualizado no repositório | Fazer `git pull` e executar `renv::restore()` novamente |
+| Cache corrompido após falha de instalação | Download interrompido ou disco cheio | Executar `renv::rebuild()` para reinstalar do zero |
+
+------------------------------------------------------------------------
+
+## Resumo das funções principais
+
+| Função | Quando usar |
+|------------------------------------|------------------------------------|
+| `renv::init()` | Uma vez, ao iniciar o projeto com `renv` |
+| `renv::status()` | Antes de commits e para diagnosticar problemas |
+| `renv::snapshot()` | Após instalar, atualizar ou remover pacotes |
+| `renv::restore()` | Ao clonar o projeto ou após `git pull` com mudanças no lockfile |
+| `renv::install()` | Para instalar pacotes dentro do projeto |
+| `renv::update()` | Para atualizar pacotes com controle |
+| `renv::remove()` | Para remover pacotes que não são mais usados |
+| `renv::paths$cache()` | Para verificar a localização do cache global |
+| `renv::rebuild()` | Para recompilar pacotes com problemas |
+
+------------------------------------------------------------------------
+
+## Resumo dos 9 passos
+
+| Passo | Função             | O que faz                                     |
+|-------|--------------------|-----------------------------------------------|
+| 1     | `renv::init()`     | Inicializa o renv e cria a biblioteca isolada |
+| 2     | `renv::status()`   | Diagnóstico de sincronização do ambiente      |
+| 3     | `renv::snapshot()` | Registra os pacotes no renv.lock              |
+| 4     | `renv::restore()`  | Restaura o ambiente a partir do lockfile      |
+| 5     | `renv::install()`  | Instala pacotes na biblioteca isolada         |
+| 6     | `renv::update()`   | Atualiza pacotes com controle de versão       |
+| 7     | `renv::remove()`   | Remove pacotes do ambiente e do lockfile      |
+| 8     | `.gitignore`       | Define o que versionar e o que ignorar        |
+| 9     | Fluxo colaborativo | Como trabalhar em equipe com renv             |
+
+------------------------------------------------------------------------
+
+## Conexão com o mercado
+
+- Reprodutibilidade é um requisito em ciência de dados aplicada, pesquisa acadêmica e ambientes corporativos.
+
+- Um projeto sem controle de ambiente pode produzir resultados diferentes dependendo de quando e onde é executado, o que compromete a confiabilidade das análises.
+
+- O `renv` é o padrão adotado pela comunidade R para esse controle.
+
+- Ele é equivalente ao `requirements.txt` do Python e ao `Gemfile` do Ruby, ferramentas que qualquer desenvolvedor experiente nessas linguagens usa por padrão.
+
+- Projetos com `renv.lock` versionado comunicam cuidado técnico e maturidade analítica para quem avalia o código.
+
+------------------------------------------------------------------------
+
+## Referências
+
+- Documentação oficial: [rstudio.github.io/renv](https://rstudio.github.io/renv)
+- Introdução ao renv: [rstudio.github.io/renv/articles/renv.html](https://rstudio.github.io/renv/articles/renv.html)
+- Colaboração com renv: [rstudio.github.io/renv/articles/collaborating.html](https://rstudio.github.io/renv/articles/collaborating.html)
+- Happy Git with R: [happygitwithr.com](https://happygitwithr.com)
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando!**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+
+[![](imagens/qrcodenovo){fig-align="center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="345"}](https://jenniferlopes.quarto.pub/portifolio/)

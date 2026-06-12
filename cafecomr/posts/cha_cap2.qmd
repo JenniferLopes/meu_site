@@ -1,0 +1,180 @@
+---
+title: "Resenha do Livro: Uma Senhora Toma Chá - Capítulo 2"
+subtitle: "Edição especial: Uma senhora toma chá - resenha do capítulo 2"
+author: "Jennifer Luz Lopes"
+date: "2026-06-12"
+categories: [Newsletter, Resenha, Estatística, Leitura]
+image: ../imagens_cha/cap2.png
+image-alt: ""
+description: "Resenha do capítulo 2 de Uma senhora toma chá, de David Salsburg. Sobre como Galton descobriu a regressão à média medindo altura de famílias, e como Karl Pearson transformou isso numa nova forma de enxergar a ciência."
+css: estilo_jeni.css
+---
+
+::: {style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;"}
+- *Que cada **gole** desperte uma nova ideia.*
+- *Que cada **script** abra uma nova conversa.*
+- *Que o **Café com R** se torne um ponto de encontro nosso.*
+:::
+
+<br>
+
+## O gole da semana
+
+<br>
+
+**Pessoal, você já se perguntou de onde vêm a correlação e a regressão?**
+
+Não a fórmula. A ideia. O momento em que alguém percebeu que duas coisas podiam ser matematicamente relacionadas e que essa relação dizia algo sobre o mundo.
+
+> **Esse momento aconteceu num laboratório em Londres, no final do século XIX, com um homem medindo a altura de famílias inteiras.**
+
+O homem era Francis Galton. O que ele encontrou nos dados mudou a estatística para sempre. E o que seu discípulo Karl Pearson fez com esse achado mudou a forma como a ciência entende a realidade.
+
+O capítulo 2 de *Uma senhora toma chá* conta essa história.
+
+<br>
+
+## A resenha
+
+<br>
+
+### O capítulo
+
+O capítulo 2 tem um título que parece técnico *As distribuições assimétricas* mas conta uma história que começa bem antes de qualquer fórmula. Começa com um homem rico e curioso que queria entender se a inteligência era hereditária e que, por não ter como medir inteligência, decidiu medir altura.
+
+**Salsburg usa esse capítulo para apresentar dois dos personagens mais importantes da estatística moderna: Francis Galton e Karl Pearson.** Um descobriu um fenômeno. O outro transformou esse fenômeno numa nova filosofia da ciência.
+
+::: callout-note
+O capítulo 2 é onde a estatística deixa de ser uma ferramenta de cálculo e passa a ser uma forma diferente de enxergar o mundo. **Pearson propôs que a realidade que a ciência estuda não são os objetos observáveis, mas as distribuições probabilísticas que os descrevem.** Essa ideia, radical em sua época, é o fundamento de quase toda a estatística que usamos hoje.
+:::
+
+<br>
+
+### Francis Galton e o laboratório biométrico
+
+Francis Galton era primo de Charles Darwin e compartilhava com ele a fascinação pela herança biológica. A maioria das pessoas que ouviu falar de Galton o conhece pelo trabalho com impressões digitais. Mas ele fez muito mais.
+
+Rico e independente, Galton instalou um laboratório biométrico em Londres e divulgou-o, convidando famílias a comparecer para ser medidas. **Coletou altura, peso, medidas de ossos e outras características de membros dessas famílias** e passou anos tabulando e examinando esses dados à procura de uma fórmula matemática que permitisse prever as medidas transmitidas de pais para filhos.
+
+> **A pergunta que ele fazia era simples: se um pai é muito alto, qual será a altura do filho?**
+
+Era óbvio que pais altos tendiam a ter filhos altos. Mas havia algo mais. Algo que os dados mostravam com insistência e que Galton demorou para nomear.
+
+<br>
+
+### A descoberta da regressão à média
+
+Os filhos de pais muito altos tendiam a ser mais baixos que seus pais. Os filhos de pais muito baixos tendiam a ser mais altos que seus pais. Era como se uma força invisível puxasse tudo em direção ao centro, à média de todos os homens.
+
+Galton chamou esse fenômeno de **regressão à média**.
+
+> **E percebeu que isso não era peculiaridade da altura humana. Quase todas as observações científicas apresentam regressão à média.**
+
+Ele também compreendeu que o fenômeno tinha de ser verdadeiro que poderia ter sido previsto antes de qualquer observação. Se os filhos de pais altos fossem, em média, tão altos quanto os pais, alguns seriam ainda mais altos. E os filhos desses, mais altos ainda. Em poucas gerações, a espécie humana consistiria em pessoas cada vez mais altas em um extremo e cada vez mais baixas no outro.
+
+**Isso não acontece. A regressão à média é o que mantém a estabilidade de uma espécie ao longo das gerações.**
+
+::: callout-tip
+Pessoal, a regressão à média aparece em todo lugar não só na biologia.
+
+- Em dados de desempenho, em resultados de testes, em avaliações de qualquer tipo.
+
+- **Quando um resultado é muito extremo numa medição, a próxima medição tende a ser menos extrema não porque algo mudou, mas porque o extremo era em parte aleatoriedade.**
+
+**Ignorar isso leva a conclusões erradas sobre causas e efeitos.**
+:::
+
+A partir desse achado, Galton elaborou uma medida matemática da relação entre as alturas de pais e filhos. Chamou essa medida de **coeficiente de correlação** e foi a primeira vez que essa palavra foi usada com o significado matemático preciso que tem hoje.
+
+<br>
+
+### Karl Pearson e a ideia revolucionária
+
+Galton estava próximo de algo maior do que conseguia ver. Foi seu discípulo Karl Pearson quem deu o passo seguinte.
+
+**Pearson era uma figura singular.** Filho de advogado, estudou matemática em Cambridge, fez doutorado em ciência política na Alemanha, publicou obra influente sobre a filosofia da ciência e fundou um clube de discussão para jovens em Londres onde conheceu a esposa. Seu desprezo pela tradição estabelecida era total e foi exatamente esse desprezo que o permitiu ver o que outros não viam.
+
+Observando os dados acumulados em biologia, Pearson chegou a uma conclusão que soou radical na época:
+
+> ***Os resultados de experimentos individuais são aleatórios. O que de fato queremos determinar em uma investigação científica são os parâmetros da distribuição que descreve essa aleatoriedade.***
+
+Não os números medidos em si. As distribuições que os descrevem.
+
+**Pearson descobriu uma família de funções matemáticas que chamou de distribuições assimétricas**, e afirmou que elas seriam capazes de descrever qualquer tipo de dispersão que um cientista pudesse encontrar nos dados. Cada distribuição nessa família é identificada por quatro números:
+
+| Parâmetro | O que descreve |
+|----|----|
+| **Média** | O valor central a partir do qual as medições se dispersam |
+| **Desvio padrão** | O quanto a maioria das medições se dispersa em torno da média |
+| **Simetria** | O grau em que as medições se acumulam em apenas um lado da média |
+| **Curtose** | O quanto as medições raras se afastam da média |
+
+::: callout-important
+**Essa mudança de perspectiva é mais profunda do que parece.**
+
+Antes de Pearson, a ciência lidava com coisas reais e palpáveis: planetas, sangue, elementos químicos. Pearson propôs que esses fenômenos observáveis fossem considerados reflexos aleatórios de algo mais fundamental **a distribuição probabilística que os descreve.**
+
+As "coisas" reais da ciência não eram mais os objetos observáveis. Eram funções matemáticas que descreviam a aleatoriedade do que podemos observar. Os parâmetros dessa distribuição eram o que de fato queríamos determinar. E eles nunca podem ser conhecidos com certeza apenas estimados, por meio dos dados.
+:::
+
+<br>
+
+### O problema que Pearson não viu
+
+Pearson acreditava que, se coletássemos dados suficientes, as estimativas dos parâmetros nos forneceriam os valores verdadeiros. **Essa crença tinha uma falha que ele não reconhecia.**
+
+Foi Ronald Fisher quem mostrou, anos depois, que muitos dos métodos de estimativa de Pearson eram menos que ótimos que havia formas melhores de extrair informação dos dados. E foi **Jerzy Neyman**, um brilhante matemático polonês, quem mostrou que o sistema de distribuições assimétricas de Pearson não cobria o universo das possíveis distribuições. Muitos problemas relevantes não poderiam ser solucionados com ele.
+
+> **Salsburg descreve o velho Karl Pearson de 1934 como um homem abandonado pelas ideias que ele mesmo havia criado superado pelos desenvolvimentos que seu próprio trabalho havia tornado possíveis.**
+
+Há algo de melancólico nessa imagem. E algo de familiar para quem trabalha em qualquer campo que avança rápido.
+
+::: callout-warning
+**Pessoal, eu penso nessa parte do capítulo quando encontro métodos que foram padrão por décadas e hoje são questionados.** Pearson construiu algo genuinamente importante. E ainda assim estava errado em partes fundamentais. A ciência não é a história de quem chegou ao destino. É a história de quem abriu o caminho para que o próximo pudesse ir além.
+:::
+
+<br>
+
+### O que fica do capítulo 2
+
+O capítulo começa com um homem medindo famílias em Londres e termina com uma nova filosofia da ciência.
+
+O que Galton descobriu medindo altura ainda está presente em qualquer análise de regressão que fazemos hoje. O coeficiente de correlação que ele nomeou aparece em todo relatório de análise de dados. Os quatro parâmetros que Pearson identificou para descrever uma distribuição são os mesmos que calculamos quando exploramos qualquer conjunto de dados.
+
+> **O que Galton e Pearson construíram não era apenas um conjunto de ferramentas. Era uma nova maneira de perguntar: o que podemos conhecer sobre o mundo quando tudo o que temos são dados incompletos e ruidosos?**
+
+Essa pergunta continua sendo a pergunta central de quem trabalha com dados.
+
+<br>
+
+------------------------------------------------------------------------
+
+## O que estou acompanhando
+
+<br>
+
+**Uma senhora toma chá de David Salsburg:** A série de resenhas continua. Se você ainda não leu o capítulo 1, começa por lá, a história da senhora e o experimento de Fisher é o ponto de partida de tudo.
+
+**The Grammar of Science de Karl Pearson:** O livro de 1892 onde Pearson desenvolveu sua filosofia da ciência. Salsburg menciona que, mais de 100 anos depois, as ideias ainda são pertinentes. Disponível gratuitamente: [archive.org](https://archive.org/details/grammarofscience00pear)
+
+<br>
+
+------------------------------------------------------------------------
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;"}
+**Próxima edição - 22 de junho**
+
+Capítulo 3 - Querido senhor Gosset
+
+O nascimento do "Student" e do teste t a história de um estatístico que trabalhava numa cervejaria e precisava tomar decisões com amostras pequenas.
+:::
+
+<br>
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;"}
+**Gostou desta edição?**
+
+Assine o Café com R e receba conteúdo de R, Estatística e Ciência de Dados toda semana.
+
+[**Clique aqui**](https://cafecomr-conteudos.lovable.app/)
+:::

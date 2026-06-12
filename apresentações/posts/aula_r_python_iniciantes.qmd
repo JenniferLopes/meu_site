@@ -112,7 +112,7 @@ Python é uma linguagem de programação de propósito geral criada por Guido va
 ## **R x Python - visão geral minha opinião**
 
 | **Dimensão** | **R** | **Python** |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | Origem | Estatística acadêmica | Programação geral |
 | Ponto forte principal | Análise estatística | Machine learning e automação |
 | Curva de aprendizado | Moderada para dados tabulares | Moderada com sintaxe mais direta |
@@ -609,7 +609,7 @@ print(dados_local.info())
 ## **Filtrar e selecionar**
 
 | **Operação** | **R (dplyr)** | **Python (pandas)** |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | Filtrar linhas | `filter(df, col > 5)` | `df[df["col"] > 5]` |
 | Selecionar colunas | `select(df, col1, col2)` | `df[["col1", "col2"]]` |
 | Criar coluna | `mutate(df, nova = a + b)` | `df["nova"] = df["a"] + df["b"]` |
@@ -618,7 +618,7 @@ print(dados_local.info())
 ## **Agrupar e resumir**
 
 | **Operação** | **R (dplyr)** | **Python (pandas)** |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | Agrupar e calcular | `group_by(df, grupo) |> summarise(media = mean(val))` | `df.groupby("grupo")["val"].mean()` |
 | Ordenar | `arrange(df, col)` | `df.sort_values("col")` |
 | Remover duplicatas | `distinct(df)` | `df.drop_duplicates()` |

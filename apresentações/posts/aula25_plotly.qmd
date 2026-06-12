@@ -1,0 +1,787 @@
+---
+title: "Aula 25. Gráficos interativos no R usando o pacote plotly"
+subtitle: "5 gráficos para elevar suas apresentações "
+categories: [R, plotly, ggplot2, Visualização, Interatividade]
+image: "imagens/capa_aula25.png"
+description: "Aprenda a criar gráficos interativos com plotly usando o dataset gapminder - hover, animação, range slider e legendas clicáveis."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(plotly)
+library(gapminder)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+paleta_continentes <- c(
+  "Africa"   = "#224573",
+  "Americas" = "#6B4F4F",
+  "Asia"     = "#4A6FA5",
+  "Europe"   = "#A67B5B",
+  "Oceania"  = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+# Acesse a versão HTML no Blog do Café com R
+
+[**jenniferlopes.quarto.pub/portifolio**](https://jenniferlopes.quarto.pub/portifolio)
+
+*Os gráficos interativos com hover, animação e range slider funcionam apenas na versão HTML renderizada.*
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula foi construída para mostrar como transformar gráficos ggplot2 em interativos com o pacote plotly. Os dados usados são o dataset `gapminder`, disponível no pacote de mesmo nome. Todo o código está funcional e pronto para reproduzir.
+
+![](imagens/meguy.jpg){fig-align="center" width="420"}
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+[![Escaneia o QR Code e acessa o portfólio.](imagens/qrcodenovo){fig-align="center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="297"}](https://jenniferlopes.quarto.pub/portifolio/)
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Compreender o que o `plotly` adiciona em relação ao `ggplot2` estático
+- Usar `ggplotly()` para converter gráficos ggplot2 em interativos
+- Usar `plot_ly()` para construir gráficos com a API nativa do plotly
+- Construir **5 gráficos interativos** com hover, animação e range slider
+- Entender quando usar interatividade e quando o gráfico estático é suficiente
+:::
+
+------------------------------------------------------------------------
+
+## Instalação
+
+```{r}
+#| eval: false
+
+install.packages("plotly")
+install.packages("gapminder")
+```
+
+```{r}
+#| eval: false
+
+library(plotly)
+library(gapminder)
+library(tidyverse)
+```
+
+------------------------------------------------------------------------
+
+## O pacote plotly
+
+**plotly** é uma biblioteca de visualização interativa disponível para R, Python e JavaScript. No R, ela se integra diretamente ao `ggplot2` através da função `ggplotly()`.
+
+- Criada pela empresa **Plotly Technologies**
+- Versão R mantida por **Carson Sievert**
+- Documentação: [plotly.com/r](https://plotly.com/r)
+- Livro: [plotly-r.com](https://plotly-r.com)
+
+Dois modos de uso:
+
+- `ggplotly()`: converte um objeto ggplot2 existente em interativo
+- `plot_ly()`: API nativa com maior controle sobre interatividade
+
+------------------------------------------------------------------------
+
+## ggplotly() - plot_ly()
+
+| Característica | `ggplotly()` | `plot_ly()` |
+|------------------------|------------------------|------------------------|
+| Ponto de partida | Gráfico ggplot2 existente | Do zero |
+| Curva de aprendizado | Baixa - sintaxe ggplot2 | Média - sintaxe própria |
+| Controle de hover | Limitado | Total |
+| Animação | Limitada | Nativa e completa |
+| Quando usar | Migrar gráficos existentes | Gráficos novos com interatividade específica |
+
+------------------------------------------------------------------------
+
+## O dataset gapminder
+
+```{r}
+#| label: gapminder-estrutura
+
+glimpse(gapminder)
+```
+
+------------------------------------------------------------------------
+
+## Variáveis do gapminder
+
+| Variável    | Tipo     | Descrição                                          |
+|------------------------|------------------------|------------------------|
+| `country`   | Fator    | País (142 países)                                  |
+| `continent` | Fator    | Continente (5 continentes)                         |
+| `year`      | Inteiro  | Ano (1952 a 2007, a cada 5 anos)                   |
+| `lifeExp`   | Numérica | Expectativa de vida ao nascer (anos)               |
+| `pop`       | Inteiro  | População total                                    |
+| `gdpPercap` | Numérica | PIB per capita em dólares (ajustado pela inflação) |
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Gráfico 1
+
+## Scatter com hover detalhado
+:::
+
+------------------------------------------------------------------------
+
+## Conceito: scatter com hover
+
+- O scatter plot estático mostra a relação entre duas variáveis contínuas. O que o plotly adiciona é o **hover**: ao passar o mouse sobre um ponto, uma caixa exibe as informações daquela observação.
+
+- O hover transforma o gráfico de uma imagem estática em uma **ferramenta de consulta**. O leitor pode investigar pontos de interesse sem precisar de uma tabela separada.
+
+- Com `ggplotly()`, o hover é gerado automaticamente a partir dos mapeamentos `aes()` do ggplot2. Com `tooltip`, você controla quais variáveis aparecem.
+
+------------------------------------------------------------------------
+
+## Código: scatter com ggplotly()
+
+```{r}
+#| label: scatter-codigo
+#| eval: false
+
+# Filtrar apenas o ano de 2007
+gap_2007 <- gapminder |>
+  filter(year == 2007) |>
+  mutate(
+    # Criar texto personalizado para o hover
+    texto_hover = paste0(
+      "<b>", country, "</b><br>",
+      "Continente: ", continent, "<br>",
+      "Expectativa de vida: ", round(lifeExp, 1), " anos<br>",
+      "PIB per capita: US$ ", scales::comma(round(gdpPercap)), "<br>",
+      "População: ", scales::comma(pop)))
+
+# Construir o gráfico ggplot2
+p <- gap_2007 |>
+  ggplot(aes(
+    x    = gdpPercap,
+    y    = lifeExp,
+    color = continent,
+    text  = texto_hover)) +
+  geom_point(aes(size = pop), alpha = 0.75) +
+  scale_x_log10(labels = scales::dollar_format()) +
+  scale_color_manual(values = paleta_continentes) +
+  scale_size_continuous(range = c(2, 14), guide = "none") +
+  labs(
+    title   = "Expectativa de vida x PIB per capita (2007)",
+    x       = "PIB per capita (escala log)",
+    y       = "Expectativa de vida (anos)",
+    color   = "Continente",
+    caption = "Jennifer Lopes | Café com R") +
+  tema
+
+# Converter para interativo
+ggplotly(p, tooltip = "text")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico 1: scatter interativo
+
+```{r}
+#| label: scatter-grafico
+#| echo: false
+#| fig-height: 5.0
+
+gap_2007 <- gapminder |>
+  filter(year == 2007) |>
+  mutate(
+    texto_hover = paste0(
+      "<b>", country, "</b><br>",
+      "Continente: ", continent, "<br>",
+      "Expectativa de vida: ", round(lifeExp, 1), " anos<br>",
+      "PIB per capita: US$ ", scales::comma(round(gdpPercap)), "<br>",
+      "População: ", scales::comma(pop)))
+
+p <- gap_2007 |>
+  ggplot(aes(
+    x     = gdpPercap,
+    y     = lifeExp,
+    color = continent,
+    text  = texto_hover)) +
+  geom_point(aes(size = pop), alpha = 0.75) +
+  scale_x_log10(labels = scales::dollar_format()) +
+  scale_color_manual(values = paleta_continentes) +
+  scale_size_continuous(range = c(2, 14), guide = "none") +
+  labs(
+    title   = "Expectativa de vida x PIB per capita (2007)",
+    x       = "PIB per capita (escala log)",
+    y       = "Expectativa de vida (anos)",
+    color   = "Continente",
+    caption = "Jennifer Lopes | Café com R") +
+  tema
+
+ggplotly(p, tooltip = "text")
+```
+
+------------------------------------------------------------------------
+
+## Interpretação: scatter com hover
+
+**O que o gráfico revela sobre 2007:**
+
+- A relação entre PIB per capita e expectativa de vida é **positiva e não linear**: o ganho em expectativa de vida por unidade de PIB é maior nos países mais pobres do que nos mais ricos
+- A **escala logarítmica** no eixo x é necessária porque a distribuição de PIB é extremamente assimétrica
+- **Qatar e Kuwait** aparecem como outliers à direita: PIB alto mas expectativa de vida abaixo do esperado para sua renda
+- O hover permite identificar países específicos sem sobrecarregar o gráfico com rótulos
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Gráfico 2
+
+## Boxplot interativo por continente
+:::
+
+------------------------------------------------------------------------
+
+## Conceito: boxplot interativo
+
+- O boxplot estático mostra mediana, IQR e outliers. O plotly adiciona **hover com valores exatos** de cada estatística e **legendas clicáveis** que ocultam e revelam grupos.
+
+- Clicar duas vezes em um continente na legenda **isola** aquele grupo, ocultando todos os outros. Um clique simples oculta ou revela individualmente.
+
+- Isso transforma uma comparação estática entre cinco continentes em uma **ferramenta de análise exploratória** onde o leitor escolhe o que comparar.
+
+------------------------------------------------------------------------
+
+## Código: boxplot com plot_ly()
+
+```{r}
+#| label: boxplot-codigo
+#| eval: false
+
+gap_2007 <- gapminder |> filter(year == 2007)
+
+plot_ly(
+  data   = gap_2007,
+  x      = ~continent,
+  y      = ~lifeExp,
+  color  = ~continent,
+  colors = paleta_continentes,
+  type   = "box",
+  boxpoints = "all",
+  jitter    = 0.3,
+  pointpos  = 0,
+  marker = list(size = 4, opacity = 0.6),
+  hovertemplate = paste0(
+    "<b>%{x}</b><br>",
+    "Expectativa de vida: %{y:.1f} anos<br>",
+    "<extra></extra>")) |>
+  layout(
+    title  = list(
+      text = "Distribuição da expectativa de vida por continente (2007)",
+      font = list(color = "#224573", size = 14)),
+    xaxis  = list(title = ""),
+    yaxis  = list(title = "Expectativa de vida (anos)"),
+    legend = list(title = list(text = "Continente")),
+    showlegend = TRUE)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico 2: boxplot interativo
+
+```{r}
+#| label: boxplot-grafico
+#| echo: false
+#| fig-height: 5.0
+
+gap_2007 <- gapminder |> filter(year == 2007)
+
+plot_ly(
+  data   = gap_2007,
+  x      = ~continent,
+  y      = ~lifeExp,
+  color  = ~continent,
+  colors = paleta_continentes,
+  type   = "box",
+  boxpoints = "all",
+  jitter    = 0.3,
+  pointpos  = 0,
+  marker = list(size = 4, opacity = 0.6),
+  hovertemplate = paste0(
+    "<b>%{x}</b><br>",
+    "Expectativa de vida: %{y:.1f} anos<br>",
+    "<extra></extra>")) |>
+  layout(
+    title  = list(
+      text = "Distribuição da expectativa de vida por continente (2007)",
+      font = list(color = "#224573", size = 14)),
+    xaxis  = list(title = ""),
+    yaxis  = list(title = "Expectativa de vida (anos)"),
+    legend = list(title = list(text = "Continente")),
+    showlegend = TRUE)
+```
+
+------------------------------------------------------------------------
+
+## Interpretação: boxplot interativo
+
+**O que o gráfico revela:**
+
+- **Europa e Oceania** têm as medianas mais altas e menor dispersão: expectativa de vida alta e homogênea entre os países
+- **África** tem a maior dispersão e a mediana mais baixa. A presença de outliers superiores indica países africanos com condições muito acima da mediana do continente
+- **Ásia** tem a maior amplitude total: de países com expectativa próxima a 40 anos até países acima de 80
+- O `boxpoints = "all"` exibe cada observação individualmente, revelando que Oceania tem apenas dois países no dataset
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Gráfico 3
+
+## Barras com evolução do PIB por continente
+:::
+
+------------------------------------------------------------------------
+
+## Conceito: barras interativas
+
+- O gráfico de barras interativo permite que o leitor **passe o mouse** para ver valores exatos e **clique na legenda** para comparar continentes específicos sem a poluição visual de todos ao mesmo tempo.
+
+- Com `plot_ly()`, o argumento `barmode` controla se as barras são empilhadas (`"stack"`), agrupadas (`"group"`) ou sobrepostas (`"overlay"`). Cada modo responde uma pergunta diferente sobre os dados.
+
+------------------------------------------------------------------------
+
+## Código: barras com plot_ly()
+
+```{r}
+#| label: barras-codigo
+#| eval: false
+
+# PIB per capita médio por continente e ano
+gap_pib <- gapminder |>
+  group_by(continent, year) |>
+  summarise(
+    pib_medio = round(mean(gdpPercap), 0),
+    .groups   = "drop")
+
+plot_ly(
+  data   = gap_pib,
+  x      = ~year,
+  y      = ~pib_medio,
+  color  = ~continent,
+  colors = paleta_continentes,
+  type   = "bar",
+  hovertemplate = paste0(
+    "<b>%{x}</b><br>",
+    "%{fullData.name}<br>",
+    "PIB per capita médio: US$ %{y:,.0f}<br>",
+    "<extra></extra>")) |>
+  layout(
+    barmode = "group",
+    title   = list(
+      text = "PIB per capita médio por continente (1952-2007)",
+      font = list(color = "#224573", size = 14)),
+    xaxis   = list(title = "Ano"),
+    yaxis   = list(
+      title  = "PIB per capita médio (US$)",
+      tickformat = ",.0f"),
+    legend  = list(title = list(text = "Continente")))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico 3: barras interativas
+
+```{r}
+#| label: barras-grafico
+#| echo: false
+#| fig-height: 5.0
+
+gap_pib <- gapminder |>
+  group_by(continent, year) |>
+  summarise(
+    pib_medio = round(mean(gdpPercap), 0),
+    .groups   = "drop")
+
+plot_ly(
+  data   = gap_pib,
+  x      = ~year,
+  y      = ~pib_medio,
+  color  = ~continent,
+  colors = paleta_continentes,
+  type   = "bar",
+  hovertemplate = paste0(
+    "<b>%{x}</b><br>",
+    "%{fullData.name}<br>",
+    "PIB per capita médio: US$ %{y:,.0f}<br>",
+    "<extra></extra>")) |>
+  layout(
+    barmode = "group",
+    title   = list(
+      text = "PIB per capita médio por continente (1952-2007)",
+      font = list(color = "#224573", size = 14)),
+    xaxis   = list(title = "Ano"),
+    yaxis   = list(
+      title      = "PIB per capita médio (US$)",
+      tickformat = ",.0f"),
+    legend  = list(title = list(text = "Continente")))
+```
+
+------------------------------------------------------------------------
+
+## Interpretação: barras interativas
+
+**O que o gráfico revela:**
+
+- **Europa** apresenta crescimento consistente ao longo de todo o período, com aceleração após 1977
+- **Oceania** tem os valores absolutos mais altos em quase todos os anos, mas o dataset tem apenas dois países (Austrália e Nova Zelândia), o que limita a representatividade
+- **Américas e Ásia** crescem em ritmo similar até 1997, quando a Ásia acelera. O hover permite verificar os valores exatos de cada ano sem ambiguidade
+- **África** permanece com valores baixos ao longo de todo o período, com crescimento muito mais lento do que os outros continentes
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Gráfico 4
+
+## Série temporal com range slider
+:::
+
+------------------------------------------------------------------------
+
+## Conceito: range slider
+
+- O **range slider** é um seletor de período posicionado abaixo do gráfico principal. Ele permite que o leitor **arraste os extremos** para ampliar um período específico sem perder a referência do período completo.
+
+- É especialmente útil em séries temporais longas onde a variação em períodos específicos é difícil de visualizar na escala completa.
+
+- No plotly, o range slider é ativado com `rangeslider = list(visible = TRUE)` dentro do `layout()`.
+
+------------------------------------------------------------------------
+
+## Código: série temporal com range slider
+
+```{r}
+#| label: serie-codigo
+#| eval: false
+
+# Expectativa de vida média por continente e ano
+gap_serie <- gapminder |>
+  group_by(continent, year) |>
+  summarise(
+    lifeExp_medio = round(mean(lifeExp), 1),
+    .groups       = "drop")
+
+plot_ly(
+  data   = gap_serie,
+  x      = ~year,
+  y      = ~lifeExp_medio,
+  color  = ~continent,
+  colors = paleta_continentes,
+  type   = "scatter",
+  mode   = "lines+markers",
+  hovertemplate = paste0(
+    "<b>%{fullData.name}</b><br>",
+    "Ano: %{x}<br>",
+    "Expectativa média: %{y:.1f} anos<br>",
+    "<extra></extra>")) |>
+  layout(
+    title  = list(
+      text = "Expectativa de vida média por continente (1952-2007)",
+      font = list(color = "#224573", size = 14)),
+    xaxis  = list(
+      title       = "Ano",
+      rangeslider = list(visible = TRUE)),
+    yaxis  = list(title = "Expectativa de vida média (anos)"),
+    legend = list(title = list(text = "Continente")),
+    hovermode = "x unified")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico 4: série temporal com range slider
+
+```{r}
+#| label: serie-grafico
+#| echo: false
+#| fig-height: 5.2
+
+gap_serie <- gapminder |>
+  group_by(continent, year) |>
+  summarise(
+    lifeExp_medio = round(mean(lifeExp), 1),
+    .groups       = "drop")
+
+plot_ly(
+  data   = gap_serie,
+  x      = ~year,
+  y      = ~lifeExp_medio,
+  color  = ~continent,
+  colors = paleta_continentes,
+  type   = "scatter",
+  mode   = "lines+markers",
+  hovertemplate = paste0(
+    "<b>%{fullData.name}</b><br>",
+    "Ano: %{x}<br>",
+    "Expectativa média: %{y:.1f} anos<br>",
+    "<extra></extra>")) |>
+  layout(
+    title  = list(
+      text = "Expectativa de vida média por continente (1952-2007)",
+      font = list(color = "#224573", size = 14)),
+    xaxis  = list(
+      title       = "Ano",
+      rangeslider = list(visible = TRUE)),
+    yaxis  = list(title = "Expectativa de vida média (anos)"),
+    legend = list(title = list(text = "Continente")),
+    hovermode = "x unified")
+```
+
+------------------------------------------------------------------------
+
+## Interpretação: série temporal com range slider
+
+**O que o gráfico revela:**
+
+- Todos os continentes apresentam crescimento consistente na expectativa de vida ao longo do período
+- **África** tem crescimento acelerado entre 1952 e 1987, seguido de estagnação e leve queda entre 1987 e 2002, provavelmente associada à epidemia de HIV/AIDS. O range slider permite ampliar esse período para leitura precisa
+- `hovermode = "x unified"` exibe os valores de todos os continentes simultaneamente ao passar o mouse sobre um ano, facilitando a comparação direta sem mover o cursor entre linhas
+- O range slider é mais útil quando a série tem muitos pontos. Com apenas 12 anos no gapminder, o recurso é didático para mostrar a funcionalidade
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Gráfico 5
+
+## Bolhas animadas por ano
+:::
+
+------------------------------------------------------------------------
+
+## Conceito: gráfico de bolhas animado
+
+O **gráfico de bolhas animado** é o formato popularizado por Hans Rosling nas apresentações do TED. Ele combina quatro variáveis simultâneas:
+
+- **Eixo x:** PIB per capita
+- **Eixo y:** expectativa de vida
+- **Tamanho da bolha:** população
+- **Cor:** continente
+- **Animação:** ano
+
+> O argumento `frame` no `plot_ly()` define qual variável controla a animação. O plotly gera automaticamente os controles de play, pause e seleção de frame.
+
+------------------------------------------------------------------------
+
+## Código: bolhas animadas
+
+```{r}
+#| label: bolhas-codigo
+#| eval: false
+
+gapminder |>
+  mutate(
+    texto_hover = paste0(
+      "<b>", country, "</b><br>",
+      "Continente: ", continent, "<br>",
+      "Expectativa de vida: ", round(lifeExp, 1), " anos<br>",
+      "PIB per capita: US$ ", scales::comma(round(gdpPercap)), "<br>",
+      "População: ", scales::comma(pop))) |>
+  plot_ly(
+    x      = ~gdpPercap,
+    y      = ~lifeExp,
+    size   = ~pop,
+    color  = ~continent,
+    frame  = ~year,
+    text   = ~texto_hover,
+    colors = paleta_continentes,
+    type   = "scatter",
+    mode   = "markers",
+    marker = list(opacity = 0.75, sizemode = "diameter"),
+    hovertemplate = "%{text}<extra></extra>") |>
+  layout(
+    title  = list(
+      text = "Expectativa de vida x PIB per capita (1952-2007)",
+      font = list(color = "#224573", size = 14)),
+    xaxis  = list(
+      title = "PIB per capita (US$)",
+      type  = "log",
+      tickformat = ",.0f"),
+    yaxis  = list(title = "Expectativa de vida (anos)"),
+    legend = list(title = list(text = "Continente"))) |>
+  animation_opts(
+    frame      = 800,
+    transition = 500,
+    easing     = "elastic") |>
+  animation_button(
+    x = 1, xanchor = "right",
+    y = 0, yanchor = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico 5: bolhas animadas
+
+```{r}
+#| label: bolhas-grafico
+#| echo: false
+#| fig-height: 5.2
+
+gapminder |>
+  mutate(
+    texto_hover = paste0(
+      "<b>", country, "</b><br>",
+      "Continente: ", continent, "<br>",
+      "Expectativa de vida: ", round(lifeExp, 1), " anos<br>",
+      "PIB per capita: US$ ", scales::comma(round(gdpPercap)), "<br>",
+      "População: ", scales::comma(pop))) |>
+  plot_ly(
+    x      = ~gdpPercap,
+    y      = ~lifeExp,
+    size   = ~pop,
+    color  = ~continent,
+    frame  = ~year,
+    text   = ~texto_hover,
+    colors = paleta_continentes,
+    type   = "scatter",
+    mode   = "markers",
+    marker = list(opacity = 0.75, sizemode = "diameter"),
+    hovertemplate = "%{text}<extra></extra>") |>
+  layout(
+    title  = list(
+      text = "Expectativa de vida x PIB per capita (1952-2007)",
+      font = list(color = "#224573", size = 14)),
+    xaxis  = list(
+      title      = "PIB per capita (US$)",
+      type       = "log",
+      tickformat = ",.0f"),
+    yaxis  = list(title = "Expectativa de vida (anos)"),
+    legend = list(title = list(text = "Continente"))) |>
+  animation_opts(
+    frame      = 800,
+    transition = 500,
+    easing     = "elastic") |>
+  animation_button(
+    x = 1, xanchor = "right",
+    y = 0, yanchor = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Interpretação: bolhas animadas
+
+**O que a animação revela:**
+
+- Em 1952, há uma separação clara entre Europa e Oceania (alta renda, alta expectativa) e África e Ásia (baixa renda, baixa expectativa)
+- Entre 1952 e 2007, **todos os continentes** se movem para cima e para a direita, mas em velocidades distintas
+- **Ásia** tem o movimento mais dramático: países como Coreia do Sul, Japão e China partem de expectativa baixa e PIB baixo e chegam próximos aos países europeus
+- A bolha da **China** cresce visivelmente ao longo da animação, refletindo o crescimento populacional
+- `animation_opts(easing = "elastic")` adiciona um efeito de transição suave entre frames que torna a animação mais legível
+
+------------------------------------------------------------------------
+
+## ggplotly() - plot_ly(): quando usar cada um
+
+| Situação                                | Recomendação |
+|-----------------------------------------|--------------|
+| Você já tem o gráfico pronto em ggplot2 | `ggplotly()` |
+| Precisa de hover personalizado com HTML | `plot_ly()`  |
+| Precisa de animação com `frame`         | `plot_ly()`  |
+| Precisa de range slider                 | `plot_ly()`  |
+| Subplots com `subplot()`                | `plot_ly()`  |
+| Prototipagem rápida                     | `ggplotly()` |
+
+------------------------------------------------------------------------
+
+## Quando interatividade não é necessária
+
+**Gráficos interativos têm custo: arquivo HTML maior, dependência de JavaScript e renderização mais lenta.**
+
+Use gráfico estático quando:
+
+- O destino é **PDF, Word ou impressão**
+- O público acessa por **conexão lenta**
+- O gráfico já comunica tudo que precisa **sem exploração**
+- O relatório tem **muitos gráficos** e a interatividade seria sobrecarga
+
+Use gráfico interativo quando:
+
+- O leitor precisa **explorar os dados** por conta própria
+- Há **muitos pontos ou grupos** que não cabem em rótulos estáticos
+- O destino é **HTML, dashboard ou apresentação digital**
+- A variável temporal justifica **animação**
+
+------------------------------------------------------------------------
+
+## Referências
+
+- Documentação plotly R: [plotly.com/r](https://plotly.com/r)
+- Livro Interactive Web-Based Data Visualization with R: [plotly-r.com](https://plotly-r.com)
+- R Graph Gallery - plotly: [r-graph-gallery.com/plotly.html](https://r-graph-gallery.com/plotly.html)
+- Dataset gapminder: [gapminder.org/data](https://www.gapminder.org/data)
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando!**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+
+[![](imagens/qrcodenovo){fig-align="center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="337"}](https://jenniferlopes.quarto.pub/portifolio/)

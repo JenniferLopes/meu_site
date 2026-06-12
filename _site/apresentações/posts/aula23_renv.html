@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Jennifer Luz Lopes – Aula 23. 9 passos para controlar seus pacotes com renv</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
+  <link rel="stylesheet" href="estilo_jeni.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Aula 23. 9 passos para controlar seus pacotes com renv</h1>
+  <p class="subtitle">Reprodutibilidade e isolamento de ambientes no R</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="democratização" class="slide level2">
+<h2>Democratização</h2>
+<blockquote>
+<p>Esta aula foi construída para que você entenda como proteger seus projetos de quebras causadas por atualizações de pacotes e incompatibilidades de ambiente. Todo o código está funcional e pronto para reproduzir.</p>
+</blockquote>
+
+<img data-src="imagens/meguy.jpg" class="quarto-figure quarto-figure-center r-stretch" width="420"></section>
+<section id="acompanhe-o-café-com-r" class="slide level2">
+<h2>Acompanhe o Café com R</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="https://jenniferlopes.quarto.pub/portifolio/"><img data-src="imagens/qrcodenovo.png" class="quarto-figure quarto-figure-center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;"></a></p>
+</figure>
+</div>
+<figcaption>Escaneia o QR Code e acessa o portfólio.</figcaption>
+</figure>
+</div>
+</section>
+<section id="projetos-no-youtube" class="slide level2">
+<h2>Projetos no YouTube</h2>
+
+<img data-src="imagens/17.png" class="quarto-figure quarto-figure-center r-stretch" width="514"><p><strong>Inscreva-se já no canal <a href="https://www.youtube.com/@jennifercafecomr/featured">Link</a>.</strong></p>
+</section>
+<section id="objetivos-da-aula" class="slide level2">
+<h2>Objetivos da aula</h2>
+<ul>
+<li class="fragment">Compreender o problema de reprodutibilidade que o <code>renv</code> resolve</li>
+<li class="fragment">Entender os conceitos de biblioteca isolada e arquivo de bloqueio</li>
+<li class="fragment">Aplicar os <strong>9 passos</strong> do fluxo de trabalho com <code>renv</code></li>
+<li class="fragment">Integrar o <code>renv</code> com Git e GitHub</li>
+<li class="fragment">Identificar e resolver os erros mais comuns</li>
+</ul>
+</section>
+<section id="section" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section id="o-problema-que-o-renv-resolve" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>O problema que o renv resolve</h1>
+
+</section>
+
+<section id="a-cena-que-você-já-viveu" class="slide level2 scrollable">
+<h2>A cena que você já viveu</h2>
+<ol type="1">
+<li><p>Você termina uma análise, compartilha o script com um <strong>colega</strong> e ele retorna com um <strong><em>erro que você nunca viu</em></strong>.</p></li>
+<li><p>Ou você volta a um projeto de seis meses atrás, roda o código e tudo quebra, porque algum pacote foi atualizado e a função mudou de nome, de argumento ou de comportamento.</p></li>
+<li><p>Ou você sobe o projeto no <strong>GitHub</strong> e o <strong>GitHub</strong> <strong>Actions</strong> falha porque a versão do pacote no servidor é diferente da sua máquina.</p></li>
+<li><p>Esses três cenários têm a mesma causa: <strong>o ambiente R não está registrado junto com o código</strong>.</p></li>
+</ol>
+</section>
+<section id="o-que-é-um-ambiente-r" class="slide level2">
+<h2>O que é um ambiente R</h2>
+<p><strong>Ambiente R</strong> é o conjunto de pacotes e versões instalados na sua máquina que o R usa quando executa um script.</p>
+<p><strong>Dois computadores com R instalado podem ter ambientes completamente diferentes:</strong></p>
+<ul>
+<li>Versões <strong>distintas</strong> dos mesmos pacotes</li>
+<li>Pacotes presentes em um e ausentes no outro</li>
+<li>Dependências instaladas em versões <strong>incompatíveis</strong> entre si</li>
+</ul>
+<blockquote>
+<p><strong>Quando um script depende implicitamente de um ambiente específico e esse ambiente não está documentado, o script deixa de ser reproduzível.</strong></p>
+</blockquote>
+</section>
+<section id="o-que-é-reprodutibilidade" class="slide level2">
+<h2>O que é reprodutibilidade</h2>
+<p><strong>Reprodutibilidade</strong> é a capacidade de um script produzir exatamente o mesmo resultado quando executado em condições idênticas, inclusive por outra pessoa em outro computador.</p>
+<p>Para que um projeto seja reproduzível, três coisas precisam estar registradas:</p>
+<ul>
+<li>O <strong>código</strong> (controlado pelo Git)</li>
+<li>Os <strong>dados</strong> (controlados pelo Git ou por um repositório de dados)</li>
+<li>O <strong>ambiente</strong> com pacotes e versões (controlado pelo <code>renv</code>)</li>
+</ul>
+<p><strong>O <code>renv</code> é responsável pela terceira parte.</strong></p>
+</section>
+<section id="o-que-é-o-renv" class="slide level2">
+<h2>O que é o renv</h2>
+<ul>
+<li><strong>renv</strong> é um pacote R desenvolvido pela Posit que cria <strong>bibliotecas de pacotes isoladas por projeto</strong> e registra as versões exatas de cada pacote em um arquivo chamado <code>renv.lock</code>.</li>
+</ul>
+<!-- -->
+<ul>
+<li>Criado por <strong>Kevin Ushey</strong></li>
+<li>Disponível no CRAN</li>
+<li>Documentação: <a href="https://rstudio.github.io/renv">rstudio.github.io/renv</a></li>
+<li>Substitui o <code>packrat</code>, que era a solução anterior para o mesmo problema</li>
+</ul>
+</section>
+<section id="biblioteca-global---biblioteca-isolada" class="slide level2">
+<h2>Biblioteca global - biblioteca isolada</h2>
+<ul>
+<li><p><strong>Biblioteca global</strong> é a pasta onde o R instala pacotes por padrão. Todos os projetos do seu computador compartilham a mesma biblioteca global.</p></li>
+<li><p><strong>Biblioteca isolada</strong> é uma pasta criada pelo <code>renv</code> dentro do projeto. Cada projeto tem a sua. Pacotes instalados em um projeto não afetam outros projetos.</p></li>
+</ul>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Por que isso importa:</strong> se você atualiza o <code>ggplot2</code> na biblioteca global para usar em um novo projeto, todos os seus projetos anteriores que dependem de uma versão específica do <strong><code>ggplot2</code></strong> podem parar de funcionar. Com o <strong><code>renv</code></strong>, cada projeto usa sua própria versão registrada.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="o-arquivo-renv.lock" class="slide level2">
+<h2>O arquivo renv.lock</h2>
+<ul>
+<li>O <strong>renv.lock</strong> é um arquivo <strong>JSON</strong> gerado pelo <strong><code>renv</code></strong> que registra:</li>
+</ul>
+<!-- -->
+<ul>
+<li>Nome de cada pacote usado no projeto</li>
+<li>Versão exata de cada pacote</li>
+<li>Repositório de onde foi instalado (CRAN, GitHub, Bioconductor)</li>
+<li>Hash de verificação para confirmar integridade</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource json number-lines code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a></a><span class="fu">{</span></span>
+<span id="cb1-2"><a></a>  <span class="dt">"R"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-3"><a></a>    <span class="dt">"Version"</span><span class="fu">:</span> <span class="st">"4.4.0"</span><span class="fu">,</span></span>
+<span id="cb1-4"><a></a>    <span class="dt">"Repositories"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span><span class="dt">"Name"</span><span class="fu">:</span> <span class="st">"CRAN"</span><span class="fu">,</span> <span class="dt">"URL"</span><span class="fu">:</span> <span class="st">"https://cloud.r-project.org"</span><span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb1-5"><a></a>  <span class="fu">},</span></span>
+<span id="cb1-6"><a></a>  <span class="dt">"Packages"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-7"><a></a>    <span class="dt">"dplyr"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-8"><a></a>      <span class="dt">"Package"</span><span class="fu">:</span> <span class="st">"dplyr"</span><span class="fu">,</span></span>
+<span id="cb1-9"><a></a>      <span class="dt">"Version"</span><span class="fu">:</span> <span class="st">"1.1.4"</span><span class="fu">,</span></span>
+<span id="cb1-10"><a></a>      <span class="dt">"Source"</span><span class="fu">:</span> <span class="st">"Repository"</span><span class="fu">,</span></span>
+<span id="cb1-11"><a></a>      <span class="dt">"Repository"</span><span class="fu">:</span> <span class="st">"CRAN"</span><span class="fu">,</span></span>
+<span id="cb1-12"><a></a>      <span class="dt">"Hash"</span><span class="fu">:</span> <span class="st">"fedd9d00c2944ff00a0e2696ccf048ec"</span></span>
+<span id="cb1-13"><a></a>    <span class="fu">}</span></span>
+<span id="cb1-14"><a></a>  <span class="fu">}</span></span>
+<span id="cb1-15"><a></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="o-renv.lock-e-o-git" class="slide level2">
+<h2>O renv.lock e o Git</h2>
+<ul>
+<li><p>O <code>renv.lock</code> deve ser <strong>versionado no Git</strong>.</p></li>
+<li><p>Ele é o equivalente ao <code>requirements.txt</code> do Python ou ao <code>package.json</code> do Node.js.</p></li>
+</ul>
+<blockquote>
+<p>Quando outra pessoa clona o repositório e roda <code>renv::restore()</code>, o <code>renv</code> lê o <code>renv.lock</code> e instala exatamente os mesmos pacotes e versões que você usou.</p>
+</blockquote>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Regra:</strong> versione o <strong><code>renv.lock</code></strong>, nunca versione a pasta <strong><code>renv/library/</code></strong>.</p>
+<ul>
+<li>A biblioteca de pacotes é gerada localmente pelo <strong><code>renv::restore()</code></strong> e não precisa estar no repositório.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="instalação" class="slide level2">
+<h2>Instalação</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">install.packages</span>(<span class="st">"renv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p>O <code>renv</code> só precisa ser instalado uma vez na biblioteca global.</p></li>
+<li><p>A partir daí, ele gerencia as bibliotecas isoladas de cada projeto.</p></li>
+</ul>
+</section>
+<section id="section-1" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section id="os-9-passos" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Os 9 passos</h1>
+
+</section>
+
+<section id="passo-1---inicializar-o-renv-com-renvinit" class="slide level2 scrollable">
+<h2>Passo 1 - Inicializar o renv com renv::init()</h2>
+<ul>
+<li><p><strong>Conceito:</strong> <code>renv::init()</code> ativa o <code>renv</code> em um projeto existente ou novo.</p></li>
+<li><p><strong>Ele realiza quatro ações em sequência:</strong></p></li>
+</ul>
+<ol type="1">
+<li>Cria a pasta <code>renv/</code> dentro do projeto</li>
+<li>Cria a biblioteca isolada em <code>renv/library/</code></li>
+<li>Copia os pacotes já em uso no projeto para a biblioteca isolada</li>
+<li>Gera o <code>renv.lock</code> com os pacotes detectados</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>renv<span class="sc">::</span><span class="fu">init</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="passo-1---output-do-renvinit" class="slide level2">
+<h2>Passo 1 - Output do renv::init()</h2>
+<pre><code>* Initializing project ...
+* Discovering package dependencies ... Done!
+* Copying packages into the cache ... Done!
+
+The following package(s) will be updated in the lockfile:
+
+# CRAN --------------------------------------------------------------
+- dplyr        [* -&gt; 1.1.4]
+- ggplot2      [* -&gt; 3.5.0]
+- tidyr        [* -&gt; 1.3.1]
+- readr        [* -&gt; 2.1.5]
+
+* Lockfile written to '~/meu_projeto/renv.lock'.</code></pre>
+<ul>
+<li><p>O asterisco <code>[*]</code> indica que o pacote não estava no lockfile antes.</p></li>
+<li><p>A seta <code>-&gt;</code> mostra a versão que foi registrada.</p></li>
+</ul>
+</section>
+<section id="passo-1---estrutura-criada-pelo-init" class="slide level2">
+<h2>Passo 1 - Estrutura criada pelo init()</h2>
+<ul>
+<li>Após o <strong><code>renv::init()</code></strong>, o projeto terá essa estrutura adicional:</li>
+</ul>
+<pre><code>meu_projeto/
+├── renv/
+│   ├── activate.R      # script de ativação automática
+│   ├── library/        # biblioteca isolada (não versionar)
+│   └── settings.json   # configurações do renv
+├── renv.lock           # arquivo de bloqueio (versionar)
+└── .Rprofile           # ativa o renv automaticamente ao abrir o projeto</code></pre>
+<ul>
+<li>O <code>.Rprofile</code> contém uma linha que carrega o <code>renv</code> toda vez que o projeto é aberto no RStudio:</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">source</span>(<span class="st">"renv/activate.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="passo-2---verificar-o-estado-com-renvstatus" class="slide level2">
+<h2>Passo 2 - Verificar o estado com renv::status()</h2>
+<ul>
+<li><strong>Conceito:</strong> <strong><code>renv::status()</code></strong> compara três fontes de informação:</li>
+</ul>
+<!-- -->
+<ul>
+<li>Os pacotes <strong>usados</strong> no código (detectados por <code>library()</code> e <code>require()</code>)</li>
+<li>Os pacotes <strong>instalados</strong> na biblioteca isolada</li>
+<li>Os pacotes <strong>registrados</strong> no <code>renv.lock</code></li>
+</ul>
+<p><strong>Quando as três fontes estão sincronizadas, o projeto está em estado consistente.</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>renv<span class="sc">::</span><span class="fu">status</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="passo-2---output-projeto-sincronizado" class="slide level2">
+<h2>Passo 2 - Output: projeto sincronizado</h2>
+<pre><code>* The project is already synchronized with the lockfile.</code></pre>
+<ul>
+<li><p>Esse é o estado desejado.</p></li>
+<li><p>Significa que o que está no código, na biblioteca e no lockfile é idêntico.</p></li>
+</ul>
+</section>
+<section id="passo-2---output-projeto-fora-de-sincronia" class="slide level2">
+<h2>Passo 2 - Output: projeto fora de sincronia</h2>
+<pre><code>The following package(s) are installed but not recorded in the lockfile:
+             _
+  lubridate   [1.9.3]
+
+The following package(s) are used in the project but are not installed:
+             _
+  patchwork   [*]
+
+Use `renv::snapshot()` to save the state of your project.
+Use `renv::restore()` to install the packages recorded in the lockfile.</code></pre>
+<ul>
+<li><p>O <strong><code>renv</code></strong> identifica três situações distintas:</p></li>
+<li><p>pacote instalado mas não registrado;</p></li>
+<li><p>pacote registrado mas não instalado;</p></li>
+<li><p>e pacote usado no código mas não instalado.</p></li>
+</ul>
+</section>
+<section id="passo-3---registrar-pacotes-com-renvsnapshot" class="slide level2">
+<h2>Passo 3 - Registrar pacotes com renv::snapshot()</h2>
+<ul>
+<li><p><strong>Conceito:</strong> <code>renv::snapshot()</code> atualiza o <code>renv.lock</code> com o estado atual da biblioteca isolada.</p></li>
+<li><p>Deve ser executado sempre que você instalar, atualizar ou remover um pacote.</p></li>
+<li><p>O <code>snapshot()</code> detecta automaticamente quais pacotes são usados no projeto percorrendo todos os arquivos <code>.R</code>, <code>.Rmd</code> e <code>.qmd</code> em busca de chamadas <code>library()</code> e <code>require()</code>.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>renv<span class="sc">::</span><span class="fu">snapshot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="passo-3---output-do-renvsnapshot" class="slide level2">
+<h2>Passo 3 - Output do renv::snapshot()</h2>
+<pre><code>The following package(s) will be updated in the lockfile:
+
+# CRAN -----------------------------------------------------------------------
+- lubridate   [* -&gt; 1.9.3]
+- patchwork   [* -&gt; 1.2.0]
+
+Do you want to proceed? [Y/n]: Y
+
+* Lockfile written to '~/meu_projeto/renv.lock'.</code></pre>
+<ul>
+<li><p>O <code>renv</code> pede confirmação antes de sobrescrever o lockfile.</p></li>
+<li><p>Isso evita atualizações acidentais.</p></li>
+</ul>
+</section>
+<section id="passo-3---tipos-de-snapshot" class="slide level2">
+<h2>Passo 3 - Tipos de snapshot</h2>
+<ul>
+<li>O <code>renv</code> oferece diferentes estratégias de snapshot controladas por <code>renv::settings$snapshot.type()</code>:</li>
+</ul>
+<table class="caption-top">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 68%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Comportamento</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>"implicit"</code> (padrão)</td>
+<td>Registra apenas pacotes usados no código</td>
+</tr>
+<tr class="even">
+<td><code>"explicit"</code></td>
+<td>Registra apenas pacotes listados no <code>DESCRIPTION</code></td>
+</tr>
+<tr class="odd">
+<td><code>"all"</code></td>
+<td>Registra todos os pacotes instalados na biblioteca</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>O tipo <code>"implicit"</code> é o mais indicado para projetos de análise porque mantém o lockfile enxuto.</li>
+</ul>
+</section>
+<section id="passo-4---restaurar-o-ambiente-com-renvrestore" class="slide level2">
+<h2>Passo 4 - Restaurar o ambiente com renv::restore()</h2>
+<ul>
+<li><p><strong>Conceito:</strong> <code>renv::restore()</code> lê o <code>renv.lock</code> e instala exatamente as versões registradas.</p></li>
+<li><p>É o comando que outra pessoa executa ao clonar seu repositório.</p></li>
+<li><p>O <code>restore()</code> não altera pacotes que já estão instalados com a versão correta.</p></li>
+<li><p>Ele instala apenas o que está ausente ou em versão diferente.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>renv<span class="sc">::</span><span class="fu">restore</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="passo-4---output-do-renvrestore" class="slide level2">
+<h2>Passo 4 - Output do renv::restore()</h2>
+<pre><code>The following package(s) will be updated:
+
+# CRAN -----------------------------------------------------------------------
+- dplyr        [1.1.2 -&gt; 1.1.4]
+- ggplot2      [3.4.4 -&gt; 3.5.0]
+
+Do you want to proceed? [Y/n]: Y
+
+* Restoring library ... Done!
+
+* The project has been restored.</code></pre>
+<ul>
+<li><strong>O <code>restore()</code> mostra a versão atual e a versão do lockfile para cada pacote que será alterado.</strong></li>
+</ul>
+</section>
+<section id="passo-4---quando-usar-renvrestore" class="slide level2 scrollable">
+<h2>Passo 4 - Quando usar renv::restore()</h2>
+<p><strong>Quatro situações em que <code>renv::restore()</code> é o primeiro comando a executar:</strong></p>
+<ol type="1">
+<li>Você clonou um repositório com <code>renv.lock</code> e precisa instalar os pacotes</li>
+<li>Você voltou a um projeto antigo e a biblioteca está desatualizada</li>
+<li>O <code>renv::status()</code> indicou que há pacotes ausentes</li>
+<li>Você está configurando um servidor ou pipeline de CI/CD</li>
+</ol>
+</section>
+<section id="passo-5---instalar-pacotes-com-renvinstall" class="slide level2">
+<h2>Passo 5 - Instalar pacotes com renv::install()</h2>
+<ul>
+<li><p><strong>Conceito:</strong> <code>renv::install()</code> instala um pacote diretamente na biblioteca isolada do projeto.</p></li>
+<li><p>É preferível a <code>install.packages()</code> dentro de um projeto com <code>renv</code> ativo porque já atualiza o cache interno do <code>renv</code>.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="co"># Instalar do CRAN</span></span>
+<span id="cb14-2"><a></a>renv<span class="sc">::</span><span class="fu">install</span>(<span class="st">"janitor"</span>)</span>
+<span id="cb14-3"><a></a></span>
+<span id="cb14-4"><a></a><span class="co"># Instalar versão específica</span></span>
+<span id="cb14-5"><a></a>renv<span class="sc">::</span><span class="fu">install</span>(<span class="st">"dplyr@1.1.4"</span>)</span>
+<span id="cb14-6"><a></a></span>
+<span id="cb14-7"><a></a><span class="co"># Instalar do GitHub</span></span>
+<span id="cb14-8"><a></a>renv<span class="sc">::</span><span class="fu">install</span>(<span class="st">"tidyverse/dplyr"</span>)</span>
+<span id="cb14-9"><a></a></span>
+<span id="cb14-10"><a></a><span class="co"># Instalar do Bioconductor</span></span>
+<span id="cb14-11"><a></a>renv<span class="sc">::</span><span class="fu">install</span>(<span class="st">"bioc::DESeq2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="passo-5---output-do-renvinstall" class="slide level2">
+<h2>Passo 5 - Output do renv::install()</h2>
+<pre><code>Retrieving 'https://cloud.r-project.org/src/contrib/janitor_2.2.0.tar.gz' ...
+  OK [downloaded 293.5 Kb in 1.2s]
+
+Installing janitor [2.2.0] ...
+  OK [built from source in 8.3s]
+
+* Run `renv::snapshot()` to update the project lockfile.</code></pre>
+<ul>
+<li><strong>Após instalar, o <code>renv</code> lembra de executar <code>renv::snapshot()</code> para registrar o novo pacote no lockfile.</strong></li>
+</ul>
+</section>
+<section id="passo-6---atualizar-pacotes-com-renvupdate" class="slide level2">
+<h2>Passo 6 - Atualizar pacotes com renv::update()</h2>
+<ul>
+<li><strong>Conceito:</strong> <code>renv::update()</code> atualiza pacotes para versões mais recentes dentro da biblioteca isolada. A atualização não é automática - você decide quando e quais pacotes atualizar.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="co"># Verificar quais pacotes têm versões mais recentes disponíveis</span></span>
+<span id="cb16-2"><a></a>renv<span class="sc">::</span><span class="fu">update</span>(<span class="at">check =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-3"><a></a></span>
+<span id="cb16-4"><a></a><span class="co"># Atualizar um pacote específico</span></span>
+<span id="cb16-5"><a></a>renv<span class="sc">::</span><span class="fu">update</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb16-6"><a></a></span>
+<span id="cb16-7"><a></a><span class="co"># Atualizar todos os pacotes do projeto</span></span>
+<span id="cb16-8"><a></a>renv<span class="sc">::</span><span class="fu">update</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="passo-6---output-do-renvupdate" class="slide level2">
+<h2>Passo 6 - Output do renv::update()</h2>
+<pre><code>The following package(s) will be updated:
+
+# CRAN -----------------------------------------------------------------------
+- ggplot2   [3.4.4 -&gt; 3.5.1]
+
+Do you want to proceed? [Y/n]: Y
+
+* Updating packages ...
+  OK [installed ggplot2 3.5.1 in 12.4s]
+
+* Run `renv::snapshot()` to save these changes to the lockfile.</code></pre>
+<p>Após atualizar, execute <code>renv::snapshot()</code> para registrar a nova versão no lockfile. Se a atualização causar problemas, use <code>renv::restore()</code> para voltar ao estado anterior.</p>
+</section>
+<section id="passo-7---remover-pacotes-com-renvremove" class="slide level2">
+<h2>Passo 7 - Remover pacotes com renv::remove()</h2>
+<p><strong>Conceito:</strong> <code>renv::remove()</code> remove um pacote da biblioteca isolada e do lockfile. Útil quando um pacote deixou de ser utilizado no projeto e você quer manter o ambiente enxuto.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># Remover um pacote</span></span>
+<span id="cb18-2"><a></a>renv<span class="sc">::</span><span class="fu">remove</span>(<span class="st">"janitor"</span>)</span>
+<span id="cb18-3"><a></a></span>
+<span id="cb18-4"><a></a><span class="co"># Após remover, executar snapshot para atualizar o lockfile</span></span>
+<span id="cb18-5"><a></a>renv<span class="sc">::</span><span class="fu">snapshot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="passo-7---output-do-renvremove" class="slide level2">
+<h2>Passo 7 - Output do renv::remove()</h2>
+<pre><code>The following packages will be removed:
+
+  janitor
+
+Do you want to proceed? [Y/n]: Y
+
+* Removing package 'janitor' ... Done!
+
+* Run `renv::snapshot()` to update the project lockfile.</code></pre>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Importante:</strong> <strong><code>renv::remove()</code></strong> remove o pacote da biblioteca isolada do projeto, não da biblioteca global nem do cache interno do <code>renv</code>.</p>
+<p>O pacote continua disponível para outros projetos.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="passo-8---o-que-versionar-e-o-que-ignorar" class="slide level2">
+<h2>Passo 8 - O que versionar e o que ignorar</h2>
+<ul>
+<li><p><strong>Conceito:</strong> nem tudo que o <code>renv</code> cria deve ser versionado no Git.</p></li>
+<li><p>O <code>renv</code> gera automaticamente um <code>.gitignore</code> dentro da pasta <code>renv/</code> com as exclusões corretas.</p></li>
+</ul>
+<pre><code># Conteúdo de renv/.gitignore gerado automaticamente
+
+library/
+local/
+lock/
+python/
+staging/</code></pre>
+</section>
+<section id="passo-8---regra-de-versionamento" class="slide level2">
+<h2>Passo 8 - Regra de versionamento</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Arquivo ou pasta</th>
+<th>Versionar?</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>renv.lock</code></td>
+<td>Sim</td>
+<td>Registro das versões - deve ser compartilhado</td>
+</tr>
+<tr class="even">
+<td><code>.Rprofile</code></td>
+<td>Sim</td>
+<td>Ativa o <code>renv</code> ao abrir o projeto</td>
+</tr>
+<tr class="odd">
+<td><code>renv/activate.R</code></td>
+<td>Sim</td>
+<td>Script de ativação</td>
+</tr>
+<tr class="even">
+<td><code>renv/settings.json</code></td>
+<td>Sim</td>
+<td>Configurações do projeto</td>
+</tr>
+<tr class="odd">
+<td><code>renv/library/</code></td>
+<td>Não</td>
+<td>Gerada localmente pelo <code>restore()</code></td>
+</tr>
+<tr class="even">
+<td><code>renv/staging/</code></td>
+<td>Não</td>
+<td>Temporária, gerada durante operações</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="passo-8---.gitignore-recomendado" class="slide level2">
+<h2>Passo 8 - .gitignore recomendado</h2>
+<pre><code># renv
+renv/library/
+renv/local/
+renv/staging/
+
+# R
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user</code></pre>
+<ul>
+<li><p>A pasta <code>renv/library/</code> pode conter centenas de megabytes.</p></li>
+<li><p>Versioná-la tornaria o repositório inutilizável e não teria nenhum benefício, já que qualquer pessoa pode regenerá-la com <code>renv::restore()</code>.</p></li>
+</ul>
+</section>
+<section id="passo-9---fluxo-colaborativo" class="slide level2">
+<h2>Passo 9 - Fluxo colaborativo</h2>
+<ul>
+<li><strong>Conceito:</strong> o fluxo de trabalho com <code>renv</code> em equipe segue uma sequência bem definida que garante que todos os colaboradores trabalhem com o mesmo ambiente.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="co"># --- Colaborador A (quem criou o projeto) ---</span></span>
+<span id="cb22-2"><a></a></span>
+<span id="cb22-3"><a></a><span class="co"># 1. Inicializa o renv</span></span>
+<span id="cb22-4"><a></a>renv<span class="sc">::</span><span class="fu">init</span>()</span>
+<span id="cb22-5"><a></a></span>
+<span id="cb22-6"><a></a><span class="co"># 2. Instala os pacotes necessários</span></span>
+<span id="cb22-7"><a></a>renv<span class="sc">::</span><span class="fu">install</span>(<span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"janitor"</span>, <span class="st">"gtsummary"</span>))</span>
+<span id="cb22-8"><a></a></span>
+<span id="cb22-9"><a></a><span class="co"># 3. Registra no lockfile</span></span>
+<span id="cb22-10"><a></a>renv<span class="sc">::</span><span class="fu">snapshot</span>()</span>
+<span id="cb22-11"><a></a></span>
+<span id="cb22-12"><a></a><span class="co"># 4. Versiona e compartilha</span></span>
+<span id="cb22-13"><a></a><span class="co"># git add renv.lock .Rprofile renv/activate.R</span></span>
+<span id="cb22-14"><a></a><span class="co"># git commit -m "feat: inicializa renv com pacotes do projeto"</span></span>
+<span id="cb22-15"><a></a><span class="co"># git push</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="passo-9---fluxo-do-colaborador-b" class="slide level2">
+<h2>Passo 9 - Fluxo do colaborador B</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="co"># --- Colaborador B (quem clonou o projeto) ---</span></span>
+<span id="cb23-2"><a></a></span>
+<span id="cb23-3"><a></a><span class="co"># 1. Clona o repositório</span></span>
+<span id="cb23-4"><a></a><span class="co"># git clone https://github.com/usuario/projeto.git</span></span>
+<span id="cb23-5"><a></a></span>
+<span id="cb23-6"><a></a><span class="co"># 2. Abre o projeto no RStudio</span></span>
+<span id="cb23-7"><a></a><span class="co"># O .Rprofile ativa o renv automaticamente</span></span>
+<span id="cb23-8"><a></a></span>
+<span id="cb23-9"><a></a><span class="co"># 3. Restaura o ambiente</span></span>
+<span id="cb23-10"><a></a>renv<span class="sc">::</span><span class="fu">restore</span>()</span>
+<span id="cb23-11"><a></a><span class="co"># Instala exatamente os mesmos pacotes e versões do lockfile</span></span>
+<span id="cb23-12"><a></a></span>
+<span id="cb23-13"><a></a><span class="co"># 4. Trabalha normalmente</span></span>
+<span id="cb23-14"><a></a><span class="co"># library(tidyverse)</span></span>
+<span id="cb23-15"><a></a><span class="co"># source("R/01_analise.R")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="passo-9---fluxo-quando-um-pacote-é-atualizado" class="slide level2">
+<h2>Passo 9 - Fluxo quando um pacote é atualizado</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="co"># Colaborador A atualiza um pacote e registra</span></span>
+<span id="cb24-2"><a></a></span>
+<span id="cb24-3"><a></a>renv<span class="sc">::</span><span class="fu">update</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb24-4"><a></a>renv<span class="sc">::</span><span class="fu">snapshot</span>()</span>
+<span id="cb24-5"><a></a></span>
+<span id="cb24-6"><a></a><span class="co"># git add renv.lock</span></span>
+<span id="cb24-7"><a></a><span class="co"># git commit -m "chore: atualiza ggplot2 para 3.5.1"</span></span>
+<span id="cb24-8"><a></a><span class="co"># git push</span></span>
+<span id="cb24-9"><a></a></span>
+<span id="cb24-10"><a></a><span class="co"># ---</span></span>
+<span id="cb24-11"><a></a></span>
+<span id="cb24-12"><a></a><span class="co"># Colaborador B puxa as mudanças e restaura o ambiente</span></span>
+<span id="cb24-13"><a></a></span>
+<span id="cb24-14"><a></a><span class="co"># git pull</span></span>
+<span id="cb24-15"><a></a>renv<span class="sc">::</span><span class="fu">restore</span>()</span>
+<span id="cb24-16"><a></a><span class="co"># Instala ggplot2 3.5.1 para ficar igual ao lockfile atualizado</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-2" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section id="o-cache-do-renv" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>O cache do renv</h1>
+
+</section>
+
+<section id="como-o-cache-do-renv-funciona" class="slide level2 scrollable">
+<h2>Como o cache do renv funciona</h2>
+<ul>
+<li>O <code>renv</code> mantém um <strong>cache global</strong> de pacotes no seu computador, separado das bibliotecas isoladas de cada projeto.</li>
+</ul>
+<p><strong>Quando você instala um pacote em um projeto, o <code>renv</code>:</strong></p>
+<ol type="1">
+<li>Baixa o pacote e o instala no cache global</li>
+<li>Cria um <strong>link simbólico</strong> da biblioteca isolada do projeto para o cache</li>
+</ol>
+<ul>
+<li>O resultado é que dois projetos que usam a mesma versão de um pacote <strong>compartilham o mesmo arquivo no cache</strong>, sem duplicar espaço em disco.</li>
+</ul>
+</section>
+<section id="localização-do-cache" class="slide level2">
+<h2>Localização do cache</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="co"># Ver o caminho do cache global</span></span>
+<span id="cb25-2"><a></a>renv<span class="sc">::</span>paths<span class="sc">$</span><span class="fu">cache</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>[1] "/Users/jennifer/Library/Caches/org.R-project.R/R/renv/cache/v5/R-4.4/x86_64-apple-darwin20"</code></pre>
+<ul>
+<li><p>O cache é organizado por versão do R e arquitetura do sistema.</p></li>
+<li><p>Isso garante compatibilidade entre diferentes versões do R instaladas no mesmo computador.</p></li>
+</ul>
+</section>
+<section id="section-3" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section id="boas-práticas-e-erros-comuns" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Boas práticas e erros comuns</h1>
+
+</section>
+
+<section id="boas-práticas" class="slide level2">
+<h2>Boas práticas</h2>
+<ul>
+<li><strong>Execute <code>renv::status()</code> antes de fazer commit</strong> para garantir que o lockfile está sincronizado com o código</li>
+<li><strong>Execute <code>renv::snapshot()</code> imediatamente após instalar ou remover pacotes</strong>, não acumule mudanças antes de registrar</li>
+<li><strong>Versione o <code>renv.lock</code> em todo commit que modifica dependências</strong> com uma mensagem descritiva: <code>chore: atualiza janitor para 2.2.0</code></li>
+<li><strong>Nunca edite o <code>renv.lock</code> manualmente</strong>. O arquivo é gerado pelo <code>renv</code> e editá-lo manualmente pode corromper as referências de hash</li>
+<li><strong>Use <code>renv::install()</code> em vez de <code>install.packages()</code></strong> dentro de projetos com <code>renv</code> ativo</li>
+</ul>
+</section>
+<section id="erros-comuns---parte-1" class="slide level2">
+<h2>Erros comuns - Parte 1</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Causa</th>
+<th>Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>renv::status()</code> mostra pacotes fora de sincronia</td>
+<td>Pacote instalado sem <code>renv::snapshot()</code></td>
+<td>Executar <code>renv::snapshot()</code></td>
+</tr>
+<tr class="even">
+<td><code>renv::restore()</code> falha com erro de compilação</td>
+<td>Dependências do sistema ausentes</td>
+<td>Instalar libs do sistema (ex: <code>libcurl</code>, <code>openssl</code>)</td>
+</tr>
+<tr class="odd">
+<td>Pacote instalado não é detectado pelo <code>status()</code></td>
+<td>Pacote não está sendo chamado com <code>library()</code> no código</td>
+<td>Adicionar <code>library()</code> ou usar tipo <code>"all"</code> no snapshot</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="erros-comuns---parte-2" class="slide level2">
+<h2>Erros comuns - Parte 2</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Causa</th>
+<th>Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Projeto abre sem ativar o <code>renv</code></td>
+<td><code>.Rprofile</code> ausente ou não versionado</td>
+<td>Verificar se <code>.Rprofile</code> está no repositório</td>
+</tr>
+<tr class="even">
+<td><code>renv::restore()</code> instala versão errada</td>
+<td><code>renv.lock</code> desatualizado no repositório</td>
+<td>Fazer <code>git pull</code> e executar <code>renv::restore()</code> novamente</td>
+</tr>
+<tr class="odd">
+<td>Cache corrompido após falha de instalação</td>
+<td>Download interrompido ou disco cheio</td>
+<td>Executar <code>renv::rebuild()</code> para reinstalar do zero</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="resumo-das-funções-principais" class="slide level2">
+<h2>Resumo das funções principais</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Função</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>renv::init()</code></td>
+<td>Uma vez, ao iniciar o projeto com <code>renv</code></td>
+</tr>
+<tr class="even">
+<td><code>renv::status()</code></td>
+<td>Antes de commits e para diagnosticar problemas</td>
+</tr>
+<tr class="odd">
+<td><code>renv::snapshot()</code></td>
+<td>Após instalar, atualizar ou remover pacotes</td>
+</tr>
+<tr class="even">
+<td><code>renv::restore()</code></td>
+<td>Ao clonar o projeto ou após <code>git pull</code> com mudanças no lockfile</td>
+</tr>
+<tr class="odd">
+<td><code>renv::install()</code></td>
+<td>Para instalar pacotes dentro do projeto</td>
+</tr>
+<tr class="even">
+<td><code>renv::update()</code></td>
+<td>Para atualizar pacotes com controle</td>
+</tr>
+<tr class="odd">
+<td><code>renv::remove()</code></td>
+<td>Para remover pacotes que não são mais usados</td>
+</tr>
+<tr class="even">
+<td><code>renv::paths$cache()</code></td>
+<td>Para verificar a localização do cache global</td>
+</tr>
+<tr class="odd">
+<td><code>renv::rebuild()</code></td>
+<td>Para recompilar pacotes com problemas</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="resumo-dos-9-passos" class="slide level2">
+<h2>Resumo dos 9 passos</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 27%">
+<col style="width: 63%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Passo</th>
+<th>Função</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>renv::init()</code></td>
+<td>Inicializa o renv e cria a biblioteca isolada</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>renv::status()</code></td>
+<td>Diagnóstico de sincronização do ambiente</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>renv::snapshot()</code></td>
+<td>Registra os pacotes no renv.lock</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><code>renv::restore()</code></td>
+<td>Restaura o ambiente a partir do lockfile</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><code>renv::install()</code></td>
+<td>Instala pacotes na biblioteca isolada</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td><code>renv::update()</code></td>
+<td>Atualiza pacotes com controle de versão</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td><code>renv::remove()</code></td>
+<td>Remove pacotes do ambiente e do lockfile</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td><code>.gitignore</code></td>
+<td>Define o que versionar e o que ignorar</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>Fluxo colaborativo</td>
+<td>Como trabalhar em equipe com renv</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="conexão-com-o-mercado" class="slide level2">
+<h2>Conexão com o mercado</h2>
+<ul>
+<li><p>Reprodutibilidade é um requisito em ciência de dados aplicada, pesquisa acadêmica e ambientes corporativos.</p></li>
+<li><p>Um projeto sem controle de ambiente pode produzir resultados diferentes dependendo de quando e onde é executado, o que compromete a confiabilidade das análises.</p></li>
+<li><p>O <code>renv</code> é o padrão adotado pela comunidade R para esse controle.</p></li>
+<li><p>Ele é equivalente ao <code>requirements.txt</code> do Python e ao <code>Gemfile</code> do Ruby, ferramentas que qualquer desenvolvedor experiente nessas linguagens usa por padrão.</p></li>
+<li><p>Projetos com <code>renv.lock</code> versionado comunicam cuidado técnico e maturidade analítica para quem avalia o código.</p></li>
+</ul>
+</section>
+<section id="referências" class="slide level2">
+<h2>Referências</h2>
+<ul>
+<li>Documentação oficial: <a href="https://rstudio.github.io/renv">rstudio.github.io/renv</a></li>
+<li>Introdução ao renv: <a href="https://rstudio.github.io/renv/articles/renv.html">rstudio.github.io/renv/articles/renv.html</a></li>
+<li>Colaboração com renv: <a href="https://rstudio.github.io/renv/articles/collaborating.html">rstudio.github.io/renv/articles/collaborating.html</a></li>
+<li>Happy Git with R: <a href="https://happygitwithr.com">happygitwithr.com</a></li>
+</ul>
+</section>
+<section id="obrigada" class="slide level2">
+<h2>Obrigada!</h2>
+
+<img data-src="imagens/comunidade.png" class="quarto-figure quarto-figure-center r-stretch" width="420"><p><strong>Continue praticando e explorando!</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+</section>
+<section id="siga-o-café-com-r" class="slide level2">
+<h2>Siga o Café com R</h2>
+<blockquote>
+
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="https://jenniferlopes.quarto.pub/portifolio/"><img data-src="imagens/qrcodenovo.png" class="quarto-figure quarto-figure-center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="345"></a></p>
+</figure>
+</div>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="imagens/logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Jennifer Lopes | Café com R</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': true,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
