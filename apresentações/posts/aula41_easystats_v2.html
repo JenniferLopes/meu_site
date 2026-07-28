@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Jennifer Luz Lopes – Aula 41. Ecossistema easystats</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
+  <link rel="stylesheet" href="estilo_jeni.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Aula 41. Ecossistema easystats</h1>
+  <p class="subtitle">parameters, performance, see, effectsize, correlation, report, modelbased e bayestestR</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="democratização" class="slide level2">
+<h2>Democratização</h2>
+<blockquote>
+<p>Esta aula apresenta o ecossistema <strong>easystats</strong>, um conjunto de oito pacotes do R projetados para trabalhar de forma integrada na análise e comunicação de modelos estatísticos. Os dados são os mesmos das aulas anteriores: híbrido H2, dose de nitrogênio e tipo de solo.</p>
+</blockquote>
+
+<img data-src="../..\apresentações/posts/imagens/meguy.jpg" class="quarto-figure quarto-figure-center r-stretch" width="438"></section>
+<section id="acompanhe-o-café-com-r" class="slide level2">
+<h2>Acompanhe o Café com R</h2>
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p><strong>SITE OFICIAL &gt;</strong> <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+</section>
+<section id="objetivos-da-aula" class="slide level2">
+<h2>Objetivos da aula</h2>
+<ul>
+<li class="fragment">Compreender o que é o <strong>ecossistema easystats</strong> e como os pacotes se integram</li>
+<li class="fragment">Extrair e formatar coeficientes de modelos com <strong><code>parameters</code></strong></li>
+<li class="fragment">Avaliar qualidade e pressupostos com <strong><code>performance</code></strong></li>
+<li class="fragment">Gerar visualizações automáticas com <strong><code>see</code></strong></li>
+<li class="fragment">Calcular tamanho do efeito com <strong><code>effectsize</code></strong></li>
+<li class="fragment">Analisar correlações com múltiplos métodos com <strong><code>correlation</code></strong></li>
+<li class="fragment">Gerar descrições textuais automáticas com <strong><code>report</code></strong></li>
+<li class="fragment">Estimar médias marginais e predições com <strong><code>modelbased</code></strong></li>
+<li class="fragment">Compreender os fundamentos da inferência bayesiana com <strong><code>bayestestR</code></strong></li>
+</ul>
+</section>
+<section id="o-que-é-o-easystats" class="slide level2">
+<h2>O que é o easystats</h2>
+<p>O <strong>easystats</strong> é um ecossistema de pacotes do R desenvolvido para tornar a análise estatística mais acessível, consistente e comunicável. Ele não substitui o tidyverse nem os pacotes de modelagem, ele complementa, organizando o que vem depois do ajuste do modelo.</p>
+
+<img data-src="../..\apresentações/posts/imagens/easystats.png" class="quarto-figure quarto-figure-center r-stretch" width="449"></section>
+<section id="o-problema-que-ele-resolve" class="slide level2">
+<h2><strong>O problema que ele resolve:</strong></h2>
+<ul>
+<li><p>Após ajustar um modelo com <code>lm()</code>, <code>glm()</code> ou <code>lmer()</code>, o R retorna um objeto com estrutura complexa.</p></li>
+<li><p>Extrair coeficientes, calcular intervalos de confiança, verificar pressupostos, comparar modelos e comunicar resultados exige conhecimento de múltiplas funções e pacotes distintos, com sintaxes inconsistentes entre si.</p></li>
+</ul>
+<p><strong>O easystats unifica esse processo em uma interface coerente.</strong></p>
+</section>
+<section id="como-instalar-o-easystats" class="slide level2">
+<h2>Como instalar o easystats</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># install.packages("easystats")</span></span>
+<span id="cb1-2"><a></a><span class="co">#install.packages("marginaleffects")</span></span>
+<span id="cb1-3"><a></a><span class="fu">library</span>(easystats)</span>
+<span id="cb1-4"><a></a><span class="fu">library</span>(marginaleffects)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Ao carregar <code>easystats</code>, os oito pacotes são carregados automaticamente: <code>parameters</code>, <code>performance</code>, <code>see</code>, <code>effectsize</code>, <code>correlation</code>, <code>report</code>, <code>modelbased</code> e <code>bayestestR</code>.</li>
+</ul>
+</section>
+<section id="os-oito-pacotes-do-ecossistema" class="slide level2">
+<h2>Os oito pacotes do ecossistema</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Pacote</th>
+<th>Função principal</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>parameters</code></td>
+<td>Extrai e formata coeficientes de modelos</td>
+</tr>
+<tr class="even">
+<td><code>performance</code></td>
+<td>Avalia qualidade do ajuste e verifica pressupostos</td>
+</tr>
+<tr class="odd">
+<td><code>see</code></td>
+<td>Visualizações integradas, ativado automaticamente</td>
+</tr>
+<tr class="even">
+<td><code>effectsize</code></td>
+<td>Calcula tamanho do efeito padronizado</td>
+</tr>
+<tr class="odd">
+<td><code>correlation</code></td>
+<td>Análise de correlação com múltiplos métodos</td>
+</tr>
+<tr class="even">
+<td><code>report</code></td>
+<td>Gera texto científico automático a partir do modelo</td>
+</tr>
+<tr class="odd">
+<td><code>modelbased</code></td>
+<td>Predições, médias marginais e contrastes</td>
+</tr>
+<tr class="even">
+<td><code>bayestestR</code></td>
+<td>Inferência bayesiana acessível</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="como-os-pacotes-se-conectam" class="slide level2">
+<h2>Como os pacotes se conectam</h2>
+<p><strong>O ecossistema foi projetado para que os pacotes trabalhem em sequência natural:</strong></p>
+<pre><code>Ajustar o modelo
+      |
+      v
+parameters  →  extrair coeficientes
+      |
+      v
+performance →  avaliar qualidade e pressupostos
+      |
+      v
+effectsize  →  quantificar a magnitude do efeito
+      |
+      v
+modelbased  →  estimar predições e médias ajustadas
+      |
+      v
+report      →  comunicar em linguagem científica</code></pre>
+<blockquote>
+<p>O <code>see</code> opera em segundo plano, fornecendo as visualizações para todos os outros pacotes quando <code>plot()</code> é chamado sobre seus objetos.</p>
+</blockquote>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="parameters" class="title-slide slide level1 center" style="text-align: center; padding-top: 120px; color: white;">
+<h1><code>parameters</code></h1>
+
+</section>
+<h3 id="extrai-formata-e-organiza-coeficientes-de-qualquer-modelo-estatístico">Extrai, formata e organiza coeficientes de qualquer modelo estatístico</h3>
+<p><em>Substitui <code>summary()</code> com uma interface tidy, consistente e visualmente clara</em></p></section>
+<section id="parameters-o-que-é-e-por-que-usar" class="slide level2">
+<h2>parameters: o que é e por que usar</h2>
+<p>O pacote <code>parameters</code> resolve um problema específico: o <code>summary()</code> do R retorna os coeficientes de um modelo, mas em um formato difícil de manipular, comparar ou incluir em relatórios.</p>
+<p><strong>O que <code>parameters</code> oferece:</strong></p>
+<ul>
+<li>Tabela de coeficientes em formato tidy, compatível com o tidyverse</li>
+<li>Intervalos de confiança calculados automaticamente</li>
+<li>Coeficientes padronizados para comparação entre variáveis em escalas diferentes</li>
+<li>Compatibilidade com mais de 200 classes de modelos no R</li>
+<li>Integração direta com <code>see</code> para visualização</li>
+</ul>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Atenção:</strong> <code>parameters</code> não ajusta modelos, ele extrai e organiza o que já foi ajustado. O modelo precisa ser criado primeiro com <code>lm()</code>, <code>glm()</code>, <code>lmer()</code> ou equivalente.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="parameters-função-principal---model_parameters" class="slide level2">
+<h2>parameters: função principal - <code>model_parameters()</code></h2>
+<p>A função <code>model_parameters()</code> é o núcleo do pacote. Ela aceita qualquer objeto de modelo e retorna uma tabela estruturada com os coeficientes e suas métricas associadas.</p>
+<p><strong>Argumentos principais:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Argumento</th>
+<th>Função</th>
+<th>Padrão</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>model</code></td>
+<td>O objeto de modelo ajustado</td>
+<td>obrigatório</td>
+</tr>
+<tr class="even">
+<td><code>ci</code></td>
+<td>Nível de confiança para o IC</td>
+<td><code>0.95</code></td>
+</tr>
+<tr class="odd">
+<td><code>standardize</code></td>
+<td>Padronizar os coeficientes?</td>
+<td><code>NULL</code></td>
+</tr>
+<tr class="even">
+<td><code>effects</code></td>
+<td>Fixos, aleatórios ou ambos</td>
+<td><code>"fixed"</code></td>
+</tr>
+<tr class="odd">
+<td><code>exponentiate</code></td>
+<td>Exponenciar coeficientes (GLM)?</td>
+<td><code>FALSE</code></td>
+</tr>
+<tr class="even">
+<td><code>p_adjust</code></td>
+<td>Correção para múltiplos testes</td>
+<td><code>NULL</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="código-coeficientes-com-model_parameters" class="slide level2">
+<h2>Código: coeficientes com model_parameters()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">model_parameters</span>(m2, <span class="at">ci =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-coeficientes-com-model_parameters" class="slide level2">
+<h2>Output: coeficientes com model_parameters()</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Parameter       | Coefficient |       SE |        95% CI | t(116) |      p
+--------------------------------------------------------------------------
+(Intercept)     |        8.84 |     0.27 | [ 8.30, 9.38] |  32.31 | &lt; .001
+nitrogenio      |        0.01 | 2.04e-03 | [ 0.01, 0.01] |   5.10 | &lt; .001
+solo [Argiloso] |       -0.42 |     0.27 | [-0.96, 0.11] |  -1.58 | 0.117 
+solo [Franco]   |       -0.59 |     0.35 | [-1.28, 0.11] |  -1.66 | 0.099 </code></pre>
+</div>
+</div>
+<p><strong>Como ler a tabela:</strong></p>
+<ul>
+<li><code>Coefficient</code>: estimativa pontual do parâmetro <span class="math inline">\(\hat{\beta}\)</span></li>
+<li><code>CI_low</code> / <code>CI_high</code>: limites inferior e superior do IC 95%</li>
+<li><code>t</code>: estatística t do teste <span class="math inline">\(H_0: \beta = 0\)</span></li>
+<li><code>df_error</code>: graus de liberdade do erro</li>
+<li><code>p</code>: p-valor do teste</li>
+</ul>
+</section>
+<section id="parameters-coeficientes-padronizados" class="slide level2">
+<h2>parameters: coeficientes padronizados</h2>
+<p>Quando as variáveis explicativas estão em escalas diferentes, dose de nitrogênio em kg/ha e uma variável categórica, por exemplo, os coeficientes brutos não são diretamente comparáveis em magnitude.</p>
+<p>A padronização transforma cada coeficiente para a escala do desvio padrão, permitindo comparar a contribuição relativa de cada variável.</p>
+<p><strong>Método <code>"refit"</code>:</strong> reajusta o modelo com todas as variáveis numéricas padronizadas antes da estimação. É o método mais preciso.</p>
+<p><strong>Método <code>"basic"</code>:</strong> divide o coeficiente pelo desvio padrão da variável. Mais rápido, menos preciso.</p>
+</section>
+<section id="código-coeficientes-padronizados" class="slide level2">
+<h2>Código: coeficientes padronizados</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">model_parameters</span>(m2, <span class="at">ci =</span> <span class="fl">0.95</span>, <span class="at">standardize =</span> <span class="st">"refit"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-coeficientes-padronizados" class="slide level2">
+<h2>Output: coeficientes padronizados</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Parameter       | Coefficient |   SE |        95% CI | t(116) |      p
+----------------------------------------------------------------------
+(Intercept)     |        0.23 | 0.15 | [-0.07, 0.52] |   1.51 | 0.132 
+nitrogenio      |        0.42 | 0.08 | [ 0.26, 0.59] |   5.10 | &lt; .001
+solo [Argiloso] |       -0.30 | 0.19 | [-0.67, 0.08] |  -1.58 | 0.117 
+solo [Franco]   |       -0.41 | 0.25 | [-0.90, 0.08] |  -1.66 | 0.099 </code></pre>
+</div>
+</div>
+<p>Os coeficientes padronizados permitem comparar diretamente a magnitude do efeito de <code>nitrogenio</code> com o efeito de <code>solo</code>, algo impossível com os coeficientes na escala original.</p>
+</section>
+<section id="código-visualização-dos-coeficientes-com-see" class="slide level2">
+<h2>Código: visualização dos coeficientes com see</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">model_parameters</span>(m2, <span class="at">ci =</span> <span class="fl">0.95</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a></a>  <span class="fu">plot</span>() <span class="sc">+</span></span>
+<span id="cb7-3"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-4"><a></a>    <span class="at">title   =</span> <span class="st">"Coeficientes do modelo com IC 95%"</span>,</span>
+<span id="cb7-5"><a></a>    <span class="at">caption =</span> <span class="st">"Jennifer Lopes | Café com R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gráfico-coeficientes-com-ic-95" class="slide level2">
+<h2>Gráfico: coeficientes com IC 95%</h2>
+
+<img data-src="aula41_easystats_v2_files/figure-revealjs/parameters-plot-grafico-1.png" width="960" class="r-stretch"><p>O gráfico de coeficientes é preferível à tabela quando o objetivo é comunicar visualmente quais efeitos são detectáveis e qual a precisão das estimativas. Coeficientes cujo IC atravessa zero não são distinguíveis de zero ao nível de confiança adotado.</p>
+</section>
+<section id="parameters-comparar-coeficientes-entre-modelos" class="slide level2">
+<h2>parameters: comparar coeficientes entre modelos</h2>
+<p><code>compare_parameters()</code> permite comparar os coeficientes de dois ou mais modelos lado a lado, útil para avaliar como os efeitos mudam com a adição de variáveis.</p>
+</section>
+<section id="código-compare_parameters" class="slide level2">
+<h2>Código: compare_parameters()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">compare_parameters</span>(m1, m2, m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-compare_parameters" class="slide level2">
+<h2>Output: compare_parameters()</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Parameter                    |                m1 |                  m2 |                     m3
+-----------------------------------------------------------------------------------------------
+(Intercept)                  | 8.52 (8.10, 8.95) |  8.84 ( 8.30, 9.38) |     9.10 ( 8.29, 9.90)
+nitrogenio                   | 0.01 (0.01, 0.01) |  0.01 ( 0.01, 0.01) | 7.33e-03 ( 0.00, 0.02)
+solo [Argiloso]              |                   | -0.42 (-0.96, 0.11) |    -0.67 (-1.69, 0.34)
+solo [Franco]                |                   | -0.59 (-1.28, 0.11) |    -1.12 (-2.31, 0.06)
+nitrogenio × solo [Argiloso] |                   |                     | 2.96e-03 (-0.01, 0.01)
+nitrogenio × solo [Franco]   |                   |                     | 6.57e-03 (-0.01, 0.02)
+-----------------------------------------------------------------------------------------------
+Observations                 |               120 |                 120 |                    120</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="performance" class="title-slide slide level1 center" style="text-align: center; padding-top: 120px; color: white;">
+<h1><code>performance</code></h1>
+
+</section>
+<h3 id="avalia-a-qualidade-do-ajuste-e-verifica-os-pressupostos-do-modelo">Avalia a qualidade do ajuste e verifica os pressupostos do modelo</h3>
+<p><em>Substitui a inspeção manual de resíduos com um painel diagnóstico automático e padronizado</em></p></section>
+<section id="performance-o-que-é-e-por-que-usar" class="slide level2">
+<h2>performance: o que é e por que usar</h2>
+<p>O pacote <code>performance</code> centraliza a avaliação de modelos estatísticos. Ele responde duas perguntas fundamentais que todo modelo precisa responder antes de ser usado para inferência:</p>
+<p><strong>1. O modelo ajusta bem os dados?</strong> Métricas como <span class="math inline">\(R^2\)</span>, AIC, BIC, RMSE e erro padrão residual quantificam a qualidade do ajuste.</p>
+<p><strong>2. Os pressupostos do modelo são atendidos?</strong> Normalidade dos resíduos, homocedasticidade, ausência de multicolinearidade e pontos influentes precisam ser verificados antes de interpretar qualquer coeficiente.</p>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Atenção:</strong> um modelo com boas métricas de ajuste pode ainda ter pressupostos violados. As duas verificações são independentes e igualmente necessárias.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="performance-função-model_performance" class="slide level2">
+<h2>performance: função model_performance()</h2>
+<p><code>model_performance()</code> retorna as principais métricas de qualidade do ajuste em uma única tabela.</p>
+<p><strong>Métricas retornadas para modelos lineares:</strong></p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 73%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Métrica</th>
+<th>O que mede</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(R^2\)</span></td>
+<td>Proporção da variância de <span class="math inline">\(Y\)</span> explicada pelo modelo</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(R^2\)</span> ajustado</td>
+<td><span class="math inline">\(R^2\)</span> penalizado pelo número de parâmetros</td>
+</tr>
+<tr class="odd">
+<td>AIC</td>
+<td>Critério de informação de Akaike, penaliza complexidade</td>
+</tr>
+<tr class="even">
+<td>BIC</td>
+<td>Critério bayesiano de informação, penalidade maior que AIC</td>
+</tr>
+<tr class="odd">
+<td>RMSE</td>
+<td>Raiz do erro quadrático médio, na escala de <span class="math inline">\(Y\)</span></td>
+</tr>
+<tr class="even">
+<td>Sigma</td>
+<td>Estimativa do desvio padrão dos resíduos</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="código-model_performance" class="slide level2">
+<h2>Código: model_performance()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">model_performance</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-model_performance" class="slide level2">
+<h2>Output: model_performance()</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># Indices of model performance
+
+AIC   |  AICc |   BIC |    R2 | R2 (adj.) |  RMSE | Sigma
+---------------------------------------------------------
+407.6 | 408.1 | 421.5 | 0.202 |     0.182 | 1.268 | 1.290</code></pre>
+</div>
+</div>
+</section>
+<section id="performance-comparar-modelos-com-compare_performance" class="slide level2">
+<h2>performance: comparar modelos com compare_performance()</h2>
+<p><code>compare_performance()</code> aplica <code>model_performance()</code> a múltiplos modelos e retorna uma tabela comparativa. O argumento <code>rank = TRUE</code> adiciona uma coluna de ranqueamento baseada em múltiplos critérios combinados.</p>
+</section>
+<section id="código-compare_performance" class="slide level2">
+<h2>Código: compare_performance()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">compare_performance</span>(m1, m2, m3, <span class="at">rank =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-compare_performance" class="slide level2">
+<h2>Output: compare_performance()</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># Comparison of Model Performance Indices
+
+Name | Model |    R2 | R2 (adj.) |  RMSE | Sigma | AIC weights | AICc weights
+-----------------------------------------------------------------------------
+m2   |    lm | 0.202 |     0.182 | 1.268 | 1.290 |       0.406 |        0.383
+m3   |    lm | 0.211 |     0.176 | 1.261 | 1.294 |       0.106 |        0.079
+m1   |    lm | 0.178 |     0.171 | 1.288 | 1.299 |       0.488 |        0.539
+
+Name | BIC weights | Performance-Score
+--------------------------------------
+m2   |       0.049 |            71.06%
+m3   |    7.83e-04 |            43.17%
+m1   |       0.950 |            42.86%</code></pre>
+</div>
+</div>
+<p>O modelo com menor AIC e BIC e maior <span class="math inline">\(R^2\)</span> ajustado é o preferido pelo critério de parcimônia. O ranqueamento combina esses critérios automaticamente.</p>
+</section>
+<section id="performance-diagnóstico-com-check_model" class="slide level2">
+<h2>performance: diagnóstico com check_model()</h2>
+<p><code>check_model()</code> é a função mais poderosa do pacote. Ela gera um painel com seis gráficos diagnósticos que verificam simultaneamente os pressupostos do modelo linear:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Gráfico</th>
+<th>Pressuposto verificado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Resíduos vs.&nbsp;ajustados</td>
+<td>Linearidade e homocedasticidade</td>
+</tr>
+<tr class="even">
+<td>QQ-plot dos resíduos</td>
+<td>Normalidade dos erros</td>
+</tr>
+<tr class="odd">
+<td>Scale-location</td>
+<td>Homocedasticidade</td>
+</tr>
+<tr class="even">
+<td>Cook’s distance</td>
+<td>Pontos influentes</td>
+</tr>
+<tr class="odd">
+<td>VIF</td>
+<td>Multicolinearidade</td>
+</tr>
+<tr class="even">
+<td>Resíduos vs.&nbsp;leverage</td>
+<td>Pontos alavancados</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="código-check_model" class="slide level2">
+<h2>Código: check_model()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">check_model</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-check_model" class="slide level2">
+<h2>Output: check_model()</h2>
+
+<img data-src="aula41_easystats_v2_files/figure-revealjs/check-model-output-1.png" width="960" class="r-stretch"></section>
+<section id="como-interpretar-o-painel-de-diagnóstico" class="slide level2">
+<h2>Como interpretar o painel de diagnóstico</h2>
+<p><strong>Resíduos vs.&nbsp;ajustados:</strong> a linha de referência deve ser aproximadamente horizontal e os pontos distribuídos sem padrão sistemático. Curvatura indica não linearidade.</p>
+<p><strong>QQ-plot:</strong> os pontos devem seguir a linha diagonal. Desvios nas caudas indicam afastamento da normalidade.</p>
+<p><strong>Scale-location:</strong> a linha deve ser horizontal. Tendência crescente indica heterocedasticidade, variância dos erros aumenta com os valores ajustados.</p>
+<p><strong>Cook’s distance:</strong> valores acima de 1 indicam pontos com influência excessiva sobre os coeficientes estimados.</p>
+<p><strong>VIF:</strong> valores acima de 5 indicam multicolinearidade moderada; acima de 10, severa.</p>
+</section>
+<section id="performance-verificações-individuais" class="slide level2">
+<h2>performance: verificações individuais</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">check_normality</span>(m2)</span>
+<span id="cb15-2"><a></a><span class="fu">check_heteroscedasticity</span>(m2)</span>
+<span id="cb15-3"><a></a><span class="fu">check_collinearity</span>(m2)</span>
+<span id="cb15-4"><a></a><span class="fu">check_outliers</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-verificações-individuais" class="slide level2">
+<h2>Output: verificações individuais</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>OK: residuals appear as normally distributed (p = 0.427).</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OK: Error variance appears to be homoscedastic (p = 0.355).</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Check for Multicollinearity
+
+Low Correlation
+
+       Term  VIF       VIF 95% CI adj. VIF Tolerance Tolerance 95% CI
+ nitrogenio 1.01 [1.00, 1.71e+07]     1.00      0.99     [0.00, 1.00]
+       solo 1.01 [1.00, 1.71e+07]     1.00      0.99     [0.00, 1.00]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>OK: No outliers detected.
+- Based on the following method and threshold: cook (0.7).
+- For variable: (Whole model)</code></pre>
+</div>
+</div>
+<p>Cada função retorna uma mensagem estruturada indicando se o pressuposto foi atendido, com referência ao teste utilizado e ao nível de significância adotado.</p>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="see" class="title-slide slide level1 center" style="text-align: center; padding-top: 120px; color: white;">
+<h1><code>see</code></h1>
+
+</section>
+<h3 id="sistema-de-visualização-integrado-ao-ecossistema-easystats">Sistema de visualização integrado ao ecossistema easystats</h3>
+<p><em>Não é chamado diretamente, é ativado automaticamente quando plot() é aplicado sobre objetos do easystats</em></p></section>
+<section id="see-o-que-é-e-como-funciona" class="slide level2">
+<h2>see: o que é e como funciona</h2>
+<p>O pacote <code>see</code> é o sistema de visualização do ecossistema easystats. Ele não é chamado diretamente pelo analista, ele opera em segundo plano, redefinindo o método <code>plot()</code> para os objetos gerados pelos outros pacotes.</p>
+<p><strong>O que isso significa na prática:</strong></p>
+<p>Quando você executa <code>plot(model_parameters(m2))</code>, o R chama automaticamente o método <code>plot</code> do <code>see</code>, que sabe como transformar aquele objeto específico em um gráfico adequado.</p>
+<p>O mesmo acontece com <code>plot(model_performance())</code>, <code>plot(check_model())</code>, <code>plot(correlation())</code> e todos os outros objetos do ecossistema.</p>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Atenção:</strong> <code>see</code> precisa estar carregado para que os métodos <code>plot()</code> funcionem. Ao carregar <code>library(easystats)</code>, o <code>see</code> é carregado automaticamente. Se você carregar apenas <code>library(parameters)</code>, por exemplo, o <code>plot()</code> pode não funcionar como esperado.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="see-paletas-de-cores" class="slide level2">
+<h2>see: paletas de cores</h2>
+<p>O <code>see</code> também oferece paletas de cores projetadas para visualizações estatísticas, acessíveis via <code>scale_color_see()</code> e <code>scale_fill_see()</code> no <code>ggplot2</code>.</p>
+</section>
+<section id="código-paletas-do-see-no-ggplot2" class="slide level2">
+<h2>Código: paletas do see no ggplot2</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> nitrogenio, <span class="at">y =</span> produtividade,</span>
+<span id="cb20-3"><a></a>             <span class="at">color =</span> solo)) <span class="sc">+</span></span>
+<span id="cb20-4"><a></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb20-5"><a></a>  <span class="fu">scale_color_see</span>() <span class="sc">+</span></span>
+<span id="cb20-6"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb20-7"><a></a>    <span class="at">title   =</span> <span class="st">"Produtividade ~ nitrogênio por tipo de solo"</span>,</span>
+<span id="cb20-8"><a></a>    <span class="at">x       =</span> <span class="st">"Dose de nitrogênio (kg/ha)"</span>,</span>
+<span id="cb20-9"><a></a>    <span class="at">y       =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
+<span id="cb20-10"><a></a>    <span class="at">color   =</span> <span class="st">"Solo"</span>,</span>
+<span id="cb20-11"><a></a>    <span class="at">caption =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb20-12"><a></a>  tema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gráfico-paleta-do-see" class="slide level2">
+<h2>Gráfico: paleta do see</h2>
+
+<img data-src="aula41_easystats_v2_files/figure-revealjs/see-paleta-grafico-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="effectsize" class="title-slide slide level1 center" style="text-align: center; padding-top: 120px; color: white;">
+<h1><code>effectsize</code></h1>
+
+</section>
+<h3 id="calcula-e-interpreta-o-tamanho-do-efeito-padronizado">Calcula e interpreta o tamanho do efeito padronizado</h3>
+<p><em>Complementa o p-valor com a magnitude prática do efeito observado</em></p></section>
+<section id="effectsize-o-que-é-e-por-que-importa" class="slide level2">
+<h2>effectsize: o que é e por que importa</h2>
+<p>O <strong>tamanho do efeito</strong> quantifica a magnitude de uma diferença ou associação, independentemente do tamanho da amostra. Ele responde à pergunta que o p-valor não responde: <strong>o efeito detectado é grande o suficiente para ter relevância prática?</strong></p>
+<p>Com amostras grandes, diferenças triviais produzem p-valores muito pequenos. Com amostras pequenas, efeitos relevantes podem não atingir significância estatística. O tamanho do efeito é a medida que desacopla essas duas informações.</p>
+<p><strong>O pacote <code>effectsize</code> calcula os principais índices padronizados usados em ciências aplicadas:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Índice</th>
+<th>Contexto de uso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cohen’s <em>d</em></td>
+<td>Diferença entre duas médias</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\eta^2\)</span> (eta²)</td>
+<td>Proporção da variância explicada, ANOVA</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\omega^2\)</span> (omega²)</td>
+<td>Versão menos viesada do <span class="math inline">\(\eta^2\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r\)</span> de correlação</td>
+<td>Associação entre duas variáveis contínuas</td>
+</tr>
+<tr class="odd">
+<td>Odds Ratio</td>
+<td>Modelos logísticos, variável binária</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="effectsize-cohens-d-interpretação" class="slide level2">
+<h2>effectsize: Cohen’s d, interpretação</h2>
+<p>O <strong>Cohen’s d</strong> mede a diferença entre duas médias em unidades de desvio padrão:</p>
+<p><span class="math display">\[d = \frac{\bar{x}_1 - \bar{x}_2}{s_{pooled}}\]</span></p>
+<p><strong>Convenções de interpretação (Cohen, 1988):</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Valor de <span class="math inline">\(|d|\)</span></th>
+<th>Magnitude</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(0{,}20\)</span></td>
+<td>Pequeno</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(0{,}50\)</span></td>
+<td>Médio</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(0{,}80\)</span></td>
+<td>Grande</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Atenção:</strong> as convenções de Cohen são referências gerais, não regras absolutas. Um efeito “pequeno” pode ser relevante em determinados contextos agronômicos, por exemplo, um ganho de 0,2 t/ha por ciclo em larga escala comercial. A relevância prática é uma decisão substantiva, não estatística.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="código-cohens-d-entre-tipos-de-solo" class="slide level2">
+<h2>Código: Cohen’s d entre tipos de solo</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>amostra_solos <span class="ot">&lt;-</span> amostra <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a></a>  <span class="fu">filter</span>(solo <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Argiloso"</span>, <span class="st">"Arenoso"</span>))</span>
+<span id="cb21-3"><a></a></span>
+<span id="cb21-4"><a></a><span class="fu">cohens_d</span>(produtividade <span class="sc">~</span> solo, <span class="at">data =</span> amostra_solos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-cohens-d" class="slide level2">
+<h2>Output: Cohen’s d</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Cohen's d |        95% CI
+-------------------------
+0.24      | [-0.17, 0.65]
+
+- Estimated using pooled SD.</code></pre>
+</div>
+</div>
+</section>
+<section id="effectsize-eta²-e-omega²-anova" class="slide level2">
+<h2>effectsize: eta² e omega², ANOVA</h2>
+<p>Para modelos com mais de dois grupos ou com múltiplas variáveis explicativas, o <strong>eta²</strong> e o <strong>omega²</strong> quantificam a proporção da variância total de <span class="math inline">\(Y\)</span> explicada por cada fator.</p>
+<p><strong>Diferença entre os dois:</strong></p>
+<p><span class="math inline">\(\eta^2\)</span>: estimativa direta da proporção de variância explicada na amostra. Levemente viesado para cima.</p>
+<p><span class="math inline">\(\omega^2\)</span>: versão corrigida, com estimativa menos viesada da magnitude do efeito na população. Preferível para reportar.</p>
+<p><strong>Convenções:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Valor</th>
+<th>Magnitude</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(0{,}01\)</span></td>
+<td>Pequeno</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(0{,}06\)</span></td>
+<td>Médio</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(0{,}14\)</span></td>
+<td>Grande</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="código-eta²-e-omega²" class="slide level2">
+<h2>Código: eta² e omega²</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>modelo_anova <span class="ot">&lt;-</span> <span class="fu">lm</span>(produtividade <span class="sc">~</span> solo, <span class="at">data =</span> amostra)</span>
+<span id="cb23-2"><a></a></span>
+<span id="cb23-3"><a></a><span class="fu">eta_squared</span>(modelo_anova, <span class="at">partial =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb23-4"><a></a><span class="fu">omega_squared</span>(modelo_anova, <span class="at">partial =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-eta²-e-omega²" class="slide level2">
+<h2>Output: eta² e omega²</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># Effect Size for ANOVA (Type I)
+
+Parameter | Eta2 |       95% CI
+-------------------------------
+solo      | 0.02 | [0.00, 1.00]
+
+- One-sided CIs: upper bound fixed at [1.00].</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Effect Size for ANOVA (Type I)
+
+Parameter |   Omega2 |       95% CI
+-----------------------------------
+solo      | 7.11e-03 | [0.00, 1.00]
+
+- One-sided CIs: upper bound fixed at [1.00].</code></pre>
+</div>
+</div>
+</section>
+<section id="código-visualização-do-tamanho-do-efeito" class="slide level2">
+<h2>Código: visualização do tamanho do efeito</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">eta_squared</span>(modelo_anova, <span class="at">partial =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a></a>  <span class="fu">plot</span>() <span class="sc">+</span></span>
+<span id="cb26-3"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb26-4"><a></a>    <span class="at">title   =</span> <span class="st">"Tamanho do efeito: eta² por fator"</span>,</span>
+<span id="cb26-5"><a></a>    <span class="at">caption =</span> <span class="st">"Jennifer Lopes | Café com R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gráfico-tamanho-do-efeito" class="slide level2">
+<h2>Gráfico: tamanho do efeito</h2>
+
+<img data-src="aula41_easystats_v2_files/figure-revealjs/effectsize-plot-grafico-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="correlation" class="title-slide slide level1 center" style="text-align: center; padding-top: 120px; color: white;">
+<h1><code>correlation</code></h1>
+
+</section>
+<h3 id="análise-de-correlação-com-múltiplos-métodos-estruturas-e-visualizações">Análise de correlação com múltiplos métodos, estruturas e visualizações</h3>
+<p><em>Vai além do cor(), suporta correlação parcial, policórica, de Kendall, Spearman e mais</em></p></section>
+<section id="correlation-o-que-é-e-por-que-usar" class="slide level2">
+<h2>correlation: o que é e por que usar</h2>
+<p>A função <code>cor()</code> do R calcula correlações, mas retorna apenas uma matriz numérica sem métricas de incerteza, sem p-valores e sem suporte a métodos alternativos de forma integrada.</p>
+<p>O pacote <code>correlation</code> resolve isso com uma interface unificada que:</p>
+<ul>
+<li>Retorna coeficiente, IC, estatística de teste e p-valor para cada par de variáveis</li>
+<li>Suporta múltiplos métodos: Pearson, Spearman, Kendall, policórico, tetracórico, parcial e semi-parcial</li>
+<li>Integra com <code>see</code> para visualização automática da matriz de correlação</li>
+<li>É compatível com <code>group_by()</code> do tidyverse para correlações por grupo</li>
+</ul>
+</section>
+<section id="correlation-métodos-disponíveis" class="slide level2">
+<h2>correlation: métodos disponíveis</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Método</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>"pearson"</code></td>
+<td>Variáveis contínuas com relação linear</td>
+</tr>
+<tr class="even">
+<td><code>"spearman"</code></td>
+<td>Variáveis ordinais ou relação monotônica não linear</td>
+</tr>
+<tr class="odd">
+<td><code>"kendall"</code></td>
+<td>Amostras pequenas ou com muitos empates</td>
+</tr>
+<tr class="even">
+<td><code>"partial"</code></td>
+<td>Correlação controlada por terceiras variáveis</td>
+</tr>
+<tr class="odd">
+<td><code>"semi"</code></td>
+<td>Correlação semi-parcial, controla apenas uma das variáveis</td>
+</tr>
+<tr class="even">
+<td><code>"polychoric"</code></td>
+<td>Variáveis ordinais, estima correlação latente</td>
+</tr>
+<tr class="odd">
+<td><code>"tetrachoric"</code></td>
+<td>Variáveis binárias, estima correlação latente</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="código-correlação-entre-variáveis-numéricas" class="slide level2">
+<h2>Código: correlação entre variáveis numéricas</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a></a>  <span class="fu">select</span>(produtividade, nitrogenio, fertilidade) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a></a>  <span class="fu">correlation</span>(<span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-matriz-de-correlação" class="slide level2">
+<h2>Output: matriz de correlação</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># Correlation Matrix (pearson-method)
+
+Parameter1    |  Parameter2 |         r |        95% CI | t(118) |         p
+----------------------------------------------------------------------------
+produtividade |  nitrogenio |      0.42 | [ 0.26, 0.56] |   5.05 | &lt; .001***
+produtividade | fertilidade |      0.42 | [ 0.26, 0.56] |   4.99 | &lt; .001***
+nitrogenio    | fertilidade | -1.42e-03 | [-0.18, 0.18] |  -0.02 | 0.988    
+
+p-value adjustment method: Holm (1979)
+Observations: 120</code></pre>
+</div>
+</div>
+<p><strong>Como ler:</strong> cada linha representa um par de variáveis. <code>r</code> é o coeficiente de Pearson, <code>CI_low</code> e <code>CI_high</code> são os limites do IC 95%, <code>t</code> é a estatística do teste <span class="math inline">\(H_0: \rho = 0\)</span> e <code>p</code> é o p-valor correspondente.</p>
+</section>
+<section id="código-correlação-por-grupo" class="slide level2">
+<h2>Código: correlação por grupo</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb29-2"><a></a>  <span class="fu">select</span>(produtividade, nitrogenio, solo) <span class="sc">|&gt;</span></span>
+<span id="cb29-3"><a></a>  <span class="fu">group_by</span>(solo) <span class="sc">|&gt;</span></span>
+<span id="cb29-4"><a></a>  <span class="fu">correlation</span>(<span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-correlação-por-grupo" class="slide level2">
+<h2>Output: correlação por grupo</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># Correlation Matrix (pearson-method)
+
+Group    |    Parameter1 | Parameter2 |    r |        95% CI |    t | df |       p
+----------------------------------------------------------------------------------
+Arenoso  | produtividade | nitrogenio | 0.32 | [ 0.00, 0.58] | 2.00 | 35 | 0.053  
+Argiloso | produtividade | nitrogenio | 0.40 | [ 0.17, 0.59] | 3.39 | 60 | 0.001**
+Franco   | produtividade | nitrogenio | 0.61 | [ 0.25, 0.83] | 3.38 | 19 | 0.003**
+
+p-value adjustment method: Holm (1979)
+Observations: 21-62</code></pre>
+</div>
+</div>
+</section>
+<section id="código-visualização-da-matriz-de-correlação" class="slide level2">
+<h2>Código: visualização da matriz de correlação</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a></a>  <span class="fu">select</span>(produtividade, nitrogenio, fertilidade) <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a></a>  <span class="fu">correlation</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-4"><a></a>  <span class="fu">summary</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-5"><a></a>  <span class="fu">plot</span>() <span class="sc">+</span></span>
+<span id="cb31-6"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb31-7"><a></a>    <span class="at">title   =</span> <span class="st">"Matriz de correlação, híbrido H2"</span>,</span>
+<span id="cb31-8"><a></a>    <span class="at">caption =</span> <span class="st">"Jennifer Lopes | Café com R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gráfico-matriz-de-correlação" class="slide level2">
+<h2>Gráfico: matriz de correlação</h2>
+
+<img data-src="aula41_easystats_v2_files/figure-revealjs/correlation-plot-grafico-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="report" class="title-slide slide level1 center" style="text-align: center; padding-top: 120px; color: white;">
+<h1><code>report</code></h1>
+
+</section>
+<h3 id="gera-descrições-textuais-automáticas-de-modelos-e-testes-em-linguagem-científica">Gera descrições textuais automáticas de modelos e testes em linguagem científica</h3>
+<p><em>Traduz objetos estatísticos em texto pronto para relatório, com as ressalvas que isso exige</em></p></section>
+<section id="report-o-que-é-e-como-funciona" class="slide level2">
+<h2>report: o que é e como funciona</h2>
+<p>O pacote <code>report</code> gera automaticamente um parágrafo descrevendo os resultados de um modelo ou teste estatístico, seguindo as convenções de redação científica da área de psicologia e ciências comportamentais, que são amplamente adotadas em outras áreas.</p>
+<p><strong>Ele reconhece e descreve:</strong></p>
+<ul>
+<li>Modelos lineares e generalizados (<code>lm</code>, <code>glm</code>)</li>
+<li>Testes t, qui-quadrado, correlações e ANOVAs</li>
+<li>Modelos mistos (<code>lmer</code>, <code>glmer</code>)</li>
+<li>Objetos do tidymodels e do easystats</li>
+</ul>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Atenção:</strong> o texto gerado pelo <code>report</code> é um ponto de partida, não um produto final. Ele segue convenções gerais que podem não capturar nuances específicas do contexto agronômico. O pesquisador precisa revisar, adaptar e complementar o texto gerado com interpretação substantiva.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="código-report-sobre-um-modelo-linear" class="slide level2">
+<h2>Código: report() sobre um modelo linear</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">report</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-report-sobre-modelo-linear" class="slide level2">
+<h2>Output: report() sobre modelo linear</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>We fitted a linear model (estimated using OLS) to predict produtividade with
+nitrogenio and solo (formula: produtividade ~ nitrogenio + solo). The model
+explains a statistically significant and moderate proportion of variance (R2 =
+0.20, F(3, 116) = 9.81, p &lt; .001, adj. R2 = 0.18). The model's intercept,
+corresponding to nitrogenio = 0 and solo = Arenoso, is at 8.84 (95% CI [8.30,
+9.38], t(116) = 32.31, p &lt; .001). Within this model:
+
+  - The effect of nitrogenio is statistically significant and positive (beta =
+0.01, 95% CI [6.36e-03, 0.01], t(116) = 5.10, p &lt; .001; Std. beta = 0.42, 95%
+CI [0.26, 0.59])
+  - The effect of solo [Argiloso] is statistically non-significant and negative
+(beta = -0.42, 95% CI [-0.96, 0.11], t(116) = -1.58, p = 0.117; Std. beta =
+-0.30, 95% CI [-0.67, 0.08])
+  - The effect of solo [Franco] is statistically non-significant and negative
+(beta = -0.59, 95% CI [-1.28, 0.11], t(116) = -1.66, p = 0.099; Std. beta =
+-0.41, 95% CI [-0.90, 0.08])
+
+Standardized parameters were obtained by fitting the model on a standardized
+version of the dataset. 95% Confidence Intervals (CIs) and p-values were
+computed using a Wald t-distribution approximation.</code></pre>
+</div>
+</div>
+</section>
+<section id="código-report-sobre-um-teste-t" class="slide level2">
+<h2>Código: report() sobre um teste t</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>resultado_t <span class="ot">&lt;-</span> <span class="fu">t.test</span>(</span>
+<span id="cb34-2"><a></a>  produtividade <span class="sc">~</span> solo,</span>
+<span id="cb34-3"><a></a>  <span class="at">data      =</span> amostra_solos,</span>
+<span id="cb34-4"><a></a>  <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-5"><a></a></span>
+<span id="cb34-6"><a></a><span class="fu">report</span>(resultado_t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-report-sobre-teste-t" class="slide level2">
+<h2>Output: report() sobre teste t</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Effect sizes were labelled following Cohen's (1988) recommendations.
+
+The Welch Two Sample t-test testing the difference of produtividade by solo
+(mean in group Arenoso = 9.72, mean in group Argiloso = 9.38) suggests that the
+effect is positive, statistically not significant, and small (difference =
+0.34, 95% CI [-0.21, 0.88], t(88.15) = 1.24, p = 0.219; Cohen's d = 0.26, 95%
+CI [-0.16, 0.68])</code></pre>
+</div>
+</div>
+</section>
+<section id="report-resumo-em-tabela" class="slide level2">
+<h2>report: resumo em tabela</h2>
+<p><code>report_table()</code> retorna os mesmos resultados do <code>report()</code> em formato tabular, mais fácil de manipular e incluir em documentos Quarto.</p>
+</section>
+<section id="código-report_table" class="slide level2">
+<h2>Código: report_table()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">report_table</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-report_table" class="slide level2">
+<h2>Output: report_table()</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Parameter       | Coefficient |        95% CI | t(116) |      p | Std. Coef.
+----------------------------------------------------------------------------
+(Intercept)     |        8.84 | [ 8.30, 9.38] |  32.31 | &lt; .001 |       0.23
+nitrogenio      |        0.01 | [ 0.01, 0.01] |   5.10 | &lt; .001 |       0.42
+solo [Argiloso] |       -0.42 | [-0.96, 0.11] |  -1.58 | 0.117  |      -0.30
+solo [Franco]   |       -0.59 | [-1.28, 0.11] |  -1.66 | 0.099  |      -0.41
+                |             |               |        |        |           
+AIC             |             |               |        |        |           
+AICc            |             |               |        |        |           
+BIC             |             |               |        |        |           
+R2              |             |               |        |        |           
+R2 (adj.)       |             |               |        |        |           
+Sigma           |             |               |        |        |           
+
+Parameter       | Std. Coef. 95% CI |    Fit
+--------------------------------------------
+(Intercept)     |     [-0.07, 0.52] |       
+nitrogenio      |     [ 0.26, 0.59] |       
+solo [Argiloso] |     [-0.67, 0.08] |       
+solo [Franco]   |     [-0.90, 0.08] |       
+                |                   |       
+AIC             |                   | 407.61
+AICc            |                   | 408.13
+BIC             |                   | 421.54
+R2              |                   |   0.20
+R2 (adj.)       |                   |   0.18
+Sigma           |                   |   1.29</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="modelbased" class="title-slide slide level1 center" style="text-align: center; padding-top: 120px; color: white;">
+<h1><code>modelbased</code></h1>
+
+</section>
+<h3 id="predições-médias-marginais-estimadas-e-contrastes-a-partir-de-modelos-ajustados">Predições, médias marginais estimadas e contrastes a partir de modelos ajustados</h3>
+<p><em>Vai além dos coeficientes, estima o que o modelo prediz para combinações específicas de variáveis</em></p></section>
+<section id="modelbased-o-que-é-e-por-que-usar" class="slide level2">
+<h2>modelbased: o que é e por que usar</h2>
+<p>Coeficientes descrevem relações entre variáveis no modelo. Mas muitas vezes o que se quer saber não é o coeficiente em si, e sim: <strong>qual é a produtividade esperada para solo Argiloso com 100 kg/ha de nitrogênio?</strong> Ou: <strong>qual é a diferença entre os solos, mantendo o nitrogênio constante?</strong></p>
+<p>O pacote <code>modelbased</code> responde a essas perguntas por meio de:</p>
+<ul>
+<li><strong><code>estimate_means()</code></strong>: médias marginais estimadas, valor esperado de <span class="math inline">\(Y\)</span> para cada nível de um fator, com as demais variáveis mantidas na média</li>
+<li><strong><code>estimate_contrasts()</code></strong>: diferenças entre grupos com IC e p-valor ajustado</li>
+<li><strong><code>estimate_relation()</code></strong>: curva de predição ao longo de uma variável contínua</li>
+<li><strong><code>estimate_expectation()</code></strong>: predição para combinações específicas de valores</li>
+</ul>
+</section>
+<section id="modelbased-médias-marginais-versus-médias-amostrais" class="slide level2">
+<h2>modelbased: médias marginais versus médias amostrais</h2>
+<p><strong>Média amostral:</strong> média calculada diretamente dos dados observados. Não controla por outras variáveis.</p>
+<p><strong>Média marginal estimada:</strong> valor esperado de <span class="math inline">\(Y\)</span> para cada nível do fator, com as demais variáveis numéricas fixadas na média da amostra. É o que o modelo prediz, não o que os dados mostram diretamente.</p>
+<p>A distinção é importante quando os grupos têm composições diferentes nas demais variáveis, por exemplo, se o solo Argiloso concentra parcelas com mais nitrogênio, a média amostral confunde o efeito do solo com o efeito do nitrogênio.</p>
+</section>
+<section id="código-médias-marginais-por-solo" class="slide level2">
+<h2>Código: médias marginais por solo</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="fu">estimate_means</span>(m2, <span class="at">by =</span> <span class="st">"solo"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-médias-marginais-por-solo" class="slide level2">
+<h2>Output: médias marginais por solo</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Estimated Marginal Means
+
+solo     | Mean |   SE |        95% CI | t(116)
+-----------------------------------------------
+Arenoso  | 9.75 | 0.21 | [9.33, 10.17] |  45.96
+Argiloso | 9.33 | 0.16 | [9.00,  9.65] |  56.84
+Franco   | 9.17 | 0.28 | [8.61,  9.73] |  32.51
+
+Variable predicted: produtividade
+Predictors modulated: solo
+Predictors averaged: nitrogenio (88)</code></pre>
+</div>
+</div>
+</section>
+<section id="código-contrastes-entre-grupos" class="slide level2">
+<h2>Código: contrastes entre grupos</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">estimate_contrasts</span>(m2, <span class="at">contrast =</span> <span class="st">"solo"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-contrastes-entre-grupos" class="slide level2">
+<h2>Output: contrastes entre grupos</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Marginal Contrasts Analysis
+
+Level1   | Level2   | Difference |   SE |        95% CI | t(116) |     p
+------------------------------------------------------------------------
+Argiloso | Arenoso  |      -0.42 | 0.27 | [-0.96, 0.11] |  -1.58 | 0.117
+Franco   | Arenoso  |      -0.59 | 0.35 | [-1.28, 0.11] |  -1.66 | 0.099
+Franco   | Argiloso |      -0.16 | 0.33 | [-0.81, 0.49] |  -0.50 | 0.621
+
+Variable predicted: produtividade
+Predictors contrasted: solo
+Predictors averaged: nitrogenio (88)
+p-values are uncorrected.</code></pre>
+</div>
+</div>
+</section>
+<section id="código-curva-de-predição-estimate_relation" class="slide level2">
+<h2>Código: curva de predição, estimate_relation()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">estimate_relation</span>(m2, <span class="at">by =</span> <span class="st">"nitrogenio"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb42-2"><a></a>  <span class="fu">plot</span>() <span class="sc">+</span></span>
+<span id="cb42-3"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb42-4"><a></a>    <span class="at">title   =</span> <span class="st">"Curva de predição: produtividade ~ nitrogênio"</span>,</span>
+<span id="cb42-5"><a></a>    <span class="at">caption =</span> <span class="st">"Jennifer Lopes | Café com R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gráfico-curva-de-predição" class="slide level2">
+<h2>Gráfico: curva de predição</h2>
+
+<img data-src="aula41_easystats_v2_files/figure-revealjs/modelbased-relation-grafico-1.png" width="960" class="r-stretch"></section>
+<section id="código-predição-por-solo-e-nitrogênio" class="slide level2">
+<h2>Código: predição por solo e nitrogênio</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="fu">estimate_relation</span>(m2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"nitrogenio"</span>, <span class="st">"solo"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a></a>  <span class="fu">plot</span>() <span class="sc">+</span></span>
+<span id="cb43-3"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb43-4"><a></a>    <span class="at">title   =</span> <span class="st">"Predição por solo e dose de nitrogênio"</span>,</span>
+<span id="cb43-5"><a></a>    <span class="at">caption =</span> <span class="st">"Jennifer Lopes | Café com R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gráfico-predição-por-solo-e-nitrogênio" class="slide level2">
+<h2>Gráfico: predição por solo e nitrogênio</h2>
+
+<img data-src="aula41_easystats_v2_files/figure-revealjs/modelbased-expectation-grafico-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bayestestr" class="title-slide slide level1 center" style="text-align: center; padding-top: 120px; color: white;">
+<h1><code>bayestestR</code></h1>
+
+</section>
+<h3 id="inferência-bayesiana-acessível-sem-mcmc-manual">Inferência bayesiana acessível, sem MCMC manual</h3>
+<p><em>Ferramentas para descrever e interpretar distribuições posteriores de modelos bayesianos</em></p></section>
+<section id="bayestestr-o-que-é" class="slide level2">
+<h2>bayestestR: o que é</h2>
+<p>O pacote <code>bayestestR</code> fornece ferramentas para trabalhar com a saída de modelos bayesianos de forma padronizada, as mesmas funções que <code>parameters</code> e <code>performance</code> oferecem para modelos frequentistas.</p>
+<p>Ele não ajusta modelos bayesianos, isso é feito por pacotes como <code>rstanarm</code> ou <code>brms</code>. O <code>bayestestR</code> processa e interpreta a distribuição posterior gerada por esses pacotes.</p>
+</section>
+<section id="bayestestr-conceitos-fundamentais" class="slide level2">
+<h2>bayestestR: conceitos fundamentais</h2>
+<p>A inferência bayesiana parte de uma lógica diferente da frequentista:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Conceito</th>
+<th>Frequentista</th>
+<th>Bayesiano</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Parâmetro</td>
+<td>Fixo, desconhecido</td>
+<td>Variável aleatória com distribuição</td>
+</tr>
+<tr class="even">
+<td>Prior</td>
+<td>Não existe</td>
+<td>Distribuição a priori, crença antes dos dados</td>
+</tr>
+<tr class="odd">
+<td>Posterior</td>
+<td>Não existe</td>
+<td>Distribuição atualizada após os dados</td>
+</tr>
+<tr class="even">
+<td>IC</td>
+<td>Intervalo de confiança, procedimento</td>
+<td>Intervalo de credibilidade, probabilidade direta</td>
+</tr>
+<tr class="odd">
+<td>p-valor</td>
+<td><span class="math inline">\(P(\text{dados} \mid H_0)\)</span></td>
+<td>Não existe, substituído por outras métricas</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bayestestr-principais-funções" class="slide level2">
+<h2>bayestestR: principais funções</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Função</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>describe_posterior()</code></td>
+<td>Resumo completo da distribuição posterior</td>
+</tr>
+<tr class="even">
+<td><code>bayesfactor_parameters()</code></td>
+<td>Fator de Bayes para cada parâmetro</td>
+</tr>
+<tr class="odd">
+<td><code>hdi()</code></td>
+<td>Intervalo de maior densidade posterior (HDI)</td>
+</tr>
+<tr class="even">
+<td><code>rope()</code></td>
+<td>Região de equivalência prática, alternativa ao teste nulo</td>
+</tr>
+<tr class="odd">
+<td><code>p_direction()</code></td>
+<td>Probabilidade de que o efeito seja positivo ou negativo</td>
+</tr>
+<tr class="even">
+<td><code>equivalence_test()</code></td>
+<td>Teste de equivalência bayesiano</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bayestestr-como-usar-na-prática" class="slide level2">
+<h2>bayestestR: como usar na prática</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb44-2"><a></a></span>
+<span id="cb44-3"><a></a>modelo_bayes <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(</span>
+<span id="cb44-4"><a></a>  produtividade <span class="sc">~</span> nitrogenio <span class="sc">+</span> solo,</span>
+<span id="cb44-5"><a></a>  <span class="at">data   =</span> amostra,</span>
+<span id="cb44-6"><a></a>  <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb44-7"><a></a>  <span class="at">prior  =</span> <span class="fu">normal</span>(<span class="dv">0</span>, <span class="fl">2.5</span>),</span>
+<span id="cb44-8"><a></a>  <span class="at">seed   =</span> <span class="dv">2026</span>)</span>
+<span id="cb44-9"><a></a></span>
+<span id="cb44-10"><a></a><span class="fu">describe_posterior</span>(modelo_bayes, <span class="at">ci =</span> <span class="fl">0.95</span>)</span>
+<span id="cb44-11"><a></a><span class="fu">bayesfactor_parameters</span>(modelo_bayes)</span>
+<span id="cb44-12"><a></a><span class="fu">hdi</span>(modelo_bayes, <span class="at">ci =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Atenção:</strong> o código acima requer <code>rstanarm</code> instalado e pode levar alguns minutos para rodar, pois ajusta o modelo por amostragem MCMC. Os outputs são apresentados na próxima aula, dedicada à modelagem bayesiana.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="bayestestr-rope-região-de-equivalência-prática" class="slide level2">
+<h2>bayestestR: ROPE, região de equivalência prática</h2>
+<p>O <strong>ROPE</strong> (Region of Practical Equivalence) é uma das contribuições mais úteis do <code>bayestestR</code>. Ele responde à pergunta que nem o p-valor nem o IC frequentista respondem diretamente:</p>
+<p><strong>O efeito é grande o suficiente para ter relevância prática?</strong></p>
+<p>O pesquisador define uma faixa de valores ao redor de zero que considera “praticamente equivalente a zero”, por exemplo, <span class="math inline">\([-0{,}1, +0{,}1]\)</span> t/ha. O ROPE calcula a proporção da distribuição posterior que cai dentro dessa faixa.</p>
+<p>Se a maior parte da posterior está dentro do ROPE, o efeito é praticamente nulo. Se está fora, o efeito é relevante.</p>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="resumo-do-ecossistema" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Resumo do Ecossistema</h1>
+
+</section>
+<section id="os-oito-pacotes-e-suas-funções-principais" class="slide level2">
+<h2>Os oito pacotes e suas funções principais</h2>
+</section></section>
+<section id="resumo-funções-principais-por-pacote" class="slide level2">
+<h2>Resumo: funções principais por pacote</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 31%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pacote</th>
+<th>Função principal</th>
+<th>O que retorna</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>parameters</code></td>
+<td><code>model_parameters()</code></td>
+<td>Coeficientes com IC</td>
+</tr>
+<tr class="even">
+<td><code>parameters</code></td>
+<td><code>compare_parameters()</code></td>
+<td>Coeficientes de múltiplos modelos</td>
+</tr>
+<tr class="odd">
+<td><code>performance</code></td>
+<td><code>model_performance()</code></td>
+<td><span class="math inline">\(R^2\)</span>, AIC, BIC, RMSE</td>
+</tr>
+<tr class="even">
+<td><code>performance</code></td>
+<td><code>check_model()</code></td>
+<td>Painel de diagnóstico</td>
+</tr>
+<tr class="odd">
+<td><code>performance</code></td>
+<td><code>compare_performance()</code></td>
+<td>Métricas de múltiplos modelos</td>
+</tr>
+<tr class="even">
+<td><code>see</code></td>
+<td><code>plot()</code></td>
+<td>Visualizações automáticas</td>
+</tr>
+<tr class="odd">
+<td><code>effectsize</code></td>
+<td><code>cohens_d()</code></td>
+<td>Cohen’s <em>d</em> com IC</td>
+</tr>
+<tr class="even">
+<td><code>effectsize</code></td>
+<td><code>eta_squared()</code></td>
+<td><span class="math inline">\(\eta^2\)</span> por fator</td>
+</tr>
+<tr class="odd">
+<td><code>correlation</code></td>
+<td><code>correlation()</code></td>
+<td>Matriz com IC e p-valor</td>
+</tr>
+<tr class="even">
+<td><code>report</code></td>
+<td><code>report()</code></td>
+<td>Texto científico automático</td>
+</tr>
+<tr class="odd">
+<td><code>modelbased</code></td>
+<td><code>estimate_means()</code></td>
+<td>Médias marginais estimadas</td>
+</tr>
+<tr class="even">
+<td><code>modelbased</code></td>
+<td><code>estimate_contrasts()</code></td>
+<td>Diferenças entre grupos</td>
+</tr>
+<tr class="odd">
+<td><code>modelbased</code></td>
+<td><code>estimate_relation()</code></td>
+<td>Curva de predição</td>
+</tr>
+<tr class="even">
+<td><code>bayestestR</code></td>
+<td><code>describe_posterior()</code></td>
+<td>Resumo da distribuição posterior</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="referências" class="slide level2">
+<h2>Referências</h2>
+<ul>
+<li>Lüdecke, D. et al.&nbsp;(2021). easystats: Framework for Easy Statistical Modeling. <em>Journal of Open Source Software</em>, 6(59), 3139. <a href="https://easystats.github.io/easystats/">easystats.github.io</a></li>
+<li>Lüdecke, D. et al.&nbsp;(2020). parameters: Extracting, Computing and Exploring the Parameters of Statistical Models. <em>JOSS</em>, 5(53), 2445.</li>
+<li>Lüdecke, D. et al.&nbsp;(2021). performance: An R Package for Assessment, Comparison and Testing of Statistical Models. <em>JOSS</em>, 6(60), 3139.</li>
+<li>Ben-Shachar, M. et al.&nbsp;(2020). effectsize: Estimation of Effect Size Indices and Standardized Parameters. <em>JOSS</em>, 5(56), 2815.</li>
+<li>Makowski, D. et al.&nbsp;(2019). bayestestR: Describing Effects and their Uncertainty, Existence and Significance within the Bayesian Framework. <em>JOSS</em>, 4(40), 1541.</li>
+<li>Documentação completa: <a href="https://easystats.github.io/easystats/">easystats.github.io/easystats</a></li>
+</ul>
+</section>
+<section id="obrigada" class="slide level2">
+<h2>Obrigada!</h2>
+
+<img data-src="../..\apresentações/posts/imagens/comunidade.png" class="quarto-figure quarto-figure-center r-stretch" width="551"><p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+</section>
+<section id="siga-o-café-com-r" class="slide level2">
+<h2>Siga o Café com R</h2>
+<blockquote>
+
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+
+</blockquote>
+<p><strong>SITE OFICIAL &gt;</strong> <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="imagens/logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Jennifer Lopes | Café com R</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': true,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://jenniluzlopes.github.io/apresentações/posts/manipulacao.html</loc>
-    <lastmod>2026-05-20T22:49:54.660Z</lastmod>
+    <lastmod>2026-07-28T01:38:54.493Z</lastmod>
   </url>
   <url>
     <loc>https://jenniluzlopes.github.io/apresentações/posts/funções_jeni.html</loc>
@@ -69,8 +69,76 @@
     <lastmod>2026-05-20T22:49:51.352Z</lastmod>
   </url>
   <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula62_modelos_mistos.html</loc>
+    <lastmod>2026-07-28T01:20:18.400Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula60_dbc.html</loc>
+    <lastmod>2026-07-28T01:19:55.062Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula58_analise_pressupostos.html</loc>
+    <lastmod>2026-07-28T01:19:32.087Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula56_transformar_ou_glm.html</loc>
+    <lastmod>2026-07-28T01:19:01.621Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula54_distribuicoes_continuas.html</loc>
+    <lastmod>2026-07-28T01:18:21.825Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula52_eda_automatizada_x_manual.html</loc>
+    <lastmod>2026-07-28T01:17:39.142Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula50_outliers.html</loc>
+    <lastmod>2026-07-28T01:17:15.530Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula48_correlacao_multicolinearidade.html</loc>
+    <lastmod>2026-07-28T01:16:40.379Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula46_eda_automatizada.html</loc>
+    <lastmod>2026-07-28T01:16:06.414Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula44_alternativas_nao_parametricas.html</loc>
+    <lastmod>2026-07-28T01:15:05.984Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula42_arrow_teorica.html</loc>
+    <lastmod>2026-07-28T01:20:56.508Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula40_teste_t_pratica.html</loc>
+    <lastmod>2026-07-28T01:11:39.294Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula38_duckdb_teorica.html</loc>
+    <lastmod>2026-07-28T01:05:38.748Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula36_databricks_v2.html</loc>
+    <lastmod>2026-07-28T01:10:50.519Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula34_amostra_erro_padrao_ic.html</loc>
+    <lastmod>2026-07-28T01:09:58.232Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula32_dbt_v2.html</loc>
+    <lastmod>2026-07-24T20:03:14.270Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula30_banco_dados_v2.html</loc>
+    <lastmod>2026-07-27T14:30:29.767Z</lastmod>
+  </url>
+  <url>
     <loc>https://jenniluzlopes.github.io/apresentações/posts/aula28_modelagem_estatistica.html</loc>
-    <lastmod>2026-05-25T23:29:35.848Z</lastmod>
+    <lastmod>2026-07-27T14:24:13.242Z</lastmod>
   </url>
   <url>
     <loc>https://jenniluzlopes.github.io/apresentações/posts/aula26_inferencia.html</loc>
@@ -102,11 +170,11 @@
   </url>
   <url>
     <loc>https://jenniluzlopes.github.io/apresentações/posts/apresentacao_r_python.html</loc>
-    <lastmod>2026-05-20T22:49:50.153Z</lastmod>
+    <lastmod>2026-07-28T01:22:17.441Z</lastmod>
   </url>
   <url>
     <loc>https://jenniluzlopes.github.io/apresentações/index.html</loc>
-    <lastmod>2026-05-20T22:49:50.146Z</lastmod>
+    <lastmod>2026-07-28T01:24:49.251Z</lastmod>
   </url>
   <url>
     <loc>https://jenniluzlopes.github.io/about.html</loc>
@@ -150,7 +218,75 @@
   </url>
   <url>
     <loc>https://jenniluzlopes.github.io/apresentações/posts/aula27_descritiva_inferencial.html</loc>
-    <lastmod>2026-05-25T23:28:47.114Z</lastmod>
+    <lastmod>2026-07-27T14:24:17.764Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula29_pointblank_v2.html</loc>
+    <lastmod>2026-07-27T16:48:23.554Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula31_media_nao_e_tudo.html</loc>
+    <lastmod>2026-07-28T01:09:36.023Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula33_deltalake_teorica.html</loc>
+    <lastmod>2026-07-27T15:02:50.083Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula35_cv_assimetria_curtose.html</loc>
+    <lastmod>2026-07-28T01:10:21.210Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula37_quatro_distribuicoes_inferencia.html</loc>
+    <lastmod>2026-07-28T01:11:05.172Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula39_teste_hipoteses_p_valor.html</loc>
+    <lastmod>2026-07-28T01:11:23.869Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula41_easystats_v2.html</loc>
+    <lastmod>2026-07-27T14:42:55.574Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula43_ml_conceitos.html</loc>
+    <lastmod>2026-07-28T01:14:44.671Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula45_power_analysis.html</loc>
+    <lastmod>2026-07-28T01:15:39.012Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula47_gtsummary.html</loc>
+    <lastmod>2026-07-28T01:16:24.706Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula49_filosofia_eda.html</loc>
+    <lastmod>2026-07-28T01:16:55.452Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula51_dados_ausentes.html</loc>
+    <lastmod>2026-07-28T01:17:26.469Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula53_distribuicoes_discretas.html</loc>
+    <lastmod>2026-07-28T01:17:53.414Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula55_fitdistrplus_normalidade.html</loc>
+    <lastmod>2026-07-28T01:18:39.363Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula57_bootstrap.html</loc>
+    <lastmod>2026-07-28T01:19:18.102Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula59_dic.html</loc>
+    <lastmod>2026-07-28T01:19:45.714Z</lastmod>
+  </url>
+  <url>
+    <loc>https://jenniluzlopes.github.io/apresentações/posts/aula61_dbi.html</loc>
+    <lastmod>2026-07-28T01:20:05.563Z</lastmod>
   </url>
   <url>
     <loc>https://jenniluzlopes.github.io/apresentações/posts/aula_r_python_iniciantes.html</loc>

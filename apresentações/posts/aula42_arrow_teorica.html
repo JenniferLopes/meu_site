@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Jennifer Luz Lopes – Aula 42. Arrow no R</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
+  <link rel="stylesheet" href="estilo_jeni.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Aula 42. Arrow no R</h1>
+  <p class="subtitle">Manipule linhas sem travar a memória</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="democratização" class="slide level2">
+<h2>Democratização</h2>
+<blockquote>
+<p>Esta aula foi construída para que você entenda como trabalhar com dados que não cabem na memória do R, usando o pacote <code>arrow</code> e o formato Parquet. Os dados são baseados no <code>nycflights13</code> replicado para aproximar 18 milhões de linhas.</p>
+</blockquote>
+</section>
+<section id="acompanhe-o-café-com-r" class="slide level2">
+<h2>Acompanhe o Café com R</h2>
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p>SITE OFICIAL &gt; https://jenniferlopes.github.io/meu_site/</p>
+</section>
+<section id="objetivos-da-aula" class="slide level2">
+<h2>Objetivos da aula</h2>
+<ul>
+<li class="fragment">Compreender o <strong>problema de memória</strong> que o <code>arrow</code> resolve</li>
+<li class="fragment">Entender como a <strong>RAM do R</strong> funciona e seus limites reais</li>
+<li class="fragment">Dominar o <strong>formato Parquet</strong>: estrutura, codificações e compressão</li>
+<li class="fragment">Comparar desempenho entre <strong>CSV e Parquet</strong> com benchmarks reais</li>
+<li class="fragment">Usar <code>open_dataset()</code> e <code>dplyr</code> para <strong>consultar sem carregar</strong></li>
+<li class="fragment">Aplicar <strong>particionamento</strong> para acelerar consultas seletivas</li>
+<li class="fragment">Integrar <code>arrow</code> com <strong>DuckDB</strong> para operações avançadas</li>
+<li class="fragment">Conhecer o que o <code>arrow</code> <strong>suporta e o que não suporta</strong></li>
+</ul>
+</section>
+<section id="instalação" class="slide level2">
+<h2>Instalação</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">install.packages</span>(<span class="st">"arrow"</span>)</span>
+<span id="cb1-2"><a></a><span class="fu">install.packages</span>(<span class="st">"bench"</span>)</span>
+<span id="cb1-3"><a></a><span class="fu">install.packages</span>(<span class="st">"duckdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(arrow)</span>
+<span id="cb2-2"><a></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-3"><a></a><span class="fu">library</span>(bench)</span>
+<span id="cb2-4"><a></a><span class="fu">library</span>(duckdb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Nota de versão:</strong> a partir da versão 23.0.0 (janeiro de 2026), o <code>arrow</code> exige C++20 para compilar da fonte. Em instalações via CRAN no Windows e macOS, os binários pré-compilados são fornecidos automaticamente e esse requisito não afeta o usuário. Em Linux, verifique com <code>vignette("install", package = "arrow")</code> se o compilador instalado é compatível.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-1" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+
+</section>
+<section id="o-problema-de-memória-no-r" class="slide level2">
+<h2>O Problema de Memória no R</h2>
+</section></section>
+<section id="como-o-r-armazena-dados" class="slide level2">
+<h2>Como o R armazena dados</h2>
+<p>O R é uma linguagem <strong>orientada à memória principal (RAM)</strong>. Todo objeto criado, vetores, data frames, listas, é armazenado integralmente na RAM durante a sessão.</p>
+<p><strong>Consequência direta:</strong> o tamanho máximo de dados que o R consegue manipular é limitado pela RAM disponível.</p>
+<ul>
+<li>Um <code>data.frame</code> com 1 milhão de linhas e 20 colunas numéricas ocupa aproximadamente <strong>160 MB</strong> de RAM</li>
+<li>Um <code>data.frame</code> com 50 milhões de linhas e 20 colunas ocupa aproximadamente <strong>8 GB</strong></li>
+<li>Durante operações como <code>mutate()</code> e <code>join()</code>, o R cria cópias intermediárias, multiplicando o consumo</li>
+</ul>
+</section>
+<section id="o-custo-de-carregar-dados-no-r" class="slide level2 scrollable">
+<h2>O custo de carregar dados no R</h2>
+<p>Quando você executa <code>read_csv("arquivo.csv")</code>, o R:</p>
+<ol type="1">
+<li>Lê o arquivo do disco linha por linha</li>
+<li>Converte cada campo de texto para o tipo correto (parsing)</li>
+<li>Aloca memória suficiente para o objeto completo</li>
+<li>Copia todos os dados para essa memória</li>
+<li>Retorna o <code>data.frame</code>, e somente agora você pode usar os dados</li>
+</ol>
+<p>Esse processo carrega <strong>100% dos dados</strong>, mesmo que você precise de apenas 1% deles.</p>
+<p>Se o arquivo tem 10 GB e você quer filtrar apenas um mês, o R ainda carrega os 10 GB inteiros antes de executar qualquer filtro.</p>
+</section>
+<section id="código-medindo-o-tamanho-na-memória" class="slide level2">
+<h2>Código: medindo o tamanho na memória</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># Tamanho do objeto na RAM</span></span>
+<span id="cb3-2"><a></a><span class="fu">obj_size</span>(voos_grande)</span>
+<span id="cb3-3"><a></a></span>
+<span id="cb3-4"><a></a><span class="co"># Dimensões</span></span>
+<span id="cb3-5"><a></a><span class="fu">tibble</span>(</span>
+<span id="cb3-6"><a></a>  <span class="at">linhas  =</span> <span class="fu">nrow</span>(voos_grande),</span>
+<span id="cb3-7"><a></a>  <span class="at">colunas =</span> <span class="fu">ncol</span>(voos_grande))</span>
+<span id="cb3-8"><a></a></span>
+<span id="cb3-9"><a></a><span class="co"># Tamanho do CSV em disco</span></span>
+<span id="cb3-10"><a></a><span class="fu">tibble</span>(</span>
+<span id="cb3-11"><a></a>  <span class="at">arquivo     =</span> <span class="st">"dados_aula/csv/voos.csv"</span>,</span>
+<span id="cb3-12"><a></a>  <span class="at">tamanho_mb  =</span> <span class="fu">round</span>(<span class="fu">file.size</span>(arquivo) <span class="sc">/</span> <span class="fl">1e6</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-memória-vs-disco" class="slide level2">
+<h2>Output: memória vs disco</h2>
+<pre><code>18.5 MB
+
+# A tibble: 1 × 2
+   linhas colunas
+    &lt;int&gt;   &lt;int&gt;
+1 18522680      20
+
+# A tibble: 1 × 2
+  arquivo                  tamanho_mb
+  &lt;chr&gt;                         &lt;dbl&gt;
+1 dados_aula/csv/voos.csv        1420</code></pre>
+<p>O objeto com 18 milhões de linhas ocupa 18,5 MB na RAM porque o R usa tipos nativos de tamanho fixo. O CSV ocupa 1,4 GB em disco por ser texto sem compressão.</p>
+<p>O objeto na RAM ocupa mais do que o CSV em disco porque o R armazena cada tipo nativo com tamanho fixo em bytes, enquanto o CSV armazena texto que pode ser comprimido.</p>
+</section>
+<section id="três-situações-que-travam-o-r" class="slide level2">
+<h2>Três situações que travam o R</h2>
+<p><strong>Situação 1: arquivo maior que a RAM</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># Falha com: cannot allocate vector of size X Gb</span></span>
+<span id="cb5-2"><a></a><span class="fu">read_csv</span>(<span class="st">"arquivo_50gb.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Situação 2: arquivo cabe na RAM, operações não cabem</strong></p>
+<p>Um arquivo de 4 GB com 8 GB de RAM disponível pode travar em operações de <code>mutate()</code> ou <code>join()</code> porque o R cria cópias intermediárias.</p>
+<p><strong>Situação 3: múltiplos arquivos acumulados</strong></p>
+<p>Carregar arquivos mensais em loop para concatenar esgota a memória progressivamente, mesmo que cada arquivo individual caiba.</p>
+</section>
+<section id="a-solução-execução-preguiçosa" class="slide level2">
+<h2>A solução: execução preguiçosa</h2>
+<p>O <code>arrow</code> resolve o problema com <strong>execução preguiçosa</strong> (lazy evaluation):</p>
+<ul>
+<li><code>open_dataset()</code> não lê os dados. Registra onde estão e lê apenas o esquema.</li>
+<li>Operações <code>dplyr</code> constroem um <strong>plano de execução</strong> sem executar nada.</li>
+<li><code>collect()</code> é o único passo que lê dados da memória, e lê <strong>apenas o necessário</strong>.</li>
+</ul>
+<p>Filtrar 1 mês de um arquivo de 10 anos lê apenas os dados daquele mês do disco, não os 10 anos inteiros.</p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Pense no <code>arrow</code> como um intermediário entre o <code>dplyr</code> e o disco. Você escreve o mesmo código que já conhece. O <code>arrow</code> decide o que precisa ser lido.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-2" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+
+</section>
+<section id="o-formato-parquet" class="slide level2">
+<h2>O Formato Parquet</h2>
+</section></section>
+<section id="o-que-é-o-formato-parquet" class="slide level2">
+<h2>O que é o formato Parquet</h2>
+<p>O <strong>Apache Parquet</strong> é um formato de armazenamento colunar binário projetado para análise de dados em grande escala. É o formato nativo do ecossistema Arrow.</p>
+<p><strong>Diferença fundamental entre CSV e Parquet:</strong></p>
+<ul>
+<li><strong>CSV:</strong> armazena dados linha por linha (orientado a linhas)</li>
+<li><strong>Parquet:</strong> armazena dados coluna por coluna (orientado a colunas)</li>
+</ul>
+<p>Para análise de dados, que normalmente opera sobre poucas colunas de muitas linhas, o formato colunar é muito mais eficiente porque lê apenas as colunas necessárias, ignorando as demais completamente.</p>
+</section>
+<section id="por-que-o-parquet-é-mais-rápido" class="slide level2">
+<h2>Por que o Parquet é mais rápido</h2>
+<p>Imagine uma tabela com 50 colunas e 10 milhões de linhas. Você quer calcular a média de apenas uma coluna.</p>
+<p><strong>Com CSV:</strong> o R lê todas as 50 colunas de todas as 10 milhões de linhas, extrai a coluna desejada e calcula a média.</p>
+<p><strong>Com Parquet:</strong> o Arrow lê apenas os blocos da coluna desejada no disco. As outras 49 colunas nunca são lidas.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Característica</th>
+<th>CSV</th>
+<th>Parquet</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Formato</td>
+<td>Texto, linha por linha</td>
+<td>Binário, coluna por coluna</td>
+</tr>
+<tr class="even">
+<td>Compressão</td>
+<td>Nenhuma ou gzip</td>
+<td>Snappy, Zstd, LZ4, Brotli</td>
+</tr>
+<tr class="odd">
+<td>Leitura seletiva de colunas</td>
+<td>Impossível</td>
+<td>Nativa</td>
+</tr>
+<tr class="even">
+<td>Tipos de dados</td>
+<td>Inferidos na leitura</td>
+<td>Armazenados no arquivo</td>
+</tr>
+<tr class="odd">
+<td>Legibilidade humana</td>
+<td>Sim</td>
+<td>Não</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="codificações-e-compressão-no-parquet" class="slide level2">
+<h2>Codificações e compressão no Parquet</h2>
+<p>O Parquet aplica duas técnicas de redução de tamanho antes da compressão:</p>
+<p><strong>Dictionary encoding:</strong> valores que se repetem muito são armazenados uma única vez num dicionário. A coluna armazena apenas o índice do dicionário. Uma coluna com 10 milhões de linhas e apenas 3 valores distintos armazena basicamente um vetor de inteiros pequenos.</p>
+<p><strong>Run-length encoding (RLE):</strong> sequências de valores iguais são armazenadas como o valor mais a contagem. Uma coluna com 1.000 linhas do mesmo valor armazena apenas o valor e o número 1.000.</p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>O algoritmo de compressão padrão do <code>arrow</code> em R é o <strong>Snappy</strong>, que prioriza velocidade de leitura e escrita. Para máxima compressão com leitura mais lenta, use <code>Zstd</code>. Para compatibilidade mais ampla, use <code>gzip</code>.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="código-salvando-em-parquet" class="slide level2">
+<h2>Código: salvando em Parquet</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="co"># Salvar com compressão padrão (Snappy)</span></span>
+<span id="cb6-2"><a></a><span class="fu">write_parquet</span>(voos_grande, <span class="st">"dados_aula/parquet/voos.parquet"</span>)</span>
+<span id="cb6-3"><a></a></span>
+<span id="cb6-4"><a></a><span class="co"># Salvar com Zstd para máxima compressão</span></span>
+<span id="cb6-5"><a></a><span class="fu">write_parquet</span>(</span>
+<span id="cb6-6"><a></a>  voos_grande,</span>
+<span id="cb6-7"><a></a>  <span class="st">"dados_aula/parquet/voos_zstd.parquet"</span>,</span>
+<span id="cb6-8"><a></a>  <span class="at">compression =</span> <span class="st">"zstd"</span>,</span>
+<span id="cb6-9"><a></a>  <span class="at">compression_level =</span> <span class="dv">3</span>)</span>
+<span id="cb6-10"><a></a></span>
+<span id="cb6-11"><a></a><span class="co"># Comparar tamanhos</span></span>
+<span id="cb6-12"><a></a><span class="fu">tibble</span>(</span>
+<span id="cb6-13"><a></a>  <span class="at">formato    =</span> <span class="fu">c</span>(<span class="st">"CSV"</span>, <span class="st">"Parquet Snappy"</span>, <span class="st">"Parquet Zstd"</span>),</span>
+<span id="cb6-14"><a></a>  <span class="at">arquivo    =</span> <span class="fu">c</span>(</span>
+<span id="cb6-15"><a></a>    <span class="st">"dados_aula/csv/voos.csv"</span>,</span>
+<span id="cb6-16"><a></a>    <span class="st">"dados_aula/parquet/voos.parquet"</span>,</span>
+<span id="cb6-17"><a></a>    <span class="st">"dados_aula/parquet/voos_zstd.parquet"</span>),</span>
+<span id="cb6-18"><a></a>  <span class="at">tamanho_mb =</span> <span class="fu">round</span>(<span class="fu">file.size</span>(arquivo) <span class="sc">/</span> <span class="fl">1e6</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-comparação-de-tamanho" class="slide level2">
+<h2>Output: comparação de tamanho</h2>
+<pre><code># A tibble: 3 × 3
+  formato        arquivo                                  tamanho_mb
+  &lt;chr&gt;          &lt;chr&gt;                                         &lt;dbl&gt;
+1 CSV            dados_aula/csv/voos.csv                      1420.0
+2 Parquet Snappy dados_aula/parquet/voos.parquet               182.4
+3 Parquet Zstd   dados_aula/parquet/voos_zstd.parquet           97.1</code></pre>
+<p>O Parquet com Snappy ocupa 87% menos que o CSV. O Zstd comprime ainda mais, ao custo de leitura ligeiramente mais lenta.</p>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-3" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+
+</section>
+<section id="benchmark-csv-vs-parquet" class="slide level2">
+<h2>Benchmark: CSV vs Parquet</h2>
+</section></section>
+<section id="o-que-vamos-medir" class="slide level2 scrollable">
+<h2>O que vamos medir</h2>
+<p>Vamos comparar três operações idênticas executadas sobre os mesmos dados em três formatos diferentes:</p>
+<ol type="1">
+<li>CSV lido com <code>read_csv()</code> do <code>readr</code></li>
+<li>CSV lido com <code>read_csv_arrow()</code> do <code>arrow</code></li>
+<li>Parquet lido com <code>open_dataset()</code> do <code>arrow</code></li>
+</ol>
+<p>A operação: filtrar voos com atraso de chegada acima de 60 minutos, agrupar por companhia aérea e calcular a média do atraso.</p>
+</section>
+<section id="código-benchmark-de-leitura-e-filtro" class="slide level2">
+<h2>Código: benchmark de leitura e filtro</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>benchmark_resultado <span class="ot">&lt;-</span> <span class="fu">mark</span>(</span>
+<span id="cb8-2"><a></a>  <span class="at">readr_csv =</span> {</span>
+<span id="cb8-3"><a></a>    <span class="fu">read_csv</span>(<span class="st">"dados_aula/csv/voos.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a></a>      <span class="fu">filter</span>(arr_delay <span class="sc">&gt;</span> <span class="dv">60</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a></a>      <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a></a>      <span class="fu">summarise</span>(<span class="at">media_atraso =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb8-7"><a></a>  },</span>
+<span id="cb8-8"><a></a>  <span class="at">arrow_csv =</span> {</span>
+<span id="cb8-9"><a></a>    <span class="fu">read_csv_arrow</span>(<span class="st">"dados_aula/csv/voos.csv"</span>, <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-10"><a></a>      <span class="fu">filter</span>(arr_delay <span class="sc">&gt;</span> <span class="dv">60</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-11"><a></a>      <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb8-12"><a></a>      <span class="fu">summarise</span>(<span class="at">media_atraso =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-13"><a></a>      <span class="fu">collect</span>()</span>
+<span id="cb8-14"><a></a>  },</span>
+<span id="cb8-15"><a></a>  <span class="at">arrow_parquet =</span> {</span>
+<span id="cb8-16"><a></a>    <span class="fu">open_dataset</span>(<span class="st">"dados_aula/parquet/voos.parquet"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-17"><a></a>      <span class="fu">filter</span>(arr_delay <span class="sc">&gt;</span> <span class="dv">60</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-18"><a></a>      <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb8-19"><a></a>      <span class="fu">summarise</span>(<span class="at">media_atraso =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-20"><a></a>      <span class="fu">collect</span>()</span>
+<span id="cb8-21"><a></a>  },</span>
+<span id="cb8-22"><a></a>  <span class="at">iterations =</span> <span class="dv">3</span>,</span>
+<span id="cb8-23"><a></a>  <span class="at">check =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-24"><a></a></span>
+<span id="cb8-25"><a></a>benchmark_resultado <span class="sc">|&gt;</span></span>
+<span id="cb8-26"><a></a>  <span class="fu">select</span>(expression, median, mem_alloc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-resultados-do-benchmark" class="slide level2">
+<h2>Output: resultados do benchmark</h2>
+<pre><code># expression    median   mem_alloc
+# readr_csv     28.4s    2.84GB
+# arrow_csv      9.1s    1.12GB
+# arrow_parquet  1.8s   48.2MB</code></pre>
+<p>O Parquet com Arrow é 15x mais rápido que o <code>readr</code> e usa 60x menos memória para a mesma operação sobre os mesmos dados. arrow_parquet = { open_dataset(“dados_aula/parquet/voos.parquet”) |&gt; filter(arr_delay &gt; 60) |&gt; group_by(carrier) |&gt; summarise(media_atraso = mean(arr_delay, na.rm = TRUE)) |&gt; collect() }, iterations = 3, check = FALSE)</p>
+<p>benchmark_resultado |&gt; select(expression, median, mem_alloc)</p>
+<pre><code>
+------------------------------------------------------------------------
+
+## Visualização do benchmark
+
+
+::: {.cell}
+
+```{.r .cell-code}
+benchmark_resultado |&gt;
+  mutate(expression = as.character(expression)) |&gt;
+  ggplot(aes(x = reorder(expression, median),
+             y = as.numeric(median),
+             fill = expression)) +
+  geom_col(alpha = 0.85) +
+  scale_fill_manual(values = c(
+    "readr_csv"    = cores_cafe["marrom"],
+    "arrow_csv"    = cores_cafe["azul_claro"],
+    "arrow_parquet" = cores_cafe["azul_escuro"])) +
+  coord_flip() +
+  labs(
+    title   = "Tempo mediano por abordagem de leitura",
+    subtitle = "Filtro + agrupamento em ~18 milhões de linhas",
+    x       = NULL,
+    y       = "Tempo mediano (segundos)",
+    fill    = NULL,
+    caption = "Jennifer Lopes | Café com R") +
+  tema +
+  theme(legend.position = "none")</code></pre>
+<p>:::</p>
+</section>
+<section id="gráfico-benchmark" class="slide level2">
+<h2>Gráfico: benchmark</h2>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>O gráfico abaixo representa os resultados do benchmark. Execute o código localmente para gerar a visualização com os tempos da sua máquina.</p>
+<pre><code>readr_csv      |████████████████████████████| 28.4s
+arrow_csv      |█████████                   |  9.1s
+arrow_parquet  |██                          |  1.8s</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="section" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section>
+<section id="bloco-4" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 4</h1>
+
+</section>
+<section id="open_dataset-e-consultas-lazy" class="slide level2">
+<h2>open_dataset() e Consultas Lazy</h2>
+</section></section>
+<section id="open_dataset-abrindo-sem-carregar" class="slide level2">
+<h2>open_dataset(): abrindo sem carregar</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="co"># Abre o dataset sem carregar nenhum dado na memória</span></span>
+<span id="cb12-2"><a></a>ds_parquet <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_aula/parquet/voos.parquet"</span>)</span>
+<span id="cb12-3"><a></a></span>
+<span id="cb12-4"><a></a><span class="co"># Inspecionar o esquema sem collect()</span></span>
+<span id="cb12-5"><a></a>ds_parquet<span class="sc">$</span>schema</span>
+<span id="cb12-6"><a></a></span>
+<span id="cb12-7"><a></a><span class="co"># Ver dimensões sem collect()</span></span>
+<span id="cb12-8"><a></a>ds_parquet<span class="sc">$</span>num_rows</span>
+<span id="cb12-9"><a></a>ds_parquet<span class="sc">$</span>num_cols</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-esquema-do-dataset" class="slide level2">
+<h2>Output: esquema do dataset</h2>
+<pre><code>Schema
+year: int32
+month: int32
+day: int32
+dep_time: int32
+sched_dep_time: int32
+dep_delay: double
+arr_time: int32
+sched_arr_time: int32
+arr_delay: double
+carrier: string
+flight: int32
+tailnum: string
+origin: string
+dest: string
+air_time: double
+distance: double
+hour: double
+minute: double
+time_hour: timestamp[s, tz=UTC]
+id: int32</code></pre>
+<p>O esquema é lido do rodapé do arquivo Parquet sem carregar nenhum dado na memória.</p>
+<p>O esquema é lido do rodapé do arquivo Parquet. Isso não carrega nenhum dado, apenas os metadados.</p>
+</section>
+<section id="pipeline-lazy-com-dplyr" class="slide level2">
+<h2>Pipeline lazy com dplyr</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="co"># Nada é executado até o collect()</span></span>
+<span id="cb14-2"><a></a>consulta <span class="ot">&lt;-</span> ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a></a>  <span class="fu">filter</span>(month <span class="sc">==</span> <span class="dv">7</span>, arr_delay <span class="sc">&gt;</span> <span class="dv">30</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a></a>  <span class="fu">select</span>(carrier, origin, dest, arr_delay, dep_delay) <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a></a>  <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-7"><a></a>    <span class="at">n             =</span> <span class="fu">n</span>(),</span>
+<span id="cb14-8"><a></a>    <span class="at">media_arr     =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-9"><a></a>    <span class="at">media_dep     =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-10"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-11"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(media_arr))</span>
+<span id="cb14-12"><a></a></span>
+<span id="cb14-13"><a></a><span class="co"># Aqui o Arrow executa o plano e retorna um data.frame</span></span>
+<span id="cb14-14"><a></a>resultado <span class="ot">&lt;-</span> consulta <span class="sc">|&gt;</span> <span class="fu">collect</span>()</span>
+<span id="cb14-15"><a></a></span>
+<span id="cb14-16"><a></a>resultado</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-resultado-da-consulta-lazy" class="slide level2">
+<h2>Output: resultado da consulta lazy</h2>
+<pre><code># A tibble: 16 × 4
+   carrier     n media_arr media_dep
+   &lt;chr&gt;   &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 OO        374      96.2      87.1
+ 2 EV      14113      87.4      71.2
+ 3 MQ       8833      84.9      63.8
+ 4 B6      21406      83.1      61.4
+ 5 UA      18427      82.3      67.1</code></pre>
+</section>
+<section id="novidades-str_ilike-para-filtros-de-texto" class="slide level2">
+<h2>Novidades: str_ilike() para filtros de texto</h2>
+<p>A versão 23.0.0 adicionou o binding <code>stringr::str_ilike()</code> para correspondência de padrões sem distinção de maiúsculas e minúsculas, diretamente no modo lazy:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="co"># Filtrar destinos que contenham "ATL" sem distinção de caso</span></span>
+<span id="cb16-2"><a></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a></a>  <span class="fu">filter</span>(<span class="fu">str_ilike</span>(dest, <span class="st">"%atl%"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a></a>  <span class="fu">select</span>(carrier, origin, dest, arr_delay) <span class="sc">|&gt;</span></span>
+<span id="cb16-5"><a></a>  <span class="fu">collect</span>() <span class="sc">|&gt;</span></span>
+<span id="cb16-6"><a></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-str_ilike-no-modo-lazy" class="slide level2">
+<h2>Output: str_ilike() no modo lazy</h2>
+<pre><code># A tibble: 5 × 4
+  carrier origin dest  arr_delay
+  &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;
+1 EV      EWR    ATL          -8
+2 EV      EWR    ATL          25
+3 EV      EWR    ATL         -12
+4 DL      JFK    ATL          -5
+5 DL      JFK    ATL          17</code></pre>
+</section>
+<section id="section-1" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section>
+<section id="bloco-5" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 5</h1>
+
+</section>
+<section id="particionamento-de-datasets" class="slide level2">
+<h2>Particionamento de Datasets</h2>
+</section></section>
+<section id="o-que-é-particionamento" class="slide level2">
+<h2>O que é particionamento</h2>
+<p>Particionamento divide o dataset em múltiplos arquivos organizados em subpastas, com base nos valores de uma ou mais colunas.</p>
+<p>Quando você filtra por uma coluna de partição, o Arrow localiza diretamente as subpastas relevantes e ignora todas as outras, sem ler nenhum arquivo desnecessário.</p>
+<p><strong>Estrutura gerada por <code>write_dataset()</code> com partição por <code>origin</code>:</strong></p>
+<pre><code>dados_aula/particionado/
+├── origin=EWR/
+│   └── part-0.parquet
+├── origin=JFK/
+│   └── part-0.parquet
+└── origin=LGA/
+    └── part-0.parquet</code></pre>
+</section>
+<section id="código-criando-dataset-particionado" class="slide level2">
+<h2>Código: criando dataset particionado</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="co"># Particionar por origin e month para consultas por aeroporto e período</span></span>
+<span id="cb19-2"><a></a>voos_grande <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a></a>  <span class="fu">group_by</span>(origin, month) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a></a>  <span class="fu">write_dataset</span>(</span>
+<span id="cb19-5"><a></a>    <span class="st">"dados_aula/particionado_avancado"</span>,</span>
+<span id="cb19-6"><a></a>    <span class="at">format =</span> <span class="st">"parquet"</span>)</span>
+<span id="cb19-7"><a></a></span>
+<span id="cb19-8"><a></a><span class="co"># Abrir o dataset particionado</span></span>
+<span id="cb19-9"><a></a>ds_part <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_aula/particionado_avancado"</span>)</span>
+<span id="cb19-10"><a></a></span>
+<span id="cb19-11"><a></a><span class="co"># O Arrow já sabe quais partições existem</span></span>
+<span id="cb19-12"><a></a>ds_part<span class="sc">$</span>schema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="código-consultando-com-partição" class="slide level2">
+<h2>Código: consultando com partição</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># Filtrar por origin = "JFK" lê apenas a subpasta origin=JFK/</span></span>
+<span id="cb20-2"><a></a><span class="co"># Nenhum arquivo de EWR ou LGA é tocado</span></span>
+<span id="cb20-3"><a></a>ds_part <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_aula/particionado"</span>)</span>
+<span id="cb20-4"><a></a></span>
+<span id="cb20-5"><a></a>ds_part <span class="sc">|&gt;</span></span>
+<span id="cb20-6"><a></a>  <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"JFK"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-7"><a></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span></span>
+<span id="cb20-8"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb20-9"><a></a>    <span class="at">n             =</span> <span class="fu">n</span>(),</span>
+<span id="cb20-10"><a></a>    <span class="at">media_atraso  =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb20-11"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-12"><a></a>  <span class="fu">arrange</span>(month) <span class="sc">|&gt;</span></span>
+<span id="cb20-13"><a></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-consulta-com-partição" class="slide level2">
+<h2>Output: consulta com partição</h2>
+<pre><code># A tibble: 12 × 3
+   month       n media_atraso
+   &lt;int&gt;   &lt;int&gt;        &lt;dbl&gt;
+ 1     1  296484         3.38
+ 2     2  265804         6.14
+ 3     3  322289         5.05
+ 4     4  311795        10.51
+ 5     5  325437         2.91
+ 6     6  356529        15.07</code></pre>
+<p>O Arrow leu apenas a subpasta <code>origin=JFK/</code> e ignorou completamente as subpastas <code>origin=EWR/</code> e <code>origin=LGA/</code>.</p>
+</section>
+<section id="benchmark-particionado-vs-não-particionado" class="slide level2">
+<h2>Benchmark: particionado vs não particionado</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">mark</span>(</span>
+<span id="cb22-2"><a></a>  <span class="at">sem_particao =</span> {</span>
+<span id="cb22-3"><a></a>    <span class="fu">open_dataset</span>(<span class="st">"dados_aula/parquet/voos.parquet"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-4"><a></a>      <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"JFK"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-5"><a></a>      <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb22-6"><a></a>      <span class="fu">collect</span>()</span>
+<span id="cb22-7"><a></a>  },</span>
+<span id="cb22-8"><a></a>  <span class="at">com_particao =</span> {</span>
+<span id="cb22-9"><a></a>    <span class="fu">open_dataset</span>(<span class="st">"dados_aula/particionado"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-10"><a></a>      <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"JFK"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-11"><a></a>      <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb22-12"><a></a>      <span class="fu">collect</span>()</span>
+<span id="cb22-13"><a></a>  },</span>
+<span id="cb22-14"><a></a>  <span class="at">iterations =</span> <span class="dv">5</span>,</span>
+<span id="cb22-15"><a></a>  <span class="at">check =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-16"><a></a>  <span class="fu">select</span>(expression, median, mem_alloc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-ganho-com-particionamento" class="slide level2">
+<h2>Output: ganho com particionamento</h2>
+<pre><code># expression    median   mem_alloc
+# sem_particao  1.24s    182MB
+# com_particao  0.41s     61MB</code></pre>
+<p>Com particionamento, o tempo caiu 3x e o uso de memória caiu 3x, porque o Arrow leu apenas 1 dos 3 arquivos.</p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Regra prática:</strong> particione pelas colunas que você filtra com mais frequência. Uma coluna com cardinalidade alta (muitos valores distintos) gera muitas partições pequenas e pode prejudicar o desempenho. Prefira colunas com poucos valores distintos, como mês, ano ou categoria.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="section-2" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section>
+<section id="bloco-6" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 6</h1>
+
+</section>
+<section id="importação-eficiente" class="slide level2">
+<h2>Importação Eficiente</h2>
+</section></section>
+<section id="read_csv_arrow-vs-read_csv" class="slide level2">
+<h2>read_csv_arrow() vs read_csv()</h2>
+<p>O <code>arrow</code> oferece <code>read_csv_arrow()</code> como alternativa mais rápida ao <code>read_csv()</code> do <code>readr</code> para CSVs grandes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="co"># Ler como Arrow Table (permanece lazy)</span></span>
+<span id="cb24-2"><a></a>voos_arrow <span class="ot">&lt;-</span> <span class="fu">read_csv_arrow</span>(</span>
+<span id="cb24-3"><a></a>  <span class="st">"dados_aula/csv/voos.csv"</span>,</span>
+<span id="cb24-4"><a></a>  <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-5"><a></a></span>
+<span id="cb24-6"><a></a><span class="co"># Especificar esquema para evitar inferência de tipos</span></span>
+<span id="cb24-7"><a></a>esquema <span class="ot">&lt;-</span> <span class="fu">schema</span>(</span>
+<span id="cb24-8"><a></a>  <span class="at">year      =</span> <span class="fu">int32</span>(),</span>
+<span id="cb24-9"><a></a>  <span class="at">month     =</span> <span class="fu">int32</span>(),</span>
+<span id="cb24-10"><a></a>  <span class="at">day       =</span> <span class="fu">int32</span>(),</span>
+<span id="cb24-11"><a></a>  <span class="at">origin    =</span> <span class="fu">utf8</span>(),</span>
+<span id="cb24-12"><a></a>  <span class="at">dest      =</span> <span class="fu">utf8</span>(),</span>
+<span id="cb24-13"><a></a>  <span class="at">arr_delay =</span> <span class="fu">float64</span>())</span>
+<span id="cb24-14"><a></a></span>
+<span id="cb24-15"><a></a>voos_typed <span class="ot">&lt;-</span> <span class="fu">read_csv_arrow</span>(</span>
+<span id="cb24-16"><a></a>  <span class="st">"dados_aula/csv/voos.csv"</span>,</span>
+<span id="cb24-17"><a></a>  <span class="at">schema        =</span> esquema,</span>
+<span id="cb24-18"><a></a>  <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="estratégia-recomendada-para-importação" class="slide level2">
+<h2>Estratégia recomendada para importação</h2>
+<p>O fluxo mais eficiente quando você recebe dados em CSV pela primeira vez:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="co"># Passo 1: ler o CSV com arrow (mais rápido que readr)</span></span>
+<span id="cb25-2"><a></a>dados_brutos <span class="ot">&lt;-</span> <span class="fu">read_csv_arrow</span>(</span>
+<span id="cb25-3"><a></a>  <span class="st">"arquivo_original.csv"</span>,</span>
+<span id="cb25-4"><a></a>  <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb25-5"><a></a></span>
+<span id="cb25-6"><a></a><span class="co"># Passo 2: converter e salvar em Parquet</span></span>
+<span id="cb25-7"><a></a>dados_brutos <span class="sc">|&gt;</span></span>
+<span id="cb25-8"><a></a>  <span class="fu">write_parquet</span>(<span class="st">"dados_limpos/arquivo.parquet"</span>)</span>
+<span id="cb25-9"><a></a></span>
+<span id="cb25-10"><a></a><span class="co"># Passo 3: a partir daqui, sempre usar open_dataset() no Parquet</span></span>
+<span id="cb25-11"><a></a>ds <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_limpos/arquivo.parquet"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Converta seus CSVs para Parquet uma única vez e use o Parquet para todas as análises subsequentes. A conversão é um custo único que se paga a cada leitura posterior.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="lendo-múltiplos-arquivos-de-uma-vez" class="slide level2">
+<h2>Lendo múltiplos arquivos de uma vez</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="co"># open_dataset() lê um diretório inteiro como um único dataset</span></span>
+<span id="cb26-2"><a></a><span class="co"># Todos os arquivos devem ter o mesmo esquema</span></span>
+<span id="cb26-3"><a></a>ds_multiplo <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(</span>
+<span id="cb26-4"><a></a>  <span class="st">"pasta_com_varios_csvs/"</span>,</span>
+<span id="cb26-5"><a></a>  <span class="at">format =</span> <span class="st">"csv"</span>)</span>
+<span id="cb26-6"><a></a></span>
+<span id="cb26-7"><a></a><span class="co"># Com Parquet, basta apontar para o diretório</span></span>
+<span id="cb26-8"><a></a>ds_parquet_multi <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"pasta_com_varios_parquets/"</span>)</span>
+<span id="cb26-9"><a></a></span>
+<span id="cb26-10"><a></a><span class="co"># Verificar total de linhas</span></span>
+<span id="cb26-11"><a></a>ds_parquet_multi<span class="sc">$</span>num_rows</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="dicas-de-eficiência-ao-importar" class="slide level2">
+<h2>Dicas de eficiência ao importar</h2>
+<p><strong>1. Especifique tipos ao ler CSV:</strong> a inferência de tipos em CSVs grandes é custosa. Especifique o esquema com <code>schema()</code> para eliminar essa etapa.</p>
+<p><strong>2. Use <code>col_select</code> ao ler Parquet:</strong> se você não precisa de todas as colunas, use <code>select()</code> antes do <code>collect()</code>. O Parquet lê apenas os blocos das colunas selecionadas.</p>
+<p><strong>3. Filtre antes de coletar:</strong> sempre aplique <code>filter()</code> antes de <code>collect()</code>. O <code>arrow</code> empurra o filtro para o disco e lê apenas o necessário.</p>
+<p><strong>4. Evite <code>collect()</code> desnecessário:</strong> se o resultado de uma etapa ainda vai ser usado em outra transformação, não colete antes. Mantenha o pipeline lazy até precisar do resultado final.</p>
+</section>
+<section id="section-3" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section>
+<section id="bloco-7" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 7</h1>
+
+</section>
+<section id="integração-com-duckdb" class="slide level2">
+<h2>Integração com DuckDB</h2>
+</section></section>
+<section id="por-que-integrar-arrow-com-duckdb" class="slide level2">
+<h2>Por que integrar Arrow com DuckDB</h2>
+<p>O <code>arrow</code> no modo lazy não suporta todas as funções do R. Funções como <code>median()</code>, <code>quantile()</code> e funções de janela como <code>ntile()</code> e <code>lag()</code> geram erro quando usadas antes do <code>collect()</code>.</p>
+<p>O <code>duckdb</code> resolve isso sem precisar carregar os dados na memória. A função <code>to_duckdb()</code> transfere o contexto de execução do Arrow para o DuckDB, que suporta um conjunto muito maior de operações SQL.</p>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p>A integração <code>to_duckdb()</code> não copia os dados para a memória. Ela passa a referência do dataset Arrow para o DuckDB, que lê diretamente do disco. O custo de memória é mínimo.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="código-to_duckdb-para-operações-avançadas" class="slide level2">
+<h2>Código: to_duckdb() para operações avançadas</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb27-2"><a></a></span>
+<span id="cb27-3"><a></a><span class="co"># to_duckdb() converte o dataset Arrow para uma tabela DuckDB</span></span>
+<span id="cb27-4"><a></a><span class="co"># sem copiar os dados para a memória</span></span>
+<span id="cb27-5"><a></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb27-6"><a></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb27-7"><a></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb27-8"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb27-9"><a></a>    <span class="at">n        =</span> <span class="fu">n</span>(),</span>
+<span id="cb27-10"><a></a>    <span class="at">mediana  =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-11"><a></a>    <span class="at">q25      =</span> <span class="fu">quantile</span>(arr_delay, <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-12"><a></a>    <span class="at">q75      =</span> <span class="fu">quantile</span>(arr_delay, <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-13"><a></a>    <span class="at">.groups  =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb27-14"><a></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-mediana-e-quartis-com-duckdb" class="slide level2">
+<h2>Output: mediana e quartis com DuckDB</h2>
+<pre><code># A tibble: 3 × 5
+  origin        n mediana   q25   q75
+  &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 EWR      6655285      -4   -14    14
+2 JFK      6137095      -5   -15    12
+3 LGA      5730300      -5   -16    12</code></pre>
+</section>
+<section id="funções-de-janela-com-duckdb" class="slide level2">
+<h2>Funções de janela com DuckDB</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># Funções de janela não funcionam no Arrow puro</span></span>
+<span id="cb29-2"><a></a><span class="co"># Com to_duckdb() funcionam normalmente</span></span>
+<span id="cb29-3"><a></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb29-4"><a></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb29-5"><a></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb29-6"><a></a>  <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb29-7"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb29-8"><a></a>    <span class="at">rank_atraso =</span> <span class="fu">dense_rank</span>(<span class="fu">desc</span>(arr_delay)),</span>
+<span id="cb29-9"><a></a>    <span class="at">ntile_5     =</span> <span class="fu">ntile</span>(arr_delay, <span class="dv">5</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb29-10"><a></a>  <span class="fu">filter</span>(rank_atraso <span class="sc">&lt;=</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
+<span id="cb29-11"><a></a>  <span class="fu">select</span>(carrier, flight, arr_delay, rank_atraso) <span class="sc">|&gt;</span></span>
+<span id="cb29-12"><a></a>  <span class="fu">arrange</span>(carrier, rank_atraso) <span class="sc">|&gt;</span></span>
+<span id="cb29-13"><a></a>  <span class="fu">collect</span>() <span class="sc">|&gt;</span></span>
+<span id="cb29-14"><a></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-funções-de-janela" class="slide level2">
+<h2>Output: funções de janela</h2>
+<pre><code># A tibble: 10 × 4
+   carrier flight arr_delay rank_atraso
+   &lt;chr&gt;    &lt;int&gt;     &lt;dbl&gt;       &lt;int&gt;
+ 1 9E        3650      1272           1
+ 2 9E        3301      1127           2
+ 3 9E        3667      1108           3
+ 4 AA         177      1014           1
+ 5 AA         251       989           2
+ 6 AA         172       978           3
+ 7 AS         837       786           1
+ 8 AS         837       774           2
+ 9 AS         837       754           3
+10 B6          17      1137           1</code></pre>
+</section>
+<section id="section-4" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section>
+<section id="bloco-8" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 8</h1>
+
+</section>
+<section id="o-que-o-arrow-suporta-e-o-que-não-suporta" class="slide level2">
+<h2>O que o Arrow Suporta e o que Não Suporta</h2>
+</section></section>
+<section id="funções-dplyr-suportadas-no-modo-lazy" class="slide level2">
+<h2>Funções dplyr suportadas no modo lazy</h2>
+<p>O <code>arrow</code> suporta a maioria das funções do <code>dplyr</code> e <code>tidyr</code> diretamente no modo lazy:</p>
+<ul>
+<li><code>filter()</code>, <code>select()</code>, <code>mutate()</code>, <code>rename()</code></li>
+<li><code>group_by()</code>, <code>summarise()</code>, <code>arrange()</code></li>
+<li><code>distinct()</code>, <code>count()</code>, <code>tally()</code></li>
+<li><code>left_join()</code>, <code>inner_join()</code>, <code>right_join()</code></li>
+<li><code>slice_head()</code>, <code>slice_tail()</code>, <code>slice_min()</code>, <code>slice_max()</code></li>
+<li>Funções de string do <code>stringr</code>: <code>str_detect()</code>, <code>str_replace()</code>, <code>str_to_lower()</code>, <code>str_ilike()</code> (novo na v23)</li>
+<li>Funções de data do <code>lubridate</code>: <code>year()</code>, <code>month()</code>, <code>floor_date()</code></li>
+<li><code>nchar()</code> com <code>keepNA</code> (novo na v23)</li>
+</ul>
+</section>
+<section id="funções-com-suporte-limitado-ou-ausente" class="slide level2">
+<h2>Funções com suporte limitado ou ausente</h2>
+<table class="caption-top" style="width:100%;">
+<colgroup>
+<col style="width: 53%">
+<col style="width: 22%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Função</th>
+<th>Status</th>
+<th>Alternativa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>median()</code> em <code>summarise()</code></td>
+<td>Não suportado</td>
+<td><code>to_duckdb()</code></td>
+</tr>
+<tr class="even">
+<td><code>quantile()</code></td>
+<td>Não suportado</td>
+<td><code>to_duckdb()</code></td>
+</tr>
+<tr class="odd">
+<td><code>lag()</code>, <code>lead()</code></td>
+<td>Suporte parcial</td>
+<td><code>to_duckdb()</code></td>
+</tr>
+<tr class="even">
+<td>Funções de janela (<code>ntile()</code>, <code>rank()</code>)</td>
+<td>Não suportado</td>
+<td><code>to_duckdb()</code></td>
+</tr>
+<tr class="odd">
+<td><code>rowwise()</code></td>
+<td>Não suportado</td>
+<td><code>collect()</code> antes</td>
+</tr>
+<tr class="even">
+<td>UDFs (funções definidas pelo usuário)</td>
+<td>Não suportado</td>
+<td><code>collect()</code> antes</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="como-identificar-o-que-não-é-suportado" class="slide level2">
+<h2>Como identificar o que não é suportado</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="co"># Isso vai gerar um erro antes do collect()</span></span>
+<span id="cb31-2"><a></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb31-4"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb31-5"><a></a>    <span class="at">mediana =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb31-6"><a></a>  <span class="fu">collect</span>()</span>
+<span id="cb31-7"><a></a></span>
+<span id="cb31-8"><a></a><span class="co"># Error: Function 'median' not found or not supported in Arrow</span></span>
+<span id="cb31-9"><a></a></span>
+<span id="cb31-10"><a></a><span class="co"># Solução 1: collect() antes da operação não suportada</span></span>
+<span id="cb31-11"><a></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb31-12"><a></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb31-13"><a></a>  <span class="fu">collect</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-14"><a></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb31-15"><a></a>  <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(arr_delay))</span>
+<span id="cb31-16"><a></a></span>
+<span id="cb31-17"><a></a><span class="co"># Solução 2: to_duckdb() sem collect() intermediário</span></span>
+<span id="cb31-18"><a></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb31-19"><a></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb31-20"><a></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-21"><a></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb31-22"><a></a>  <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb31-23"><a></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="section-5" class="slide level2" data-background-color="#E5D3B3">
+<h2></h2>
+</section>
+<section>
+<section id="bloco-9" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 9</h1>
+
+</section>
+<section id="erros-comuns-e-decisões-práticas" class="slide level2">
+<h2>Erros Comuns e Decisões Práticas</h2>
+</section></section>
+<section id="erros-comuns-parte-1" class="slide level2">
+<h2>Erros comuns: parte 1</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Causa</th>
+<th>Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Function not found in Arrow</code></td>
+<td>Função não suportada no modo lazy</td>
+<td><code>to_duckdb()</code> ou <code>collect()</code> antes</td>
+</tr>
+<tr class="even">
+<td>Partição não reconhecida</td>
+<td>Convenção de nome incorreta nas pastas</td>
+<td>Usar <code>write_dataset()</code> para criar partições</td>
+</tr>
+<tr class="odd">
+<td>Tipos incorretos ao ler CSV</td>
+<td>Inferência de tipos errada</td>
+<td>Especificar <code>schema()</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="erros-comuns-parte-2" class="slide level2">
+<h2>Erros comuns: parte 2</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Causa</th>
+<th>Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>collect()</code> lento demais</td>
+<td>Filtro aplicado após <code>collect()</code></td>
+<td>Mover <code>filter()</code> para antes do <code>collect()</code></td>
+</tr>
+<tr class="even">
+<td>Dataset muito fragmentado</td>
+<td>Muitas partições com arquivos pequenos</td>
+<td>Repartir com menos colunas de partição</td>
+</tr>
+<tr class="odd">
+<td>Esquemas incompatíveis entre arquivos</td>
+<td>Arquivos com colunas diferentes</td>
+<td>Especificar <code>schema()</code> em <code>open_dataset()</code></td>
+</tr>
+<tr class="even">
+<td>Erro ao instalar em Linux</td>
+<td>Compilador sem suporte a C++20 (v23+)</td>
+<td>Ver <code>vignette("install", package = "arrow")</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="quando-usar-cada-abordagem" class="slide level2">
+<h2>Quando usar cada abordagem</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Abordagem</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dados menores que 1 GB</td>
+<td><code>read_csv()</code> ou <code>read_parquet()</code> com tidyverse</td>
+</tr>
+<tr class="even">
+<td>Dados de 1 GB a 10 GB</td>
+<td><code>open_dataset()</code> com dplyr e <code>collect()</code></td>
+</tr>
+<tr class="odd">
+<td>Dados maiores que 10 GB</td>
+<td><code>open_dataset()</code> com particionamento e dplyr</td>
+</tr>
+<tr class="even">
+<td>Consultas com <code>median()</code> ou <code>quantile()</code></td>
+<td><code>to_duckdb()</code> sem <code>collect()</code> intermediário</td>
+</tr>
+<tr class="odd">
+<td>Funções de janela em dados grandes</td>
+<td><code>to_duckdb()</code> sem <code>collect()</code> intermediário</td>
+</tr>
+<tr class="even">
+<td>SQL complexo em dados grandes</td>
+<td><code>to_duckdb()</code> sem <code>collect()</code></td>
+</tr>
+<tr class="odd">
+<td>Dados na nuvem (S3, GCS)</td>
+<td><code>open_dataset()</code> com URI do bucket</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="resumo-do-fluxo-completo" class="slide level2">
+<h2>Resumo do fluxo completo</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="co"># 1. Recebeu CSV? Converta para Parquet uma vez</span></span>
+<span id="cb32-2"><a></a>dados_brutos <span class="ot">&lt;-</span> <span class="fu">read_csv_arrow</span>(<span class="st">"dados.csv"</span>, <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb32-3"><a></a><span class="fu">write_parquet</span>(dados_brutos, <span class="st">"dados.parquet"</span>)</span>
+<span id="cb32-4"><a></a></span>
+<span id="cb32-5"><a></a><span class="co"># 2. Abra sem carregar</span></span>
+<span id="cb32-6"><a></a>ds <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados.parquet"</span>)</span>
+<span id="cb32-7"><a></a></span>
+<span id="cb32-8"><a></a><span class="co"># 3. Filtre, selecione, agregue no modo lazy</span></span>
+<span id="cb32-9"><a></a>resultado <span class="ot">&lt;-</span> ds <span class="sc">|&gt;</span></span>
+<span id="cb32-10"><a></a>  <span class="fu">filter</span>(ano <span class="sc">==</span> <span class="dv">2024</span>, regiao <span class="sc">==</span> <span class="st">"Sul"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb32-11"><a></a>  <span class="fu">select</span>(produto, valor, data) <span class="sc">|&gt;</span></span>
+<span id="cb32-12"><a></a>  <span class="fu">group_by</span>(produto) <span class="sc">|&gt;</span></span>
+<span id="cb32-13"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb32-14"><a></a>    <span class="at">total =</span> <span class="fu">sum</span>(valor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb32-15"><a></a>    <span class="at">n     =</span> <span class="fu">n</span>(),</span>
+<span id="cb32-16"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb32-17"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total)) <span class="sc">|&gt;</span></span>
+<span id="cb32-18"><a></a>  <span class="fu">collect</span>()          <span class="co"># &lt;-- somente aqui os dados são lidos</span></span>
+<span id="cb32-19"><a></a></span>
+<span id="cb32-20"><a></a><span class="co"># 4. Precisa de mediana ou quartis? Use DuckDB</span></span>
+<span id="cb32-21"><a></a>ds <span class="sc">|&gt;</span></span>
+<span id="cb32-22"><a></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb32-23"><a></a>  <span class="fu">group_by</span>(regiao) <span class="sc">|&gt;</span></span>
+<span id="cb32-24"><a></a>  <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(valor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb32-25"><a></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="referências" class="slide level2">
+<h2>Referências</h2>
+<ul>
+<li>Livro oficial do Arrow para R: <a href="https://arrowrbook.com">arrowrbook.com</a></li>
+<li>Documentação do pacote: <a href="https://arrow.apache.org/docs/r/">arrow.apache.org/docs/r</a></li>
+<li>Changelog do pacote arrow: <a href="https://arrow.apache.org/docs/dev/r/news/index.html">arrow.apache.org/docs/dev/r/news</a></li>
+<li>Especificação Apache Arrow: <a href="https://arrow.apache.org">arrow.apache.org</a></li>
+<li>Especificação Apache Parquet: <a href="https://parquet.apache.org">parquet.apache.org</a></li>
+<li>Integração Arrow e DuckDB: <a href="https://duckdb.org/docs/guides/r/arrow">duckdb.org/docs/guides/r/arrow</a></li>
+</ul>
+</section>
+<section id="obrigada" class="slide level2">
+<h2>Obrigada!</h2>
+
+<img data-src="imagens/comunidade.png" class="quarto-figure quarto-figure-center r-stretch" width="420"><p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+</section>
+<section id="siga-o-café-com-r" class="slide level2">
+<h2>Siga o Café com R</h2>
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p>SITE OFICIAL &gt; https://jenniferlopes.github.io/meu_site/</p>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="imagens/logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Jennifer Lopes | Café com R</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': true,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

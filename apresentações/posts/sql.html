@@ -319,7 +319,7 @@
 <span id="cb4-4"><a></a><span class="co"># Ver os dados</span></span>
 <span id="cb4-5"><a></a>clientes_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   table&lt;`clientes`&gt; [?? x 4]
+<pre><code># A query:  ?? x 4
 # Database: sqlite 3.51.2 [:memory:]
      id nome     idade cidade
   &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt; 
@@ -341,7 +341,7 @@
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>clientes_db <span class="sc">|&gt;</span></span>
 <span id="cb7-2"><a></a>  <span class="fu">select</span>(nome, idade)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 2]
+<pre><code># A query:  ?? x 2
 # Database: sqlite 3.51.2 [:memory:]
   nome     idade
   &lt;chr&gt;    &lt;dbl&gt;
@@ -362,7 +362,7 @@
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>clientes_db <span class="sc">|&gt;</span></span>
 <span id="cb10-2"><a></a>  <span class="fu">filter</span>(idade <span class="sc">&gt;</span> <span class="dv">25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 4]
+<pre><code># A query:  ?? x 4
 # Database: sqlite 3.51.2 [:memory:]
      id nome     idade cidade
   &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt; 
@@ -427,7 +427,7 @@
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>clientes_db <span class="sc">|&gt;</span></span>
 <span id="cb13-2"><a></a>  <span class="fu">filter</span>(idade <span class="sc">&gt;</span> <span class="dv">25</span> <span class="sc">&amp;</span> cidade <span class="sc">==</span> <span class="st">"SP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 4]
+<pre><code># A query:  ?? x 4
 # Database: sqlite 3.51.2 [:memory:]
      id nome     idade cidade
   &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt; 
@@ -445,7 +445,7 @@
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>clientes_db <span class="sc">|&gt;</span></span>
 <span id="cb16-2"><a></a>  <span class="fu">filter</span>(cidade <span class="sc">==</span> <span class="st">"SP"</span> <span class="sc">|</span> cidade <span class="sc">==</span> <span class="st">"RJ"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 4]
+<pre><code># A query:  ?? x 4
 # Database: sqlite 3.51.2 [:memory:]
      id nome     idade cidade
   &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt; 
@@ -466,7 +466,7 @@
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>clientes_db <span class="sc">|&gt;</span></span>
 <span id="cb19-2"><a></a>  <span class="fu">filter</span>(cidade <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"SP"</span>, <span class="st">"RJ"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 4]
+<pre><code># A query:  ?? x 4
 # Database: sqlite 3.51.2 [:memory:]
      id nome     idade cidade
   &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt; 
@@ -486,7 +486,7 @@
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>clientes_db <span class="sc">|&gt;</span></span>
 <span id="cb22-2"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(idade))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:     SQL [?? x 4]
+<pre><code># A query:    ?? x 4
 # Database:   sqlite 3.51.2 [:memory:]
 # Ordered by: desc(idade)
      id nome     idade cidade
@@ -508,7 +508,7 @@
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>clientes_db <span class="sc">|&gt;</span></span>
 <span id="cb25-2"><a></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 4]
+<pre><code># A query:  ?? x 4
 # Database: sqlite 3.51.2 [:memory:]
      id nome     idade cidade
   &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt; 
@@ -527,7 +527,7 @@
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>clientes_db <span class="sc">|&gt;</span></span>
 <span id="cb28-2"><a></a>  <span class="fu">summarise</span>(<span class="at">total =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 1]
+<pre><code># A query:  ?? x 1
 # Database: sqlite 3.51.2 [:memory:]
   total
   &lt;int&gt;
@@ -562,7 +562,7 @@
 <span id="cb32-2"><a></a>  <span class="fu">group_by</span>(produto) <span class="sc">|&gt;</span></span>
 <span id="cb32-3"><a></a>  <span class="fu">summarise</span>(<span class="at">total_vendas =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 2]
+<pre><code># A query:  ?? x 2
 # Database: sqlite 3.51.2 [:memory:]
   produto total_vendas
   &lt;chr&gt;          &lt;int&gt;
@@ -584,7 +584,7 @@
 <span id="cb35-2"><a></a>  <span class="fu">group_by</span>(produto) <span class="sc">|&gt;</span></span>
 <span id="cb35-3"><a></a>  <span class="fu">summarise</span>(<span class="at">receita_total =</span> <span class="fu">sum</span>(valor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 2]
+<pre><code># A query:  ?? x 2
 # Database: sqlite 3.51.2 [:memory:]
   produto receita_total
   &lt;chr&gt;           &lt;dbl&gt;
@@ -615,7 +615,7 @@
 <span id="cb38-5"><a></a>    <span class="at">receita =</span> <span class="fu">sum</span>(valor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb38-6"><a></a>    <span class="at">ticket_medio =</span> <span class="fu">mean</span>(valor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 4]
+<pre><code># A query:  ?? x 4
 # Database: sqlite 3.51.2 [:memory:]
   produto vendas receita ticket_medio
   &lt;chr&gt;    &lt;int&gt;   &lt;dbl&gt;        &lt;dbl&gt;
@@ -679,7 +679,7 @@
 <span id="cb41-3"><a></a>  <span class="fu">summarise</span>(<span class="at">receita =</span> <span class="fu">sum</span>(valor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb41-4"><a></a>  <span class="fu">filter</span>(receita <span class="sc">&gt;</span> <span class="dv">200</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 2]
+<pre><code># A query:  ?? x 2
 # Database: sqlite 3.51.2 [:memory:]
   produto receita
   &lt;chr&gt;     &lt;dbl&gt;
@@ -700,7 +700,7 @@
 <span id="cb44-2"><a></a>  <span class="fu">inner_join</span>(vendas_db, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"id"</span> <span class="ot">=</span> <span class="st">"cliente_id"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb44-3"><a></a>  <span class="fu">select</span>(nome, produto, valor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 3]
+<pre><code># A query:  ?? x 3
 # Database: sqlite 3.51.2 [:memory:]
   nome     produto valor
   &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt;
@@ -727,7 +727,7 @@
 <span id="cb47-2"><a></a>  <span class="fu">left_join</span>(vendas_db, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"id"</span> <span class="ot">=</span> <span class="st">"cliente_id"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb47-3"><a></a>  <span class="fu">select</span>(nome, produto)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 2]
+<pre><code># A query:  ?? x 2
 # Database: sqlite 3.51.2 [:memory:]
   nome     produto
   &lt;chr&gt;    &lt;chr&gt;  
@@ -800,7 +800,7 @@
 <span id="cb50-6"><a></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Experiente"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb50-7"><a></a>  <span class="fu">select</span>(nome, idade, faixa_etaria)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 3]
+<pre><code># A query:  ?? x 3
 # Database: sqlite 3.51.2 [:memory:]
   nome     idade faixa_etaria
   &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;       
@@ -822,7 +822,7 @@
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a>vendas_db <span class="sc">|&gt;</span></span>
 <span id="cb53-2"><a></a>  <span class="fu">mutate</span>(<span class="at">total =</span> valor <span class="sc">*</span> quantidade)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 6]
+<pre><code># A query:  ?? x 6
 # Database: sqlite 3.51.2 [:memory:]
      id cliente_id produto valor quantidade total
   &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;
@@ -847,7 +847,7 @@
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a>clientes_db <span class="sc">|&gt;</span></span>
 <span id="cb56-2"><a></a>  <span class="fu">distinct</span>(cidade)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 1]
+<pre><code># A query:  ?? x 1
 # Database: sqlite 3.51.2 [:memory:]
   cidade
   &lt;chr&gt; 
@@ -873,7 +873,7 @@
 <span id="cb59-7"><a></a>vendas_db <span class="sc">|&gt;</span></span>
 <span id="cb59-8"><a></a>  <span class="fu">filter</span>(valor <span class="sc">&gt;</span> valor_medio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:   SQL [?? x 5]
+<pre><code># A query:  ?? x 5
 # Database: sqlite 3.51.2 [:memory:]
      id cliente_id produto valor quantidade
   &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;      &lt;dbl&gt;
@@ -982,19 +982,11 @@ SELECT
   SUM(`valor`) AS `valor_total`,
   AVG(`valor`) AS `ticket_medio`
 FROM (
-  SELECT `q01`.*
-  FROM (
-    SELECT
-      `clientes`.*,
-      `vendas`.`id` AS `id.y`,
-      `produto`,
-      `valor`,
-      `quantidade`
-    FROM `clientes`
-    LEFT JOIN `vendas`
-      ON (`clientes`.`id` = `vendas`.`cliente_id`)
-  ) AS `q01`
-  WHERE (NOT((`valor` IS NULL)))
+  SELECT `clientes`.*, `vendas`.`id` AS `id.y`, `produto`, `valor`, `quantidade`
+  FROM `clientes`
+  LEFT JOIN `vendas`
+    ON (`clientes`.`id` = `vendas`.`cliente_id`)
+  WHERE (NOT((`vendas`.`valor` IS NULL)))
 ) AS `q01`
 GROUP BY `nome`, `cidade`
 ORDER BY `valor_total` DESC</code></pre>
@@ -1225,7 +1217,7 @@ ORDER BY `valor_total` DESC</code></pre>
 <span id="cb79-5"><a></a>  <span class="fu">filter</span>(valor_total <span class="sc">&gt;</span> <span class="dv">200</span>) <span class="sc">|&gt;</span></span>
 <span id="cb79-6"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(valor_total))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># Source:     SQL [?? x 2]
+<pre><code># A query:    ?? x 2
 # Database:   sqlite 3.51.2 [:memory:]
 # Ordered by: desc(valor_total)
   nome     valor_total
