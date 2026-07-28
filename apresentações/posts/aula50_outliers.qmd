@@ -1,0 +1,348 @@
+---
+title: "Aula 50. Outliers"
+subtitle: "Detectar não é sempre excluir, três critérios e uma árvore de decisão"
+categories: [R, Estatística, EDA, Tidyverse]
+image: "imagens/50.png"
+description: "Aprenda três critérios formais para detectar outliers, univariado e multivariado, e uma árvore de decisão para saber o que fazer com cada um."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+n <- 80
+peso_intencionado <- round(rnorm(n, mean = 150, sd = 18), 1)
+diametro_mm       <- round(30 + 0.15 * peso_intencionado + rnorm(n, 0, 2), 1)
+
+peso_g <- peso_intencionado
+peso_g[15] <- 1500
+
+peso_g[42]       <- 245
+diametro_mm[42]  <- round(30 + 0.15 * 245 + rnorm(1, 0, 2), 1)
+
+dados_tomate <- tibble(fruto = 1:n, peso_g, diametro_mm)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Definir o que é um outlier, e reconhecer que outlier não é sinônimo de erro
+- Aplicar o critério de Tukey, baseado no IQR
+- Aplicar o critério do z-score modificado, baseado no MAD
+- Aplicar a distância de Mahalanobis para outliers multivariados
+- Decidir corretamente o que fazer com um outlier identificado
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O que é um Outlier
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, definição
+
+- Um **outlier** é uma observação que se distancia substancialmente do padrão geral dos demais dados, segundo um critério estatístico formal.
+
+- **Contexto:** um lote de 80 frutos de tomate tem peso e diâmetro registrados. Dois valores chamam atenção, um provavelmente originado de um erro de digitação, outro correspondente a um fruto real, de tamanho genuinamente excepcional.
+
+::: callout-important
+**Atenção:** outlier não é sinônimo de erro. Um valor discrepante pode refletir um erro de coleta ou de digitação, ou pode refletir um evento real e legítimo, uma planta excepcional, uma condição de solo pontual, uma medição correta de algo raro.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Critério 1, IQR de Tukey
+:::
+
+------------------------------------------------------------------------
+
+## Fórmula, a regra de 1,5 vezes o IQR
+
+$$\text{Limite inferior} = Q_1 - 1{,}5 \times IQR \qquad \text{Limite superior} = Q_3 + 1{,}5 \times IQR$$
+
+- $Q_1$ e $Q_3$ são o primeiro e o terceiro quartis, $IQR = Q_3 - Q_1$.
+
+- Proposto por John Tukey em 1977, é o critério mais utilizado em boxplots, e depende apenas da posição dos dados, sendo pouco sensível a distribuições assimétricas moderadas.
+
+------------------------------------------------------------------------
+
+## Código: identificação de outliers por IQR
+
+```{r}
+#| label: iqr-codigo
+#| eval: false
+
+limites_iqr <- dados_tomate |>
+  summarise(q1 = quantile(peso_g, 0.25), q3 = quantile(peso_g, 0.75)) |>
+  mutate(iqr = q3 - q1,
+         limite_inf = q1 - 1.5 * iqr,
+         limite_sup = q3 + 1.5 * iqr)
+
+dados_tomate |>
+  mutate(outlier_iqr = peso_g < limites_iqr$limite_inf |
+                        peso_g > limites_iqr$limite_sup) |>
+  filter(outlier_iqr)
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: iqr-output
+#| echo: false
+
+limites_iqr <- dados_tomate |>
+  summarise(q1 = quantile(peso_g, 0.25), q3 = quantile(peso_g, 0.75)) |>
+  mutate(iqr = q3 - q1,
+         limite_inf = q1 - 1.5 * iqr,
+         limite_sup = q3 + 1.5 * iqr)
+
+limites_iqr |> mutate(across(everything(), ~ round(.x, 2)))
+
+dados_tomate |>
+  mutate(outlier_iqr = peso_g < limites_iqr$limite_inf |
+                        peso_g > limites_iqr$limite_sup) |>
+  filter(outlier_iqr)
+```
+
+- **O critério do IQR identifica os dois valores discrepantes, o de 1500 gramas e o de 245 gramas, ambos acima do limite superior. Esse critério, sozinho, não distingue qual dos dois é erro e qual é evento real.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Critério 2, Z-score Modificado
+:::
+
+------------------------------------------------------------------------
+
+## Fórmula, baseada no MAD
+
+$$M_i = \frac{0{,}6745 \times (x_i - \tilde{x})}{MAD}$$
+
+- Proposto por Iglewicz e Hoaglin em 1993, substitui a média e o desvio padrão do z-score tradicional pela mediana e pelo MAD, medidas robustas a valores extremos.
+
+- Observações com $|M_i| > 3{,}5$ são consideradas outliers. A constante 0,6745 torna o MAD comparável ao desvio padrão sob distribuição normal.
+
+- Por depender de medidas robustas, é menos influenciado pelo próprio outlier que está sendo avaliado, ao contrário do z-score tradicional.
+
+------------------------------------------------------------------------
+
+## Código: identificação por z-score modificado
+
+```{r}
+#| label: z-modificado-codigo
+#| eval: false
+
+mediana_peso <- median(dados_tomate$peso_g)
+mad_peso     <- mad(dados_tomate$peso_g)
+
+dados_tomate |>
+  mutate(z_modificado = 0.6745 * (peso_g - mediana_peso) / mad_peso) |>
+  filter(abs(z_modificado) > 3.5)
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: z-modificado-output
+#| echo: false
+
+mediana_peso <- median(dados_tomate$peso_g)
+mad_peso     <- mad(dados_tomate$peso_g)
+
+dados_tomate |>
+  mutate(z_modificado = 0.6745 * (peso_g - mediana_peso) / mad_peso) |>
+  filter(abs(z_modificado) > 3.5) |>
+  mutate(z_modificado = round(z_modificado, 2))
+```
+
+- **Os mesmos dois valores são sinalizados, mas o z-score modificado do valor de 1500 gramas é ordens de magnitude maior que o do valor de 245 gramas, uma primeira pista de que se trata de naturezas diferentes de desvio.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Critério 3, Distância de Mahalanobis
+:::
+
+------------------------------------------------------------------------
+
+## Conceito multivariado, quando usar
+
+- A **distância de Mahalanobis** mede o quão distante uma observação está do centro de um conjunto de variáveis, considerando também a correlação entre elas, e não apenas cada variável isoladamente.
+
+$$D_i^2 = (\mathbf{x}_i - \bar{\mathbf{x}})^T \, S^{-1} \, (\mathbf{x}_i - \bar{\mathbf{x}})$$
+
+- $S$ é a matriz de covariância das variáveis, $\bar{\mathbf{x}}$ o vetor de médias.
+
+- É o critério indicado quando duas ou mais variáveis são naturalmente correlacionadas, como peso e diâmetro do fruto, e o objetivo é detectar combinações inconsistentes, não apenas valores extremos isolados.
+
+------------------------------------------------------------------------
+
+## Código: cálculo da distância de Mahalanobis
+
+```{r}
+#| label: mahalanobis-codigo
+#| eval: false
+
+matriz_dados <- dados_tomate |> select(peso_g, diametro_mm)
+centro       <- colMeans(matriz_dados)
+covariancia  <- cov(matriz_dados)
+
+dados_tomate |>
+  mutate(distancia_mahalanobis = mahalanobis(matriz_dados, centro, covariancia)) |>
+  arrange(desc(distancia_mahalanobis)) |>
+  head(5)
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: mahalanobis-output
+#| echo: false
+
+matriz_dados <- dados_tomate |> select(peso_g, diametro_mm)
+centro       <- colMeans(matriz_dados)
+covariancia  <- cov(matriz_dados)
+
+dados_tomate |>
+  mutate(distancia_mahalanobis = mahalanobis(matriz_dados, centro, covariancia)) |>
+  arrange(desc(distancia_mahalanobis)) |>
+  head(5) |>
+  mutate(distancia_mahalanobis = round(distancia_mahalanobis, 2))
+```
+
+- **O fruto 15, com peso de 1500 gramas e diâmetro compatível com um fruto normal, apresenta a distância de Mahalanobis mais alta, pois a combinação entre as duas variáveis é inconsistente. O fruto 42, apesar de também ter peso elevado, tem diâmetro proporcionalmente compatível, e sua distância de Mahalanobis é bem menor, coerente com um fruto real, grande, mas fisicamente plausível.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Tomada de Decisão
+:::
+
+------------------------------------------------------------------------
+
+## Árvore de decisão, o que fazer com o outlier
+
+| Situação | Ação recomendada |
+|------------------------------------|------------------------------------|
+| Valor impossível para a variável, erro de digitação identificável | Corrigir, quando a fonte original permite confirmação, ou remover |
+| Valor extremo, mas fisicamente plausível e consistente entre variáveis correlacionadas | Manter, investigar sua causa, considerar reportar separadamente |
+| Valor extremo, causa desconhecida, sem possibilidade de verificação | Analisar os dados com e sem o valor, reportar ambos os resultados |
+| Múltiplos valores extremos concentrados em uma condição específica | Investigar se representam um subgrupo real, não outliers individuais |
+
+------------------------------------------------------------------------
+
+## Erro comum 1, excluir todo outlier automaticamente
+
+- Remover qualquer observação sinalizada por um critério estatístico, sem investigar sua origem, pode eliminar informação real e relevante, como o fruto excepcionalmente grande deste conjunto de dados.
+
+- A exclusão deve ser justificada pela origem do valor, não apenas pelo resultado do critério estatístico isoladamente.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, usar um único critério sem considerar o contexto do dado
+
+- Critérios univariados, como IQR e z-score modificado, não distinguem entre um erro de digitação e um evento real quando ambos produzem valores extremos na mesma variável.
+
+- Combinar critérios, incluindo a distância de Mahalanobis quando há variáveis correlacionadas disponíveis, fornece uma base mais sólida para a decisão do que um único número isolado.
+
+------------------------------------------------------------------------
+
+## Resumo: detecção de outliers
+
+| Critério | Tipo | Baseado em | Função no R |
+|------------------|------------------|------------------|------------------|
+| IQR de Tukey | Univariado | Quartis | `quantile()` |
+| Z-score modificado | Univariado | Mediana e MAD | `median()`, `mad()` |
+| Distância de Mahalanobis | Multivariado | Média e covariância | `mahalanobis()` |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+>
+> ------------------------------------------------------------------------

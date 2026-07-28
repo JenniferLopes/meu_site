@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Aprenda a usar o pacote arrow para trabalhar com dados maiores que a memória disponível, o formato Parquet e integração com dplyr e DuckDB.">
+
+<title>Arrow no R – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#democratização" id="toc-democratização" class="nav-link active" data-scroll-target="#democratização">Democratização</a></li>
+  <li><a href="#acompanhe-o-café-com-r" id="toc-acompanhe-o-café-com-r" class="nav-link" data-scroll-target="#acompanhe-o-café-com-r">Acompanhe o Café com R</a></li>
+  <li><a href="#objetivos-da-aula" id="toc-objetivos-da-aula" class="nav-link" data-scroll-target="#objetivos-da-aula">Objetivos da aula</a></li>
+  <li><a href="#instalação" id="toc-instalação" class="nav-link" data-scroll-target="#instalação">Instalação</a></li>
+  <li><a href="#bloco-1" id="toc-bloco-1" class="nav-link" data-scroll-target="#bloco-1">Bloco 1</a>
+  <ul class="collapse">
+  <li><a href="#o-problema-de-memória-no-r" id="toc-o-problema-de-memória-no-r" class="nav-link" data-scroll-target="#o-problema-de-memória-no-r">O Problema de Memória no R</a></li>
+  </ul></li>
+  <li><a href="#como-o-r-armazena-dados" id="toc-como-o-r-armazena-dados" class="nav-link" data-scroll-target="#como-o-r-armazena-dados">Como o R armazena dados</a></li>
+  <li><a href="#o-custo-de-carregar-dados-no-r" id="toc-o-custo-de-carregar-dados-no-r" class="nav-link" data-scroll-target="#o-custo-de-carregar-dados-no-r">O custo de carregar dados no R</a></li>
+  <li><a href="#código-medindo-o-tamanho-na-memória" id="toc-código-medindo-o-tamanho-na-memória" class="nav-link" data-scroll-target="#código-medindo-o-tamanho-na-memória">Código: medindo o tamanho na memória</a></li>
+  <li><a href="#output-memória-vs-disco" id="toc-output-memória-vs-disco" class="nav-link" data-scroll-target="#output-memória-vs-disco">Output: memória vs disco</a></li>
+  <li><a href="#três-situações-que-travam-o-r" id="toc-três-situações-que-travam-o-r" class="nav-link" data-scroll-target="#três-situações-que-travam-o-r">Três situações que travam o R</a></li>
+  <li><a href="#a-solução-execução-preguiçosa" id="toc-a-solução-execução-preguiçosa" class="nav-link" data-scroll-target="#a-solução-execução-preguiçosa">A solução: execução preguiçosa</a></li>
+  <li><a href="#bloco-2" id="toc-bloco-2" class="nav-link" data-scroll-target="#bloco-2">Bloco 2</a>
+  <ul class="collapse">
+  <li><a href="#o-formato-parquet" id="toc-o-formato-parquet" class="nav-link" data-scroll-target="#o-formato-parquet">O Formato Parquet</a></li>
+  </ul></li>
+  <li><a href="#o-que-é-o-formato-parquet" id="toc-o-que-é-o-formato-parquet" class="nav-link" data-scroll-target="#o-que-é-o-formato-parquet">O que é o formato Parquet</a></li>
+  <li><a href="#por-que-o-parquet-é-mais-rápido" id="toc-por-que-o-parquet-é-mais-rápido" class="nav-link" data-scroll-target="#por-que-o-parquet-é-mais-rápido">Por que o Parquet é mais rápido</a></li>
+  <li><a href="#codificações-e-compressão-no-parquet" id="toc-codificações-e-compressão-no-parquet" class="nav-link" data-scroll-target="#codificações-e-compressão-no-parquet">Codificações e compressão no Parquet</a></li>
+  <li><a href="#código-salvando-em-parquet" id="toc-código-salvando-em-parquet" class="nav-link" data-scroll-target="#código-salvando-em-parquet">Código: salvando em Parquet</a></li>
+  <li><a href="#output-comparação-de-tamanho" id="toc-output-comparação-de-tamanho" class="nav-link" data-scroll-target="#output-comparação-de-tamanho">Output: comparação de tamanho</a></li>
+  <li><a href="#bloco-3" id="toc-bloco-3" class="nav-link" data-scroll-target="#bloco-3">Bloco 3</a>
+  <ul class="collapse">
+  <li><a href="#benchmark-csv-vs-parquet" id="toc-benchmark-csv-vs-parquet" class="nav-link" data-scroll-target="#benchmark-csv-vs-parquet">Benchmark: CSV vs Parquet</a></li>
+  </ul></li>
+  <li><a href="#o-que-vamos-medir" id="toc-o-que-vamos-medir" class="nav-link" data-scroll-target="#o-que-vamos-medir">O que vamos medir</a></li>
+  <li><a href="#código-benchmark-de-leitura-e-filtro" id="toc-código-benchmark-de-leitura-e-filtro" class="nav-link" data-scroll-target="#código-benchmark-de-leitura-e-filtro">Código: benchmark de leitura e filtro</a></li>
+  <li><a href="#output-resultados-do-benchmark" id="toc-output-resultados-do-benchmark" class="nav-link" data-scroll-target="#output-resultados-do-benchmark">Output: resultados do benchmark</a></li>
+  <li><a href="#gráfico-benchmark" id="toc-gráfico-benchmark" class="nav-link" data-scroll-target="#gráfico-benchmark">Gráfico: benchmark</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
+  <li><a href="#bloco-4" id="toc-bloco-4" class="nav-link" data-scroll-target="#bloco-4">Bloco 4</a>
+  <ul class="collapse">
+  <li><a href="#open_dataset-e-consultas-lazy" id="toc-open_dataset-e-consultas-lazy" class="nav-link" data-scroll-target="#open_dataset-e-consultas-lazy">open_dataset() e Consultas Lazy</a></li>
+  </ul></li>
+  <li><a href="#open_dataset-abrindo-sem-carregar" id="toc-open_dataset-abrindo-sem-carregar" class="nav-link" data-scroll-target="#open_dataset-abrindo-sem-carregar">open_dataset(): abrindo sem carregar</a></li>
+  <li><a href="#output-esquema-do-dataset" id="toc-output-esquema-do-dataset" class="nav-link" data-scroll-target="#output-esquema-do-dataset">Output: esquema do dataset</a></li>
+  <li><a href="#pipeline-lazy-com-dplyr" id="toc-pipeline-lazy-com-dplyr" class="nav-link" data-scroll-target="#pipeline-lazy-com-dplyr">Pipeline lazy com dplyr</a></li>
+  <li><a href="#output-resultado-da-consulta-lazy" id="toc-output-resultado-da-consulta-lazy" class="nav-link" data-scroll-target="#output-resultado-da-consulta-lazy">Output: resultado da consulta lazy</a></li>
+  <li><a href="#novidades-str_ilike-para-filtros-de-texto" id="toc-novidades-str_ilike-para-filtros-de-texto" class="nav-link" data-scroll-target="#novidades-str_ilike-para-filtros-de-texto">Novidades: str_ilike() para filtros de texto</a></li>
+  <li><a href="#output-str_ilike-no-modo-lazy" id="toc-output-str_ilike-no-modo-lazy" class="nav-link" data-scroll-target="#output-str_ilike-no-modo-lazy">Output: str_ilike() no modo lazy</a></li>
+  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1"></a></li>
+  <li><a href="#bloco-5" id="toc-bloco-5" class="nav-link" data-scroll-target="#bloco-5">Bloco 5</a>
+  <ul class="collapse">
+  <li><a href="#particionamento-de-datasets" id="toc-particionamento-de-datasets" class="nav-link" data-scroll-target="#particionamento-de-datasets">Particionamento de Datasets</a></li>
+  </ul></li>
+  <li><a href="#o-que-é-particionamento" id="toc-o-que-é-particionamento" class="nav-link" data-scroll-target="#o-que-é-particionamento">O que é particionamento</a></li>
+  <li><a href="#código-criando-dataset-particionado" id="toc-código-criando-dataset-particionado" class="nav-link" data-scroll-target="#código-criando-dataset-particionado">Código: criando dataset particionado</a></li>
+  <li><a href="#código-consultando-com-partição" id="toc-código-consultando-com-partição" class="nav-link" data-scroll-target="#código-consultando-com-partição">Código: consultando com partição</a></li>
+  <li><a href="#output-consulta-com-partição" id="toc-output-consulta-com-partição" class="nav-link" data-scroll-target="#output-consulta-com-partição">Output: consulta com partição</a></li>
+  <li><a href="#benchmark-particionado-vs-não-particionado" id="toc-benchmark-particionado-vs-não-particionado" class="nav-link" data-scroll-target="#benchmark-particionado-vs-não-particionado">Benchmark: particionado vs não particionado</a></li>
+  <li><a href="#output-ganho-com-particionamento" id="toc-output-ganho-com-particionamento" class="nav-link" data-scroll-target="#output-ganho-com-particionamento">Output: ganho com particionamento</a></li>
+  <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2"></a></li>
+  <li><a href="#bloco-6" id="toc-bloco-6" class="nav-link" data-scroll-target="#bloco-6">Bloco 6</a>
+  <ul class="collapse">
+  <li><a href="#importação-eficiente" id="toc-importação-eficiente" class="nav-link" data-scroll-target="#importação-eficiente">Importação Eficiente</a></li>
+  </ul></li>
+  <li><a href="#read_csv_arrow-vs-read_csv" id="toc-read_csv_arrow-vs-read_csv" class="nav-link" data-scroll-target="#read_csv_arrow-vs-read_csv">read_csv_arrow() vs read_csv()</a></li>
+  <li><a href="#estratégia-recomendada-para-importação" id="toc-estratégia-recomendada-para-importação" class="nav-link" data-scroll-target="#estratégia-recomendada-para-importação">Estratégia recomendada para importação</a></li>
+  <li><a href="#lendo-múltiplos-arquivos-de-uma-vez" id="toc-lendo-múltiplos-arquivos-de-uma-vez" class="nav-link" data-scroll-target="#lendo-múltiplos-arquivos-de-uma-vez">Lendo múltiplos arquivos de uma vez</a></li>
+  <li><a href="#dicas-de-eficiência-ao-importar" id="toc-dicas-de-eficiência-ao-importar" class="nav-link" data-scroll-target="#dicas-de-eficiência-ao-importar">Dicas de eficiência ao importar</a></li>
+  <li><a href="#section-3" id="toc-section-3" class="nav-link" data-scroll-target="#section-3"></a></li>
+  <li><a href="#bloco-7" id="toc-bloco-7" class="nav-link" data-scroll-target="#bloco-7">Bloco 7</a>
+  <ul class="collapse">
+  <li><a href="#integração-com-duckdb" id="toc-integração-com-duckdb" class="nav-link" data-scroll-target="#integração-com-duckdb">Integração com DuckDB</a></li>
+  </ul></li>
+  <li><a href="#por-que-integrar-arrow-com-duckdb" id="toc-por-que-integrar-arrow-com-duckdb" class="nav-link" data-scroll-target="#por-que-integrar-arrow-com-duckdb">Por que integrar Arrow com DuckDB</a></li>
+  <li><a href="#código-to_duckdb-para-operações-avançadas" id="toc-código-to_duckdb-para-operações-avançadas" class="nav-link" data-scroll-target="#código-to_duckdb-para-operações-avançadas">Código: to_duckdb() para operações avançadas</a></li>
+  <li><a href="#output-mediana-e-quartis-com-duckdb" id="toc-output-mediana-e-quartis-com-duckdb" class="nav-link" data-scroll-target="#output-mediana-e-quartis-com-duckdb">Output: mediana e quartis com DuckDB</a></li>
+  <li><a href="#funções-de-janela-com-duckdb" id="toc-funções-de-janela-com-duckdb" class="nav-link" data-scroll-target="#funções-de-janela-com-duckdb">Funções de janela com DuckDB</a></li>
+  <li><a href="#output-funções-de-janela" id="toc-output-funções-de-janela" class="nav-link" data-scroll-target="#output-funções-de-janela">Output: funções de janela</a></li>
+  <li><a href="#section-4" id="toc-section-4" class="nav-link" data-scroll-target="#section-4"></a></li>
+  <li><a href="#bloco-8" id="toc-bloco-8" class="nav-link" data-scroll-target="#bloco-8">Bloco 8</a>
+  <ul class="collapse">
+  <li><a href="#o-que-o-arrow-suporta-e-o-que-não-suporta" id="toc-o-que-o-arrow-suporta-e-o-que-não-suporta" class="nav-link" data-scroll-target="#o-que-o-arrow-suporta-e-o-que-não-suporta">O que o Arrow Suporta e o que Não Suporta</a></li>
+  </ul></li>
+  <li><a href="#funções-dplyr-suportadas-no-modo-lazy" id="toc-funções-dplyr-suportadas-no-modo-lazy" class="nav-link" data-scroll-target="#funções-dplyr-suportadas-no-modo-lazy">Funções dplyr suportadas no modo lazy</a></li>
+  <li><a href="#funções-com-suporte-limitado-ou-ausente" id="toc-funções-com-suporte-limitado-ou-ausente" class="nav-link" data-scroll-target="#funções-com-suporte-limitado-ou-ausente">Funções com suporte limitado ou ausente</a></li>
+  <li><a href="#como-identificar-o-que-não-é-suportado" id="toc-como-identificar-o-que-não-é-suportado" class="nav-link" data-scroll-target="#como-identificar-o-que-não-é-suportado">Como identificar o que não é suportado</a></li>
+  <li><a href="#section-5" id="toc-section-5" class="nav-link" data-scroll-target="#section-5"></a></li>
+  <li><a href="#bloco-9" id="toc-bloco-9" class="nav-link" data-scroll-target="#bloco-9">Bloco 9</a>
+  <ul class="collapse">
+  <li><a href="#erros-comuns-e-decisões-práticas" id="toc-erros-comuns-e-decisões-práticas" class="nav-link" data-scroll-target="#erros-comuns-e-decisões-práticas">Erros Comuns e Decisões Práticas</a></li>
+  </ul></li>
+  <li><a href="#erros-comuns-parte-1" id="toc-erros-comuns-parte-1" class="nav-link" data-scroll-target="#erros-comuns-parte-1">Erros comuns: parte 1</a></li>
+  <li><a href="#erros-comuns-parte-2" id="toc-erros-comuns-parte-2" class="nav-link" data-scroll-target="#erros-comuns-parte-2">Erros comuns: parte 2</a></li>
+  <li><a href="#quando-usar-cada-abordagem" id="toc-quando-usar-cada-abordagem" class="nav-link" data-scroll-target="#quando-usar-cada-abordagem">Quando usar cada abordagem</a></li>
+  <li><a href="#resumo-do-fluxo-completo" id="toc-resumo-do-fluxo-completo" class="nav-link" data-scroll-target="#resumo-do-fluxo-completo">Resumo do fluxo completo</a></li>
+  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências">Referências</a></li>
+  <li><a href="#obrigada" id="toc-obrigada" class="nav-link" data-scroll-target="#obrigada">Obrigada!</a></li>
+  <li><a href="#siga-o-café-com-r" id="toc-siga-o-café-com-r" class="nav-link" data-scroll-target="#siga-o-café-com-r">Siga o Café com R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="aula42_arrow_teorica.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Arrow no R</h1>
+<p class="subtitle lead">Manipule linhas sem travar a memória</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Arrow</div>
+    <div class="quarto-category">Parquet</div>
+    <div class="quarto-category">Big Data</div>
+    <div class="quarto-category">Performance</div>
+    <div class="quarto-category">Tidyverse</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Aprenda a usar o pacote arrow para trabalhar com dados maiores que a memória disponível, o formato Parquet e integração com dplyr e DuckDB.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="democratização" class="level2">
+<h2 class="anchored" data-anchor-id="democratização">Democratização</h2>
+<blockquote class="blockquote">
+<p>Esta aula foi construída para que você entenda como trabalhar com dados que não cabem na memória do R, usando o pacote <code>arrow</code> e o formato Parquet. Os dados são baseados no <code>nycflights13</code> replicado para aproximar 18 milhões de linhas.</p>
+</blockquote>
+<hr>
+</section>
+<section id="acompanhe-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="acompanhe-o-café-com-r">Acompanhe o Café com R</h2>
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p>SITE OFICIAL &gt; https://jenniferlopes.github.io/meu_site/</p>
+<hr>
+</section>
+<section id="objetivos-da-aula" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-da-aula">Objetivos da aula</h2>
+<div class="incremental">
+<ul class="incremental">
+<li>Compreender o <strong>problema de memória</strong> que o <code>arrow</code> resolve</li>
+<li>Entender como a <strong>RAM do R</strong> funciona e seus limites reais</li>
+<li>Dominar o <strong>formato Parquet</strong>: estrutura, codificações e compressão</li>
+<li>Comparar desempenho entre <strong>CSV e Parquet</strong> com benchmarks reais</li>
+<li>Usar <code>open_dataset()</code> e <code>dplyr</code> para <strong>consultar sem carregar</strong></li>
+<li>Aplicar <strong>particionamento</strong> para acelerar consultas seletivas</li>
+<li>Integrar <code>arrow</code> com <strong>DuckDB</strong> para operações avançadas</li>
+<li>Conhecer o que o <code>arrow</code> <strong>suporta e o que não suporta</strong></li>
+</ul>
+</div>
+<hr>
+</section>
+<section id="instalação" class="level2">
+<h2 class="anchored" data-anchor-id="instalação">Instalação</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"arrow"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"bench"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"duckdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bench)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Nota de versão:</strong> a partir da versão 23.0.0 (janeiro de 2026), o <code>arrow</code> exige C++20 para compilar da fonte. Em instalações via CRAN no Windows e macOS, os binários pré-compilados são fornecidos automaticamente e esse requisito não afeta o usuário. Em Linux, verifique com <code>vignette("install", package = "arrow")</code> se o compilador instalado é compatível.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="bloco-1" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+<section id="o-problema-de-memória-no-r" class="level2">
+<h2 class="anchored" data-anchor-id="o-problema-de-memória-no-r">O Problema de Memória no R</h2>
+</section>
+</section>
+<hr>
+<section id="como-o-r-armazena-dados" class="level2">
+<h2 class="anchored" data-anchor-id="como-o-r-armazena-dados">Como o R armazena dados</h2>
+<p>O R é uma linguagem <strong>orientada à memória principal (RAM)</strong>. Todo objeto criado, vetores, data frames, listas, é armazenado integralmente na RAM durante a sessão.</p>
+<p><strong>Consequência direta:</strong> o tamanho máximo de dados que o R consegue manipular é limitado pela RAM disponível.</p>
+<ul>
+<li>Um <code>data.frame</code> com 1 milhão de linhas e 20 colunas numéricas ocupa aproximadamente <strong>160 MB</strong> de RAM</li>
+<li>Um <code>data.frame</code> com 50 milhões de linhas e 20 colunas ocupa aproximadamente <strong>8 GB</strong></li>
+<li>Durante operações como <code>mutate()</code> e <code>join()</code>, o R cria cópias intermediárias, multiplicando o consumo</li>
+</ul>
+<hr>
+</section>
+<section id="o-custo-de-carregar-dados-no-r" class="level2">
+<h2 class="anchored" data-anchor-id="o-custo-de-carregar-dados-no-r">O custo de carregar dados no R</h2>
+<p>Quando você executa <code>read_csv("arquivo.csv")</code>, o R:</p>
+<ol type="1">
+<li>Lê o arquivo do disco linha por linha</li>
+<li>Converte cada campo de texto para o tipo correto (parsing)</li>
+<li>Aloca memória suficiente para o objeto completo</li>
+<li>Copia todos os dados para essa memória</li>
+<li>Retorna o <code>data.frame</code>, e somente agora você pode usar os dados</li>
+</ol>
+<p>Esse processo carrega <strong>100% dos dados</strong>, mesmo que você precise de apenas 1% deles.</p>
+<p>Se o arquivo tem 10 GB e você quer filtrar apenas um mês, o R ainda carrega os 10 GB inteiros antes de executar qualquer filtro.</p>
+<hr>
+</section>
+<section id="código-medindo-o-tamanho-na-memória" class="level2">
+<h2 class="anchored" data-anchor-id="código-medindo-o-tamanho-na-memória">Código: medindo o tamanho na memória</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tamanho do objeto na RAM</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_size</span>(voos_grande)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensões</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">linhas  =</span> <span class="fu">nrow</span>(voos_grande),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">colunas =</span> <span class="fu">ncol</span>(voos_grande))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Tamanho do CSV em disco</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">arquivo     =</span> <span class="st">"dados_aula/csv/voos.csv"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">tamanho_mb  =</span> <span class="fu">round</span>(<span class="fu">file.size</span>(arquivo) <span class="sc">/</span> <span class="fl">1e6</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-memória-vs-disco" class="level2">
+<h2 class="anchored" data-anchor-id="output-memória-vs-disco">Output: memória vs disco</h2>
+<pre><code>18.5 MB
+
+# A tibble: 1 × 2
+   linhas colunas
+    &lt;int&gt;   &lt;int&gt;
+1 18522680      20
+
+# A tibble: 1 × 2
+  arquivo                  tamanho_mb
+  &lt;chr&gt;                         &lt;dbl&gt;
+1 dados_aula/csv/voos.csv        1420</code></pre>
+<p>O objeto com 18 milhões de linhas ocupa 18,5 MB na RAM porque o R usa tipos nativos de tamanho fixo. O CSV ocupa 1,4 GB em disco por ser texto sem compressão.</p>
+<p>O objeto na RAM ocupa mais do que o CSV em disco porque o R armazena cada tipo nativo com tamanho fixo em bytes, enquanto o CSV armazena texto que pode ser comprimido.</p>
+<hr>
+</section>
+<section id="três-situações-que-travam-o-r" class="level2">
+<h2 class="anchored" data-anchor-id="três-situações-que-travam-o-r">Três situações que travam o R</h2>
+<p><strong>Situação 1: arquivo maior que a RAM</strong></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Falha com: cannot allocate vector of size X Gb</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(<span class="st">"arquivo_50gb.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Situação 2: arquivo cabe na RAM, operações não cabem</strong></p>
+<p>Um arquivo de 4 GB com 8 GB de RAM disponível pode travar em operações de <code>mutate()</code> ou <code>join()</code> porque o R cria cópias intermediárias.</p>
+<p><strong>Situação 3: múltiplos arquivos acumulados</strong></p>
+<p>Carregar arquivos mensais em loop para concatenar esgota a memória progressivamente, mesmo que cada arquivo individual caiba.</p>
+<hr>
+</section>
+<section id="a-solução-execução-preguiçosa" class="level2">
+<h2 class="anchored" data-anchor-id="a-solução-execução-preguiçosa">A solução: execução preguiçosa</h2>
+<p>O <code>arrow</code> resolve o problema com <strong>execução preguiçosa</strong> (lazy evaluation):</p>
+<ul>
+<li><code>open_dataset()</code> não lê os dados. Registra onde estão e lê apenas o esquema.</li>
+<li>Operações <code>dplyr</code> constroem um <strong>plano de execução</strong> sem executar nada.</li>
+<li><code>collect()</code> é o único passo que lê dados da memória, e lê <strong>apenas o necessário</strong>.</li>
+</ul>
+<p>Filtrar 1 mês de um arquivo de 10 anos lê apenas os dados daquele mês do disco, não os 10 anos inteiros.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Pense no <code>arrow</code> como um intermediário entre o <code>dplyr</code> e o disco. Você escreve o mesmo código que já conhece. O <code>arrow</code> decide o que precisa ser lido.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="bloco-2" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+<section id="o-formato-parquet" class="level2">
+<h2 class="anchored" data-anchor-id="o-formato-parquet">O Formato Parquet</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-é-o-formato-parquet" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-o-formato-parquet">O que é o formato Parquet</h2>
+<p>O <strong>Apache Parquet</strong> é um formato de armazenamento colunar binário projetado para análise de dados em grande escala. É o formato nativo do ecossistema Arrow.</p>
+<p><strong>Diferença fundamental entre CSV e Parquet:</strong></p>
+<ul>
+<li><strong>CSV:</strong> armazena dados linha por linha (orientado a linhas)</li>
+<li><strong>Parquet:</strong> armazena dados coluna por coluna (orientado a colunas)</li>
+</ul>
+<p>Para análise de dados, que normalmente opera sobre poucas colunas de muitas linhas, o formato colunar é muito mais eficiente porque lê apenas as colunas necessárias, ignorando as demais completamente.</p>
+<hr>
+</section>
+<section id="por-que-o-parquet-é-mais-rápido" class="level2">
+<h2 class="anchored" data-anchor-id="por-que-o-parquet-é-mais-rápido">Por que o Parquet é mais rápido</h2>
+<p>Imagine uma tabela com 50 colunas e 10 milhões de linhas. Você quer calcular a média de apenas uma coluna.</p>
+<p><strong>Com CSV:</strong> o R lê todas as 50 colunas de todas as 10 milhões de linhas, extrai a coluna desejada e calcula a média.</p>
+<p><strong>Com Parquet:</strong> o Arrow lê apenas os blocos da coluna desejada no disco. As outras 49 colunas nunca são lidas.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Característica</th>
+<th>CSV</th>
+<th>Parquet</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Formato</td>
+<td>Texto, linha por linha</td>
+<td>Binário, coluna por coluna</td>
+</tr>
+<tr class="even">
+<td>Compressão</td>
+<td>Nenhuma ou gzip</td>
+<td>Snappy, Zstd, LZ4, Brotli</td>
+</tr>
+<tr class="odd">
+<td>Leitura seletiva de colunas</td>
+<td>Impossível</td>
+<td>Nativa</td>
+</tr>
+<tr class="even">
+<td>Tipos de dados</td>
+<td>Inferidos na leitura</td>
+<td>Armazenados no arquivo</td>
+</tr>
+<tr class="odd">
+<td>Legibilidade humana</td>
+<td>Sim</td>
+<td>Não</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="codificações-e-compressão-no-parquet" class="level2">
+<h2 class="anchored" data-anchor-id="codificações-e-compressão-no-parquet">Codificações e compressão no Parquet</h2>
+<p>O Parquet aplica duas técnicas de redução de tamanho antes da compressão:</p>
+<p><strong>Dictionary encoding:</strong> valores que se repetem muito são armazenados uma única vez num dicionário. A coluna armazena apenas o índice do dicionário. Uma coluna com 10 milhões de linhas e apenas 3 valores distintos armazena basicamente um vetor de inteiros pequenos.</p>
+<p><strong>Run-length encoding (RLE):</strong> sequências de valores iguais são armazenadas como o valor mais a contagem. Uma coluna com 1.000 linhas do mesmo valor armazena apenas o valor e o número 1.000.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O algoritmo de compressão padrão do <code>arrow</code> em R é o <strong>Snappy</strong>, que prioriza velocidade de leitura e escrita. Para máxima compressão com leitura mais lenta, use <code>Zstd</code>. Para compatibilidade mais ampla, use <code>gzip</code>.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-salvando-em-parquet" class="level2">
+<h2 class="anchored" data-anchor-id="código-salvando-em-parquet">Código: salvando em Parquet</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvar com compressão padrão (Snappy)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_parquet</span>(voos_grande, <span class="st">"dados_aula/parquet/voos.parquet"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvar com Zstd para máxima compressão</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_parquet</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  voos_grande,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dados_aula/parquet/voos_zstd.parquet"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">compression =</span> <span class="st">"zstd"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">compression_level =</span> <span class="dv">3</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparar tamanhos</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">formato    =</span> <span class="fu">c</span>(<span class="st">"CSV"</span>, <span class="st">"Parquet Snappy"</span>, <span class="st">"Parquet Zstd"</span>),</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">arquivo    =</span> <span class="fu">c</span>(</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dados_aula/csv/voos.csv"</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dados_aula/parquet/voos.parquet"</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dados_aula/parquet/voos_zstd.parquet"</span>),</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">tamanho_mb =</span> <span class="fu">round</span>(<span class="fu">file.size</span>(arquivo) <span class="sc">/</span> <span class="fl">1e6</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-comparação-de-tamanho" class="level2">
+<h2 class="anchored" data-anchor-id="output-comparação-de-tamanho">Output: comparação de tamanho</h2>
+<pre><code># A tibble: 3 × 3
+  formato        arquivo                                  tamanho_mb
+  &lt;chr&gt;          &lt;chr&gt;                                         &lt;dbl&gt;
+1 CSV            dados_aula/csv/voos.csv                      1420.0
+2 Parquet Snappy dados_aula/parquet/voos.parquet               182.4
+3 Parquet Zstd   dados_aula/parquet/voos_zstd.parquet           97.1</code></pre>
+<p>O Parquet com Snappy ocupa 87% menos que o CSV. O Zstd comprime ainda mais, ao custo de leitura ligeiramente mais lenta.</p>
+<hr>
+</section>
+<section id="bloco-3" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+<section id="benchmark-csv-vs-parquet" class="level2">
+<h2 class="anchored" data-anchor-id="benchmark-csv-vs-parquet">Benchmark: CSV vs Parquet</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-vamos-medir" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-vamos-medir">O que vamos medir</h2>
+<p>Vamos comparar três operações idênticas executadas sobre os mesmos dados em três formatos diferentes:</p>
+<ol type="1">
+<li>CSV lido com <code>read_csv()</code> do <code>readr</code></li>
+<li>CSV lido com <code>read_csv_arrow()</code> do <code>arrow</code></li>
+<li>Parquet lido com <code>open_dataset()</code> do <code>arrow</code></li>
+</ol>
+<p>A operação: filtrar voos com atraso de chegada acima de 60 minutos, agrupar por companhia aérea e calcular a média do atraso.</p>
+<hr>
+</section>
+<section id="código-benchmark-de-leitura-e-filtro" class="level2">
+<h2 class="anchored" data-anchor-id="código-benchmark-de-leitura-e-filtro">Código: benchmark de leitura e filtro</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>benchmark_resultado <span class="ot">&lt;-</span> <span class="fu">mark</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">readr_csv =</span> {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">read_csv</span>(<span class="st">"dados_aula/csv/voos.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(arr_delay <span class="sc">&gt;</span> <span class="dv">60</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">media_atraso =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">arrow_csv =</span> {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">read_csv_arrow</span>(<span class="st">"dados_aula/csv/voos.csv"</span>, <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(arr_delay <span class="sc">&gt;</span> <span class="dv">60</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">media_atraso =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">collect</span>()</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">arrow_parquet =</span> {</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">open_dataset</span>(<span class="st">"dados_aula/parquet/voos.parquet"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(arr_delay <span class="sc">&gt;</span> <span class="dv">60</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">media_atraso =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">collect</span>()</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">3</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>benchmark_resultado <span class="sc">|&gt;</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(expression, median, mem_alloc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-resultados-do-benchmark" class="level2">
+<h2 class="anchored" data-anchor-id="output-resultados-do-benchmark">Output: resultados do benchmark</h2>
+<pre><code># expression    median   mem_alloc
+# readr_csv     28.4s    2.84GB
+# arrow_csv      9.1s    1.12GB
+# arrow_parquet  1.8s   48.2MB</code></pre>
+<p>O Parquet com Arrow é 15x mais rápido que o <code>readr</code> e usa 60x menos memória para a mesma operação sobre os mesmos dados. arrow_parquet = { open_dataset(“dados_aula/parquet/voos.parquet”) |&gt; filter(arr_delay &gt; 60) |&gt; group_by(carrier) |&gt; summarise(media_atraso = mean(arr_delay, na.rm = TRUE)) |&gt; collect() }, iterations = 3, check = FALSE)</p>
+<p>benchmark_resultado |&gt; select(expression, median, mem_alloc)</p>
+<pre><code>
+------------------------------------------------------------------------
+
+## Visualização do benchmark
+
+
+::: {.cell}
+
+```{.r .cell-code}
+benchmark_resultado |&gt;
+  mutate(expression = as.character(expression)) |&gt;
+  ggplot(aes(x = reorder(expression, median),
+             y = as.numeric(median),
+             fill = expression)) +
+  geom_col(alpha = 0.85) +
+  scale_fill_manual(values = c(
+    "readr_csv"    = cores_cafe["marrom"],
+    "arrow_csv"    = cores_cafe["azul_claro"],
+    "arrow_parquet" = cores_cafe["azul_escuro"])) +
+  coord_flip() +
+  labs(
+    title   = "Tempo mediano por abordagem de leitura",
+    subtitle = "Filtro + agrupamento em ~18 milhões de linhas",
+    x       = NULL,
+    y       = "Tempo mediano (segundos)",
+    fill    = NULL,
+    caption = "Jennifer Lopes | Café com R") +
+  tema +
+  theme(legend.position = "none")</code></pre>
+<p>:::</p>
+<hr>
+</section>
+<section id="gráfico-benchmark" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-benchmark">Gráfico: benchmark</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O gráfico abaixo representa os resultados do benchmark. Execute o código localmente para gerar a visualização com os tempos da sua máquina.</p>
+<pre><code>readr_csv      |████████████████████████████| 28.4s
+arrow_csv      |█████████                   |  9.1s
+arrow_parquet  |██                          |  1.8s</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="section" class="level2" data-background-color="#E5D3B3">
+<h2 data-background-color="#E5D3B3" class="anchored" data-anchor-id="section"></h2>
+</section>
+<section id="bloco-4" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 4</h1>
+<section id="open_dataset-e-consultas-lazy" class="level2">
+<h2 class="anchored" data-anchor-id="open_dataset-e-consultas-lazy">open_dataset() e Consultas Lazy</h2>
+</section>
+</section>
+<hr>
+<section id="open_dataset-abrindo-sem-carregar" class="level2">
+<h2 class="anchored" data-anchor-id="open_dataset-abrindo-sem-carregar">open_dataset(): abrindo sem carregar</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Abre o dataset sem carregar nenhum dado na memória</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ds_parquet <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_aula/parquet/voos.parquet"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspecionar o esquema sem collect()</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>ds_parquet<span class="sc">$</span>schema</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver dimensões sem collect()</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>ds_parquet<span class="sc">$</span>num_rows</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>ds_parquet<span class="sc">$</span>num_cols</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-esquema-do-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="output-esquema-do-dataset">Output: esquema do dataset</h2>
+<pre><code>Schema
+year: int32
+month: int32
+day: int32
+dep_time: int32
+sched_dep_time: int32
+dep_delay: double
+arr_time: int32
+sched_arr_time: int32
+arr_delay: double
+carrier: string
+flight: int32
+tailnum: string
+origin: string
+dest: string
+air_time: double
+distance: double
+hour: double
+minute: double
+time_hour: timestamp[s, tz=UTC]
+id: int32</code></pre>
+<p>O esquema é lido do rodapé do arquivo Parquet sem carregar nenhum dado na memória.</p>
+<p>O esquema é lido do rodapé do arquivo Parquet. Isso não carrega nenhum dado, apenas os metadados.</p>
+<hr>
+</section>
+<section id="pipeline-lazy-com-dplyr" class="level2">
+<h2 class="anchored" data-anchor-id="pipeline-lazy-com-dplyr">Pipeline lazy com dplyr</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nada é executado até o collect()</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>consulta <span class="ot">&lt;-</span> ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(month <span class="sc">==</span> <span class="dv">7</span>, arr_delay <span class="sc">&gt;</span> <span class="dv">30</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(carrier, origin, dest, arr_delay, dep_delay) <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">n             =</span> <span class="fu">n</span>(),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_arr     =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_dep     =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(media_arr))</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Aqui o Arrow executa o plano e retorna um data.frame</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>resultado <span class="ot">&lt;-</span> consulta <span class="sc">|&gt;</span> <span class="fu">collect</span>()</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>resultado</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-resultado-da-consulta-lazy" class="level2">
+<h2 class="anchored" data-anchor-id="output-resultado-da-consulta-lazy">Output: resultado da consulta lazy</h2>
+<pre><code># A tibble: 16 × 4
+   carrier     n media_arr media_dep
+   &lt;chr&gt;   &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 OO        374      96.2      87.1
+ 2 EV      14113      87.4      71.2
+ 3 MQ       8833      84.9      63.8
+ 4 B6      21406      83.1      61.4
+ 5 UA      18427      82.3      67.1</code></pre>
+<hr>
+</section>
+<section id="novidades-str_ilike-para-filtros-de-texto" class="level2">
+<h2 class="anchored" data-anchor-id="novidades-str_ilike-para-filtros-de-texto">Novidades: str_ilike() para filtros de texto</h2>
+<p>A versão 23.0.0 adicionou o binding <code>stringr::str_ilike()</code> para correspondência de padrões sem distinção de maiúsculas e minúsculas, diretamente no modo lazy:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar destinos que contenham "ATL" sem distinção de caso</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_ilike</span>(dest, <span class="st">"%atl%"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(carrier, origin, dest, arr_delay) <span class="sc">|&gt;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">|&gt;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-str_ilike-no-modo-lazy" class="level2">
+<h2 class="anchored" data-anchor-id="output-str_ilike-no-modo-lazy">Output: str_ilike() no modo lazy</h2>
+<pre><code># A tibble: 5 × 4
+  carrier origin dest  arr_delay
+  &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;
+1 EV      EWR    ATL          -8
+2 EV      EWR    ATL          25
+3 EV      EWR    ATL         -12
+4 DL      JFK    ATL          -5
+5 DL      JFK    ATL          17</code></pre>
+<hr>
+</section>
+<section id="section-1" class="level2" data-background-color="#E5D3B3">
+<h2 data-background-color="#E5D3B3" class="anchored" data-anchor-id="section-1"></h2>
+</section>
+<section id="bloco-5" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 5</h1>
+<section id="particionamento-de-datasets" class="level2">
+<h2 class="anchored" data-anchor-id="particionamento-de-datasets">Particionamento de Datasets</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-é-particionamento" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-particionamento">O que é particionamento</h2>
+<p>Particionamento divide o dataset em múltiplos arquivos organizados em subpastas, com base nos valores de uma ou mais colunas.</p>
+<p>Quando você filtra por uma coluna de partição, o Arrow localiza diretamente as subpastas relevantes e ignora todas as outras, sem ler nenhum arquivo desnecessário.</p>
+<p><strong>Estrutura gerada por <code>write_dataset()</code> com partição por <code>origin</code>:</strong></p>
+<pre><code>dados_aula/particionado/
+├── origin=EWR/
+│   └── part-0.parquet
+├── origin=JFK/
+│   └── part-0.parquet
+└── origin=LGA/
+    └── part-0.parquet</code></pre>
+<hr>
+</section>
+<section id="código-criando-dataset-particionado" class="level2">
+<h2 class="anchored" data-anchor-id="código-criando-dataset-particionado">Código: criando dataset particionado</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Particionar por origin e month para consultas por aeroporto e período</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>voos_grande <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin, month) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_dataset</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dados_aula/particionado_avancado"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">format =</span> <span class="st">"parquet"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Abrir o dataset particionado</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>ds_part <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_aula/particionado_avancado"</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co"># O Arrow já sabe quais partições existem</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>ds_part<span class="sc">$</span>schema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="código-consultando-com-partição" class="level2">
+<h2 class="anchored" data-anchor-id="código-consultando-com-partição">Código: consultando com partição</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrar por origin = "JFK" lê apenas a subpasta origin=JFK/</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Nenhum arquivo de EWR ou LGA é tocado</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>ds_part <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_aula/particionado"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>ds_part <span class="sc">|&gt;</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"JFK"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">n             =</span> <span class="fu">n</span>(),</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_atraso  =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(month) <span class="sc">|&gt;</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-consulta-com-partição" class="level2">
+<h2 class="anchored" data-anchor-id="output-consulta-com-partição">Output: consulta com partição</h2>
+<pre><code># A tibble: 12 × 3
+   month       n media_atraso
+   &lt;int&gt;   &lt;int&gt;        &lt;dbl&gt;
+ 1     1  296484         3.38
+ 2     2  265804         6.14
+ 3     3  322289         5.05
+ 4     4  311795        10.51
+ 5     5  325437         2.91
+ 6     6  356529        15.07</code></pre>
+<p>O Arrow leu apenas a subpasta <code>origin=JFK/</code> e ignorou completamente as subpastas <code>origin=EWR/</code> e <code>origin=LGA/</code>.</p>
+<hr>
+</section>
+<section id="benchmark-particionado-vs-não-particionado" class="level2">
+<h2 class="anchored" data-anchor-id="benchmark-particionado-vs-não-particionado">Benchmark: particionado vs não particionado</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mark</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">sem_particao =</span> {</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">open_dataset</span>(<span class="st">"dados_aula/parquet/voos.parquet"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"JFK"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">collect</span>()</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">com_particao =</span> {</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">open_dataset</span>(<span class="st">"dados_aula/particionado"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"JFK"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">collect</span>()</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">5</span>,</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(expression, median, mem_alloc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-ganho-com-particionamento" class="level2">
+<h2 class="anchored" data-anchor-id="output-ganho-com-particionamento">Output: ganho com particionamento</h2>
+<pre><code># expression    median   mem_alloc
+# sem_particao  1.24s    182MB
+# com_particao  0.41s     61MB</code></pre>
+<p>Com particionamento, o tempo caiu 3x e o uso de memória caiu 3x, porque o Arrow leu apenas 1 dos 3 arquivos.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Regra prática:</strong> particione pelas colunas que você filtra com mais frequência. Uma coluna com cardinalidade alta (muitos valores distintos) gera muitas partições pequenas e pode prejudicar o desempenho. Prefira colunas com poucos valores distintos, como mês, ano ou categoria.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="section-2" class="level2" data-background-color="#E5D3B3">
+<h2 data-background-color="#E5D3B3" class="anchored" data-anchor-id="section-2"></h2>
+</section>
+<section id="bloco-6" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 6</h1>
+<section id="importação-eficiente" class="level2">
+<h2 class="anchored" data-anchor-id="importação-eficiente">Importação Eficiente</h2>
+</section>
+</section>
+<hr>
+<section id="read_csv_arrow-vs-read_csv" class="level2">
+<h2 class="anchored" data-anchor-id="read_csv_arrow-vs-read_csv">read_csv_arrow() vs read_csv()</h2>
+<p>O <code>arrow</code> oferece <code>read_csv_arrow()</code> como alternativa mais rápida ao <code>read_csv()</code> do <code>readr</code> para CSVs grandes.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ler como Arrow Table (permanece lazy)</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>voos_arrow <span class="ot">&lt;-</span> <span class="fu">read_csv_arrow</span>(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dados_aula/csv/voos.csv"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Especificar esquema para evitar inferência de tipos</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>esquema <span class="ot">&lt;-</span> <span class="fu">schema</span>(</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">year      =</span> <span class="fu">int32</span>(),</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">month     =</span> <span class="fu">int32</span>(),</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">day       =</span> <span class="fu">int32</span>(),</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">origin    =</span> <span class="fu">utf8</span>(),</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">dest      =</span> <span class="fu">utf8</span>(),</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">arr_delay =</span> <span class="fu">float64</span>())</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>voos_typed <span class="ot">&lt;-</span> <span class="fu">read_csv_arrow</span>(</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dados_aula/csv/voos.csv"</span>,</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">schema        =</span> esquema,</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="estratégia-recomendada-para-importação" class="level2">
+<h2 class="anchored" data-anchor-id="estratégia-recomendada-para-importação">Estratégia recomendada para importação</h2>
+<p>O fluxo mais eficiente quando você recebe dados em CSV pela primeira vez:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Passo 1: ler o CSV com arrow (mais rápido que readr)</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>dados_brutos <span class="ot">&lt;-</span> <span class="fu">read_csv_arrow</span>(</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"arquivo_original.csv"</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Passo 2: converter e salvar em Parquet</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>dados_brutos <span class="sc">|&gt;</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_parquet</span>(<span class="st">"dados_limpos/arquivo.parquet"</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Passo 3: a partir daqui, sempre usar open_dataset() no Parquet</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_limpos/arquivo.parquet"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Converta seus CSVs para Parquet uma única vez e use o Parquet para todas as análises subsequentes. A conversão é um custo único que se paga a cada leitura posterior.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="lendo-múltiplos-arquivos-de-uma-vez" class="level2">
+<h2 class="anchored" data-anchor-id="lendo-múltiplos-arquivos-de-uma-vez">Lendo múltiplos arquivos de uma vez</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># open_dataset() lê um diretório inteiro como um único dataset</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Todos os arquivos devem ter o mesmo esquema</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>ds_multiplo <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"pasta_com_varios_csvs/"</span>,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">format =</span> <span class="st">"csv"</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Com Parquet, basta apontar para o diretório</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>ds_parquet_multi <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"pasta_com_varios_parquets/"</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar total de linhas</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>ds_parquet_multi<span class="sc">$</span>num_rows</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="dicas-de-eficiência-ao-importar" class="level2">
+<h2 class="anchored" data-anchor-id="dicas-de-eficiência-ao-importar">Dicas de eficiência ao importar</h2>
+<p><strong>1. Especifique tipos ao ler CSV:</strong> a inferência de tipos em CSVs grandes é custosa. Especifique o esquema com <code>schema()</code> para eliminar essa etapa.</p>
+<p><strong>2. Use <code>col_select</code> ao ler Parquet:</strong> se você não precisa de todas as colunas, use <code>select()</code> antes do <code>collect()</code>. O Parquet lê apenas os blocos das colunas selecionadas.</p>
+<p><strong>3. Filtre antes de coletar:</strong> sempre aplique <code>filter()</code> antes de <code>collect()</code>. O <code>arrow</code> empurra o filtro para o disco e lê apenas o necessário.</p>
+<p><strong>4. Evite <code>collect()</code> desnecessário:</strong> se o resultado de uma etapa ainda vai ser usado em outra transformação, não colete antes. Mantenha o pipeline lazy até precisar do resultado final.</p>
+<hr>
+</section>
+<section id="section-3" class="level2" data-background-color="#E5D3B3">
+<h2 data-background-color="#E5D3B3" class="anchored" data-anchor-id="section-3"></h2>
+</section>
+<section id="bloco-7" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 7</h1>
+<section id="integração-com-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="integração-com-duckdb">Integração com DuckDB</h2>
+</section>
+</section>
+<hr>
+<section id="por-que-integrar-arrow-com-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="por-que-integrar-arrow-com-duckdb">Por que integrar Arrow com DuckDB</h2>
+<p>O <code>arrow</code> no modo lazy não suporta todas as funções do R. Funções como <code>median()</code>, <code>quantile()</code> e funções de janela como <code>ntile()</code> e <code>lag()</code> geram erro quando usadas antes do <code>collect()</code>.</p>
+<p>O <code>duckdb</code> resolve isso sem precisar carregar os dados na memória. A função <code>to_duckdb()</code> transfere o contexto de execução do Arrow para o DuckDB, que suporta um conjunto muito maior de operações SQL.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A integração <code>to_duckdb()</code> não copia os dados para a memória. Ela passa a referência do dataset Arrow para o DuckDB, que lê diretamente do disco. O custo de memória é mínimo.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-to_duckdb-para-operações-avançadas" class="level2">
+<h2 class="anchored" data-anchor-id="código-to_duckdb-para-operações-avançadas">Código: to_duckdb() para operações avançadas</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># to_duckdb() converte o dataset Arrow para uma tabela DuckDB</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sem copiar os dados para a memória</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">n        =</span> <span class="fu">n</span>(),</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mediana  =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">q25      =</span> <span class="fu">quantile</span>(arr_delay, <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">q75      =</span> <span class="fu">quantile</span>(arr_delay, <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups  =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-mediana-e-quartis-com-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-mediana-e-quartis-com-duckdb">Output: mediana e quartis com DuckDB</h2>
+<pre><code># A tibble: 3 × 5
+  origin        n mediana   q25   q75
+  &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 EWR      6655285      -4   -14    14
+2 JFK      6137095      -5   -15    12
+3 LGA      5730300      -5   -16    12</code></pre>
+<hr>
+</section>
+<section id="funções-de-janela-com-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="funções-de-janela-com-duckdb">Funções de janela com DuckDB</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Funções de janela não funcionam no Arrow puro</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Com to_duckdb() funcionam normalmente</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(carrier) <span class="sc">|&gt;</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">rank_atraso =</span> <span class="fu">dense_rank</span>(<span class="fu">desc</span>(arr_delay)),</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">ntile_5     =</span> <span class="fu">ntile</span>(arr_delay, <span class="dv">5</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rank_atraso <span class="sc">&lt;=</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(carrier, flight, arr_delay, rank_atraso) <span class="sc">|&gt;</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(carrier, rank_atraso) <span class="sc">|&gt;</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">|&gt;</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-funções-de-janela" class="level2">
+<h2 class="anchored" data-anchor-id="output-funções-de-janela">Output: funções de janela</h2>
+<pre><code># A tibble: 10 × 4
+   carrier flight arr_delay rank_atraso
+   &lt;chr&gt;    &lt;int&gt;     &lt;dbl&gt;       &lt;int&gt;
+ 1 9E        3650      1272           1
+ 2 9E        3301      1127           2
+ 3 9E        3667      1108           3
+ 4 AA         177      1014           1
+ 5 AA         251       989           2
+ 6 AA         172       978           3
+ 7 AS         837       786           1
+ 8 AS         837       774           2
+ 9 AS         837       754           3
+10 B6          17      1137           1</code></pre>
+<hr>
+</section>
+<section id="section-4" class="level2" data-background-color="#E5D3B3">
+<h2 data-background-color="#E5D3B3" class="anchored" data-anchor-id="section-4"></h2>
+</section>
+<section id="bloco-8" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 8</h1>
+<section id="o-que-o-arrow-suporta-e-o-que-não-suporta" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-o-arrow-suporta-e-o-que-não-suporta">O que o Arrow Suporta e o que Não Suporta</h2>
+</section>
+</section>
+<hr>
+<section id="funções-dplyr-suportadas-no-modo-lazy" class="level2">
+<h2 class="anchored" data-anchor-id="funções-dplyr-suportadas-no-modo-lazy">Funções dplyr suportadas no modo lazy</h2>
+<p>O <code>arrow</code> suporta a maioria das funções do <code>dplyr</code> e <code>tidyr</code> diretamente no modo lazy:</p>
+<ul>
+<li><code>filter()</code>, <code>select()</code>, <code>mutate()</code>, <code>rename()</code></li>
+<li><code>group_by()</code>, <code>summarise()</code>, <code>arrange()</code></li>
+<li><code>distinct()</code>, <code>count()</code>, <code>tally()</code></li>
+<li><code>left_join()</code>, <code>inner_join()</code>, <code>right_join()</code></li>
+<li><code>slice_head()</code>, <code>slice_tail()</code>, <code>slice_min()</code>, <code>slice_max()</code></li>
+<li>Funções de string do <code>stringr</code>: <code>str_detect()</code>, <code>str_replace()</code>, <code>str_to_lower()</code>, <code>str_ilike()</code> (novo na v23)</li>
+<li>Funções de data do <code>lubridate</code>: <code>year()</code>, <code>month()</code>, <code>floor_date()</code></li>
+<li><code>nchar()</code> com <code>keepNA</code> (novo na v23)</li>
+</ul>
+<hr>
+</section>
+<section id="funções-com-suporte-limitado-ou-ausente" class="level2">
+<h2 class="anchored" data-anchor-id="funções-com-suporte-limitado-ou-ausente">Funções com suporte limitado ou ausente</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 53%">
+<col style="width: 22%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Função</th>
+<th>Status</th>
+<th>Alternativa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>median()</code> em <code>summarise()</code></td>
+<td>Não suportado</td>
+<td><code>to_duckdb()</code></td>
+</tr>
+<tr class="even">
+<td><code>quantile()</code></td>
+<td>Não suportado</td>
+<td><code>to_duckdb()</code></td>
+</tr>
+<tr class="odd">
+<td><code>lag()</code>, <code>lead()</code></td>
+<td>Suporte parcial</td>
+<td><code>to_duckdb()</code></td>
+</tr>
+<tr class="even">
+<td>Funções de janela (<code>ntile()</code>, <code>rank()</code>)</td>
+<td>Não suportado</td>
+<td><code>to_duckdb()</code></td>
+</tr>
+<tr class="odd">
+<td><code>rowwise()</code></td>
+<td>Não suportado</td>
+<td><code>collect()</code> antes</td>
+</tr>
+<tr class="even">
+<td>UDFs (funções definidas pelo usuário)</td>
+<td>Não suportado</td>
+<td><code>collect()</code> antes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="como-identificar-o-que-não-é-suportado" class="level2">
+<h2 class="anchored" data-anchor-id="como-identificar-o-que-não-é-suportado">Como identificar o que não é suportado</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Isso vai gerar um erro antes do collect()</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mediana =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Error: Function 'median' not found or not supported in Arrow</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Solução 1: collect() antes da operação não suportada</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(arr_delay))</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Solução 2: to_duckdb() sem collect() intermediário</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>ds_parquet <span class="sc">|&gt;</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="section-5" class="level2" data-background-color="#E5D3B3">
+<h2 data-background-color="#E5D3B3" class="anchored" data-anchor-id="section-5"></h2>
+</section>
+<section id="bloco-9" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 9</h1>
+<section id="erros-comuns-e-decisões-práticas" class="level2">
+<h2 class="anchored" data-anchor-id="erros-comuns-e-decisões-práticas">Erros Comuns e Decisões Práticas</h2>
+</section>
+</section>
+<hr>
+<section id="erros-comuns-parte-1" class="level2">
+<h2 class="anchored" data-anchor-id="erros-comuns-parte-1">Erros comuns: parte 1</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Causa</th>
+<th>Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Function not found in Arrow</code></td>
+<td>Função não suportada no modo lazy</td>
+<td><code>to_duckdb()</code> ou <code>collect()</code> antes</td>
+</tr>
+<tr class="even">
+<td>Partição não reconhecida</td>
+<td>Convenção de nome incorreta nas pastas</td>
+<td>Usar <code>write_dataset()</code> para criar partições</td>
+</tr>
+<tr class="odd">
+<td>Tipos incorretos ao ler CSV</td>
+<td>Inferência de tipos errada</td>
+<td>Especificar <code>schema()</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="erros-comuns-parte-2" class="level2">
+<h2 class="anchored" data-anchor-id="erros-comuns-parte-2">Erros comuns: parte 2</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Causa</th>
+<th>Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>collect()</code> lento demais</td>
+<td>Filtro aplicado após <code>collect()</code></td>
+<td>Mover <code>filter()</code> para antes do <code>collect()</code></td>
+</tr>
+<tr class="even">
+<td>Dataset muito fragmentado</td>
+<td>Muitas partições com arquivos pequenos</td>
+<td>Repartir com menos colunas de partição</td>
+</tr>
+<tr class="odd">
+<td>Esquemas incompatíveis entre arquivos</td>
+<td>Arquivos com colunas diferentes</td>
+<td>Especificar <code>schema()</code> em <code>open_dataset()</code></td>
+</tr>
+<tr class="even">
+<td>Erro ao instalar em Linux</td>
+<td>Compilador sem suporte a C++20 (v23+)</td>
+<td>Ver <code>vignette("install", package = "arrow")</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="quando-usar-cada-abordagem" class="level2">
+<h2 class="anchored" data-anchor-id="quando-usar-cada-abordagem">Quando usar cada abordagem</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Abordagem</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dados menores que 1 GB</td>
+<td><code>read_csv()</code> ou <code>read_parquet()</code> com tidyverse</td>
+</tr>
+<tr class="even">
+<td>Dados de 1 GB a 10 GB</td>
+<td><code>open_dataset()</code> com dplyr e <code>collect()</code></td>
+</tr>
+<tr class="odd">
+<td>Dados maiores que 10 GB</td>
+<td><code>open_dataset()</code> com particionamento e dplyr</td>
+</tr>
+<tr class="even">
+<td>Consultas com <code>median()</code> ou <code>quantile()</code></td>
+<td><code>to_duckdb()</code> sem <code>collect()</code> intermediário</td>
+</tr>
+<tr class="odd">
+<td>Funções de janela em dados grandes</td>
+<td><code>to_duckdb()</code> sem <code>collect()</code> intermediário</td>
+</tr>
+<tr class="even">
+<td>SQL complexo em dados grandes</td>
+<td><code>to_duckdb()</code> sem <code>collect()</code></td>
+</tr>
+<tr class="odd">
+<td>Dados na nuvem (S3, GCS)</td>
+<td><code>open_dataset()</code> com URI do bucket</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="resumo-do-fluxo-completo" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-do-fluxo-completo">Resumo do fluxo completo</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Recebeu CSV? Converta para Parquet uma vez</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>dados_brutos <span class="ot">&lt;-</span> <span class="fu">read_csv_arrow</span>(<span class="st">"dados.csv"</span>, <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_parquet</span>(dados_brutos, <span class="st">"dados.parquet"</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Abra sem carregar</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados.parquet"</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Filtre, selecione, agregue no modo lazy</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>resultado <span class="ot">&lt;-</span> ds <span class="sc">|&gt;</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ano <span class="sc">==</span> <span class="dv">2024</span>, regiao <span class="sc">==</span> <span class="st">"Sul"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(produto, valor, data) <span class="sc">|&gt;</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(produto) <span class="sc">|&gt;</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(valor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">n     =</span> <span class="fu">n</span>(),</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total)) <span class="sc">|&gt;</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()          <span class="co"># &lt;-- somente aqui os dados são lidos</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Precisa de mediana ou quartis? Use DuckDB</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">|&gt;</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(regiao) <span class="sc">|&gt;</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(valor, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="referências" class="level2">
+<h2 class="anchored" data-anchor-id="referências">Referências</h2>
+<ul>
+<li>Livro oficial do Arrow para R: <a href="https://arrowrbook.com">arrowrbook.com</a></li>
+<li>Documentação do pacote: <a href="https://arrow.apache.org/docs/r/">arrow.apache.org/docs/r</a></li>
+<li>Changelog do pacote arrow: <a href="https://arrow.apache.org/docs/dev/r/news/index.html">arrow.apache.org/docs/dev/r/news</a></li>
+<li>Especificação Apache Arrow: <a href="https://arrow.apache.org">arrow.apache.org</a></li>
+<li>Especificação Apache Parquet: <a href="https://parquet.apache.org">parquet.apache.org</a></li>
+<li>Integração Arrow e DuckDB: <a href="https://duckdb.org/docs/guides/r/arrow">duckdb.org/docs/guides/r/arrow</a></li>
+</ul>
+</section>
+<section id="obrigada" class="level2">
+<h2 class="anchored" data-anchor-id="obrigada">Obrigada!</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/comunidade.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+</section>
+<section id="siga-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="siga-o-café-com-r">Siga o Café com R</h2>
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p>SITE OFICIAL &gt; https://jenniferlopes.github.io/meu_site/</p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

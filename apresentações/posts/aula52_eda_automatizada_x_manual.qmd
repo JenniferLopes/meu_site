@@ -1,0 +1,282 @@
+---
+title: "Aula 52. EDA automatizada x EDA manual"
+subtitle: "Quando cada uma serve, EDA por grupos e EDA com dados grandes"
+categories: [R, Estatística, EDA, Tidyverse]
+image: "imagens/52.png"
+description: "Compare a EDA automatizada e a EDA manual, aprenda a explorar dados agrupados por ambiente com metan e a lidar com sobreposição de pontos em conjuntos de dados grandes."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(metan)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+genotipos <- paste0("G", 1:10)
+ambientes <- paste0("Ambiente ", 1:4)
+
+ensaio_multiambiente <- expand_grid(
+  genotipo  = genotipos,
+  ambiente  = ambientes,
+  repeticao = 1:3) |>
+  mutate(produtividade = rnorm(n(),
+                                mean = 3200 + as.numeric(factor(ambiente)) * 150,
+                                sd   = 250))
+
+leituras_sensores <- tibble(
+  leitura     = 1:50000,
+  temperatura = rnorm(50000, mean = 24, sd = 4)) |>
+  mutate(umidade = 60 - 1.2 * temperatura + rnorm(50000, 0, 5))
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Realizar EDA por grupos, ambiente e genótipo, com o pacote **metan**
+- Revisar o que a EDA automatizada resolve e o que ela não resolve
+- Lidar com sobreposição de pontos em conjuntos de dados grandes
+- Decidir quando usar EDA automatizada e quando usar EDA manual
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## EDA por Grupos com metan
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, por que agrupar antes de analisar
+
+- **Contexto:** um ensaio multiambiente avalia 10 genótipos de soja em 4 ambientes, com 3 repetições cada, totalizando 120 parcelas.
+
+- Calcular um resumo descritivo único, ignorando o ambiente, mistura a variação genética com a variação ambiental, e esconde justamente a informação mais relevante em um ensaio multiambiente, como o desempenho relativo de cada genótipo em cada condição.
+
+- O pacote **metan**, desenvolvido especificamente para experimentos multiambiente, fornece funções de estatística descritiva já preparadas para essa estrutura de agrupamento.
+
+------------------------------------------------------------------------
+
+## Código: estatística descritiva por grupo
+
+```{r}
+#| label: metan-codigo
+#| eval: false
+
+ensaio_multiambiente |>
+  group_by(ambiente) |>
+  desc_stat(produtividade)
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: metan-output
+#| echo: false
+
+ensaio_multiambiente |>
+  group_by(ambiente) |>
+  desc_stat(produtividade)
+```
+
+- **A produtividade média cresce de forma consistente do Ambiente 1 ao Ambiente 4, um padrão que um resumo descritivo único, sem agrupamento, esconderia completamente. A EDA por grupo é o ponto de partida obrigatório antes de qualquer modelo de interação genótipo por ambiente.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Revisitando a EDA Automatizada
+:::
+
+------------------------------------------------------------------------
+
+## O que ela resolve e o que ela não resolve
+
+- Pacotes de EDA automatizada, como os vistos anteriormente, resolvem bem a padronização de nomes, o resumo estatístico geral e o panorama inicial de estrutura e dados ausentes.
+
+- Eles não resolvem a exploração orientada pela estrutura experimental do problema, como a comparação entre ambientes, genótipos ou tratamentos, que exige agrupamento definido pelo analista, e não descoberto automaticamente pela ferramenta.
+
+- A EDA automatizada entrega o panorama. A EDA manual, com agrupamento correto, entrega a resposta à pergunta de pesquisa.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## EDA com Dados Grandes
+:::
+
+------------------------------------------------------------------------
+
+## O problema, sobreposição de pontos
+
+- **Contexto:** um sensor de campo registra temperatura e umidade do solo a cada minuto, gerando 50.000 leituras ao longo de um período de monitoramento.
+
+- Um gráfico de dispersão tradicional, com `geom_point()`, sobrepõe tantos pontos nessa quantidade de dados que a maior parte da figura se torna uma mancha densa e uniforme, escondendo a real concentração dos dados.
+
+- Duas estratégias resolvem esse problema, reduzir o número de pontos plotados por amostragem, ou substituir o gráfico de dispersão por uma representação de densidade em grade.
+
+------------------------------------------------------------------------
+
+## Código: amostragem e geom_hex()
+
+```{r}
+#| label: dados-grandes-codigo
+#| eval: false
+
+leituras_sensores |>
+  slice_sample(n = 2000) |>
+  ggplot(aes(x = temperatura, y = umidade)) +
+  geom_point(alpha = 0.4, color = cores_cafe["azul_claro"])
+
+leituras_sensores |>
+  ggplot(aes(x = temperatura, y = umidade)) +
+  geom_hex(bins = 40) +
+  scale_fill_gradient(low = cores_cafe["bege"], high = cores_cafe["marrom"])
+```
+
+------------------------------------------------------------------------
+
+## Gráfico e interpretação
+
+```{r}
+#| label: dados-grandes-grafico
+#| echo: false
+#| fig-height: 4.8
+
+leituras_sensores |>
+  ggplot(aes(x = temperatura, y = umidade)) +
+  geom_hex(bins = 40) +
+  scale_fill_gradient(low = cores_cafe["bege"], high = cores_cafe["marrom"]) +
+  labs(
+    title    = "Relação entre temperatura e umidade do solo",
+    subtitle = "50.000 leituras, representadas por densidade em grade hexagonal",
+    x        = "Temperatura (°C)",
+    y        = "Umidade do solo (%)",
+    fill     = "Contagem",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+- **A representação em grade hexagonal revela a densidade real da relação entre as duas variáveis, algo que um gráfico de dispersão tradicional, com 50.000 pontos sobrepostos, tornaria ilegível. A amostragem por `slice_sample()` é uma alternativa mais simples, útil para uma inspeção rápida antes de decidir a estratégia final de visualização.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Quando Cada Abordagem Serve
+:::
+
+------------------------------------------------------------------------
+
+## Tabela de decisão final
+
+| Situação | Abordagem indicada |
+|------------------------------------|------------------------------------|
+| Primeiro contato com dados novos, poucas colunas | EDA automatizada |
+| Estrutura experimental com grupos, ambientes ou tratamentos | EDA manual, com agrupamento definido pelo analista |
+| Ensaio multiambiente ou multigenótipo | Funções específicas, como as do pacote metan |
+| Conjunto de dados com dezenas de milhares de observações ou mais | Amostragem para inspeção rápida, `geom_hex()` para visualização final |
+| Investigação dirigida pela pergunta de pesquisa | EDA manual, sempre |
+
+------------------------------------------------------------------------
+
+## Erro comum 1, aplicar EDA automatizada sem agrupar
+
+- Rodar um relatório automatizado padrão em um ensaio multiambiente, sem primeiro agrupar por ambiente e por genótipo, entrega um resumo estatisticamente correto, mas irrelevante para a estrutura real do experimento.
+
+- A pergunta de pesquisa deve guiar o agrupamento, a ferramenta automatizada não infere essa estrutura sozinha.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, plotar milhões de pontos sem ajuste
+
+- Gerar um `geom_point()` padrão com um número muito grande de observações produz um gráfico ilegível, e também um arquivo pesado e lento de renderizar.
+
+- Ajustar a estratégia de visualização, com amostragem ou representação de densidade, ao volume de dados disponível deve ser uma decisão tomada antes de gerar o gráfico, não depois de constatar que ele não serve.
+
+------------------------------------------------------------------------
+
+## Resumo: EDA automatizada x EDA manual
+
+| Abordagem | Vantagem | Limite |
+|------------------------|------------------------|------------------------|
+| EDA automatizada | Rápida, padronizada, boa para primeiro contato | Não considera a estrutura experimental do problema |
+| EDA manual | Dirigida pela pergunta de pesquisa | Exige mais tempo e conhecimento do domínio |
+| metan | Preparado para dados multiambiente | Específico para essa estrutura experimental |
+| geom_hex, amostragem | Resolve sobreposição em dados grandes | Não substitui a inspeção detalhada de subconjuntos relevantes |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

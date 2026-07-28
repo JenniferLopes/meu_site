@@ -1,0 +1,323 @@
+---
+title: "Aula 46. EDA automatizada em 3 pacotes"
+subtitle: "janitor, skimr e DataExplorer, uma primeira exploração rápida e confiável"
+categories: [R, Estatística, EDA, Tidyverse]
+image: "imagens/46.png"
+description: "Use janitor, skimr e DataExplorer para fazer uma primeira exploração de dados rápida, organizada e reprodutível, sem substituir a EDA manual."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(janitor)
+library(skimr)
+library(DataExplorer)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+talhoes_bruto <- tibble(
+  `ID Talhão`                  = 1:150,
+  `Área (ha)`                  = round(rnorm(150, mean = 12, sd = 4), 1),
+  `Tipo de Solo`                = sample(c("Argiloso", "Arenoso", "Franco", NA), 150,
+                                         replace = TRUE, prob = c(0.40, 0.25, 0.30, 0.05)),
+  `Irrigação (Sim/Não)`        = sample(c("Sim", "Não"), 150, replace = TRUE,
+                                         prob = c(0.35, 0.65)),
+  `Produtividade Média (sc/ha)` = round(rnorm(150, mean = 55, sd = 12), 1),
+  `Ano de Cadastro`             = sample(2019:2025, 150, replace = TRUE))
+
+talhoes_bruto$`Produtividade Média (sc/ha)`[sample(1:150, 12)] <- NA
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Padronizar nomes de colunas e obter contagens categóricas rápidas com **janitor**
+- Obter uma visão geral completa de todas as variáveis com **skimr**
+- Gerar uma exploração automatizada de estrutura, distribuição e dados ausentes com **DataExplorer**
+- Reconhecer quando a EDA automatizada é suficiente e quando exige investigação manual complementar
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## janitor
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, o que o janitor resolve
+
+- **Contexto:** um cadastro de 150 talhões, exportado de uma planilha de crédito agrícola, chega com nomes de coluna contendo espaços, acentuação e parênteses, como `Produtividade Média (sc/ha)`.
+
+- Nomes de coluna nesse formato exigem crase em todo o código R, `` `Produtividade Média (sc/ha)` ``, e aumentam o risco de erro de digitação.
+
+- O pacote **janitor** padroniza esses nomes para o formato `snake_case`, e oferece funções para contagem categórica e verificação de duplicidade.
+
+------------------------------------------------------------------------
+
+## Código: clean_names() e tabyl()
+
+```{r}
+#| label: janitor-codigo
+#| eval: false
+
+colnames(talhoes_bruto)
+
+talhoes <- talhoes_bruto |> clean_names()
+
+colnames(talhoes)
+
+talhoes |> tabyl(tipo_de_solo)
+```
+
+------------------------------------------------------------------------
+
+## Output: nomes limpos e contagem categórica
+
+```{r}
+#| label: janitor-output
+#| echo: false
+
+talhoes <- talhoes_bruto |> clean_names()
+
+colnames(talhoes)
+
+talhoes |> tabyl(tipo_de_solo)
+```
+
+- **Os nomes de coluna passam a seguir um padrão único, em minúsculas e sem espaços, o que simplifica todo o código posterior. A função `tabyl()` já entrega contagem absoluta e percentual, incluindo os valores ausentes na categoria de solo.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## skimr
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, visão geral rápida de todas as variáveis
+
+- O pacote **skimr** produz um resumo de todas as variáveis do conjunto de dados em uma única chamada, separando estatísticas para variáveis numéricas e categóricas.
+
+- Para variáveis numéricas, o resumo inclui média, desvio padrão, quartis e um histograma em miniatura. Para variáveis categóricas, inclui contagem de valores únicos e de valores ausentes.
+
+- É o ponto de partida recomendado antes de qualquer análise, pois revela rapidamente tipos de variável incorretos e volume de dados ausentes.
+
+------------------------------------------------------------------------
+
+## Código: skim()
+
+```{r}
+#| label: skim-codigo
+#| eval: false
+
+talhoes |> skim()
+```
+
+------------------------------------------------------------------------
+
+## Output: skim()
+
+```{r}
+#| label: skim-output
+#| echo: false
+
+talhoes |> skim()
+```
+
+- **O resumo mostra que a variável de produtividade tem 12 valores ausentes, e que a área dos talhões está concentrada entre 8 e 16 hectares. Essa visão geral orienta quais variáveis merecem investigação mais detalhada.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## DataExplorer
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, EDA automatizada, quando usar e qual seu limite
+
+- O pacote **DataExplorer** gera gráficos padronizados de estrutura, distribuição e dados ausentes com uma única linha de código cada, sem exigir que o analista escreva o `ggplot2` manualmente para cada variável.
+
+- É indicado como primeira exploração de um conjunto de dados novo, especialmente com muitas colunas, quando o objetivo é obter um panorama inicial rapidamente.
+
+- Não substitui a EDA manual. Padrões específicos do problema, relações entre variáveis relevantes para a pergunta de pesquisa e valores discrepantes precisam de inspeção dirigida pelo analista.
+
+------------------------------------------------------------------------
+
+## Código: plot_intro() e plot_missing()
+
+```{r}
+#| label: dataexplorer-grafico-codigo
+#| eval: false
+
+talhoes |> plot_intro()
+
+talhoes |> plot_missing()
+```
+
+------------------------------------------------------------------------
+
+## Output: estrutura dos dados e padrão de ausência
+
+```{r}
+#| label: dataexplorer-grafico-output
+#| echo: false
+#| fig-height: 4.2
+
+talhoes |> plot_intro()
+```
+
+```{r}
+#| label: dataexplorer-missing-output
+#| echo: false
+#| fig-height: 4.2
+
+talhoes |> plot_missing()
+```
+
+- **O gráfico de introdução resume a proporção de colunas contínuas e discretas e a completude geral dos dados. O gráfico de dados ausentes confirma que apenas a variável de produtividade apresenta valores faltantes, e em proporção baixa.**
+
+------------------------------------------------------------------------
+
+## Código: create_report(), o relatório completo
+
+```{r}
+#| label: create-report-codigo
+#| eval: false
+
+talhoes |> create_report(output_file = "relatorio_talhoes.html")
+```
+
+- A função `create_report()` gera um arquivo HTML completo, com estrutura dos dados, distribuições univariadas, correlações entre variáveis numéricas e um resumo de dados ausentes, tudo em um único documento navegável.
+
+- É especialmente útil para documentar a primeira exploração de um conjunto de dados, e pode ser anexado a um relatório de consultoria como material de apoio.
+
+------------------------------------------------------------------------
+
+## Quando usar EDA automatizada x EDA manual
+
+| Etapa | Ferramenta indicada |
+|-----------------------|-------------------------------------------------|
+| Primeiro contato com dados novos | janitor, skimr, DataExplorer |
+| Verificação de nomes, tipos e dados ausentes | janitor, skimr |
+| Panorama geral de distribuições e correlações | DataExplorer |
+| Investigação de padrões específicos da pergunta de pesquisa | EDA manual, `ggplot2` dirigido |
+| Identificação e tratamento de valores discrepantes | EDA manual |
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, usar só o relatório automatizado sem investigar manualmente
+
+- Tratar o relatório do DataExplorer como análise final, sem aprofundar nas variáveis relevantes para a pergunta de pesquisa, entrega um panorama superficial.
+
+- O relatório automatizado indica onde olhar, ele não substitui a interpretação dirigida pelo objetivo da análise.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, aplicar clean_names() sem revisar o sentido semântico do nome
+
+- A padronização automática de nomes pode gerar abreviações ambíguas quando o nome original é longo ou contém termos técnicos específicos.
+
+- Sempre conferir o resultado de `clean_names()` e renomear manualmente quando o nome padronizado perder clareza.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, ignorar o padrão de dados ausentes revelado no relatório
+
+- Constatar que uma variável tem dados ausentes e prosseguir para a análise sem investigar se a ausência segue algum padrão, associado a outra variável, pode enviesar os resultados.
+
+- O gráfico de dados ausentes do DataExplorer é o ponto de partida, não o encerramento dessa investigação.
+
+------------------------------------------------------------------------
+
+## Resumo: EDA automatizada
+
+| Pacote | Função central | O que entrega |
+|-------------------|-------------------|-----------------------------------|
+| janitor | `clean_names()`, `tabyl()` | Nomes padronizados, contagem categórica |
+| skimr | `skim()` | Resumo estatístico de todas as variáveis |
+| DataExplorer | `plot_intro()`, `plot_missing()`, `create_report()` | Panorama de estrutura, distribuição e ausência |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

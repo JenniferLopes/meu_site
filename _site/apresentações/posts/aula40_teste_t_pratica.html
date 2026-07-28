@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Aplique os três tipos de teste t em um único contexto de controle de qualidade e aprenda a escolher o teste correto para cada estrutura de dados.">
+
+<title>Aula 40. Teste t na prática – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#acompanhe-o-café-com-r" id="toc-acompanhe-o-café-com-r" class="nav-link active" data-scroll-target="#acompanhe-o-café-com-r">Acompanhe o Café com R</a></li>
+  <li><a href="#conteúdos-relacionados-para-estudar-mais" id="toc-conteúdos-relacionados-para-estudar-mais" class="nav-link" data-scroll-target="#conteúdos-relacionados-para-estudar-mais">Conteúdos relacionados para estudar mais:</a></li>
+  <li><a href="#objetivos-da-aula" id="toc-objetivos-da-aula" class="nav-link" data-scroll-target="#objetivos-da-aula">Objetivos da aula</a></li>
+  <li><a href="#bloco-1" id="toc-bloco-1" class="nav-link" data-scroll-target="#bloco-1">Bloco 1</a>
+  <ul class="collapse">
+  <li><a href="#teste-t-para-uma-amostra" id="toc-teste-t-para-uma-amostra" class="nav-link" data-scroll-target="#teste-t-para-uma-amostra">Teste t para Uma Amostra</a></li>
+  </ul></li>
+  <li><a href="#conceito-quando-usar" id="toc-conceito-quando-usar" class="nav-link" data-scroll-target="#conceito-quando-usar">Conceito, quando usar</a></li>
+  <li><a href="#fórmula-do-teste-t-para-uma-amostra" id="toc-fórmula-do-teste-t-para-uma-amostra" class="nav-link" data-scroll-target="#fórmula-do-teste-t-para-uma-amostra">Fórmula do teste t para uma amostra</a></li>
+  <li><a href="#código-umidade-do-lote-x-referência" id="toc-código-umidade-do-lote-x-referência" class="nav-link" data-scroll-target="#código-umidade-do-lote-x-referência">Código: umidade do lote x referência</a></li>
+  <li><a href="#output-teste-t-uma-amostra" id="toc-output-teste-t-uma-amostra" class="nav-link" data-scroll-target="#output-teste-t-uma-amostra">Output: teste t uma amostra</a></li>
+  <li><a href="#bloco-2" id="toc-bloco-2" class="nav-link" data-scroll-target="#bloco-2">Bloco 2</a>
+  <ul class="collapse">
+  <li><a href="#teste-t-para-duas-amostras-independentes" id="toc-teste-t-para-duas-amostras-independentes" class="nav-link" data-scroll-target="#teste-t-para-duas-amostras-independentes">Teste t para Duas Amostras Independentes</a></li>
+  </ul></li>
+  <li><a href="#conceito-quando-usar-1" id="toc-conceito-quando-usar-1" class="nav-link" data-scroll-target="#conceito-quando-usar-1">Conceito, quando usar</a></li>
+  <li><a href="#verificação-da-homogeneidade-de-variâncias" id="toc-verificação-da-homogeneidade-de-variâncias" class="nav-link" data-scroll-target="#verificação-da-homogeneidade-de-variâncias">Verificação da homogeneidade de variâncias</a></li>
+  <li><a href="#código-teste-de-variâncias-e-teste-t-independente" id="toc-código-teste-de-variâncias-e-teste-t-independente" class="nav-link" data-scroll-target="#código-teste-de-variâncias-e-teste-t-independente">Código: teste de variâncias e teste t independente</a></li>
+  <li><a href="#output-teste-t-independente" id="toc-output-teste-t-independente" class="nav-link" data-scroll-target="#output-teste-t-independente">Output: teste t independente</a></li>
+  <li><a href="#bloco-3" id="toc-bloco-3" class="nav-link" data-scroll-target="#bloco-3">Bloco 3</a>
+  <ul class="collapse">
+  <li><a href="#teste-t-pareado" id="toc-teste-t-pareado" class="nav-link" data-scroll-target="#teste-t-pareado">Teste t Pareado</a></li>
+  </ul></li>
+  <li><a href="#conceito-quando-usar-2" id="toc-conceito-quando-usar-2" class="nav-link" data-scroll-target="#conceito-quando-usar-2">Conceito, quando usar</a></li>
+  <li><a href="#por-que-o-pareamento-aumenta-o-poder-do-teste" id="toc-por-que-o-pareamento-aumenta-o-poder-do-teste" class="nav-link" data-scroll-target="#por-que-o-pareamento-aumenta-o-poder-do-teste">Por que o pareamento aumenta o poder do teste</a></li>
+  <li><a href="#código-umidade-antes-x-depois-da-secagem" id="toc-código-umidade-antes-x-depois-da-secagem" class="nav-link" data-scroll-target="#código-umidade-antes-x-depois-da-secagem">Código: umidade antes x depois da secagem</a></li>
+  <li><a href="#output-teste-t-pareado" id="toc-output-teste-t-pareado" class="nav-link" data-scroll-target="#output-teste-t-pareado">Output: teste t pareado</a></li>
+  <li><a href="#bloco-4" id="toc-bloco-4" class="nav-link" data-scroll-target="#bloco-4">Bloco 4</a>
+  <ul class="collapse">
+  <li><a href="#qual-teste-usar" id="toc-qual-teste-usar" class="nav-link" data-scroll-target="#qual-teste-usar">Qual Teste Usar</a></li>
+  </ul></li>
+  <li><a href="#árvore-de-decisão" id="toc-árvore-de-decisão" class="nav-link" data-scroll-target="#árvore-de-decisão">Árvore de decisão</a></li>
+  <li><a href="#erro-comum-1-aplicar-teste-independente-em-dados-pareados" id="toc-erro-comum-1-aplicar-teste-independente-em-dados-pareados" class="nav-link" data-scroll-target="#erro-comum-1-aplicar-teste-independente-em-dados-pareados">Erro comum 1, aplicar teste independente em dados pareados</a></li>
+  <li><a href="#erro-comum-2-não-verificar-homogeneidade-de-variância-antes-do-teste-independente" id="toc-erro-comum-2-não-verificar-homogeneidade-de-variância-antes-do-teste-independente" class="nav-link" data-scroll-target="#erro-comum-2-não-verificar-homogeneidade-de-variância-antes-do-teste-independente">Erro comum 2, não verificar homogeneidade de variância antes do teste independente</a></li>
+  <li><a href="#erro-comum-3-aplicar-teste-t-sem-checar-normalidade-em-amostra-pequena" id="toc-erro-comum-3-aplicar-teste-t-sem-checar-normalidade-em-amostra-pequena" class="nav-link" data-scroll-target="#erro-comum-3-aplicar-teste-t-sem-checar-normalidade-em-amostra-pequena">Erro comum 3, aplicar teste t sem checar normalidade em amostra pequena</a></li>
+  <li><a href="#resumo-teste-t-na-prática" id="toc-resumo-teste-t-na-prática" class="nav-link" data-scroll-target="#resumo-teste-t-na-prática">Resumo: teste t na prática</a></li>
+  <li><a href="#obrigada" id="toc-obrigada" class="nav-link" data-scroll-target="#obrigada">Obrigada!</a></li>
+  <li><a href="#siga-o-café-com-r" id="toc-siga-o-café-com-r" class="nav-link" data-scroll-target="#siga-o-café-com-r">Siga o Café com R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="aula40_teste_t_pratica.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Aula 40. Teste t na prática</h1>
+<p class="subtitle lead">Uma amostra, duas amostras independentes e teste pareado, e como escolher o correto</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Estatística</div>
+    <div class="quarto-category">Inferência</div>
+    <div class="quarto-category">Tidyverse</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Aplique os três tipos de teste t em um único contexto de controle de qualidade e aprenda a escolher o teste correto para cada estrutura de dados.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="acompanhe-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="acompanhe-o-café-com-r">Acompanhe o Café com R</h2>
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p><strong>SITE OFICIAL &gt;</strong> <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+<hr>
+</section>
+<section id="conteúdos-relacionados-para-estudar-mais" class="level2">
+<h2 class="anchored" data-anchor-id="conteúdos-relacionados-para-estudar-mais">Conteúdos relacionados para estudar mais:</h2>
+<ul>
+<li><p>Acesse a <a href="https://jenniferlopes.github.io/meu_site/cafecomr/">Newsletter</a>;</p></li>
+<li><p>Acesse as <a href="https://jenniferlopes.github.io/meu_site/apresenta%C3%A7%C3%B5es/">aulas</a>;</p></li>
+<li><p>Acesse a apostila de <a href="https://jenniferlopes.github.io/meu_site/apostila.html">Estatística com R</a>.</p></li>
+</ul>
+</section>
+<section id="objetivos-da-aula" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-da-aula">Objetivos da aula</h2>
+<div class="incremental">
+<ul class="incremental">
+<li>Aplicar o <strong>teste t para uma amostra</strong>, comparando uma média a um valor de referência</li>
+<li>Aplicar o <strong>teste t para duas amostras independentes</strong>, verificando a homogeneidade de variâncias antes do teste</li>
+<li>Aplicar o <strong>teste t pareado</strong>, quando a mesma unidade é medida duas vezes</li>
+<li>Entender por que o pareamento aumenta o poder do teste</li>
+<li>Escolher corretamente qual dos três testes se aplica a cada estrutura de dados</li>
+</ul>
+</div>
+<hr>
+</section>
+<section id="bloco-1" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+<section id="teste-t-para-uma-amostra" class="level2">
+<h2 class="anchored" data-anchor-id="teste-t-para-uma-amostra">Teste t para Uma Amostra</h2>
+</section>
+</section>
+<hr>
+<section id="conceito-quando-usar" class="level2">
+<h2 class="anchored" data-anchor-id="conceito-quando-usar">Conceito, quando usar</h2>
+<ul>
+<li><p>O teste t para uma amostra compara a média de um único grupo a um valor de referência fixo e conhecido.</p></li>
+<li><p><strong>No contexto deste estudo:</strong> um lote de café tem sua umidade medida em 30 pontos de amostragem, e o objetivo é verificar se a umidade média do lote é compatível com o valor de referência de mercado, 12%.</p></li>
+<li><p><span class="math inline">\(H_0: \mu = 12\)</span> contra <span class="math inline">\(H_1: \mu \neq 12\)</span>, teste bicaudal, pois o desvio pode ocorrer em qualquer direção.</p></li>
+</ul>
+<hr>
+</section>
+<section id="fórmula-do-teste-t-para-uma-amostra" class="level2">
+<h2 class="anchored" data-anchor-id="fórmula-do-teste-t-para-uma-amostra">Fórmula do teste t para uma amostra</h2>
+<p><span class="math display">\[t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}}, \quad \text{com } n-1 \text{ graus de liberdade}\]</span></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Símbolo</th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\bar{x}\)</span></td>
+<td>Média amostral da umidade</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mu_0\)</span></td>
+<td>Valor de referência, 12%</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(s/\sqrt{n}\)</span></td>
+<td>Erro padrão da média amostral</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="código-umidade-do-lote-x-referência" class="level2">
+<h2 class="anchored" data-anchor-id="código-umidade-do-lote-x-referência">Código: umidade do lote x referência</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>resultado_uma_amostra <span class="ot">&lt;-</span> <span class="fu">t.test</span>(amostra_lote<span class="sc">$</span>umidade, <span class="at">mu =</span> valor_referencia)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">media           =</span> <span class="fu">mean</span>(amostra_lote<span class="sc">$</span>umidade),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">estatistica_t   =</span> resultado_uma_amostra<span class="sc">$</span>statistic,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">graus_liberdade =</span> resultado_uma_amostra<span class="sc">$</span>parameter,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">valor_p         =</span> resultado_uma_amostra<span class="sc">$</span>p.value,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">ic_inf          =</span> resultado_uma_amostra<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ic_sup          =</span> resultado_uma_amostra<span class="sc">$</span>conf.int[<span class="dv">2</span>]) <span class="sc">|&gt;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-teste-t-uma-amostra" class="level2">
+<h2 class="anchored" data-anchor-id="output-teste-t-uma-amostra">Output: teste t uma amostra</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  media estatistica_t graus_liberdade valor_p ic_inf ic_sup
+  &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1  11.6         -4.16              29  0.0003   11.4   11.8</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>O intervalo de confiança não contém o valor de referência de 12%, e o p-valor é pequeno, o que indica que a umidade média deste lote difere estatisticamente do valor esperado.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-2" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+<section id="teste-t-para-duas-amostras-independentes" class="level2">
+<h2 class="anchored" data-anchor-id="teste-t-para-duas-amostras-independentes">Teste t para Duas Amostras Independentes</h2>
+</section>
+</section>
+<hr>
+<section id="conceito-quando-usar-1" class="level2">
+<h2 class="anchored" data-anchor-id="conceito-quando-usar-1">Conceito, quando usar</h2>
+<ul>
+<li><p>O teste t para duas amostras independentes compara as médias de dois grupos formados por unidades diferentes, sem qualquer relação de emparelhamento entre elas.</p></li>
+<li><p><strong>No contexto deste estudo:</strong> lotes secados no Secador A são unidades diferentes dos lotes secados no Secador B, cada lote passa por apenas um dos dois equipamentos.</p></li>
+<li><p><span class="math inline">\(H_0: \mu_A = \mu_B\)</span> contra <span class="math inline">\(H_1: \mu_A \neq \mu_B\)</span>.</p></li>
+</ul>
+<hr>
+</section>
+<section id="verificação-da-homogeneidade-de-variâncias" class="level2">
+<h2 class="anchored" data-anchor-id="verificação-da-homogeneidade-de-variâncias">Verificação da homogeneidade de variâncias</h2>
+<ul>
+<li><p>Antes de aplicar o teste t independente, é necessário verificar se os dois grupos apresentam variância semelhante.</p></li>
+<li><p>Quando as variâncias são homogêneas, usa-se a versão do teste t com variância combinada (pooled). Quando não são, usa-se a correção de Welch, que ajusta os graus de liberdade.</p></li>
+<li><p>O teste F de razão de variâncias, <code>var.test()</code>, fornece essa verificação.</p></li>
+</ul>
+<hr>
+</section>
+<section id="código-teste-de-variâncias-e-teste-t-independente" class="level2">
+<h2 class="anchored" data-anchor-id="código-teste-de-variâncias-e-teste-t-independente">Código: teste de variâncias e teste t independente</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>resultado_variancia <span class="ot">&lt;-</span> <span class="fu">var.test</span>(umidade <span class="sc">~</span> secador, <span class="at">data =</span> amostra_secadores)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>resultado_duas_amostras <span class="ot">&lt;-</span> <span class="fu">t.test</span>(umidade <span class="sc">~</span> secador, <span class="at">data =</span> amostra_secadores,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">f_variancia     =</span> resultado_variancia<span class="sc">$</span>statistic,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_variancia     =</span> resultado_variancia<span class="sc">$</span>p.value,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">estatistica_t   =</span> resultado_duas_amostras<span class="sc">$</span>statistic,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">graus_liberdade =</span> resultado_duas_amostras<span class="sc">$</span>parameter,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">valor_p         =</span> resultado_duas_amostras<span class="sc">$</span>p.value) <span class="sc">|&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-teste-t-independente" class="level2">
+<h2 class="anchored" data-anchor-id="output-teste-t-independente">Output: teste t independente</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  f_variancia p_variancia estatistica_t graus_liberdade valor_p
+        &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;
+1       0.913       0.837         -3.08            41.9  0.0036</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>O teste de variâncias indica heterogeneidade entre os grupos, o que justifica o uso da correção de Welch. O p-valor do teste t indica se a diferença de umidade média entre os dois secadores é estatisticamente significativa.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-3" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+<section id="teste-t-pareado" class="level2">
+<h2 class="anchored" data-anchor-id="teste-t-pareado">Teste t Pareado</h2>
+</section>
+</section>
+<hr>
+<section id="conceito-quando-usar-2" class="level2">
+<h2 class="anchored" data-anchor-id="conceito-quando-usar-2">Conceito, quando usar</h2>
+<ul>
+<li><p>O teste t pareado compara duas medições feitas na mesma unidade experimental, eliminando a variabilidade natural entre unidades diferentes.</p></li>
+<li><p><strong>No contexto deste estudo:</strong> o mesmo lote de café é medido antes e depois do processo de secagem, as duas medições pertencem à mesma unidade.</p></li>
+<li><p><span class="math inline">\(H_0: \mu_d = 0\)</span> contra <span class="math inline">\(H_1: \mu_d \neq 0\)</span>, em que <span class="math inline">\(\mu_d\)</span> é a média das diferenças antes menos depois.</p></li>
+</ul>
+<hr>
+</section>
+<section id="por-que-o-pareamento-aumenta-o-poder-do-teste" class="level2">
+<h2 class="anchored" data-anchor-id="por-que-o-pareamento-aumenta-o-poder-do-teste">Por que o pareamento aumenta o poder do teste</h2>
+<p><span class="math display">\[t = \frac{\bar{d}}{s_d/\sqrt{n}}, \quad \text{com } n-1 \text{ graus de liberdade}\]</span></p>
+<ul>
+<li><p>Ao trabalhar com as diferenças dentro de cada lote, o teste pareado remove a variabilidade entre lotes, que normalmente aumenta o erro padrão em um teste independente.</p></li>
+<li><p>Como resultado, o mesmo tamanho de efeito é detectado com maior facilidade no teste pareado do que seria no teste independente, para o mesmo número de observações.</p></li>
+</ul>
+<hr>
+</section>
+<section id="código-umidade-antes-x-depois-da-secagem" class="level2">
+<h2 class="anchored" data-anchor-id="código-umidade-antes-x-depois-da-secagem">Código: umidade antes x depois da secagem</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>resultado_pareado <span class="ot">&lt;-</span> <span class="fu">t.test</span>(amostra_pareada<span class="sc">$</span>umidade_antes,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                             amostra_pareada<span class="sc">$</span>umidade_depois,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">paired =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">diferenca_media =</span> <span class="fu">mean</span>(amostra_pareada<span class="sc">$</span>umidade_antes <span class="sc">-</span> amostra_pareada<span class="sc">$</span>umidade_depois),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">estatistica_t    =</span> resultado_pareado<span class="sc">$</span>statistic,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">graus_liberdade  =</span> resultado_pareado<span class="sc">$</span>parameter,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">valor_p          =</span> resultado_pareado<span class="sc">$</span>p.value) <span class="sc">|&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-teste-t-pareado" class="level2">
+<h2 class="anchored" data-anchor-id="output-teste-t-pareado">Output: teste t pareado</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  diferenca_media estatistica_t graus_liberdade valor_p_pareado
+            &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;           &lt;dbl&gt;
+1            6.13          67.9              17               0
+# ℹ 1 more variable: valor_p_se_independente &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>A umidade reduz de forma consistente após a secagem, com p-valor muito pequeno no teste pareado. A última coluna mostra o que aconteceria se os mesmos dados fossem, incorretamente, tratados como independentes, o p-valor resultante é maior, evidenciando a perda de poder ao ignorar o pareamento.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-4" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 4</h1>
+<section id="qual-teste-usar" class="level2">
+<h2 class="anchored" data-anchor-id="qual-teste-usar">Qual Teste Usar</h2>
+</section>
+</section>
+<hr>
+<section id="árvore-de-decisão" class="level2">
+<h2 class="anchored" data-anchor-id="árvore-de-decisão">Árvore de decisão</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pergunta</th>
+<th>Resposta</th>
+<th>Teste indicado</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estou comparando a média de um grupo a um valor fixo?</td>
+<td>Sim</td>
+<td>Teste t para uma amostra</td>
+</tr>
+<tr class="even">
+<td>Estou comparando dois grupos formados por unidades diferentes?</td>
+<td>Sim</td>
+<td>Teste t para duas amostras independentes</td>
+</tr>
+<tr class="odd">
+<td>A mesma unidade foi medida duas vezes?</td>
+<td>Sim</td>
+<td>Teste t pareado</td>
+</tr>
+<tr class="even">
+<td>As variâncias dos dois grupos independentes são homogêneas?</td>
+<td>Verificar com <code>var.test()</code></td>
+<td>Pooled ou correção de Welch</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="erro-comum-1-aplicar-teste-independente-em-dados-pareados" class="level2">
+<h2 class="anchored" data-anchor-id="erro-comum-1-aplicar-teste-independente-em-dados-pareados">Erro comum 1, aplicar teste independente em dados pareados</h2>
+<ul>
+<li><p>Tratar medições repetidas na mesma unidade como se fossem de unidades diferentes ignora a correlação entre as duas medições.</p></li>
+<li><p>Essa prática infla o erro padrão da diferença e reduz o poder do teste, como demonstrado na comparação do Bloco 3.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-comum-2-não-verificar-homogeneidade-de-variância-antes-do-teste-independente" class="level2">
+<h2 class="anchored" data-anchor-id="erro-comum-2-não-verificar-homogeneidade-de-variância-antes-do-teste-independente">Erro comum 2, não verificar homogeneidade de variância antes do teste independente</h2>
+<ul>
+<li><p>Assumir variâncias iguais sem verificação pode distorcer o erro padrão da diferença de médias e, consequentemente, o valor de p.</p></li>
+<li><p>O teste <code>var.test()</code> deve preceder a escolha entre a versão pooled e a correção de Welch do teste t.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-comum-3-aplicar-teste-t-sem-checar-normalidade-em-amostra-pequena" class="level2">
+<h2 class="anchored" data-anchor-id="erro-comum-3-aplicar-teste-t-sem-checar-normalidade-em-amostra-pequena">Erro comum 3, aplicar teste t sem checar normalidade em amostra pequena</h2>
+<ul>
+<li><p>O teste t assume que os dados provêm de uma distribuição aproximadamente normal, especialmente relevante quando o tamanho da amostra é pequeno.</p></li>
+<li><p>Em amostras pequenas com forte assimetria, a alternativa não paramétrica correspondente deve ser considerada antes de aplicar o teste t.</p></li>
+</ul>
+<hr>
+</section>
+<section id="resumo-teste-t-na-prática" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-teste-t-na-prática">Resumo: teste t na prática</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo de teste</th>
+<th>Estrutura dos dados</th>
+<th>Hipótese nula</th>
+<th>Função no R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Uma amostra</td>
+<td>Um grupo x valor de referência</td>
+<td><span class="math inline">\(\mu = \mu_0\)</span></td>
+<td><code>t.test(x, mu = valor)</code></td>
+</tr>
+<tr class="even">
+<td>Duas amostras independentes</td>
+<td>Dois grupos, unidades diferentes</td>
+<td><span class="math inline">\(\mu_1 = \mu_2\)</span></td>
+<td><code>t.test(y ~ grupo)</code></td>
+</tr>
+<tr class="odd">
+<td>Pareado</td>
+<td>Mesma unidade, duas medições</td>
+<td><span class="math inline">\(\mu_d = 0\)</span></td>
+<td><code>t.test(x, y, paired = TRUE)</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="obrigada" class="level2">
+<h2 class="anchored" data-anchor-id="obrigada">Obrigada!</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/comunidade.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+<hr>
+</section>
+<section id="siga-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="siga-o-café-com-r">Siga o Café com R</h2>
+<blockquote class="blockquote">
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p><strong>SITE OFICIAL &gt;</strong> <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+</blockquote>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

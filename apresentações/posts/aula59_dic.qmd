@@ -1,0 +1,372 @@
+---
+title: "Aula 59. DIC, Delineamento Inteiramente Casualizado"
+subtitle: "Estrutura, croqui de campo com FielDHub, ANOVA e comparação de médias"
+categories: [R, Estatística, Delineamento Experimental, Tidyverse]
+image: "imagens/59.png"
+description: "Entenda quando usar o Delineamento Inteiramente Casualizado, gere o croqui de aleatorização com FielDHub e conduza a ANOVA completa."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(FielDHub)
+library(metan)
+library(emmeans)
+library(multcomp)
+library(multcompView)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+cultivares    <- paste0("Cultivar ", 1:5)
+medias_reais  <- c(185, 210, 175, 230, 198)
+
+dados_dic <- tibble(
+  cultivar     = rep(cultivares, each = 6),
+  repeticao    = rep(1:6, times = 5),
+  produtividade = rnorm(30, mean = rep(medias_reais, each = 6), sd = 15))
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Definir o Delineamento Inteiramente Casualizado, DIC, e reconhecer quando ele é apropriado
+- Gerar o croqui de aleatorização de campo com o pacote `FielDHub`
+- Obter a estatística descritiva por tratamento com `metan`
+- Conduzir a ANOVA e interpretar o teste F
+- Comparar médias com `emmeans` e apresentar o resultado com letras
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O Delineamento
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, estrutura e quando é apropriado
+
+- No **Delineamento Inteiramente Casualizado**, DIC, os tratamentos são atribuídos às unidades experimentais de forma completamente aleatória, sem nenhuma restrição ou agrupamento.
+
+- **Contexto:** 5 cultivares de milho são avaliados quanto à produtividade, em gramas por planta, em casa de vegetação, ambiente controlado e homogêneo, sem gradiente ambiental relevante a controlar.
+
+- É o delineamento apropriado quando as unidades experimentais são, de fato, homogêneas entre si, condição mais comum em ambientes controlados do que em campo aberto.
+
+------------------------------------------------------------------------
+
+## Modelo estatístico do DIC
+
+$$Y_{ij} = \mu + \tau_i + \epsilon_{ij}$$
+
+| Termo           | Significado                                       |
+|-----------------|---------------------------------------------------|
+| $Y_{ij}$        | Observação da repetição $j$ no tratamento $i$     |
+| $\mu$           | Média geral                                       |
+| $\tau_i$        | Efeito do tratamento $i$                          |
+| $\epsilon_{ij}$ | Erro experimental, assumido $\sim N(0, \sigma^2)$ |
+
+- É o modelo mais simples entre os delineamentos, com apenas dois componentes de variação, tratamento e resíduo.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Gerando o Croqui
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, FielDHub, por que aleatorizar corretamente
+
+- Sortear tratamentos "à mão" ou por critérios informais compromete a validade da aleatorização, que é a base teórica que sustenta a inferência estatística de qualquer delineamento.
+
+- O pacote **FielDHub** gera a aleatorização formalmente, documenta a semente utilizada para reprodutibilidade, e produz o croqui de campo, o mapa de onde cada tratamento deve ser instalado.
+
+------------------------------------------------------------------------
+
+## Código: CRD()
+
+```{r}
+#| label: fieldhub-dic-codigo
+#| eval: false
+
+croqui_dic <- CRD(
+  t          = cultivares,
+  reps       = 6,
+  plotNumber = 101,
+  seed       = 2026)
+
+croqui_dic$fieldBook
+```
+
+------------------------------------------------------------------------
+
+## Output: o croqui gerado
+
+```{r}
+#| label: fieldhub-dic-output
+#| echo: false
+
+croqui_dic <- CRD(
+  t          = cultivares,
+  reps       = 6,
+  plotNumber = 101,
+  seed       = 2026)
+
+croqui_dic$fieldBook |> head(10)
+
+plot(croqui_dic)
+```
+
+- **O `fieldBook` documenta exatamente qual cultivar ocupa cada parcela, com a aleatorização registrada e reprodutível pela semente utilizada. O croqui visual facilita a instalação correta do experimento em campo, evitando erro de troca de parcelas.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Descritiva
+:::
+
+------------------------------------------------------------------------
+
+## Código: desc_stat() por cultivar
+
+```{r}
+#| label: desc-stat-dic-codigo
+#| eval: false
+
+dados_dic |>
+  group_by(cultivar) |>
+  desc_stat(produtividade)
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: desc-stat-dic-output
+#| echo: false
+
+dados_dic |>
+  group_by(cultivar) |>
+  desc_stat(produtividade)
+```
+
+- **A produtividade média varia consideravelmente entre os cultivares, com o Cultivar 4 apresentando a maior média e o Cultivar 3 a menor. A ANOVA formaliza se essa diferença é estatisticamente sustentável.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## ANOVA
+:::
+
+------------------------------------------------------------------------
+
+## Código: aov()
+
+```{r}
+#| label: anova-dic-codigo
+#| eval: false
+
+modelo_dic <- aov(produtividade ~ cultivar, data = dados_dic)
+
+summary(modelo_dic)
+```
+
+------------------------------------------------------------------------
+
+## Output: tabela de ANOVA
+
+```{r}
+#| label: anova-dic-output
+#| echo: false
+
+modelo_dic <- aov(produtividade ~ cultivar, data = dados_dic)
+
+summary(modelo_dic)[[1]] |>
+  as_tibble(rownames = "fonte_variacao") |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Interpretação do teste F
+
+- O quadrado médio de cultivar, dividido pelo quadrado médio do resíduo, produz a estatística F, comparada à distribuição F com os graus de liberdade do modelo.
+
+- Um valor de p pequeno indica que ao menos um cultivar difere dos demais quanto à produtividade média, mas não indica, sozinho, quais pares diferem entre si, questão respondida no próximo bloco.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Comparação de Médias
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, emmeans e teste de Tukey
+
+- O pacote **emmeans** calcula as médias ajustadas de cada nível do fator, e permite comparações par a par com correção para múltiplas comparações, como o método de Tukey, que controla a taxa de erro tipo I em nível de experimento.
+
+------------------------------------------------------------------------
+
+## Código: emmeans e cld
+
+```{r}
+#| label: emmeans-dic-codigo
+#| eval: false
+
+medias_dic <- emmeans(modelo_dic, ~ cultivar)
+
+cld(medias_dic, Letters = letters, adjust = "tukey")
+```
+
+------------------------------------------------------------------------
+
+## Output
+
+```{r}
+#| label: emmeans-dic-output
+#| echo: false
+
+medias_dic <- emmeans(modelo_dic, ~ cultivar)
+
+resultado_cld <- cld(medias_dic, Letters = letters, adjust = "tukey")
+
+resultado_cld |>
+  as_tibble() |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico de médias com letras
+
+```{r}
+#| label: grafico-medias-dic
+#| echo: false
+#| fig-height: 4.8
+
+resultado_cld |>
+  as_tibble() |>
+  ggplot(aes(x = cultivar, y = emmean)) +
+  geom_col(fill = cores_cafe["azul_claro"], width = 0.6) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  geom_text(aes(label = trimws(.group), y = upper.CL + 8), size = 4.5) +
+  labs(
+    title    = "Produtividade média por cultivar, com letras de Tukey",
+    subtitle = "Cultivares que não compartilham nenhuma letra diferem estatisticamente",
+    x        = NULL,
+    y        = "Produtividade (g/planta)",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, não aleatorizar de fato
+
+- Distribuir os tratamentos por conveniência, como agrupar todas as repetições de um mesmo cultivar lado a lado por facilidade de manejo, invalida a base teórica da inferência do DIC, mesmo que a análise estatística seja executada corretamente depois.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, confundir repetição com pseudo-repetição
+
+- Medir a mesma planta várias vezes e tratar essas medições como repetições independentes infla artificialmente os graus de liberdade do resíduo, e não corresponde à estrutura real de repetição do DIC, que exige unidades experimentais distintas.
+
+------------------------------------------------------------------------
+
+## Resumo: DIC
+
+| Etapa                  | Função no R          |
+|------------------------|----------------------|
+| Croqui de campo        | `FielDHub::CRD()`    |
+| Estatística descritiva | `metan::desc_stat()` |
+| ANOVA                  | `aov()`              |
+| Comparação de médias   | `emmeans::cld()`     |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

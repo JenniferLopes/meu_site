@@ -1,0 +1,706 @@
+---
+title: "Aula 33. Delta Lake no R"
+subtitle: "Tabelas com histórico, ACID e time travel com o pacote deltaR"
+categories: [R, Delta Lake, Arrow, Parquet, Engenharia de Dados, Pipeline]
+image: "imagens/capa_aula32.png"
+description: "Compreenda o que é o Delta Lake, por que ele existe e como usá-lo no R para criar tabelas com histórico, transações seguras, evolução de schema e operações MERGE com o pacote deltaR."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  eval: false
+  warning: false
+  message: false
+editor: visual
+---
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula apresenta o Delta Lake de forma conceitual e prática. Todo o código está disponível para execução, mas requer a instalação prévia do toolchain Rust e do pacote `deltaR`. O foco aqui é compreender o que cada operação faz e quando usá-la.
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Compreender o que é o **Delta Lake** e qual problema ele resolve
+- Entender o que é **Rust** e por que o `deltaR` depende dele
+- Instalar o **toolchain Rust** e o pacote `deltaR`
+- Escrever e ler tabelas Delta com **`write_deltalake()`**
+- Navegar pelo **histórico de versões** com time travel
+- Adicionar colunas com **evolução de schema**
+- Executar **operações MERGE** para upserts atômicos
+- Integrar Delta Lake com **`arrow`** e **`duckdb`**
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O que é o Delta Lake e por que ele existe
+:::
+
+------------------------------------------------------------------------
+
+## O problema e a solução
+
+**O problema:** com Parquet puro, cada escrita substitui o estado anterior sem deixar registro. Se você sobrescreve um arquivo com dados novos e depois descobre um erro nos dados anteriores, o histórico se perdeu.
+
+**Delta Lake** é um formato de código aberto que adiciona uma camada de gerenciamento de transações e histórico sobre arquivos Parquet existentes. Desenvolvido pela Databricks e cedido à Linux Foundation em 2019.
+
+O Delta Lake **não substitui o Parquet**, ele **estende o Parquet** com:
+
+- Um **log de transações** que registra cada operação realizada
+- **Metadados** sobre o estado atual e histórico da tabela
+- **Garantias de consistência** para leituras e escritas simultâneas
+
+------------------------------------------------------------------------
+
+## Delta Lake versus Parquet puro
+
+| Característica       | Parquet puro | Delta Lake                 |
+|----------------------|--------------|----------------------------|
+| Formato dos dados    | `.parquet`   | `.parquet` + `_delta_log/` |
+| Histórico de versões | Nenhum       | Completo                   |
+| Transações ACID      | Não          | Sim                        |
+| Time travel          | Não          | Sim                        |
+| Evolução de schema   | Manual       | Nativa                     |
+| Operação MERGE       | Não existe   | Nativa e atômica           |
+| Rollback             | Não          | Sim                        |
+| Leitura com `arrow`  | Sim          | Via `get_files()`          |
+
+------------------------------------------------------------------------
+
+## Os quatro pilares do Delta Lake
+
+**ACID:** Atomicidade, Consistência, Isolamento e Durabilidade. Garantem que operações concorrentes não corrompam os dados.
+
+**Time travel:** acesso a qualquer versão anterior da tabela, por número de versão ou por data e hora. Essencial para auditoria e reprodução de análises.
+
+**Schema evolution:** adicionar, remover ou modificar colunas sem recriar os dados existentes. O Delta Lake controla qual versão do schema cada arquivo pertence.
+
+**MERGE:** combina INSERT, UPDATE e DELETE em uma única transação atômica. Resolve o problema do upsert sem carregar os dados na memória.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Rust e o pacote deltaR
+:::
+
+------------------------------------------------------------------------
+
+## O que é Rust e por que importa
+
+**Rust** é uma linguagem de programação de sistemas com desempenho comparável ao C e segurança de memória garantida em tempo de compilação. É usada hoje em componentes críticos do Firefox, Linux Kernel e Android.
+
+**No ecossistema de dados**, várias ferramentas foram reescritas em Rust para ganhos massivos de desempenho:
+
+| Ferramenta       | Antes              | Com Rust      |
+|------------------|--------------------|---------------|
+| `delta-rs`       | Java/Scala (Spark) | Rust puro     |
+| `polars`         | Python             | Rust          |
+| `arrow` (partes) | C++                | Rust (partes) |
+
+O `delta-rs` é a implementação do Delta Lake em Rust. O `deltaR` é a interface R sobre ele.
+
+------------------------------------------------------------------------
+
+## Por que o deltaR exige compilação
+
+O `deltaR` não está disponível como binário pré-compilado no CRAN. Durante a instalação, o R precisa compilar o código Rust localmente.
+
+**O que acontece durante `remotes::install_github("ixpantia/deltaR")`:**
+
+1.  O R baixa o código-fonte do `deltaR`
+2.  O compilador Rust (`rustc`) compila o código para o seu sistema
+3.  O resultado é uma biblioteca nativa (`.so`, `.dll` ou `.dylib`)
+4.  O R carrega essa biblioteca quando você executa `library(deltaR)`
+
+Por isso a instalação demora mais do que um pacote CRAN comum.
+
+------------------------------------------------------------------------
+
+## Instalando o toolchain Rust
+
+**macOS e Linux:**
+
+``` bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+**Windows:** baixar e executar o instalador em [rustup.rs](https://rustup.rs)
+
+Após instalar, verificar no terminal:
+
+``` bash
+rustc --version
+cargo --version
+```
+
+A versão mínima exigida pelo `deltaR` é Rust \>= 1.88. Para atualizar:
+
+``` bash
+rustup update stable
+```
+
+------------------------------------------------------------------------
+
+## Instalando o deltaR
+
+```{r}
+#| label: instalar-deltar
+
+install.packages("remotes")
+
+# Esta etapa compila o código Rust e pode levar alguns minutos
+remotes::install_github("ixpantia/deltaR")
+
+library(deltaR)
+library(arrow)
+library(tidyverse)
+```
+
+::: callout-tip
+A primeira instalação demora porque compila o `delta-rs`. Instalações subsequentes reutilizam o cache de compilação do `cargo` e são mais rápidas.
+:::
+
+------------------------------------------------------------------------
+
+## Arquitetura do deltaR
+
+O `deltaR` não lê os dados diretamente para o R. Ele gerencia a tabela Delta e delega a leitura para o `arrow`, `duckdb` ou `polars`:
+
+```         
+R (você escreve código aqui)
+    |
+    | deltaR::write_deltalake()
+    v
+delta-rs (Rust)
+    |
+    | Cria e gerencia _delta_log/ + arquivos .parquet
+    v
+Sistema de arquivos (disco local, S3, GCS, Azure)
+    |
+    | deltaR::get_files() → retorna caminhos .parquet
+    v
+arrow::open_dataset() → dplyr → collect()
+    |
+    v
+R (tibble na memória)
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Escrevendo e Lendo Tabelas Delta
+:::
+
+------------------------------------------------------------------------
+
+## write_deltalake(): criando a tabela
+
+```{r}
+#| label: write-create
+
+library(deltaR)
+library(tidyverse)
+library(nycflights13)
+
+voos_jan <- flights |>
+  as_tibble() |>
+  filter(month == 1) |>
+  select(year, month, day, origin, dest,
+         carrier, dep_delay, arr_delay,
+         air_time, distance)
+
+# Na primeira escrita, a tabela é criada do zero
+write_deltalake(
+  data = voos_jan,
+  path = "dados_delta/voos")
+```
+
+------------------------------------------------------------------------
+
+## Estrutura de arquivos criada no disco
+
+Após `write_deltalake()`, o diretório contém:
+
+```         
+dados_delta/voos/
+├── _delta_log/
+│   └── 00000000000000000000.json   ← log da versão 0
+└── part-00000-abc123.parquet        ← dados da versão 0
+```
+
+**Arquivos `.parquet`:** os dados reais, idênticos ao Parquet puro.
+
+**Pasta `_delta_log/`:** o log de transações. Cada arquivo JSON registra uma operação com metadados: quais arquivos foram adicionados ou removidos, o schema da tabela e estatísticas.
+
+------------------------------------------------------------------------
+
+## Modos de escrita: append e overwrite
+
+```{r}
+#| label: write-modos
+
+voos_fev <- flights |>
+  as_tibble() |>
+  filter(month == 2) |>
+  select(year, month, day, origin, dest,
+         carrier, dep_delay, arr_delay,
+         air_time, distance)
+
+# Append: adiciona dados sem apagar os existentes
+write_deltalake(
+  data = voos_fev,
+  path = "dados_delta/voos",
+  mode = "append")
+
+# Overwrite: substitui todos os dados existentes
+# Os arquivos anteriores NÃO são apagados fisicamente,
+# apenas marcados como removidos no log
+write_deltalake(
+  data = voos_fev,
+  path = "dados_delta/voos",
+  mode = "overwrite")
+```
+
+::: callout-important
+**Atenção:** o modo `overwrite` marca os arquivos anteriores como removidos no log, mas não os apaga fisicamente. Os dados de versões anteriores continuam acessíveis via time travel. A remoção física só acontece com `vacuum()`.
+:::
+
+------------------------------------------------------------------------
+
+## Abrindo e lendo uma tabela Delta
+
+```{r}
+#| label: ler-delta
+
+library(arrow)
+
+# delta_table() abre a referência para a tabela
+# Não carrega os dados: apenas registra o caminho
+dt <- delta_table("dados_delta/voos")
+
+# Ver a versão atual
+table_version(dt)
+
+# Ver o schema
+get_schema(dt)
+
+# Ler com arrow via get_files()
+open_dataset(get_files(dt)) |>
+  filter(!is.na(arr_delay)) |>
+  group_by(origin) |>
+  summarise(
+    total_voos   = n(),
+    atraso_medio = round(mean(arr_delay), 2),
+    .groups = "drop") |>
+  collect()
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Time Travel
+:::
+
+------------------------------------------------------------------------
+
+## O que é time travel e por que importa
+
+**Time travel** é a capacidade de acessar qualquer versão anterior da tabela como se ela ainda existisse.
+
+Cada operação de escrita cria uma nova versão no `_delta_log/`. O Delta Lake registra exatamente quais arquivos pertenciam a cada versão.
+
+**Por que isso importa na prática:**
+
+- **Auditoria:** saber exatamente o que estava na tabela em uma data específica
+- **Depuração:** entender o que mudou entre duas versões após um erro
+- **Reprodução de análises:** garantir que uma análise de 6 meses atrás pode ser reproduzida com os mesmos dados
+- **Rollback:** restaurar a tabela para uma versão anterior sem perder o histórico
+
+------------------------------------------------------------------------
+
+## Histórico e acesso a versões anteriores
+
+```{r}
+#| label: time-travel
+
+dt <- delta_table("dados_delta/voos")
+
+# Ver todas as operações realizadas
+get_table_history(dt)
+
+# Versão 0: dados de janeiro (primeira escrita)
+dt_v0 <- delta_table(
+  path    = "dados_delta/voos",
+  version = 0L)
+
+open_dataset(get_files(dt_v0)) |>
+  summarise(total_linhas = n(), mes_unico = max(month)) |>
+  collect()
+
+# Por timestamp: acessa a versão vigente naquele momento
+dt_historico <- delta_table(
+  path      = "dados_delta/voos",
+  timestamp = "2026-05-11 10:44:50")
+
+table_version(dt_historico)
+```
+
+------------------------------------------------------------------------
+
+## Comparação entre versões com map()
+
+```{r}
+#| label: comparacao-versoes
+
+map(0:2, function(v) {
+  dt_v <- delta_table("dados_delta/voos",
+                      version = as.integer(v))
+  open_dataset(get_files(dt_v)) |>
+    summarise(
+      total_voos   = n(),
+      atraso_medio = round(mean(arr_delay,
+                                na.rm = TRUE), 2)) |>
+    collect() |>
+    mutate(versao = v)
+}) |>
+  list_rbind()
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Evolução de Schema
+:::
+
+------------------------------------------------------------------------
+
+## O que é e quando acontece o problema
+
+**Evolução de schema** é a capacidade de modificar a estrutura da tabela sem recriar todos os dados existentes.
+
+**O problema sem evolução de schema:**
+
+Se você tentar fazer um `append` com um `data.frame` que tem uma coluna a mais do que o schema registrado na tabela, o Delta Lake rejeita a operação:
+
+```         
+Error: Schema mismatch detected:
+Column 'velocidade_kmh' not found in existing table schema.
+Use schema_mode = 'merge' to allow schema evolution.
+```
+
+**Com `schema_mode = "merge"`:** o Delta Lake aceita a nova coluna, atualiza o schema no log e trata os registros anteriores como tendo `NA` nessa coluna.
+
+------------------------------------------------------------------------
+
+## Adicionando uma coluna nova
+
+```{r}
+#| label: schema-merge
+
+voos_com_coluna <- voos_jan |>
+  mutate(
+    velocidade_kmh = (distance * 1.60934) /
+                     (air_time / 60))
+
+# Isso geraria erro sem schema_mode = "merge"
+write_deltalake(
+  data        = voos_com_coluna,
+  path        = "dados_delta/voos",
+  mode        = "append",
+  schema_mode = "merge")
+
+# Verificar o schema atualizado
+get_schema(delta_table("dados_delta/voos"))
+```
+
+Os registros anteriores, que não tinham `velocidade_kmh`, recebem `NA` automaticamente. Os novos registros têm o valor calculado.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Operação MERGE
+:::
+
+------------------------------------------------------------------------
+
+## O que é MERGE e por que é necessário
+
+**MERGE** combina três operações em uma única transação atômica:
+
+- **UPDATE:** atualizar registros que já existem na tabela
+- **INSERT:** inserir registros que não existem
+- **DELETE:** remover registros que satisfazem uma condição
+
+**Sem MERGE, implementar um upsert exige:**
+
+1.  Ler a tabela inteira para o R
+2.  Fazer o join com os dados novos
+3.  Aplicar a lógica de atualização
+4.  Sobrescrever a tabela inteira
+
+**Com MERGE:** tudo acontece dentro do banco, em uma única operação atômica, sem carregar os dados na memória do R.
+
+------------------------------------------------------------------------
+
+## MERGE: estrutura e exemplo
+
+```{r}
+#| label: merge-completo
+
+# Dados de referência na tabela
+voos_ref <- voos_jan |>
+  mutate(
+    flight_key = paste(month, day, flight,
+                       origin, dest, sep = "_"),
+    status     = "original") |>
+  select(flight_key, month, day, origin,
+         dest, carrier, arr_delay, status)
+
+write_deltalake(data = voos_ref,
+                path = "dados_delta/voos_merge")
+
+# Dados novos: alguns existentes atualizados + novos
+voos_novos <- voos_jan |>
+  slice_sample(n = 500) |>
+  mutate(
+    flight_key = paste(month, day, flight,
+                       origin, dest, sep = "_"),
+    arr_delay  = arr_delay + runif(500, -5, 5),
+    status     = "atualizado") |>
+  select(flight_key, month, day, origin,
+         dest, carrier, arr_delay, status)
+
+# Executar o MERGE
+delta_merge(
+  target    = "dados_delta/voos_merge",
+  source    = voos_novos,
+  condition = "target.flight_key = source.flight_key"
+) |>
+  when_matched_update(
+    updates = c(arr_delay = "source.arr_delay",
+                status    = "source.status")
+  ) |>
+  when_not_matched_insert(
+    values = c(
+      flight_key = "source.flight_key",
+      month      = "source.month",
+      arr_delay  = "source.arr_delay",
+      status     = "source.status")
+  ) |>
+  merge_execute()
+```
+
+------------------------------------------------------------------------
+
+## when_matched_delete(): remover registros
+
+```{r}
+#| label: merge-delete
+
+voos_para_deletar <- open_dataset(
+  get_files(
+    delta_table("dados_delta/voos_merge"))) |>
+  filter(arr_delay > 120) |>
+  collect()
+
+delta_merge(
+  target    = "dados_delta/voos_merge",
+  source    = voos_para_deletar,
+  condition = "target.flight_key = source.flight_key"
+) |>
+  when_matched_delete() |>
+  merge_execute()
+```
+
+::: callout-tip
+`when_matched_delete()` remove os registros da tabela, mas o Delta Log mantém o registro da operação. Os dados deletados podem ser recuperados via time travel enquanto não forem removidos com `vacuum()`.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 7
+
+## Integração com o Ecossistema
+:::
+
+------------------------------------------------------------------------
+
+## Delta Lake com arrow e dplyr
+
+```{r}
+#| label: integracao-arrow
+
+library(arrow)
+
+dt <- delta_table("dados_delta/voos")
+
+open_dataset(get_files(dt)) |>
+  filter(!is.na(arr_delay), !is.na(dep_delay)) |>
+  group_by(origin) |>
+  summarise(
+    total_voos   = n(),
+    atraso_medio = round(mean(arr_delay), 2),
+    .groups = "drop") |>
+  arrange(desc(atraso_medio)) |>
+  collect()
+```
+
+A leitura via `get_files()` retorna os caminhos dos arquivos Parquet da versão atual. O `open_dataset()` do arrow lê apenas as colunas e partições necessárias para a consulta.
+
+------------------------------------------------------------------------
+
+## Delta Lake com DuckDB e na nuvem
+
+O DuckDB lê tabelas Delta diretamente com a extensão `delta`, sem precisar do `deltaR`:
+
+```{r}
+#| label: integracao-duckdb
+
+library(duckdb)
+con <- dbConnect(duckdb())
+dbExecute(con, "INSTALL delta; LOAD delta")
+
+dbGetQuery(con, "
+  SELECT origin, COUNT(*) AS total_voos,
+         AVG(arr_delay) AS atraso_medio
+  FROM   delta_scan('dados_delta/voos')
+  WHERE  arr_delay IS NOT NULL
+  GROUP BY origin ORDER BY atraso_medio DESC") |>
+  as_tibble()
+
+dbDisconnect(con)
+```
+
+Para **nuvem**, use o argumento `storage_options` com credenciais via `Sys.getenv()`:
+
+```{r}
+#| label: nuvem
+
+write_deltalake(
+  data    = voos_jan,
+  path    = "s3://meu-bucket/delta/voos",
+  storage_options = list(
+    aws_access_key_id     = Sys.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
+    aws_region            = "us-east-1"))
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 8
+
+## Comparativo Final e Quando Usar
+:::
+
+------------------------------------------------------------------------
+
+## Delta Lake, Parquet e CSV: comparativo
+
+| Característica       | CSV   | Parquet         | Delta Lake            |
+|----------------------|-------|-----------------|-----------------------|
+| Formato              | Texto | Binário colunar | Binário colunar + log |
+| Histórico de versões | Não   | Não             | Sim                   |
+| Time travel          | Não   | Não             | Sim                   |
+| Transações ACID      | Não   | Não             | Sim                   |
+| Evolução de schema   | Não   | Manual          | Nativa                |
+| MERGE (upsert)       | Não   | Não             | Sim                   |
+| Leitura com `arrow`  | Sim   | Sim             | Via `get_files()`     |
+| Leitura com `duckdb` | Sim   | Sim             | Via extensão `delta`  |
+
+------------------------------------------------------------------------
+
+## Funções principais e quando usar
+
+**Funções centrais do `deltaR`:**
+
+| Função                              | O que faz                         |
+|-------------------------------------|-----------------------------------|
+| `write_deltalake()`                 | Cria ou atualiza uma tabela Delta |
+| `delta_table()`                     | Abre a referência para a tabela   |
+| `get_files()`                       | Lista os arquivos da versão atual |
+| `get_table_history()`               | Retorna o histórico de operações  |
+| `delta_merge()` + `merge_execute()` | Executa upsert atômico            |
+
+**Use Delta Lake quando precisar de:**
+
+- Histórico e auditoria de mudanças nos dados
+- Upserts frequentes sem carregar tudo na memória
+- Reprodução de análises com dados históricos
+- Integração com Databricks, Spark ou data lakehouse
+
+Use Parquet simples quando os dados são imutáveis após a escrita.
+
+------------------------------------------------------------------------
+
+## Referências
+
+- Documentação `deltaR`: [ixpantia.github.io/deltalakeR](https://ixpantia.github.io/deltalakeR)
+- Repositório `deltaR`: [github.com/ixpantia/deltaR](https://github.com/ixpantia/deltaR)
+- Documentação `delta-rs`: [delta-io.github.io/delta-rs](https://delta-io.github.io/delta-rs)
+- Delta Lake oficial: [delta.io](https://delta.io)
+- Instalar Rust: [rustup.rs](https://rustup.rs)
+- Documentação `arrow` R: [arrow.apache.org/docs/r](https://arrow.apache.org/docs/r)
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

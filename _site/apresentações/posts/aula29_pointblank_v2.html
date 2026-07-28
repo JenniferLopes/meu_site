@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Aprenda a validar dados sistematicamente com o pointblank, gerar relatórios de qualidade, definir limiares de falha e integrar validação em pipelines de dados.">
+
+<title>Aula 29. Validação de Dados no R – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#democratização" id="toc-democratização" class="nav-link active" data-scroll-target="#democratização">Democratização</a></li>
+  <li><a href="#acompanhe-o-café-com-r" id="toc-acompanhe-o-café-com-r" class="nav-link" data-scroll-target="#acompanhe-o-café-com-r">Acompanhe o Café com R</a></li>
+  <li><a href="#objetivos-da-aula" id="toc-objetivos-da-aula" class="nav-link" data-scroll-target="#objetivos-da-aula">Objetivos da aula</a></li>
+  <li><a href="#instalação" id="toc-instalação" class="nav-link" data-scroll-target="#instalação">Instalação</a></li>
+  <li><a href="#bloco-1" id="toc-bloco-1" class="nav-link" data-scroll-target="#bloco-1">Bloco 1</a>
+  <ul class="collapse">
+  <li><a href="#o-problema-da-qualidade-de-dados" id="toc-o-problema-da-qualidade-de-dados" class="nav-link" data-scroll-target="#o-problema-da-qualidade-de-dados">O Problema da Qualidade de Dados</a></li>
+  </ul></li>
+  <li><a href="#o-problema-que-a-validação-resolve" id="toc-o-problema-que-a-validação-resolve" class="nav-link" data-scroll-target="#o-problema-que-a-validação-resolve">O problema que a validação resolve</a></li>
+  <li><a href="#validação-versus-limpeza" id="toc-validação-versus-limpeza" class="nav-link" data-scroll-target="#validação-versus-limpeza">Validação versus limpeza</a></li>
+  <li><a href="#os-workflows-do-pointblank" id="toc-os-workflows-do-pointblank" class="nav-link" data-scroll-target="#os-workflows-do-pointblank">Os workflows do pointblank</a></li>
+  <li><a href="#bloco-2" id="toc-bloco-2" class="nav-link" data-scroll-target="#bloco-2">Bloco 2</a>
+  <ul class="collapse">
+  <li><a href="#o-dataset-de-rh" id="toc-o-dataset-de-rh" class="nav-link" data-scroll-target="#o-dataset-de-rh">O Dataset de RH</a></li>
+  </ul></li>
+  <li><a href="#os-problemas-inseridos-deliberadamente" id="toc-os-problemas-inseridos-deliberadamente" class="nav-link" data-scroll-target="#os-problemas-inseridos-deliberadamente">Os problemas inseridos deliberadamente</a></li>
+  <li><a href="#output-mapa-de-problemas" id="toc-output-mapa-de-problemas" class="nav-link" data-scroll-target="#output-mapa-de-problemas">Output: mapa de problemas</a></li>
+  <li><a href="#bloco-3" id="toc-bloco-3" class="nav-link" data-scroll-target="#bloco-3">Bloco 3</a>
+  <ul class="collapse">
+  <li><a href="#workflow-i-data-quality-reporting" id="toc-workflow-i-data-quality-reporting" class="nav-link" data-scroll-target="#workflow-i-data-quality-reporting">Workflow I: Data Quality Reporting</a></li>
+  </ul></li>
+  <li><a href="#conceito-o-agent" id="toc-conceito-o-agent" class="nav-link" data-scroll-target="#conceito-o-agent">Conceito: o agent</a></li>
+  <li><a href="#código-plano-de-validação-completo" id="toc-código-plano-de-validação-completo" class="nav-link" data-scroll-target="#código-plano-de-validação-completo">Código: plano de validação completo</a></li>
+  <li><a href="#output-relatório-do-agente" id="toc-output-relatório-do-agente" class="nav-link" data-scroll-target="#output-relatório-do-agente">Output: relatório do agente</a></li>
+  <li><a href="#código-extrair-métricas-como-tibble" id="toc-código-extrair-métricas-como-tibble" class="nav-link" data-scroll-target="#código-extrair-métricas-como-tibble">Código: extrair métricas como tibble</a></li>
+  <li><a href="#output-métricas-das-etapas-com-falha" id="toc-output-métricas-das-etapas-com-falha" class="nav-link" data-scroll-target="#output-métricas-das-etapas-com-falha">Output: métricas das etapas com falha</a></li>
+  <li><a href="#código-extrair-as-linhas-que-falharam" id="toc-código-extrair-as-linhas-que-falharam" class="nav-link" data-scroll-target="#código-extrair-as-linhas-que-falharam">Código: extrair as linhas que falharam</a></li>
+  <li><a href="#output-linhas-com-departamento-inválido" id="toc-output-linhas-com-departamento-inválido" class="nav-link" data-scroll-target="#output-linhas-com-departamento-inválido">Output: linhas com departamento inválido</a></li>
+  <li><a href="#bloco-4" id="toc-bloco-4" class="nav-link" data-scroll-target="#bloco-4">Bloco 4</a>
+  <ul class="collapse">
+  <li><a href="#limiares-e-ações" id="toc-limiares-e-ações" class="nav-link" data-scroll-target="#limiares-e-ações">Limiares e Ações</a></li>
+  </ul></li>
+  <li><a href="#o-que-são-limiares" id="toc-o-que-são-limiares" class="nav-link" data-scroll-target="#o-que-são-limiares">O que são limiares</a></li>
+  <li><a href="#código-configurando-limiares" id="toc-código-configurando-limiares" class="nav-link" data-scroll-target="#código-configurando-limiares">Código: configurando limiares</a></li>
+  <li><a href="#código-ação-customizada-ao-atingir-limiar" id="toc-código-ação-customizada-ao-atingir-limiar" class="nav-link" data-scroll-target="#código-ação-customizada-ao-atingir-limiar">Código: ação customizada ao atingir limiar</a></li>
+  <li><a href="#bloco-5" id="toc-bloco-5" class="nav-link" data-scroll-target="#bloco-5">Bloco 5</a>
+  <ul class="collapse">
+  <li><a href="#workflow-ii-pipeline-validation" id="toc-workflow-ii-pipeline-validation" class="nav-link" data-scroll-target="#workflow-ii-pipeline-validation">Workflow II: Pipeline Validation</a></li>
+  </ul></li>
+  <li><a href="#as-três-formas-de-pipeline-validation" id="toc-as-três-formas-de-pipeline-validation" class="nav-link" data-scroll-target="#as-três-formas-de-pipeline-validation">As três formas de Pipeline Validation</a></li>
+  <li><a href="#código-test_-em-condicional" id="toc-código-test_-em-condicional" class="nav-link" data-scroll-target="#código-test_-em-condicional">Código: test_*() em condicional</a></li>
+  <li><a href="#output-resultado-do-test_" id="toc-output-resultado-do-test_" class="nav-link" data-scroll-target="#output-resultado-do-test_">Output: resultado do test_*()</a></li>
+  <li><a href="#bloco-6" id="toc-bloco-6" class="nav-link" data-scroll-target="#bloco-6">Bloco 6</a>
+  <ul class="collapse">
+  <li><a href="#funções-de-validação-principais" id="toc-funções-de-validação-principais" class="nav-link" data-scroll-target="#funções-de-validação-principais">Funções de Validação Principais</a></li>
+  </ul></li>
+  <li><a href="#validações-de-valor-parte-1" id="toc-validações-de-valor-parte-1" class="nav-link" data-scroll-target="#validações-de-valor-parte-1">Validações de valor, parte 1</a></li>
+  <li><a href="#validações-de-valor-parte-2" id="toc-validações-de-valor-parte-2" class="nav-link" data-scroll-target="#validações-de-valor-parte-2">Validações de valor, parte 2</a></li>
+  <li><a href="#validações-de-estrutura" id="toc-validações-de-estrutura" class="nav-link" data-scroll-target="#validações-de-estrutura">Validações de estrutura</a></li>
+  <li><a href="#código-validações-de-estrutura" id="toc-código-validações-de-estrutura" class="nav-link" data-scroll-target="#código-validações-de-estrutura">Código: validações de estrutura</a></li>
+  <li><a href="#output-validações-de-estrutura" id="toc-output-validações-de-estrutura" class="nav-link" data-scroll-target="#output-validações-de-estrutura">Output: validações de estrutura</a></li>
+  <li><a href="#código-conjointly-para-múltiplas-condições" id="toc-código-conjointly-para-múltiplas-condições" class="nav-link" data-scroll-target="#código-conjointly-para-múltiplas-condições">Código: conjointly() para múltiplas condições</a></li>
+  <li><a href="#output-conjointly" id="toc-output-conjointly" class="nav-link" data-scroll-target="#output-conjointly">Output: conjointly()</a></li>
+  <li><a href="#bloco-7" id="toc-bloco-7" class="nav-link" data-scroll-target="#bloco-7">Bloco 7</a>
+  <ul class="collapse">
+  <li><a href="#workflow-v-table-scan" id="toc-workflow-v-table-scan" class="nav-link" data-scroll-target="#workflow-v-table-scan">Workflow V: Table Scan</a></li>
+  </ul></li>
+  <li><a href="#scan_data-exploração-rápida" id="toc-scan_data-exploração-rápida" class="nav-link" data-scroll-target="#scan_data-exploração-rápida">scan_data(): exploração rápida</a></li>
+  <li><a href="#bloco-8" id="toc-bloco-8" class="nav-link" data-scroll-target="#bloco-8">Bloco 8</a>
+  <ul class="collapse">
+  <li><a href="#information-management-o-informant" id="toc-information-management-o-informant" class="nav-link" data-scroll-target="#information-management-o-informant">Information Management: o Informant</a></li>
+  </ul></li>
+  <li><a href="#o-que-é-o-informant" id="toc-o-que-é-o-informant" class="nav-link" data-scroll-target="#o-que-é-o-informant">O que é o informant</a></li>
+  <li><a href="#código-criando-o-informant" id="toc-código-criando-o-informant" class="nav-link" data-scroll-target="#código-criando-o-informant">Código: criando o informant</a></li>
+  <li><a href="#output-informant-com-metadados" id="toc-output-informant-com-metadados" class="nav-link" data-scroll-target="#output-informant-com-metadados">Output: informant com metadados</a></li>
+  <li><a href="#bloco-9" id="toc-bloco-9" class="nav-link" data-scroll-target="#bloco-9">Bloco 9</a>
+  <ul class="collapse">
+  <li><a href="#pointblank-com-duckdb" id="toc-pointblank-com-duckdb" class="nav-link" data-scroll-target="#pointblank-com-duckdb">pointblank com DuckDB</a></li>
+  </ul></li>
+  <li><a href="#código-validando-tabela-no-duckdb" id="toc-código-validando-tabela-no-duckdb" class="nav-link" data-scroll-target="#código-validando-tabela-no-duckdb">Código: validando tabela no DuckDB</a></li>
+  <li><a href="#output-relatório-do-agente-duckdb" id="toc-output-relatório-do-agente-duckdb" class="nav-link" data-scroll-target="#output-relatório-do-agente-duckdb">Output: relatório do agente DuckDB</a></li>
+  <li><a href="#bloco-10" id="toc-bloco-10" class="nav-link" data-scroll-target="#bloco-10">Bloco 10</a>
+  <ul class="collapse">
+  <li><a href="#boas-práticas-e-mercado" id="toc-boas-práticas-e-mercado" class="nav-link" data-scroll-target="#boas-práticas-e-mercado">Boas Práticas e Mercado</a></li>
+  </ul></li>
+  <li><a href="#onde-colocar-validação-no-pipeline" id="toc-onde-colocar-validação-no-pipeline" class="nav-link" data-scroll-target="#onde-colocar-validação-no-pipeline">Onde colocar validação no pipeline</a></li>
+  <li><a href="#exportar-plano-para-yaml" id="toc-exportar-plano-para-yaml" class="nav-link" data-scroll-target="#exportar-plano-para-yaml">Exportar plano para YAML</a></li>
+  <li><a href="#erros-comuns" id="toc-erros-comuns" class="nav-link" data-scroll-target="#erros-comuns">Erros comuns</a></li>
+  <li><a href="#resumo-das-funções-principais-parte-1" id="toc-resumo-das-funções-principais-parte-1" class="nav-link" data-scroll-target="#resumo-das-funções-principais-parte-1">Resumo das funções principais, parte 1</a></li>
+  <li><a href="#resumo-das-funções-principais-parte-2" id="toc-resumo-das-funções-principais-parte-2" class="nav-link" data-scroll-target="#resumo-das-funções-principais-parte-2">Resumo das funções principais, parte 2</a></li>
+  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências">Referências</a></li>
+  <li><a href="#obrigada" id="toc-obrigada" class="nav-link" data-scroll-target="#obrigada">Obrigada!</a></li>
+  <li><a href="#siga-o-café-com-r" id="toc-siga-o-café-com-r" class="nav-link" data-scroll-target="#siga-o-café-com-r">Siga o Café com R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="aula29_pointblank_v2.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Aula 29. Validação de Dados no R</h1>
+<p class="subtitle lead">Do pipeline ao relatório com o pacote pointblank</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">pointblank</div>
+    <div class="quarto-category">Qualidade de Dados</div>
+    <div class="quarto-category">Pipeline</div>
+    <div class="quarto-category">Engenharia de Dados</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Aprenda a validar dados sistematicamente com o pointblank, gerar relatórios de qualidade, definir limiares de falha e integrar validação em pipelines de dados.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="democratização" class="level2">
+<h2 class="anchored" data-anchor-id="democratização">Democratização</h2>
+<blockquote class="blockquote">
+<p>Esta aula foi construída para que você compreenda como validar dados sistematicamente com o <code>pointblank</code>, identificar problemas antes que contaminem a análise, gerar relatórios de qualidade e integrar validação em pipelines de dados. Os dados usados são um dataset de RH simulado com problemas reais e deliberados.</p>
+</blockquote>
+<hr>
+</section>
+<section id="acompanhe-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="acompanhe-o-café-com-r">Acompanhe o Café com R</h2>
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p><strong>SITE OFICIAL &gt;</strong> <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+<hr>
+</section>
+<section id="objetivos-da-aula" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-da-aula">Objetivos da aula</h2>
+<div class="incremental">
+<ul class="incremental">
+<li>Compreender o que é <strong>validação de dados</strong> e por que ela importa</li>
+<li>Conhecer os workflows do <code>pointblank</code></li>
+<li>Criar um <strong>agente</strong> e definir um plano de validação</li>
+<li>Gerar e interpretar o <strong>relatório de qualidade</strong></li>
+<li>Configurar <strong>limiares</strong> com ações automáticas</li>
+<li>Usar <strong>Pipeline Validation</strong> dentro de um fluxo dplyr</li>
+<li>Criar um <strong>informant</strong> como dicionário de dados vivo</li>
+<li>Integrar validação com <strong>DuckDB</strong></li>
+</ul>
+</div>
+<hr>
+</section>
+<section id="instalação" class="level2">
+<h2 class="anchored" data-anchor-id="instalação">Instalação</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"pointblank"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pointblank)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="bloco-1" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+<section id="o-problema-da-qualidade-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="o-problema-da-qualidade-de-dados">O Problema da Qualidade de Dados</h2>
+</section>
+</section>
+<hr>
+<section id="o-problema-que-a-validação-resolve" class="level2">
+<h2 class="anchored" data-anchor-id="o-problema-que-a-validação-resolve">O problema que a validação resolve</h2>
+<p>Uma análise começa com dados. Se os dados têm problemas não detectados, a análise produz resultados incorretos, e você só descobre quando o dano já está feito.</p>
+<p>Problemas comuns que passam despercebidos:</p>
+<ul>
+<li>Salários negativos ou acima do limite razoável</li>
+<li>Datas de admissão no futuro</li>
+<li>Capitalização inconsistente (<code>"ativo"</code>, <code>"ATIVO"</code>, <code>"Ativo"</code>)</li>
+<li>Identificadores duplicados ou nulos</li>
+<li>Valores fora de um conjunto permitido</li>
+<li>Padrões de texto inválidos (CPF sem formato correto)</li>
+</ul>
+<p>Sem validação sistemática, você depende de inspeção manual, que falha conforme os dados crescem.</p>
+<hr>
+</section>
+<section id="validação-versus-limpeza" class="level2">
+<h2 class="anchored" data-anchor-id="validação-versus-limpeza">Validação versus limpeza</h2>
+<p><strong>Limpeza</strong> transforma os dados: corrige valores, remove duplicatas, padroniza texto.</p>
+<p><strong>Validação</strong> verifica se os dados atendem às expectativas definidas e reporta o que falhou, sem alterar os dados.</p>
+<p>A sequência correta no pipeline:</p>
+<pre><code>Dados brutos
+    |
+    | Validação inicial: os dados chegaram como esperado?
+    v
+Limpeza e transformação
+    |
+    | Validação final: o resultado da transformação está correto?
+    v
+Análise e modelagem</code></pre>
+<hr>
+</section>
+<section id="os-workflows-do-pointblank" class="level2">
+<h2 class="anchored" data-anchor-id="os-workflows-do-pointblank">Os workflows do pointblank</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Workflow</th>
+<th>Nome</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>VALID-I</td>
+<td>Data Quality Reporting</td>
+<td>Relatório periódico de qualidade</td>
+</tr>
+<tr class="even">
+<td>VALID-II</td>
+<td>Pipeline Data Validation</td>
+<td>Dentro de ETL com ações automáticas</td>
+</tr>
+<tr class="odd">
+<td>VALID-III</td>
+<td>Expectations in Unit Tests</td>
+<td>Com <code>testthat</code> em pacotes R</td>
+</tr>
+<tr class="even">
+<td>VALID-IV</td>
+<td>Data Tests for Conditionals</td>
+<td>Retornar TRUE/FALSE para condicionais</td>
+</tr>
+<tr class="odd">
+<td>VALID-V</td>
+<td>Table Scan</td>
+<td>Exploração rápida sem plano definido</td>
+</tr>
+</tbody>
+</table>
+<p>Esta aula cobre os workflows I, II e V, que são os mais usados no dia a dia de análise de dados.</p>
+<hr>
+</section>
+<section id="bloco-2" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+<section id="o-dataset-de-rh" class="level2">
+<h2 class="anchored" data-anchor-id="o-dataset-de-rh">O Dataset de RH</h2>
+</section>
+</section>
+<hr>
+<section id="os-problemas-inseridos-deliberadamente" class="level2">
+<h2 class="anchored" data-anchor-id="os-problemas-inseridos-deliberadamente">Os problemas inseridos deliberadamente</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tribble</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>Coluna,           <span class="sc">~</span>Problema,                           <span class="sc">~</span>Qtd,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"id_funcionario"</span>,  <span class="st">"Valores NA"</span>,                        <span class="st">"2"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"id_funcionario"</span>,  <span class="st">"IDs duplicados (101, 102, 103)"</span>,    <span class="st">"3"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"nome"</span>,            <span class="st">"Valores NA"</span>,                        <span class="st">"5"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"departamento"</span>,    <span class="st">"Capitalização inconsistente"</span>,        <span class="st">"3"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"departamento"</span>,    <span class="st">"Valores fora do conjunto válido"</span>,   <span class="st">"2"</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"salario"</span>,         <span class="st">"Valores negativos ou zero"</span>,         <span class="st">"3"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"salario"</span>,         <span class="st">"Valores extremos (&gt;R$300.000)"</span>,     <span class="st">"2"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data_admissao"</span>,   <span class="st">"Datas no futuro"</span>,                   <span class="st">"2"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"status"</span>,          <span class="st">"Valores fora do conjunto válido"</span>,   <span class="st">"5"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"cpf"</span>,             <span class="st">"Formato inválido ou NA"</span>,            <span class="st">"5"</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"avaliacao_anual"</span>, <span class="st">"Valores fora do intervalo [1,10]"</span>,  <span class="st">"3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-mapa-de-problemas" class="level2">
+<h2 class="anchored" data-anchor-id="output-mapa-de-problemas">Output: mapa de problemas</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 3
+   Coluna          Problema                         Qtd  
+   &lt;chr&gt;           &lt;chr&gt;                            &lt;chr&gt;
+ 1 id_funcionario  Valores NA                       2    
+ 2 id_funcionario  IDs duplicados (101, 102, 103)   3    
+ 3 nome            Valores NA                       5    
+ 4 departamento    Capitalização inconsistente      3    
+ 5 departamento    Valores fora do conjunto válido  2    
+ 6 salario         Valores negativos ou zero        3    
+ 7 salario         Valores extremos (&gt;R$300.000)    2    
+ 8 data_admissao   Datas no futuro                  2    
+ 9 status          Valores fora do conjunto válido  5    
+10 cpf             Formato inválido ou NA           5    
+11 avaliacao_anual Valores fora do intervalo [1,10] 3    </code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="bloco-3" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+<section id="workflow-i-data-quality-reporting" class="level2">
+<h2 class="anchored" data-anchor-id="workflow-i-data-quality-reporting">Workflow I: Data Quality Reporting</h2>
+</section>
+</section>
+<hr>
+<section id="conceito-o-agent" class="level2">
+<h2 class="anchored" data-anchor-id="conceito-o-agent">Conceito: o agent</h2>
+<p>O <strong>agent</strong> é o objeto central do <code>pointblank</code>. Ele recebe a tabela alvo, acumula as etapas de validação e executa o plano completo quando <code>interrogate()</code> é chamado.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">create_agent</span>(<span class="at">label =</span> <span class="st">"Descrição"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">funcao_validacao_1</span>(...) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">funcao_validacao_2</span>(...) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">interrogate</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>O <code>interrogate()</code> retorna o agente enriquecido com os resultados. Chamar o objeto no console abre o relatório interativo.</p>
+<hr>
+</section>
+<section id="código-plano-de-validação-completo" class="level2">
+<h2 class="anchored" data-anchor-id="código-plano-de-validação-completo">Código: plano de validação completo</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>agente_rh <span class="ot">&lt;-</span> rh_dados <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">create_agent</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">label   =</span> <span class="st">"Validação de Dados de RH"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">actions =</span> <span class="fu">action_levels</span>(<span class="at">warn_at =</span> <span class="fl">0.05</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">stop_at =</span> <span class="fl">0.20</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_not_null</span>(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(id_funcionario, nome,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                departamento, salario,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                data_admissao, status)) <span class="sc">|&gt;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rows_distinct</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> id_funcionario) <span class="sc">|&gt;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_in_set</span>(</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> departamento,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">set     =</span> <span class="fu">c</span>(<span class="st">"TI"</span>, <span class="st">"RH"</span>, <span class="st">"Financeiro"</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Marketing"</span>, <span class="st">"Operações"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_in_set</span>(</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> status,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">set     =</span> <span class="fu">c</span>(<span class="st">"Ativo"</span>, <span class="st">"Inativo"</span>, <span class="st">"Férias"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_between</span>(</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> salario,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">left    =</span> <span class="dv">1320</span>, <span class="at">right =</span> <span class="dv">200000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_between</span>(</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> avaliacao_anual,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">left    =</span> <span class="dv">1</span>, <span class="at">right =</span> <span class="dv">10</span>, <span class="at">na_pass =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_lte</span>(</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> data_admissao,</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">value   =</span> <span class="fu">Sys.Date</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_regex</span>(</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> cpf,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">regex   =</span> <span class="st">"^</span><span class="sc">\\</span><span class="st">d{3}</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">d{3}</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">d{3}-</span><span class="sc">\\</span><span class="st">d{2}$"</span>,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">na_pass =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">interrogate</span>()</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>agente_rh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-relatório-do-agente" class="level2">
+<h2 class="anchored" data-anchor-id="output-relatório-do-agente">Output: relatório do agente</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Ao chamar o objeto <code>agente_rh</code> no console do R, o <code>pointblank</code> abre o relatório HTML interativo com todas as etapas, resultados e proporções de falha.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-extrair-métricas-como-tibble" class="level2">
+<h2 class="anchored" data-anchor-id="código-extrair-métricas-como-tibble">Código: extrair métricas como tibble</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>relatorio <span class="ot">&lt;-</span> <span class="fu">get_agent_report</span>(agente_rh, <span class="at">display_table =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>relatorio <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n_failed <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(i, <span class="fu">where</span>(is.character) <span class="sc">&amp;</span> <span class="sc">!</span>columns, columns,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>         n, n_passed, n_failed, f_failed) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-métricas-das-etapas-com-falha" class="level2">
+<h2 class="anchored" data-anchor-id="output-métricas-das-etapas-com-falha">Output: métricas das etapas com falha</h2>
+<pre><code># Exemplo de colunas retornadas (nomes variam por versão do pointblank):
+# i  type/assertion_type  columns  n   n_passed  n_failed  f_failed  warn  stop
+# 1  col_vals_not_null    ...      200  193       7         0.035     TRUE  FALSE
+# 2  rows_distinct        ...      200  197       3         0.015     FALSE FALSE</code></pre>
+<hr>
+</section>
+<section id="código-extrair-as-linhas-que-falharam" class="level2">
+<h2 class="anchored" data-anchor-id="código-extrair-as-linhas-que-falharam">Código: extrair as linhas que falharam</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># i = número da etapa - etapa 3: departamento inválido</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>falhas_departamento <span class="ot">&lt;-</span> <span class="fu">get_data_extracts</span>(agente_rh, <span class="at">i =</span> <span class="dv">3</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>falhas_departamento <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id_funcionario, nome, departamento, status)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-linhas-com-departamento-inválido" class="level2">
+<h2 class="anchored" data-anchor-id="output-linhas-com-departamento-inválido">Output: linhas com departamento inválido</h2>
+<pre><code># As linhas com departamento fora do conjunto permitido:
+# id_funcionario  nome              departamento       status
+#            196  Funcionário 196   Recursos_Humanos   ativo
+#            198  Funcionário 198   MARKETING          ATIVO
+#            199  Funcionário 199   operações          Demitido</code></pre>
+<p><code>get_data_extracts()</code> retorna exatamente as linhas que violaram aquela etapa. Use para investigar os problemas e decidir como corrigi-los.</p>
+<hr>
+</section>
+<section id="bloco-4" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 4</h1>
+<section id="limiares-e-ações" class="level2">
+<h2 class="anchored" data-anchor-id="limiares-e-ações">Limiares e Ações</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-são-limiares" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-são-limiares">O que são limiares</h2>
+<p><strong>Limiares</strong> definem a proporção de falhas que aciona um comportamento específico:</p>
+<p><strong><code>warn_at</code>:</strong> aviso - a proporção de falhas ultrapassou o limite aceitável, mas o pipeline pode continuar.</p>
+<p><strong><code>stop_at</code>:</strong> erro - a proporção de falhas ultrapassou o limite crítico. O pipeline deve ser interrompido.</p>
+<p><strong><code>notify_at</code>:</strong> notificação - aciona uma função customizada, como envio de e-mail ou registro em log.</p>
+<p>Os limiares podem ser definidos como proporção (0 a 1) ou como contagem absoluta de falhas.</p>
+<hr>
+</section>
+<section id="código-configurando-limiares" class="level2">
+<h2 class="anchored" data-anchor-id="código-configurando-limiares">Código: configurando limiares</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Limiar global: aplica a todas as etapas do agente</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>limiares <span class="ot">&lt;-</span> <span class="fu">action_levels</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">warn_at   =</span> <span class="fl">0.05</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">stop_at   =</span> <span class="fl">0.20</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">notify_at =</span> <span class="fl">0.10</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Limiar por etapa: sobrescreve o global</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>agente_personalizado <span class="ot">&lt;-</span> rh_dados <span class="sc">|&gt;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">create_agent</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_not_null</span>(</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> id_funcionario,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">actions =</span> <span class="fu">action_levels</span>(<span class="at">warn_at =</span> <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_between</span>(</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> salario,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">left    =</span> <span class="dv">1320</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">right   =</span> <span class="dv">200000</span>,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">actions =</span> <span class="fu">action_levels</span>(</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">warn_at =</span> <span class="fl">0.03</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">stop_at =</span> <span class="fl">0.10</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">interrogate</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="código-ação-customizada-ao-atingir-limiar" class="level2">
+<h2 class="anchored" data-anchor-id="código-ação-customizada-ao-atingir-limiar">Código: ação customizada ao atingir limiar</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>registrar_aviso <span class="ot">&lt;-</span> <span class="cf">function</span>(object) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  msg <span class="ot">&lt;-</span> glue<span class="sc">::</span><span class="fu">glue</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"[{Sys.time()}] AVISO: etapa '{object$name}' "</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"atingiu {round(object$f_failed * 100, 1)}% de falhas."</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write</span>(msg, <span class="at">file =</span> <span class="st">"validacao_log.txt"</span>, <span class="at">append =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(msg)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>limiares_com_log <span class="ot">&lt;-</span> <span class="fu">action_levels</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">warn_at =</span> <span class="fl">0.05</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">fns     =</span> <span class="fu">list</span>(<span class="at">warn =</span> <span class="sc">~</span> <span class="fu">registrar_aviso</span>(.)))</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>rh_dados <span class="sc">|&gt;</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">create_agent</span>(<span class="at">actions =</span> limiares_com_log) <span class="sc">|&gt;</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_between</span>(</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> salario,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">left    =</span> <span class="dv">1320</span>,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">right   =</span> <span class="dv">200000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">interrogate</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="bloco-5" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 5</h1>
+<section id="workflow-ii-pipeline-validation" class="level2">
+<h2 class="anchored" data-anchor-id="workflow-ii-pipeline-validation">Workflow II: Pipeline Validation</h2>
+</section>
+</section>
+<hr>
+<section id="as-três-formas-de-pipeline-validation" class="level2">
+<h2 class="anchored" data-anchor-id="as-três-formas-de-pipeline-validation">As três formas de Pipeline Validation</h2>
+<p><strong>Forma 1 - Filtro direto:</strong> a tabela passa pela validação e lança <code>stop()</code> se qualquer unidade falhar.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dados <span class="sc">|&gt;</span> <span class="fu">col_vals_not_null</span>(<span class="at">columns =</span> id_funcionario)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Forma 2 - <code>expect_*()</code>:</strong> para uso com <code>testthat</code>. Falha com <code>expectation failed</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_col_vals_not_null</span>(dados, <span class="at">columns =</span> id_funcionario)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Forma 3 - <code>test_*()</code>:</strong> retorna <code>TRUE</code> ou <code>FALSE</code> para uso em condicionais.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test_col_vals_not_null</span>(dados, <span class="at">columns =</span> id_funcionario)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="código-test_-em-condicional" class="level2">
+<h2 class="anchored" data-anchor-id="código-test_-em-condicional">Código: test_*() em condicional</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>departamentos_validos <span class="ot">&lt;-</span> <span class="fu">test_col_vals_in_set</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  rh_dados,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns =</span> departamento,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">set     =</span> <span class="fu">c</span>(<span class="st">"TI"</span>, <span class="st">"RH"</span>, <span class="st">"Financeiro"</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Marketing"</span>, <span class="st">"Operações"</span>))</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span>departamentos_validos) {</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Dados com departamentos inválidos."</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">" Aplicando padronização."</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  rh_dados <span class="ot">&lt;-</span> rh_dados <span class="sc">|&gt;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">departamento =</span> <span class="fu">str_to_title</span>(</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_replace_all</span>(departamento, <span class="st">"_"</span>, <span class="st">" "</span>)))</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Departamentos validados com sucesso."</span>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-resultado-do-test_" class="level2">
+<h2 class="anchored" data-anchor-id="output-resultado-do-test_">Output: resultado do test_*()</h2>
+<pre><code>[1] FALSE</code></pre>
+<p><code>test_col_vals_in_set()</code> retornou <code>FALSE</code> porque existem valores como <code>"Recursos_Humanos"</code>, <code>"MARKETING"</code> e <code>"operações"</code> fora do conjunto permitido.</p>
+<hr>
+</section>
+<section id="bloco-6" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 6</h1>
+<section id="funções-de-validação-principais" class="level2">
+<h2 class="anchored" data-anchor-id="funções-de-validação-principais">Funções de Validação Principais</h2>
+</section>
+</section>
+<hr>
+<section id="validações-de-valor-parte-1" class="level2">
+<h2 class="anchored" data-anchor-id="validações-de-valor-parte-1">Validações de valor, parte 1</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Função</th>
+<th>O que verifica</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>col_vals_not_null()</code></td>
+<td>Ausência de NA</td>
+</tr>
+<tr class="even">
+<td><code>col_vals_between()</code></td>
+<td>Valor dentro de intervalo <code>[left, right]</code></td>
+</tr>
+<tr class="odd">
+<td><code>col_vals_gt()</code></td>
+<td>Valor maior que</td>
+</tr>
+<tr class="even">
+<td><code>col_vals_gte()</code></td>
+<td>Valor maior ou igual a</td>
+</tr>
+<tr class="odd">
+<td><code>col_vals_lt()</code></td>
+<td>Valor menor que</td>
+</tr>
+<tr class="even">
+<td><code>col_vals_lte()</code></td>
+<td>Valor menor ou igual a</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="validações-de-valor-parte-2" class="level2">
+<h2 class="anchored" data-anchor-id="validações-de-valor-parte-2">Validações de valor, parte 2</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Função</th>
+<th>O que verifica</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>col_vals_in_set()</code></td>
+<td>Valor dentro de um conjunto permitido</td>
+</tr>
+<tr class="even">
+<td><code>col_vals_not_in_set()</code></td>
+<td>Valor fora de um conjunto proibido</td>
+</tr>
+<tr class="odd">
+<td><code>col_vals_regex()</code></td>
+<td>Valor corresponde a expressão regular</td>
+</tr>
+<tr class="even">
+<td><code>col_vals_ne()</code></td>
+<td>Valor diferente de</td>
+</tr>
+<tr class="odd">
+<td><code>col_vals_outside()</code></td>
+<td>Valor fora de um intervalo</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="validações-de-estrutura" class="level2">
+<h2 class="anchored" data-anchor-id="validações-de-estrutura">Validações de estrutura</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Função</th>
+<th>O que verifica</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>rows_distinct()</code></td>
+<td>Linhas únicas por coluna-chave</td>
+</tr>
+<tr class="even">
+<td><code>rows_complete()</code></td>
+<td>Linhas sem nulos em nenhuma coluna</td>
+</tr>
+<tr class="odd">
+<td><code>col_exists()</code></td>
+<td>Coluna existe na tabela</td>
+</tr>
+<tr class="even">
+<td><code>col_is_numeric()</code></td>
+<td>Coluna é numérica</td>
+</tr>
+<tr class="odd">
+<td><code>col_is_character()</code></td>
+<td>Coluna é texto</td>
+</tr>
+<tr class="even">
+<td><code>col_is_date()</code></td>
+<td>Coluna é data</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="código-validações-de-estrutura" class="level2">
+<h2 class="anchored" data-anchor-id="código-validações-de-estrutura">Código: validações de estrutura</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>rh_dados <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">create_agent</span>(<span class="at">label =</span> <span class="st">"Estrutura da tabela"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rows_distinct</span>(<span class="at">columns =</span> id_funcionario) <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_exists</span>(</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(id_funcionario, nome, salario)) <span class="sc">|&gt;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_is_numeric</span>(</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(salario, avaliacao_anual)) <span class="sc">|&gt;</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_is_character</span>(</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(nome, departamento)) <span class="sc">|&gt;</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_is_date</span>(<span class="at">columns =</span> data_admissao) <span class="sc">|&gt;</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">interrogate</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-validações-de-estrutura" class="level2">
+<h2 class="anchored" data-anchor-id="output-validações-de-estrutura">Output: validações de estrutura</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O relatório interativo do <code>pointblank</code> é gerado ao rodar este código localmente. Ele exibe cada etapa com status verde (passou) ou vermelho (falhou), proporção de falhas e métricas detalhadas.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-conjointly-para-múltiplas-condições" class="level2">
+<h2 class="anchored" data-anchor-id="código-conjointly-para-múltiplas-condições">Código: conjointly() para múltiplas condições</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>rh_dados <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">create_agent</span>(<span class="at">label =</span> <span class="st">"Validação conjunta"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">conjointly</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> <span class="fu">col_vals_not_null</span>(., <span class="at">columns =</span> salario),</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> <span class="fu">col_vals_gt</span>(., <span class="at">columns =</span> salario, <span class="at">value =</span> <span class="dv">0</span>),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> <span class="fu">col_vals_lt</span>(., <span class="at">columns =</span> salario, <span class="at">value =</span> <span class="dv">200000</span>),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.label =</span> <span class="st">"Salário: não nulo, positivo e dentro do limite"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">interrogate</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-conjointly" class="level2">
+<h2 class="anchored" data-anchor-id="output-conjointly">Output: conjointly()</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>conjointly()</code> avalia as três condições juntas por linha. Uma linha falha se qualquer uma delas não for atendida. No dataset de RH, as linhas com salário negativo, zero ou acima de R$200.000 são marcadas como falha nessa etapa.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="bloco-7" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 7</h1>
+<section id="workflow-v-table-scan" class="level2">
+<h2 class="anchored" data-anchor-id="workflow-v-table-scan">Workflow V: Table Scan</h2>
+</section>
+</section>
+<hr>
+<section id="scan_data-exploração-rápida" class="level2">
+<h2 class="anchored" data-anchor-id="scan_data-exploração-rápida">scan_data(): exploração rápida</h2>
+<p><code>scan_data()</code> gera um relatório completo de análise exploratória sem precisar definir um plano de validação. É o equivalente a um <code>skimr::skim()</code> com relatório HTML interativo.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scan_data</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">tbl      =</span> rh_dados,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sections =</span> <span class="st">"OVMS"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>O que o relatório inclui:</strong></p>
+<p><strong>O - Overview:</strong> linhas, colunas, nulos totais e tipos.</p>
+<p><strong>V - Variables:</strong> para cada coluna: valores únicos, proporção de nulos, distribuição numérica e frequência categórica.</p>
+<p><strong>M - Missing:</strong> padrões de valores ausentes entre colunas.</p>
+<p><strong>S - Sample:</strong> primeiras e últimas linhas.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use <code>scan_data()</code> antes de definir o plano de validação. O relatório revela os problemas e ajuda a calibrar os limiares corretos para cada coluna.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="bloco-8" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 8</h1>
+<section id="information-management-o-informant" class="level2">
+<h2 class="anchored" data-anchor-id="information-management-o-informant">Information Management: o Informant</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-é-o-informant" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-o-informant">O que é o informant</h2>
+<p>O <strong>informant</strong> mantém metadados sobre a tabela e os atualiza automaticamente quando os dados mudam. O resultado é um dicionário de dados vivo: um relatório HTML com descrição de cada coluna, estatísticas atualizadas e notas do analista.</p>
+<hr>
+</section>
+<section id="código-criando-o-informant" class="level2">
+<h2 class="anchored" data-anchor-id="código-criando-o-informant">Código: criando o informant</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>informant_rh <span class="ot">&lt;-</span> rh_dados <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">create_informant</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="st">"Dicionário de Dados de RH"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">info_tabular</span>(</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">description =</span> <span class="st">"</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="st">    Tabela de funcionários com dados de identificação,</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="st">    cargo, remuneração e avaliação. Atualizada mensalmente.</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="st">    Fonte: Sistema HRIS."</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Responsável</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Equipe de RH"</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Contato</span><span class="st">`</span>     <span class="ot">=</span> <span class="st">"rh@empresa.com.br"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">info_columns</span>(</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> id_funcionario,</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">info    =</span> <span class="st">"Identificador único. Não nulo, não duplicado."</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">info_columns</span>(</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> salario,</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">info    =</span> <span class="st">"Salário bruto mensal em reais (R$1.320 a R$200.000)."</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">info_columns</span>(</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> avaliacao_anual,</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">info    =</span> <span class="st">"Nota de desempenho anual. Escala de 1 a 10."</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">incorporate</span>()</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>informant_rh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-informant-com-metadados" class="level2">
+<h2 class="anchored" data-anchor-id="output-informant-com-metadados">Output: informant com metadados</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O informant gera um relatório HTML com o dicionário de dados atualizado. Cada coluna aparece com sua descrição, tipo, valores únicos e proporção de nulos calculados automaticamente por <code>incorporate()</code>.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="bloco-9" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 9</h1>
+<section id="pointblank-com-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="pointblank-com-duckdb">pointblank com DuckDB</h2>
+</section>
+</section>
+<hr>
+<section id="código-validando-tabela-no-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="código-validando-tabela-no-duckdb">Código: validando tabela no DuckDB</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">duckdb_register</span>(con, <span class="st">"rh"</span>, rh_dados)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl</span>(con, <span class="st">"rh"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">create_agent</span>(</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">label   =</span> <span class="st">"Validação RH - DuckDB"</span>,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">actions =</span> <span class="fu">action_levels</span>(<span class="at">warn_at =</span> <span class="fl">0.05</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>                             <span class="at">stop_at =</span> <span class="fl">0.20</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_not_null</span>(</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(id_funcionario, nome, salario)) <span class="sc">|&gt;</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rows_distinct</span>(<span class="at">columns =</span> id_funcionario) <span class="sc">|&gt;</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_in_set</span>(</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> departamento,</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">set     =</span> <span class="fu">c</span>(<span class="st">"TI"</span>, <span class="st">"RH"</span>, <span class="st">"Financeiro"</span>,</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Marketing"</span>, <span class="st">"Operações"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">col_vals_between</span>(</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> salario,</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">left    =</span> <span class="dv">1320</span>,</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">right   =</span> <span class="dv">200000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">interrogate</span>()</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-relatório-do-agente-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-relatório-do-agente-duckdb">Output: relatório do agente DuckDB</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O código de validação sobre uma tabela DuckDB é idêntico ao usado com um <code>data.frame</code>. O <code>pointblank</code> detecta automaticamente a fonte e traduz as validações para SQL quando necessário.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="bloco-10" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 10</h1>
+<section id="boas-práticas-e-mercado" class="level2">
+<h2 class="anchored" data-anchor-id="boas-práticas-e-mercado">Boas Práticas e Mercado</h2>
+</section>
+</section>
+<hr>
+<section id="onde-colocar-validação-no-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="onde-colocar-validação-no-pipeline">Onde colocar validação no pipeline</h2>
+<pre><code>Ingestão (leitura de CSV, API, banco)
+    |
+    | scan_data(): explorar antes de validar
+    | col_vals_not_null(), col_is_*(): verificar estrutura
+    v
+Transformação (limpeza, join, agregação)
+    |
+    | test_*(): decisões baseadas em qualidade
+    | col_vals_between(): verificar intermediários
+    v
+Saída (escrita em banco, Parquet, relatório)
+    |
+    | create_agent() + interrogate(): relatório completo
+    | yaml_write(): versionar o plano de validação
+    v
+Monitoramento (execução periódica com agendamento)</code></pre>
+<hr>
+</section>
+<section id="exportar-plano-para-yaml" class="level2">
+<h2 class="anchored" data-anchor-id="exportar-plano-para-yaml">Exportar plano para YAML</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">yaml_write</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  agente_rh,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"plano_validacao_rh.yml"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">path     =</span> <span class="st">"validacoes/"</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>agente_do_yaml <span class="ot">&lt;-</span> <span class="fu">yaml_read_agent</span>(</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"validacoes/plano_validacao_rh.yml"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>novos_dados <span class="sc">|&gt;</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">create_agent_from_yaml</span>(agente_do_yaml) <span class="sc">|&gt;</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">interrogate</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>O arquivo YAML gerado pode ser versionado no Git junto com o projeto, funcionando como um contrato de dados: define formalmente o que a tabela deve conter.</p>
+<hr>
+</section>
+<section id="erros-comuns" class="level2">
+<h2 class="anchored" data-anchor-id="erros-comuns">Erros comuns</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Causa</th>
+<th>Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Relatório vazio ou sem falhas</td>
+<td><code>interrogate()</code> não foi chamado</td>
+<td>Sempre terminar com <code>interrogate()</code></td>
+</tr>
+<tr class="even">
+<td>NA contado como falha</td>
+<td><code>na_pass</code> não configurado</td>
+<td>Adicionar <code>na_pass = TRUE</code> quando NA é válido</td>
+</tr>
+<tr class="odd">
+<td><code>get_data_extracts()</code> vazio</td>
+<td>Índice <code>i</code> incorreto</td>
+<td>Verificar o número da etapa no relatório</td>
+</tr>
+<tr class="even">
+<td>Limiar muito restritivo</td>
+<td><code>stop_at = 0.01</code> para coluna com ausência esperada</td>
+<td>Calibrar com <code>scan_data()</code> antes de definir</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="resumo-das-funções-principais-parte-1" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-das-funções-principais-parte-1">Resumo das funções principais, parte 1</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 14%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Função</th>
+<th>Workflow</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>create_agent()</code></td>
+<td>I</td>
+<td>Cria o agente de validação</td>
+</tr>
+<tr class="even">
+<td><code>interrogate()</code></td>
+<td>I</td>
+<td>Executa o plano e gera o relatório</td>
+</tr>
+<tr class="odd">
+<td><code>get_agent_report()</code></td>
+<td>I</td>
+<td>Extrai o relatório como tibble</td>
+</tr>
+<tr class="even">
+<td><code>get_data_extracts()</code></td>
+<td>I</td>
+<td>Retorna as linhas que falharam</td>
+</tr>
+<tr class="odd">
+<td><code>action_levels()</code></td>
+<td>I, II</td>
+<td>Define limiares e ações</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="resumo-das-funções-principais-parte-2" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-das-funções-principais-parte-2">Resumo das funções principais, parte 2</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 13%">
+<col style="width: 56%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Função</th>
+<th>Workflow</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>scan_data()</code></td>
+<td>V</td>
+<td>Análise exploratória com relatório HTML</td>
+</tr>
+<tr class="even">
+<td><code>create_informant()</code></td>
+<td>Info</td>
+<td>Cria o dicionário de dados</td>
+</tr>
+<tr class="odd">
+<td><code>incorporate()</code></td>
+<td>Info</td>
+<td>Atualiza estatísticas do informant</td>
+</tr>
+<tr class="even">
+<td><code>yaml_write()</code></td>
+<td>I</td>
+<td>Exporta o plano para YAML</td>
+</tr>
+<tr class="odd">
+<td><code>test_*()</code></td>
+<td>IV</td>
+<td>Retorna TRUE/FALSE para condicionais</td>
+</tr>
+<tr class="even">
+<td><code>expect_*()</code></td>
+<td>III</td>
+<td>Para uso com <code>testthat</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="referências" class="level2">
+<h2 class="anchored" data-anchor-id="referências">Referências</h2>
+<ul>
+<li>Documentação oficial: <a href="https://rstudio.github.io/pointblank">rstudio.github.io/pointblank</a></li>
+<li>VALID-I - Data Quality Reporting: <a href="https://rstudio.github.io/pointblank/articles/VALID-I.html">rstudio.github.io/pointblank/articles/VALID-I.html</a></li>
+<li>VALID-II - Pipeline Validation: <a href="https://rstudio.github.io/pointblank/articles/VALID-II.html">rstudio.github.io/pointblank/articles/VALID-II.html</a></li>
+<li>Information Management: <a href="https://rstudio.github.io/pointblank/articles/INFO-1.html">rstudio.github.io/pointblank/articles/INFO-1.html</a></li>
+<li>Referência de funções: <a href="https://rstudio.github.io/pointblank/reference">rstudio.github.io/pointblank/reference</a></li>
+</ul>
+<hr>
+</section>
+<section id="obrigada" class="level2">
+<h2 class="anchored" data-anchor-id="obrigada">Obrigada!</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/comunidade.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+<hr>
+</section>
+<section id="siga-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="siga-o-café-com-r">Siga o Café com R</h2>
+<blockquote class="blockquote">
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p><strong>SITE OFICIAL &gt;</strong> <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+</blockquote>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

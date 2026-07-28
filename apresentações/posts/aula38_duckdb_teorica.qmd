@@ -1,0 +1,1257 @@
+---
+title: "Aula 38. DuckDB no R"
+subtitle: "SQL analítico"
+categories: [R, DuckDB, dplyr, Arrow, SQL, Engenharia de Dados, Performance]
+image: "imagens/capa_aula33.png"
+description: "Aprenda a usar o DuckDB no R para consultas analíticas rápidas sobre dados grandes, com integração nativa ao dplyr, arrow e arquivos Parquet."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  eval: false
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+#| eval: true
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula foi construída para que você entenda como o DuckDB resolve o problema de desempenho do R com dados grandes, sem precisar de servidor, sem configuração e com a sintaxe dplyr que você já conhece. Os dados são o `nycflights13` escalado para aproximar 18 milhões de linhas.
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Compreender o que é o **DuckDB** e qual problema ele resolve
+- Conectar e operar um banco DuckDB **em memória e em arquivo**
+- Executar **SQL analítico** com funções que o dplyr não suporta
+- Usar **dplyr sobre DuckDB** com `tbl()` e `dbplyr`
+- Ler **CSV e Parquet diretamente** sem passar pelo R
+- Integrar DuckDB com **arrow** via zero-copy
+- Usar o **duckplyr** para dplyr nativo com backend DuckDB
+- Instalar e usar **extensões** do DuckDB
+:::
+
+------------------------------------------------------------------------
+
+## Instalação
+
+```{r}
+#| eval: false
+
+install.packages("duckdb")
+install.packages("duckplyr")
+```
+
+```{r}
+#| eval: false
+
+library(duckdb)
+library(tidyverse)
+library(dbplyr)
+library(arrow)
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O que é o DuckDB
+:::
+
+------------------------------------------------------------------------
+
+## O problema com dados grandes no R
+
+O **R** carrega todos os dados na memória antes de qualquer operação. Com `dplyr`, isso significa:
+
+``` r
+voos_grande |>
+  group_by(origin) |>
+  summarise(media = mean(arr_delay, na.rm = TRUE))
+```
+
+**O R precisa:**
+
+1.  Carregar todas as 18 milhões de linhas na RAM
+2.  Dividir em grupos
+3.  Calcular a média de cada grupo
+4.  Retornar o resultado
+
+- O **`dplyr`** é uma ferramenta construída para conveniência. Ao enfrentar datasets que crescem além de alguns gigabytes, ele revela sua principal limitação: é single-threaded e opera integralmente em memória.
+
+------------------------------------------------------------------------
+
+## O que é o DuckDB
+
+- **DuckDB** é um banco de dados analítico open-source, embutido, in-process, relacional e OLAP. Cada uma dessas palavras tem significado técnico preciso:
+
+- **Open-source:** lançado sob licença MIT. Código disponível, modificável e de uso livre.
+
+- **Embutido:** não existe como servidor separado. Roda dentro do processo do R, como uma biblioteca.
+
+- **In-process:** opera no mesmo espaço de memória do R. A comunicação é direta, sem serialização de rede.
+
+- **OLAP:** otimizado para consultas analíticas, agregações, filtros e joins sobre grandes volumes, não para transações individuais como inserções e atualizações.
+
+------------------------------------------------------------------------
+
+## DuckDB x SQLite
+
+Ambos são bancos embutidos sem servidor. O propósito é oposto:
+
+| Característica | SQLite | DuckDB |
+|------------------------|------------------------|------------------------|
+| Modelo | OLTP | OLAP |
+| Otimizado para | Muitas escritas individuais | Leituras analíticas em massa |
+| Armazenamento | Orientado a linha | Orientado a coluna |
+| Paralelismo | Single-thread | Multi-thread nativo |
+| Funções analíticas | Básicas | `median()`, `quantile()`, janelas |
+| Leitura de Parquet | Via extensão | Nativa |
+| Uso típico | Apps, sistemas web | Análise de dados, BI |
+
+------------------------------------------------------------------------
+
+## DuckDB x dplyr:
+
+```{r}
+#| label: bench-dplyr-duck-codigo
+#| eval: false
+
+con_bench <- dbConnect(duckdb())
+
+bench::mark(
+  dplyr = {
+    nycflights13::flights |>
+      filter(!is.na(arr_delay)) |>
+      group_by(origin, carrier) |>
+      summarise(
+        n            = n(),
+        atraso_medio = mean(arr_delay),
+        .groups = "drop")
+  },
+  duckdb_parquet = {
+    dbGetQuery(con_bench, "
+      SELECT   origin, carrier,
+               COUNT(*)         AS n,
+               AVG(arr_delay)   AS atraso_medio
+      FROM     'dados_duck/voos.parquet'
+      WHERE    arr_delay IS NOT NULL
+      GROUP BY origin, carrier")
+  },
+  iterations = 3,
+  check = FALSE) |>
+  select(expression, median, mem_alloc)
+```
+
+------------------------------------------------------------------------
+
+## Output: dplyr x DuckDB
+
+```         
+# expression       median    mem_alloc
+# dplyr            142ms     52.4MB
+# duckdb_parquet    38ms      2.1MB
+```
+
+> O **DuckDB** leu o **Parquet** grande sem carregar tudo na RAM e completou a consulta em menos de 1/3 do tempo do **`dplyr`** sobre o mesmo dataset em memória.
+
+------------------------------------------------------------------------
+
+## DuckDB x arrow: quando usar cada um
+
+| Situação                        | arrow         | DuckDB        |
+|---------------------------------|---------------|---------------|
+| Leitura seletiva de colunas     | Excelente     | Excelente     |
+| `filter()` e `select()` simples | Excelente     | Excelente     |
+| `median()` e `quantile()`       | Não suportado | Nativo        |
+| Funções de janela               | Não suportado | Nativo        |
+| Joins complexos                 | Limitado      | Nativo        |
+| SQL direto                      | Não           | Sim           |
+| Leitura de Delta Lake           | Via `deltaR`  | Via extensão  |
+| Zero-copy com arrow             | Não           | `to_duckdb()` |
+
+A transferência de dados entre arrow e DuckDB é uma operação de custo praticamente zero: apenas ponteiros são trocados, sem cópia dos dados.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Instalação e Conexão
+:::
+
+------------------------------------------------------------------------
+
+## Conexão em memória
+
+```{r}
+#| label: conexao-memoria-codigo
+#| eval: false
+
+library(duckdb)
+
+# Conexão em memória: dados existem apenas na sessão atual
+# Ideal para análise exploratória e consultas temporárias
+con <- dbConnect(duckdb())
+
+con
+```
+
+------------------------------------------------------------------------
+
+## Output: objeto de conexão DuckDB
+
+```         
+<duckdb_connection dbdir=':memory:' driver=<duckdb_driver>>
+```
+
+- O objeto de conexão identifica o driver (`duckdb`), o banco (`:memory:`) e o estado da conexão.
+
+- Todos os dados criados nessa conexão desaparecem quando você executa `dbDisconnect()` ou encerra a sessão R.
+
+------------------------------------------------------------------------
+
+## Conexão persistente em arquivo
+
+```{r}
+#| label: conexao-arquivo-codigo
+#| eval: false
+
+# Conexão persistente: dados são gravados no arquivo .duckdb
+# O arquivo é criado automaticamente se não existir
+con_file <- dbConnect(
+  duckdb(),
+  dbdir = "dados_duck/analytics.duckdb")
+
+con_file
+```
+
+------------------------------------------------------------------------
+
+## Output: conexão persistente
+
+```         
+<duckdb_connection dbdir='dados_duck/analytics.duckdb' driver=<duckdb_driver>>
+```
+
+- A conexão persistente salva os dados no arquivo `analytics.duckdb`.
+
+- Na próxima sessão R, basta reconectar com o mesmo caminho para acessar todos os dados anteriores.
+
+------------------------------------------------------------------------
+
+## Em memória x arquivo persistente
+
+| Situação | Em memória | Arquivo persistente |
+|------------------------|------------------------|------------------------|
+| Análise exploratória única | Ideal | Desnecessário |
+| Dados que precisam persistir entre sessões | Não | Sim |
+| Pipeline que cria tabelas intermediárias | Ideal | Opcional |
+| Compartilhar o banco com outro usuário | Não | Sim, copiar o `.duckdb` |
+| Desempenho | Ligeiramente maior | Similar |
+
+------------------------------------------------------------------------
+
+## Gerenciamento da conexão
+
+```{r}
+#| label: gerenciamento-codigo
+#| eval: false
+
+# Sempre feche a conexão ao final do trabalho
+dbDisconnect(con,      shutdown = TRUE)
+dbDisconnect(con_file, shutdown = TRUE)
+
+# Em funções, use on.exit() para garantir o fechamento
+analisar_dados <- function(caminho) {
+  con <- dbConnect(duckdb(), dbdir = caminho)
+  on.exit(dbDisconnect(con, shutdown = TRUE), add = TRUE)
+
+  dbGetQuery(con, "SELECT COUNT(*) FROM voos")
+}
+```
+
+::: callout-important
+**Atenção:** o **DuckDB** permite apenas uma conexão por arquivo ao mesmo tempo. Se você tentar abrir uma segunda conexão para o mesmo arquivo **`.duckdb`**, receberá um erro de bloqueio. Sempre feche a conexão antes de reconectar.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## SQL Direto no DuckDB
+:::
+
+------------------------------------------------------------------------
+
+## Registrando um data frame como tabela virtual
+
+```{r}
+#| label: register-codigo
+#| eval: false
+
+con <- dbConnect(duckdb())
+
+# duckdb_register() torna um data frame R acessível como tabela SQL
+# Operação de custo zero: apenas um ponteiro é registrado
+duckdb_register(con, "flights",  nycflights13::flights)
+duckdb_register(con, "airlines", nycflights13::airlines)
+duckdb_register(con, "airports", nycflights13::airports)
+
+dbListTables(con)
+```
+
+------------------------------------------------------------------------
+
+## Output: tabelas registradas
+
+```         
+[1] "airlines" "airports" "flights"
+```
+
+------------------------------------------------------------------------
+
+## dbGetQuery(): SQL que retorna dados
+
+```{r}
+#| label: sql-query-codigo
+#| eval: false
+
+dbGetQuery(con, "
+  SELECT   origin,
+           carrier,
+           COUNT(*)                    AS total_voos,
+           ROUND(AVG(arr_delay), 2)    AS atraso_medio,
+           ROUND(MEDIAN(arr_delay), 2) AS atraso_mediano,
+           ROUND(STDDEV(arr_delay), 2) AS desvio_padrao
+  FROM     flights
+  WHERE    arr_delay IS NOT NULL
+  GROUP BY origin, carrier
+  ORDER BY atraso_medio DESC
+  LIMIT    10") |>
+  as_tibble()
+```
+
+------------------------------------------------------------------------
+
+## Output: consulta SQL com MEDIAN
+
+```         
+# A tibble: 10 × 6
+   origin carrier total_voos atraso_medio atraso_mediano desvio_padrao
+   <chr>  <chr>        <int>        <dbl>          <dbl>         <dbl>
+ 1 EWR    OO             152        24.08          13.00         44.21
+ 2 JFK    B6           40884        22.12           6.00         52.87
+ 3 LGA    EV           24919        21.18           5.00         48.33
+```
+
+- `MEDIAN()` é uma função analítica que o `dplyr` não consegue traduzir para SQL via `dbplyr` quando conectado a outros bancos.
+
+- No **DuckDB**, ela é nativa e eficiente.
+
+------------------------------------------------------------------------
+
+## Funções analíticas nativas do DuckDB
+
+```{r}
+#| label: funcoes-analiticas-codigo
+#| eval: false
+
+dbGetQuery(con, "
+  SELECT   origin,
+           ROUND(MEDIAN(arr_delay), 2)                      AS mediana,
+           ROUND(QUANTILE_CONT(arr_delay, 0.25), 2)         AS q25,
+           ROUND(QUANTILE_CONT(arr_delay, 0.75), 2)         AS q75,
+           ROUND(QUANTILE_CONT(arr_delay, 0.95), 2)         AS p95,
+           ROUND(CORR(dep_delay, arr_delay), 4)             AS correlacao
+  FROM     flights
+  WHERE    arr_delay IS NOT NULL
+  GROUP BY origin") |>
+  as_tibble()
+```
+
+------------------------------------------------------------------------
+
+## Output: funções estatísticas avançadas
+
+```         
+# A tibble: 3 × 6
+  origin mediana   q25   q75    p95 correlacao
+  <chr>    <dbl> <dbl> <dbl>  <dbl>      <dbl>
+1 EWR       -4    -14    14   67.0       0.9317
+2 JFK       -5    -15    12   72.0       0.9181
+3 LGA       -5    -16    12   59.0       0.9292
+```
+
+------------------------------------------------------------------------
+
+## Funções de janela no DuckDB
+
+**Funções de janela** calculam valores sobre um conjunto de linhas relacionadas à linha atual, sem colapsá-las em grupos. São fundamentais para rankings, médias móveis e comparações com o período anterior.
+
+```{r}
+#| label: window-codigo
+#| eval: false
+
+dbGetQuery(con, "
+  SELECT   month,
+           origin,
+           ROUND(AVG(arr_delay), 2)    AS atraso_medio,
+           ROUND(AVG(AVG(arr_delay)) OVER (
+             PARTITION BY origin
+             ORDER BY month
+             ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+           ), 2)                       AS media_movel_3m
+  FROM     flights
+  WHERE    arr_delay IS NOT NULL
+  GROUP BY month, origin
+  ORDER BY origin, month") |>
+  as_tibble()
+```
+
+------------------------------------------------------------------------
+
+## Output: média móvel com função de janela
+
+```         
+# A tibble: 9 × 4
+   month origin atraso_medio media_movel_3m
+   <int> <chr>         <dbl>          <dbl>
+ 1     1 EWR            7.42           7.42
+ 2     2 EWR           15.41          11.42
+ 3     3 EWR           10.54          11.12
+ 4     4 EWR           13.92          13.29
+ 5     5 EWR            7.46          10.64
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## dplyr sobre DuckDB
+:::
+
+------------------------------------------------------------------------
+
+## tbl(): a mesma interface que você já conhece
+
+```{r}
+#| label: tbl-codigo
+#| eval: false
+
+flights_db  <- tbl(con, "flights")
+airlines_db <- tbl(con, "airlines")
+
+flights_db
+```
+
+------------------------------------------------------------------------
+
+## Output: referência lazy ao DuckDB
+
+```         
+# Source:   table<flights> [?? x 19]
+# Database: DuckDB v1.x.x [:memory:]
+   year month   day dep_time sched_dep_time dep_delay arr_time …
+  <int> <int> <int>    <int>          <int>     <dbl>    <int>
+1  2013     1     1      517            515         2      830
+2  2013     1     1      533            529         4      850
+```
+
+------------------------------------------------------------------------
+
+## Pipeline dplyr completo sobre DuckDB
+
+```{r}
+#| label: dplyr-pipeline-codigo
+#| eval: false
+
+flights_db |>
+  left_join(airlines_db, by = "carrier") |>
+  filter(!is.na(arr_delay)) |>
+  group_by(name, month) |>
+  summarise(
+    total_voos   = n(),
+    atraso_medio = round(mean(arr_delay, na.rm = TRUE), 2),
+    .groups = "drop") |>
+  arrange(month, desc(atraso_medio)) |>
+  collect() |>
+  glimpse()
+```
+
+------------------------------------------------------------------------
+
+## Output: resultado do pipeline dplyr
+
+```         
+Rows: 185
+Columns: 4
+$ name         <chr> "ExpressJet Airlines Inc.", "AirTran Airways …
+$ month        <int> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+$ total_voos   <int> 2479, 2027, 1706, 1061, 949, 838, …
+$ atraso_medio <dbl> 20.18, 19.42, 17.31, 15.82, 14.21, …
+```
+
+------------------------------------------------------------------------
+
+## show_query(): SQL gerado pelo dbplyr
+
+```{r}
+#| label: show-query-codigo
+#| eval: false
+
+flights_db |>
+  left_join(airlines_db, by = "carrier") |>
+  filter(!is.na(arr_delay)) |>
+  group_by(name, month) |>
+  summarise(
+    total_voos   = n(),
+    atraso_medio = mean(arr_delay, na.rm = TRUE),
+    .groups = "drop") |>
+  arrange(month, desc(atraso_medio)) |>
+  show_query()
+```
+
+------------------------------------------------------------------------
+
+## Output: SQL gerado pelo dbplyr
+
+``` sql
+SELECT
+  "name",
+  "month",
+  COUNT(*) AS "total_voos",
+  AVG("arr_delay") AS "atraso_medio"
+FROM (
+  SELECT "flights".*, "name"
+  FROM "flights"
+  LEFT JOIN "airlines" ON ("flights"."carrier" = "airlines"."carrier")
+  WHERE NOT(("arr_delay" IS NULL))
+) "q01"
+GROUP BY "name", "month"
+ORDER BY "month", "atraso_medio" DESC
+```
+
+------------------------------------------------------------------------
+
+## O que o DuckDB suporta que o arrow não suporta
+
+```{r}
+#| label: duck-vs-arrow-codigo
+#| eval: false
+
+# Isso falha no arrow sem collect() antes:
+open_dataset("dados_duck/voos.parquet") |>
+  group_by(origin) |>
+  summarise(mediana = median(arr_delay, na.rm = TRUE)) |>
+  collect()
+# Error: Function 'median' not found in Arrow
+
+# Isso funciona com DuckDB via to_duckdb():
+open_dataset("dados_duck/voos.parquet") |>
+  to_duckdb() |>
+  group_by(origin) |>
+  summarise(mediana = median(arr_delay, na.rm = TRUE)) |>
+  collect()
+```
+
+------------------------------------------------------------------------
+
+## Output: median() via to_duckdb()
+
+```         
+# A tibble: 3 × 2
+  origin mediana
+  <chr>    <dbl>
+1 EWR         -4
+2 JFK         -5
+3 LGA         -5
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Lendo Arquivos Diretamente
+:::
+
+------------------------------------------------------------------------
+
+## Lendo CSV sem read_csv()
+
+- O **DuckDB** lê arquivos CSV diretamente com **SQL**, sem passar pelo **R**:
+
+```{r}
+#| label: ler-csv-codigo
+#| eval: false
+
+dbGetQuery(con, "
+  SELECT   origin,
+           COUNT(*)                  AS total_voos,
+           ROUND(AVG(arr_delay), 2)  AS atraso_medio
+  FROM     'dados_duck/voos.csv'
+  WHERE    arr_delay IS NOT NULL
+  GROUP BY origin
+  ORDER BY atraso_medio DESC") |>
+  as_tibble()
+```
+
+------------------------------------------------------------------------
+
+## Output: leitura de CSV pelo DuckDB
+
+```         
+# A tibble: 3 × 3
+  origin total_voos atraso_medio
+  <chr>       <int>        <dbl>
+1 EWR         98387         9.11
+2 JFK         98656         5.55
+3 LGA        101140         5.78
+```
+
+------------------------------------------------------------------------
+
+## Lendo Parquet sem arrow
+
+```{r}
+#| label: ler-parquet-codigo
+#| eval: false
+
+# O DuckDB lê Parquet nativamente, sem library(arrow)
+dbGetQuery(con, "
+  SELECT   origin,
+           carrier,
+           ROUND(MEDIAN(arr_delay), 2)   AS mediana,
+           ROUND(AVG(arr_delay), 2)      AS media,
+           COUNT(*)                      AS n
+  FROM     'dados_duck/voos.parquet'
+  WHERE    arr_delay IS NOT NULL
+  GROUP BY origin, carrier
+  ORDER BY mediana DESC
+  LIMIT    8") |>
+  as_tibble()
+```
+
+------------------------------------------------------------------------
+
+## Output: leitura de Parquet pelo DuckDB
+
+```         
+# A tibble: 8 × 5
+  origin carrier mediana  media       n
+  <chr>  <chr>     <dbl>  <dbl>   <int>
+1 EWR    OO        19.0   24.08    8360
+2 JFK    B6        12.0   22.12 2248620
+3 EWR    EV        10.0   19.15 1369510
+```
+
+------------------------------------------------------------------------
+
+## Lendo múltiplos arquivos com glob
+
+```{r}
+#| label: glob-codigo
+#| eval: false
+
+# Ler todos os arquivos com glob (*)
+dbGetQuery(con, "
+  SELECT   COUNT(*)    AS total_linhas,
+           MIN(month)  AS mes_min,
+           MAX(month)  AS mes_max
+  FROM     'dados_duck/por_mes/*.parquet'") |>
+  as_tibble()
+```
+
+------------------------------------------------------------------------
+
+## Output: múltiplos arquivos com glob
+
+```         
+# A tibble: 1 × 3
+  total_linhas mes_min mes_max
+         <int>   <int>   <int>
+1       336776       1      12
+```
+
+------------------------------------------------------------------------
+
+## : leitura e filtro por formato
+
+```{r}
+#| label: bench-formatos-codigo
+#| eval: false
+
+bench::mark(
+  readr_csv = {
+    read_csv("dados_duck/voos.csv",
+             show_col_types = FALSE) |>
+      filter(origin == "JFK", !is.na(arr_delay)) |>
+      summarise(media = mean(arr_delay))
+  },
+  arrow_parquet = {
+    open_dataset("dados_duck/voos.parquet") |>
+      filter(origin == "JFK", !is.na(arr_delay)) |>
+      summarise(media = mean(arr_delay, na.rm = TRUE)) |>
+      collect()
+  },
+  duckdb_parquet = {
+    dbGetQuery(con, "
+      SELECT ROUND(AVG(arr_delay), 2) AS media
+      FROM   'dados_duck/voos.parquet'
+      WHERE  origin = 'JFK'
+      AND    arr_delay IS NOT NULL")
+  },
+  iterations = 3,
+  check = FALSE) |>
+  select(expression, median, mem_alloc)
+```
+
+------------------------------------------------------------------------
+
+## Output: por formato
+
+```         
+# expression      median   mem_alloc
+# readr_csv       812ms    189MB
+# arrow_parquet    42ms      2.4MB
+# duckdb_parquet   31ms      1.1MB
+```
+
+- O **DuckDB** lê o Parquet e executa o filtro sem carregar colunas desnecessárias na memória.
+
+- O `readr` carrega todo o CSV antes de qualquer operação.
+
+------------------------------------------------------------------------
+
+## Escrevendo resultados em Parquet com COPY TO
+
+```{r}
+#| label: copy-to-codigo
+#| eval: false
+
+# COPY TO escreve o resultado de uma consulta diretamente
+# para um arquivo Parquet, sem passar pelo R
+dbExecute(con, "
+  COPY (
+    SELECT   origin,
+             carrier,
+             month,
+             COUNT(*)                    AS total_voos,
+             ROUND(AVG(arr_delay), 2)    AS atraso_medio,
+             ROUND(MEDIAN(arr_delay), 2) AS atraso_mediano
+    FROM     'dados_duck/voos.parquet'
+    WHERE    arr_delay IS NOT NULL
+    GROUP BY origin, carrier, month
+  )
+  TO 'dados_duck/resumo_atrasos.parquet'
+  (FORMAT PARQUET, COMPRESSION SNAPPY)")
+
+tibble(
+  arquivo    = "dados_duck/resumo_atrasos.parquet",
+  tamanho_kb = round(file.size(arquivo) / 1e3, 1))
+```
+
+------------------------------------------------------------------------
+
+## Output: arquivo Parquet criado pelo DuckDB
+
+```         
+# A tibble: 1 × 2
+  arquivo                              tamanho_kb
+  <chr>                                     <dbl>
+1 dados_duck/resumo_atrasos.parquet          14.2
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Integração com Arrow
+:::
+
+------------------------------------------------------------------------
+
+## Transferência zero-copy entre arrow e DuckDB
+
+A integração zero-copy entre DuckDB e Apache Arrow permite análise rápida de datasets maiores que a memória disponível usando SQL ou APIs relacionais, sem serialização ou cópia de dados.
+
+**O que zero-copy significa tecnicamente:**
+
+Quando você chama `to_duckdb()` sobre um dataset arrow, o DuckDB recebe ponteiros para os buffers de memória do arrow, não cópias dos dados. Isso significa:
+
+- Nenhum dado é duplicado na memória
+- A operação é praticamente instantânea, independente do tamanho
+- Modificações no DuckDB não afetam o objeto arrow original
+
+------------------------------------------------------------------------
+
+## to_duckdb(): arrow para DuckDB
+
+```{r}
+#| label: to-duckdb-codigo
+#| eval: false
+
+ds <- open_dataset("dados_duck/voos.parquet")
+
+ds |>
+  to_duckdb() |>
+  filter(!is.na(arr_delay)) |>
+  group_by(origin) |>
+  summarise(
+    n       = n(),
+    media   = round(mean(arr_delay), 2),
+    mediana = round(median(arr_delay), 2),
+    q75     = round(quantile(arr_delay, 0.75), 2),
+    .groups = "drop") |>
+  collect()
+```
+
+------------------------------------------------------------------------
+
+## Output: pipeline arrow + DuckDB
+
+```         
+# A tibble: 3 × 5
+  origin        n  media mediana   q75
+  <chr>     <int>  <dbl>   <dbl> <dbl>
+1 EWR      120835   9.11      -4    14
+2 JFK      111279   5.55      -5    12
+3 LGA      104662   5.78      -5    12
+```
+
+------------------------------------------------------------------------
+
+## to_arrow(): DuckDB de volta para arrow
+
+```{r}
+#| label: to-arrow-codigo
+#| eval: false
+
+# Iniciar no arrow, passar para DuckDB, voltar para arrow
+# sem materializar na memória do R em nenhum passo intermediário
+resultado_arrow <- open_dataset("dados_duck/voos.parquet") |>
+  to_duckdb() |>
+  filter(!is.na(arr_delay), month %in% c(6, 7, 8)) |>
+  group_by(origin, month) |>
+  summarise(
+    atraso_medio   = mean(arr_delay),
+    atraso_mediano = median(arr_delay),
+    .groups = "drop") |>
+  to_arrow()
+
+class(resultado_arrow)
+resultado_arrow
+```
+
+------------------------------------------------------------------------
+
+## Output: Arrow Table resultado do pipeline
+
+```         
+# A tibble: 1 × 1
+  classe
+  <chr>
+1 Table
+
+# Arrow Table with schema:
+# origin: string
+# month: int32
+# atraso_medio: double
+# atraso_mediano: double
+```
+
+- O `to_arrow()` retorna um objeto `Table` do arrow sem materializar no R. Pode ser passado diretamente para `write_dataset()` ou outro passo da pipeline.
+
+------------------------------------------------------------------------
+
+## Quando usar to_duckdb() no meio de um pipeline
+
+Use `to_duckdb()` quando:
+
+- Precisar de `median()`, `quantile()` ou funções de janela em dados Parquet grandes
+- O pipeline arrow encontrar um erro de tradução SQL
+- Precisar de SQL complexo que o `dbplyr` não consegue gerar
+
+Use `to_arrow()` para voltar quando:
+
+- O resultado precisa ser escrito como Parquet com `write_dataset()`
+- A próxima operação é melhor suportada pelo arrow do que pelo DuckDB
+- Você quer evitar `collect()` e manter os dados fora da RAM
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 7
+
+## duckplyr
+:::
+
+------------------------------------------------------------------------
+
+## O que é o duckplyr
+
+- **duckplyr** é um pacote que substitui o backend padrão do dplyr pelo motor de consultas do DuckDB, sem precisar de `dbConnect()`, `tbl()` ou `collect()` explícitos.
+
+- Com o `dplyr` convencional, você escreve R que vira C++.
+
+- Com o `duckplyr`, você escreve dplyr que vira SQL nativo do DuckDB.
+
+- **A diferença em relação ao `dbplyr` com DuckDB:**
+
+- `dbplyr` traduz dplyr para SQL genérico via `DBI`, depois o banco executa.
+
+- `duckplyr` traduz dplyr diretamente para o plano relacional interno do DuckDB, sem intermediários.
+
+------------------------------------------------------------------------
+
+## Instalação e uso básico do duckplyr
+
+```{r}
+#| label: duckplyr-basico-codigo
+#| eval: false
+
+library(duckplyr)
+
+flights_dp <- nycflights13::flights |>
+  as_duckplyr_df()
+
+flights_dp |>
+  filter(!is.na(arr_delay)) |>
+  group_by(origin, carrier) |>
+  summarise(
+    n            = n(),
+    atraso_medio = round(mean(arr_delay), 2),
+    .groups = "drop") |>
+  arrange(desc(atraso_medio)) |>
+  collect()
+```
+
+------------------------------------------------------------------------
+
+## Output: duckplyr com mesma sintaxe dplyr
+
+```         
+# A tibble: 8 × 4
+  origin carrier     n atraso_medio
+  <chr>  <chr>   <int>        <dbl>
+1 EWR    OO        152        24.08
+2 JFK    B6      40884        22.12
+3 LGA    EV      24919        21.18
+4 EWR    EV      43939        20.05
+5 EWR    MQ       4713        18.74
+6 LGA    B6      19786        16.48
+7 LGA    MQ      26397        15.67
+8 JFK    FL       3260        15.41
+```
+
+------------------------------------------------------------------------
+
+## duckplyr lendo Parquet diretamente
+
+```{r}
+#| label: duckplyr-parquet-codigo
+#| eval: false
+
+# duckplyr pode ler Parquet diretamente sem arrow
+voos_dp <- duckplyr_df_from_parquet("dados_duck/voos.parquet")
+
+voos_dp |>
+  filter(!is.na(arr_delay)) |>
+  group_by(origin) |>
+  summarise(
+    mediana = median(arr_delay),
+    .groups = "drop") |>
+  collect()
+```
+
+------------------------------------------------------------------------
+
+## Output: duckplyr sobre Parquet
+
+```         
+# A tibble: 3 × 2
+  origin mediana
+  <chr>    <dbl>
+1 EWR         -4
+2 JFK         -5
+3 LGA         -5
+```
+
+------------------------------------------------------------------------
+
+## duckplyr x dbplyr + DuckDB: quando usar cada um
+
+| Situação                               | duckplyr | DBI + dbplyr |
+|----------------------------------------|----------|--------------|
+| Código 100% dplyr sem SQL              | Ideal    | Funciona     |
+| SQL direto necessário                  | Não      | Sim          |
+| Múltiplos usuários no mesmo banco      | Limitado | Sim          |
+| Banco persistente compartilhado        | Limitado | Sim          |
+| Prototipagem rápida sobre Parquet      | Ideal    | Mais verboso |
+| Integração com outros sistemas via DBI | Não      | Sim          |
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 8
+
+## Extensões do DuckDB
+:::
+
+------------------------------------------------------------------------
+
+## O sistema de extensões do DuckDB
+
+- O DuckDB tem um sistema de extensões que adiciona funcionalidades sem precisar reinstalar o pacote. Extensões são instaladas uma vez e carregadas por sessão.
+
+```{r}
+#| label: extensoes-codigo
+#| eval: false
+
+con <- dbConnect(duckdb())
+
+# Instalar uma extensão (necessário apenas uma vez)
+dbExecute(con, "INSTALL httpfs")
+dbExecute(con, "INSTALL delta")
+dbExecute(con, "INSTALL spatial")
+
+# Carregar a extensão na sessão atual (necessário sempre)
+dbExecute(con, "LOAD httpfs")
+dbExecute(con, "LOAD delta")
+
+# Listar extensões instaladas
+dbGetQuery(con, "
+  SELECT extension_name, installed, loaded
+  FROM   duckdb_extensions()
+  WHERE  installed = TRUE") |>
+  as_tibble()
+```
+
+------------------------------------------------------------------------
+
+## Output: extensões instaladas
+
+```         
+# A tibble: 6 × 3
+  extension_name installed loaded
+  <chr>          <lgl>     <lgl>
+1 arrow          TRUE      FALSE
+2 delta          TRUE      FALSE
+3 httpfs         TRUE      FALSE
+4 json           TRUE      TRUE
+5 parquet        TRUE      TRUE
+6 spatial        TRUE      FALSE
+```
+
+------------------------------------------------------------------------
+
+## Extensão delta: ler tabelas Delta Lake
+
+```{r}
+#| label: ext-delta-codigo
+#| eval: false
+
+con <- dbConnect(duckdb())
+dbExecute(con, "INSTALL delta; LOAD delta")
+
+dbGetQuery(con, "
+  SELECT   origin,
+           COUNT(*)                  AS total_voos,
+           ROUND(AVG(arr_delay), 2)  AS atraso_medio
+  FROM     delta_scan('dados_delta/voos')
+  WHERE    arr_delay IS NOT NULL
+  GROUP BY origin
+  ORDER BY atraso_medio DESC") |>
+  as_tibble()
+```
+
+::: callout-tip
+**`delta_scan()`** lê a versão mais recente da tabela Delta Lake. Para ler uma versão específica, use `delta_scan('caminho', version = 1)`.
+:::
+
+------------------------------------------------------------------------
+
+## Extensão httpfs: ler arquivos remotos
+
+```{r}
+#| label: ext-httpfs-codigo
+#| eval: false
+
+con <- dbConnect(duckdb())
+dbExecute(con, "INSTALL httpfs; LOAD httpfs")
+
+# Ler um arquivo Parquet diretamente de uma URL
+# sem baixar o arquivo para o disco local
+dbGetQuery(con, "
+  SELECT   COUNT(*)   AS total_linhas,
+           MIN(year)  AS ano_min,
+           MAX(year)  AS ano_max
+  FROM     'https://huggingface.co/datasets/
+            nycflights/nycflights13/resolve/main/
+            flights.parquet'") |>
+  as_tibble()
+```
+
+::: callout-note
+A extensão **`httpfs`** também suporta leitura direta de buckets S3, Google Cloud Storage e Azure Blob Storage via URL com credenciais configuradas em variáveis de ambiente.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 9
+
+## Boas Práticas e Padrões
+:::
+
+------------------------------------------------------------------------
+
+## Quando usar cada ferramenta
+
+| Situação                                    | Ferramenta recomendada    |
+|---------------------------------------------|---------------------------|
+| Dados menores que 1 GB, análise rápida      | dplyr convencional        |
+| Dados de 1 a 10 GB, consultas seletivas     | arrow + dplyr             |
+| `median()`, `quantile()`, funções de janela | DuckDB via `to_duckdb()`  |
+| SQL complexo sobre arquivos grandes         | DuckDB com `dbGetQuery()` |
+| Banco compartilhado entre usuários          | PostgreSQL via DBI        |
+| Dados com histórico e time travel           | Delta Lake                |
+| Pipeline 100% dplyr sem SQL                 | duckplyr                  |
+
+------------------------------------------------------------------------
+
+## DuckDB em memória x arquivo persistente
+
+```{r}
+#| label: memoria-vs-arquivo-codigo
+#| eval: false
+
+# Em memória: use para análise exploratória
+con_mem <- dbConnect(duckdb())
+
+# Arquivo: use quando precisar persistir entre sessões
+con_file <- dbConnect(duckdb(), dbdir = "meu_banco.duckdb")
+
+# ATENÇÃO: apenas uma conexão por arquivo ao mesmo tempo
+# Isso vai gerar erro:
+con_a <- dbConnect(duckdb(), dbdir = "mesmo_banco.duckdb")
+con_b <- dbConnect(duckdb(), dbdir = "mesmo_banco.duckdb")
+# Error: Could not set lock on file
+
+# Solução: fechar antes de reabrir
+dbDisconnect(con_a, shutdown = TRUE)
+con_b <- dbConnect(duckdb(), dbdir = "mesmo_banco.duckdb")
+```
+
+------------------------------------------------------------------------
+
+## Erros comuns e soluções
+
+| Situação | Causa | Solução |
+|------------------------|------------------------|------------------------|
+| `Could not set lock on file` | Arquivo `.duckdb` aberto em outra conexão | `dbDisconnect()` na conexão anterior antes de reconectar |
+| `Binder Error: not found` | Tabela não registrada na conexão | `duckdb_register()` ou verificar com `dbListTables()` |
+| `IO Error: No files found` | Caminho do arquivo incorreto | Verificar com `file.exists()` |
+| Extensão não encontrada | Extensão não instalada | `dbExecute(con, "INSTALL nome_ext")` |
+| Resultado diferente entre sessões | Banco em memória, dados perdidos | Usar arquivo persistente com `dbdir =` |
+
+------------------------------------------------------------------------
+
+## Tabela comparativa final
+
+| Ferramenta | Dados       | SQL        | `median()` | Persistência | Servidor |
+|------------|-------------|------------|------------|--------------|----------|
+| dplyr      | RAM         | Não        | Sim        | Não          | Não      |
+| arrow      | Disco       | Não        | Não        | Não          | Não      |
+| DuckDB     | Disco + RAM | Sim        | Sim        | Sim          | Não      |
+| PostgreSQL | Disco       | Sim        | Sim        | Sim          | Sim      |
+| Delta Lake | Disco       | Via DuckDB | Via DuckDB | Sim          | Não      |
+
+------------------------------------------------------------------------
+
+## Referências
+
+- Documentação `duckdb` R: [r.duckdb.org](https://r.duckdb.org)
+- DuckDB SQL reference: [duckdb.org/docs/sql](https://duckdb.org/docs/sql)
+- Documentação `duckplyr`: [duckplyr.tidyverse.org](https://duckplyr.tidyverse.org)
+- Extensões DuckDB: [duckdb.org/docs/extensions](https://duckdb.org/docs/extensions)
+- Integração DuckDB e Arrow: [duckdb.org/2021/12/03/duck-arrow](https://duckdb.org/2021/12/03/duck-arrow)
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

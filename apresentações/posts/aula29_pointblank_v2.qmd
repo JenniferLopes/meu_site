@@ -1,0 +1,1051 @@
+---
+title: "Aula 29. Validação de Dados no R"
+subtitle: "Do pipeline ao relatório com o pacote pointblank"
+categories: [R, pointblank, Qualidade de Dados, Pipeline, Engenharia de Dados]
+image: "imagens/capa_aula34.png"
+description: "Aprenda a validar dados sistematicamente com o pointblank, gerar relatórios de qualidade, definir limiares de falha e integrar validação em pipelines de dados."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(pointblank)
+library(tidyverse)
+library(duckdb)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+n <- 200
+
+rh_dados <- tibble(
+  id_funcionario  = c(1:195, 101, 102, 103, NA, NA),
+  nome            = c(
+    paste("Funcionário", 1:190),
+    NA, NA, NA, NA, NA,
+    "Maria Silva", "João Costa", "Ana Lima",
+    "Pedro Souza", "Carla Melo"),
+  departamento    = c(
+    sample(c("TI", "RH", "Financeiro",
+             "Marketing", "Operações"),
+           190, replace = TRUE),
+    "TI", "Recursos_Humanos", "Financeiro",
+    "MARKETING", "operações",
+    "TI", "RH", "Financeiro",
+    "Marketing", "Operações"),
+  cargo           = c(
+    sample(c("Analista", "Coordenador",
+             "Gerente", "Assistente", "Diretor"),
+           190, replace = TRUE),
+    "Analista", "analista", "ANALISTA",
+    "Estagiário", "Consultor",
+    "Analista", "Coordenador", "Gerente",
+    "Assistente", "Diretor"),
+  salario         = c(
+    round(rnorm(190, mean = 6500, sd = 2000), 2),
+    -1500, -800, 0,
+    350000, 420000,
+    5200, 7800, 12000,
+    3200, 85000),
+  data_admissao   = c(
+    sample(seq(as.Date("2010-01-01"),
+               as.Date("2024-12-31"),
+               by = "day"),
+           190, replace = TRUE),
+    as.Date("2027-03-15"),
+    as.Date("2028-07-01"),
+    as.Date("1985-06-10"),
+    as.Date("2024-01-15"),
+    as.Date("2023-08-20"),
+    as.Date("2022-05-10"),
+    as.Date("2021-03-01"),
+    as.Date("2020-07-15"),
+    as.Date("2019-11-30"),
+    as.Date("2018-04-22")),
+  status          = c(
+    sample(c("Ativo", "Inativo", "Férias"),
+           190, replace = TRUE),
+    "ativo", "ATIVO", "Demitido",
+    "Em_gozo", NA,
+    "Ativo", "Inativo", "Ativo",
+    "Férias", "Ativo"),
+  cpf             = c(
+    paste0(
+      sample(100:999, 190, replace = TRUE), ".",
+      sample(100:999, 190, replace = TRUE), ".",
+      sample(100:999, 190, replace = TRUE), "-",
+      sample(10:99,   190, replace = TRUE)),
+    "123.456.789-00",
+    "000.000.000-00",
+    "12345678900",
+    "abc.def.ghi-jk",
+    NA,
+    paste0(
+      sample(100:999, 5, replace = TRUE), ".",
+      sample(100:999, 5, replace = TRUE), ".",
+      sample(100:999, 5, replace = TRUE), "-",
+      sample(10:99,   5, replace = TRUE))),
+  avaliacao_anual = c(
+    round(runif(190, 1, 10), 1),
+    11.5, -0.5, 0,
+    10.1, NA,
+    8.5, 7.2, 9.1,
+    6.8, 8.0))
+
+
+```
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula foi construída para que você compreenda como validar dados sistematicamente com o `pointblank`, identificar problemas antes que contaminem a análise, gerar relatórios de qualidade e integrar validação em pipelines de dados. Os dados usados são um dataset de RH simulado com problemas reais e deliberados.
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Compreender o que é **validação de dados** e por que ela importa
+- Conhecer os workflows do `pointblank`
+- Criar um **agente** e definir um plano de validação
+- Gerar e interpretar o **relatório de qualidade**
+- Configurar **limiares** com ações automáticas
+- Usar **Pipeline Validation** dentro de um fluxo dplyr
+- Criar um **informant** como dicionário de dados vivo
+- Integrar validação com **DuckDB**
+:::
+
+------------------------------------------------------------------------
+
+## Instalação
+
+```{r}
+#| eval: false
+
+install.packages("pointblank")
+library(pointblank)
+library(tidyverse)
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O Problema da Qualidade de Dados
+:::
+
+------------------------------------------------------------------------
+
+## O problema que a validação resolve
+
+Uma análise começa com dados. Se os dados têm problemas não detectados, a análise produz resultados incorretos, e você só descobre quando o dano já está feito.
+
+Problemas comuns que passam despercebidos:
+
+- Salários negativos ou acima do limite razoável
+- Datas de admissão no futuro
+- Capitalização inconsistente (`"ativo"`, `"ATIVO"`, `"Ativo"`)
+- Identificadores duplicados ou nulos
+- Valores fora de um conjunto permitido
+- Padrões de texto inválidos (CPF sem formato correto)
+
+Sem validação sistemática, você depende de inspeção manual, que falha conforme os dados crescem.
+
+------------------------------------------------------------------------
+
+## Validação versus limpeza
+
+**Limpeza** transforma os dados: corrige valores, remove duplicatas, padroniza texto.
+
+**Validação** verifica se os dados atendem às expectativas definidas e reporta o que falhou, sem alterar os dados.
+
+A sequência correta no pipeline:
+
+```         
+Dados brutos
+    |
+    | Validação inicial: os dados chegaram como esperado?
+    v
+Limpeza e transformação
+    |
+    | Validação final: o resultado da transformação está correto?
+    v
+Análise e modelagem
+```
+
+------------------------------------------------------------------------
+
+## Os workflows do pointblank
+
+| Workflow | Nome | Quando usar |
+|----|----|----|
+| VALID-I | Data Quality Reporting | Relatório periódico de qualidade |
+| VALID-II | Pipeline Data Validation | Dentro de ETL com ações automáticas |
+| VALID-III | Expectations in Unit Tests | Com `testthat` em pacotes R |
+| VALID-IV | Data Tests for Conditionals | Retornar TRUE/FALSE para condicionais |
+| VALID-V | Table Scan | Exploração rápida sem plano definido |
+
+Esta aula cobre os workflows I, II e V, que são os mais usados no dia a dia de análise de dados.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## O Dataset de RH
+:::
+
+------------------------------------------------------------------------
+
+## Os problemas inseridos deliberadamente
+
+```{r}
+#| label: problemas-codigo
+#| eval: false
+
+tribble(
+  ~Coluna,           ~Problema,                           ~Qtd,
+  "id_funcionario",  "Valores NA",                        "2",
+  "id_funcionario",  "IDs duplicados (101, 102, 103)",    "3",
+  "nome",            "Valores NA",                        "5",
+  "departamento",    "Capitalização inconsistente",        "3",
+  "departamento",    "Valores fora do conjunto válido",   "2",
+  "salario",         "Valores negativos ou zero",         "3",
+  "salario",         "Valores extremos (>R$300.000)",     "2",
+  "data_admissao",   "Datas no futuro",                   "2",
+  "status",          "Valores fora do conjunto válido",   "5",
+  "cpf",             "Formato inválido ou NA",            "5",
+  "avaliacao_anual", "Valores fora do intervalo [1,10]",  "3")
+```
+
+------------------------------------------------------------------------
+
+## Output: mapa de problemas
+
+```{r}
+#| label: problemas-output
+#| echo: false
+
+tribble(
+  ~Coluna,           ~Problema,                           ~Qtd,
+  "id_funcionario",  "Valores NA",                        "2",
+  "id_funcionario",  "IDs duplicados (101, 102, 103)",    "3",
+  "nome",            "Valores NA",                        "5",
+  "departamento",    "Capitalização inconsistente",        "3",
+  "departamento",    "Valores fora do conjunto válido",   "2",
+  "salario",         "Valores negativos ou zero",         "3",
+  "salario",         "Valores extremos (>R$300.000)",     "2",
+  "data_admissao",   "Datas no futuro",                   "2",
+  "status",          "Valores fora do conjunto válido",   "5",
+  "cpf",             "Formato inválido ou NA",            "5",
+  "avaliacao_anual", "Valores fora do intervalo [1,10]",  "3")
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Workflow I: Data Quality Reporting
+:::
+
+------------------------------------------------------------------------
+
+## Conceito: o agent
+
+O **agent** é o objeto central do `pointblank`. Ele recebe a tabela alvo, acumula as etapas de validação e executa o plano completo quando `interrogate()` é chamado.
+
+``` r
+dados |>
+  create_agent(label = "Descrição") |>
+  funcao_validacao_1(...) |>
+  funcao_validacao_2(...) |>
+  interrogate()
+```
+
+O `interrogate()` retorna o agente enriquecido com os resultados. Chamar o objeto no console abre o relatório interativo.
+
+------------------------------------------------------------------------
+
+## Código: plano de validação completo
+
+```{r}
+#| label: agente-completo-codigo
+#| eval: false
+
+agente_rh <- rh_dados |>
+  create_agent(
+    label   = "Validação de Dados de RH",
+    actions = action_levels(warn_at = 0.05,
+                             stop_at = 0.20)) |>
+  col_vals_not_null(
+    columns = c(id_funcionario, nome,
+                departamento, salario,
+                data_admissao, status)) |>
+  rows_distinct(
+    columns = id_funcionario) |>
+  col_vals_in_set(
+    columns = departamento,
+    set     = c("TI", "RH", "Financeiro",
+                "Marketing", "Operações")) |>
+  col_vals_in_set(
+    columns = status,
+    set     = c("Ativo", "Inativo", "Férias")) |>
+  col_vals_between(
+    columns = salario,
+    left    = 1320, right = 200000) |>
+  col_vals_between(
+    columns = avaliacao_anual,
+    left    = 1, right = 10, na_pass = TRUE) |>
+  col_vals_lte(
+    columns = data_admissao,
+    value   = Sys.Date()) |>
+  col_vals_regex(
+    columns = cpf,
+    regex   = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$",
+    na_pass = TRUE) |>
+  interrogate()
+
+agente_rh
+```
+
+------------------------------------------------------------------------
+
+## Output: relatório do agente
+
+```{r}
+#| label: agente-completo-output
+#| eval: false
+#| echo: false
+
+agente_rh
+```
+
+::: callout-note
+Ao chamar o objeto `agente_rh` no console do R, o `pointblank` abre o relatório HTML interativo com todas as etapas, resultados e proporções de falha.
+:::
+
+------------------------------------------------------------------------
+
+## Código: extrair métricas como tibble
+
+```{r}
+#| label: agent-report-codigo
+#| eval: false
+
+relatorio <- get_agent_report(agente_rh, display_table = FALSE)
+
+relatorio |>
+  filter(n_failed > 0) |>
+  select(i, where(is.character) & !columns, columns,
+         n, n_passed, n_failed, f_failed) |>
+  slice_head(n = 8)
+```
+
+------------------------------------------------------------------------
+
+## Output: métricas das etapas com falha
+
+```{r}
+#| label: agent-report-output
+#| echo: false
+#| eval: false
+
+relatorio <- get_agent_report(agente_rh, display_table = FALSE)
+relatorio
+```
+
+```         
+# Exemplo de colunas retornadas (nomes variam por versão do pointblank):
+# i  type/assertion_type  columns  n   n_passed  n_failed  f_failed  warn  stop
+# 1  col_vals_not_null    ...      200  193       7         0.035     TRUE  FALSE
+# 2  rows_distinct        ...      200  197       3         0.015     FALSE FALSE
+```
+
+------------------------------------------------------------------------
+
+## Código: extrair as linhas que falharam
+
+```{r}
+#| label: extrair-falhas-codigo
+#| eval: false
+
+# i = número da etapa - etapa 3: departamento inválido
+falhas_departamento <- get_data_extracts(agente_rh, i = 3)
+
+falhas_departamento |>
+  select(id_funcionario, nome, departamento, status)
+```
+
+------------------------------------------------------------------------
+
+## Output: linhas com departamento inválido
+
+```{r}
+#| label: extrair-falhas-output
+#| eval: false
+#| echo: false
+
+get_data_extracts(agente_rh, i = 3) |>
+  select(id_funcionario, nome, departamento, status)
+```
+
+```         
+# As linhas com departamento fora do conjunto permitido:
+# id_funcionario  nome              departamento       status
+#            196  Funcionário 196   Recursos_Humanos   ativo
+#            198  Funcionário 198   MARKETING          ATIVO
+#            199  Funcionário 199   operações          Demitido
+```
+
+`get_data_extracts()` retorna exatamente as linhas que violaram aquela etapa. Use para investigar os problemas e decidir como corrigi-los.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Limiares e Ações
+:::
+
+------------------------------------------------------------------------
+
+## O que são limiares
+
+**Limiares** definem a proporção de falhas que aciona um comportamento específico:
+
+**`warn_at`:** aviso - a proporção de falhas ultrapassou o limite aceitável, mas o pipeline pode continuar.
+
+**`stop_at`:** erro - a proporção de falhas ultrapassou o limite crítico. O pipeline deve ser interrompido.
+
+**`notify_at`:** notificação - aciona uma função customizada, como envio de e-mail ou registro em log.
+
+Os limiares podem ser definidos como proporção (0 a 1) ou como contagem absoluta de falhas.
+
+------------------------------------------------------------------------
+
+## Código: configurando limiares
+
+```{r}
+#| label: action-levels-codigo
+#| eval: false
+
+# Limiar global: aplica a todas as etapas do agente
+limiares <- action_levels(
+  warn_at   = 0.05,
+  stop_at   = 0.20,
+  notify_at = 0.10)
+
+# Limiar por etapa: sobrescreve o global
+agente_personalizado <- rh_dados |>
+  create_agent() |>
+  col_vals_not_null(
+    columns = id_funcionario,
+    actions = action_levels(warn_at = 1)) |>
+  col_vals_between(
+    columns = salario,
+    left    = 1320,
+    right   = 200000,
+    actions = action_levels(
+      warn_at = 0.03,
+      stop_at = 0.10)) |>
+  interrogate()
+```
+
+------------------------------------------------------------------------
+
+## Código: ação customizada ao atingir limiar
+
+```{r}
+#| label: action-log-codigo
+#| eval: false
+
+registrar_aviso <- function(object) {
+  msg <- glue::glue(
+    "[{Sys.time()}] AVISO: etapa '{object$name}' ",
+    "atingiu {round(object$f_failed * 100, 1)}% de falhas.")
+  write(msg, file = "validacao_log.txt", append = TRUE)
+  message(msg)
+}
+
+limiares_com_log <- action_levels(
+  warn_at = 0.05,
+  fns     = list(warn = ~ registrar_aviso(.)))
+
+rh_dados |>
+  create_agent(actions = limiares_com_log) |>
+  col_vals_between(
+    columns = salario,
+    left    = 1320,
+    right   = 200000) |>
+  interrogate()
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Workflow II: Pipeline Validation
+:::
+
+------------------------------------------------------------------------
+
+## As três formas de Pipeline Validation
+
+**Forma 1 - Filtro direto:** a tabela passa pela validação e lança `stop()` se qualquer unidade falhar.
+
+``` r
+dados |> col_vals_not_null(columns = id_funcionario)
+```
+
+**Forma 2 - `expect_*()`:** para uso com `testthat`. Falha com `expectation failed`.
+
+``` r
+expect_col_vals_not_null(dados, columns = id_funcionario)
+```
+
+**Forma 3 - `test_*()`:** retorna `TRUE` ou `FALSE` para uso em condicionais.
+
+``` r
+test_col_vals_not_null(dados, columns = id_funcionario)
+```
+
+------------------------------------------------------------------------
+
+## Código: test\_\*() em condicional
+
+```{r}
+#| label: pipeline-test-codigo
+#| eval: false
+
+departamentos_validos <- test_col_vals_in_set(
+  rh_dados,
+  columns = departamento,
+  set     = c("TI", "RH", "Financeiro",
+              "Marketing", "Operações"))
+
+if (!departamentos_validos) {
+  message("Dados com departamentos inválidos.",
+          " Aplicando padronização.")
+
+  rh_dados <- rh_dados |>
+    mutate(departamento = str_to_title(
+      str_replace_all(departamento, "_", " ")))
+} else {
+  message("Departamentos validados com sucesso.")
+}
+```
+
+------------------------------------------------------------------------
+
+## Output: resultado do test\_\*()
+
+```{r}
+#| label: pipeline-test-output
+#| echo: false
+#| eval: false
+
+test_col_vals_in_set(
+  rh_dados,
+  columns = departamento,
+  set     = c("TI", "RH", "Financeiro",
+              "Marketing", "Operações"))
+```
+
+```         
+[1] FALSE
+```
+
+`test_col_vals_in_set()` retornou `FALSE` porque existem valores como `"Recursos_Humanos"`, `"MARKETING"` e `"operações"` fora do conjunto permitido.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Funções de Validação Principais
+:::
+
+------------------------------------------------------------------------
+
+## Validações de valor, parte 1
+
+| Função                | O que verifica                            |
+|-----------------------|-------------------------------------------|
+| `col_vals_not_null()` | Ausência de NA                            |
+| `col_vals_between()`  | Valor dentro de intervalo `[left, right]` |
+| `col_vals_gt()`       | Valor maior que                           |
+| `col_vals_gte()`      | Valor maior ou igual a                    |
+| `col_vals_lt()`       | Valor menor que                           |
+| `col_vals_lte()`      | Valor menor ou igual a                    |
+
+------------------------------------------------------------------------
+
+## Validações de valor, parte 2
+
+| Função                  | O que verifica                        |
+|-------------------------|---------------------------------------|
+| `col_vals_in_set()`     | Valor dentro de um conjunto permitido |
+| `col_vals_not_in_set()` | Valor fora de um conjunto proibido    |
+| `col_vals_regex()`      | Valor corresponde a expressão regular |
+| `col_vals_ne()`         | Valor diferente de                    |
+| `col_vals_outside()`    | Valor fora de um intervalo            |
+
+------------------------------------------------------------------------
+
+## Validações de estrutura
+
+| Função               | O que verifica                     |
+|----------------------|------------------------------------|
+| `rows_distinct()`    | Linhas únicas por coluna-chave     |
+| `rows_complete()`    | Linhas sem nulos em nenhuma coluna |
+| `col_exists()`       | Coluna existe na tabela            |
+| `col_is_numeric()`   | Coluna é numérica                  |
+| `col_is_character()` | Coluna é texto                     |
+| `col_is_date()`      | Coluna é data                      |
+
+------------------------------------------------------------------------
+
+## Código: validações de estrutura
+
+```{r}
+#| label: val-estrutura-codigo
+#| eval: false
+
+rh_dados |>
+  create_agent(label = "Estrutura da tabela") |>
+  rows_distinct(columns = id_funcionario) |>
+  col_exists(
+    columns = c(id_funcionario, nome, salario)) |>
+  col_is_numeric(
+    columns = c(salario, avaliacao_anual)) |>
+  col_is_character(
+    columns = c(nome, departamento)) |>
+  col_is_date(columns = data_admissao) |>
+  interrogate()
+```
+
+------------------------------------------------------------------------
+
+## Output: validações de estrutura
+
+```{r}
+#| label: val-estrutura-output
+#| eval: false
+#| echo: false
+
+rh_dados |>
+  create_agent(label = "Estrutura da tabela") |>
+  rows_distinct(columns = id_funcionario) |>
+  col_exists(
+    columns = c(id_funcionario, nome, salario)) |>
+  col_is_numeric(
+    columns = c(salario, avaliacao_anual)) |>
+  col_is_character(
+    columns = c(nome, departamento)) |>
+  col_is_date(columns = data_admissao) |>
+  interrogate()
+```
+
+::: callout-note
+O relatório interativo do `pointblank` é gerado ao rodar este código localmente. Ele exibe cada etapa com status verde (passou) ou vermelho (falhou), proporção de falhas e métricas detalhadas.
+:::
+
+------------------------------------------------------------------------
+
+## Código: conjointly() para múltiplas condições
+
+```{r}
+#| label: conjointly-codigo
+#| eval: false
+
+rh_dados |>
+  create_agent(label = "Validação conjunta") |>
+  conjointly(
+    ~ col_vals_not_null(., columns = salario),
+    ~ col_vals_gt(., columns = salario, value = 0),
+    ~ col_vals_lt(., columns = salario, value = 200000),
+    .label = "Salário: não nulo, positivo e dentro do limite") |>
+  interrogate()
+```
+
+------------------------------------------------------------------------
+
+## Output: conjointly()
+
+```{r}
+#| label: conjointly-output
+#| eval: false
+#| echo: false
+
+rh_dados |>
+  create_agent(label = "Validação conjunta") |>
+  conjointly(
+    ~ col_vals_not_null(., columns = salario),
+    ~ col_vals_gt(., columns = salario, value = 0),
+    ~ col_vals_lt(., columns = salario, value = 200000),
+    .label = "Salário: não nulo, positivo e dentro do limite") |>
+  interrogate()
+```
+
+::: callout-note
+`conjointly()` avalia as três condições juntas por linha. Uma linha falha se qualquer uma delas não for atendida. No dataset de RH, as linhas com salário negativo, zero ou acima de R\$200.000 são marcadas como falha nessa etapa.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 7
+
+## Workflow V: Table Scan
+:::
+
+------------------------------------------------------------------------
+
+## scan_data(): exploração rápida
+
+`scan_data()` gera um relatório completo de análise exploratória sem precisar definir um plano de validação. É o equivalente a um `skimr::skim()` com relatório HTML interativo.
+
+```{r}
+#| label: scan-codigo
+#| eval: false
+
+scan_data(
+  tbl      = rh_dados,
+  sections = "OVMS")
+```
+
+**O que o relatório inclui:**
+
+**O - Overview:** linhas, colunas, nulos totais e tipos.
+
+**V - Variables:** para cada coluna: valores únicos, proporção de nulos, distribuição numérica e frequência categórica.
+
+**M - Missing:** padrões de valores ausentes entre colunas.
+
+**S - Sample:** primeiras e últimas linhas.
+
+::: callout-tip
+Use `scan_data()` antes de definir o plano de validação. O relatório revela os problemas e ajuda a calibrar os limiares corretos para cada coluna.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 8
+
+## Information Management: o Informant
+:::
+
+------------------------------------------------------------------------
+
+## O que é o informant
+
+O **informant** mantém metadados sobre a tabela e os atualiza automaticamente quando os dados mudam. O resultado é um dicionário de dados vivo: um relatório HTML com descrição de cada coluna, estatísticas atualizadas e notas do analista.
+
+------------------------------------------------------------------------
+
+## Código: criando o informant
+
+```{r}
+#| label: informant-codigo
+#| eval: false
+
+informant_rh <- rh_dados |>
+  create_informant(
+    label = "Dicionário de Dados de RH") |>
+  info_tabular(
+    description = "
+    Tabela de funcionários com dados de identificação,
+    cargo, remuneração e avaliação. Atualizada mensalmente.
+    Fonte: Sistema HRIS.",
+    `Responsável` = "Equipe de RH",
+    `Contato`     = "rh@empresa.com.br") |>
+  info_columns(
+    columns = id_funcionario,
+    info    = "Identificador único. Não nulo, não duplicado.") |>
+  info_columns(
+    columns = salario,
+    info    = "Salário bruto mensal em reais (R$1.320 a R$200.000).") |>
+  info_columns(
+    columns = avaliacao_anual,
+    info    = "Nota de desempenho anual. Escala de 1 a 10.") |>
+  incorporate()
+
+informant_rh
+```
+
+------------------------------------------------------------------------
+
+## Output: informant com metadados
+
+```{r}
+#| label: informant-output
+#| eval: false
+#| echo: false
+
+rh_dados |>
+  create_informant(label = "Dicionário de Dados de RH") |>
+  info_tabular(
+    description = "Tabela de funcionários com dados de RH.") |>
+  info_columns(
+    columns = id_funcionario,
+    info    = "Identificador único. Não nulo, não duplicado.") |>
+  info_columns(
+    columns = salario,
+    info    = "Salário bruto mensal em reais (R$1.320 a R$200.000).") |>
+  info_columns(
+    columns = avaliacao_anual,
+    info    = "Nota de desempenho anual. Escala de 1 a 10.") |>
+  incorporate()
+```
+
+::: callout-note
+O informant gera um relatório HTML com o dicionário de dados atualizado. Cada coluna aparece com sua descrição, tipo, valores únicos e proporção de nulos calculados automaticamente por `incorporate()`.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 9
+
+## pointblank com DuckDB
+:::
+
+------------------------------------------------------------------------
+
+## Código: validando tabela no DuckDB
+
+```{r}
+#| label: duckdb-codigo
+#| eval: false
+
+library(duckdb)
+
+con <- dbConnect(duckdb())
+duckdb_register(con, "rh", rh_dados)
+
+tbl(con, "rh") |>
+  create_agent(
+    label   = "Validação RH - DuckDB",
+    actions = action_levels(warn_at = 0.05,
+                             stop_at = 0.20)) |>
+  col_vals_not_null(
+    columns = c(id_funcionario, nome, salario)) |>
+  rows_distinct(columns = id_funcionario) |>
+  col_vals_in_set(
+    columns = departamento,
+    set     = c("TI", "RH", "Financeiro",
+                "Marketing", "Operações")) |>
+  col_vals_between(
+    columns = salario,
+    left    = 1320,
+    right   = 200000) |>
+  interrogate()
+
+dbDisconnect(con)
+```
+
+------------------------------------------------------------------------
+
+## Output: relatório do agente DuckDB
+
+```{r}
+#| label: duckdb-output
+#| eval: false
+#| echo: false
+
+con <- dbConnect(duckdb())
+duckdb_register(con, "rh", rh_dados)
+
+tbl(con, "rh") |>
+  create_agent(
+    label   = "Validação RH - DuckDB",
+    actions = action_levels(warn_at = 0.05,
+                             stop_at = 0.20)) |>
+  col_vals_not_null(
+    columns = c(id_funcionario, nome, salario)) |>
+  rows_distinct(columns = id_funcionario) |>
+  col_vals_in_set(
+    columns = departamento,
+    set     = c("TI", "RH", "Financeiro",
+                "Marketing", "Operações")) |>
+  col_vals_between(
+    columns = salario,
+    left    = 1320,
+    right   = 200000) |>
+  interrogate()
+
+dbDisconnect(con)
+```
+
+::: callout-note
+O código de validação sobre uma tabela DuckDB é idêntico ao usado com um `data.frame`. O `pointblank` detecta automaticamente a fonte e traduz as validações para SQL quando necessário.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 10
+
+## Boas Práticas e Mercado
+:::
+
+------------------------------------------------------------------------
+
+## Onde colocar validação no pipeline
+
+```         
+Ingestão (leitura de CSV, API, banco)
+    |
+    | scan_data(): explorar antes de validar
+    | col_vals_not_null(), col_is_*(): verificar estrutura
+    v
+Transformação (limpeza, join, agregação)
+    |
+    | test_*(): decisões baseadas em qualidade
+    | col_vals_between(): verificar intermediários
+    v
+Saída (escrita em banco, Parquet, relatório)
+    |
+    | create_agent() + interrogate(): relatório completo
+    | yaml_write(): versionar o plano de validação
+    v
+Monitoramento (execução periódica com agendamento)
+```
+
+------------------------------------------------------------------------
+
+## Exportar plano para YAML
+
+```{r}
+#| label: yaml-codigo
+#| eval: false
+
+yaml_write(
+  agente_rh,
+  filename = "plano_validacao_rh.yml",
+  path     = "validacoes/")
+
+agente_do_yaml <- yaml_read_agent(
+  "validacoes/plano_validacao_rh.yml")
+
+novos_dados |>
+  create_agent_from_yaml(agente_do_yaml) |>
+  interrogate()
+```
+
+O arquivo YAML gerado pode ser versionado no Git junto com o projeto, funcionando como um contrato de dados: define formalmente o que a tabela deve conter.
+
+------------------------------------------------------------------------
+
+## Erros comuns
+
+| Situação | Causa | Solução |
+|----|----|----|
+| Relatório vazio ou sem falhas | `interrogate()` não foi chamado | Sempre terminar com `interrogate()` |
+| NA contado como falha | `na_pass` não configurado | Adicionar `na_pass = TRUE` quando NA é válido |
+| `get_data_extracts()` vazio | Índice `i` incorreto | Verificar o número da etapa no relatório |
+| Limiar muito restritivo | `stop_at = 0.01` para coluna com ausência esperada | Calibrar com `scan_data()` antes de definir |
+
+------------------------------------------------------------------------
+
+## Resumo das funções principais, parte 1
+
+| Função                | Workflow | O que faz                          |
+|-----------------------|----------|------------------------------------|
+| `create_agent()`      | I        | Cria o agente de validação         |
+| `interrogate()`       | I        | Executa o plano e gera o relatório |
+| `get_agent_report()`  | I        | Extrai o relatório como tibble     |
+| `get_data_extracts()` | I        | Retorna as linhas que falharam     |
+| `action_levels()`     | I, II    | Define limiares e ações            |
+
+------------------------------------------------------------------------
+
+## Resumo das funções principais, parte 2
+
+| Função               | Workflow | O que faz                               |
+|----------------------|----------|-----------------------------------------|
+| `scan_data()`        | V        | Análise exploratória com relatório HTML |
+| `create_informant()` | Info     | Cria o dicionário de dados              |
+| `incorporate()`      | Info     | Atualiza estatísticas do informant      |
+| `yaml_write()`       | I        | Exporta o plano para YAML               |
+| `test_*()`           | IV       | Retorna TRUE/FALSE para condicionais    |
+| `expect_*()`         | III      | Para uso com `testthat`                 |
+
+------------------------------------------------------------------------
+
+## Referências
+
+- Documentação oficial: [rstudio.github.io/pointblank](https://rstudio.github.io/pointblank)
+- VALID-I - Data Quality Reporting: [rstudio.github.io/pointblank/articles/VALID-I.html](https://rstudio.github.io/pointblank/articles/VALID-I.html)
+- VALID-II - Pipeline Validation: [rstudio.github.io/pointblank/articles/VALID-II.html](https://rstudio.github.io/pointblank/articles/VALID-II.html)
+- Information Management: [rstudio.github.io/pointblank/articles/INFO-1.html](https://rstudio.github.io/pointblank/articles/INFO-1.html)
+- Referência de funções: [rstudio.github.io/pointblank/reference](https://rstudio.github.io/pointblank/reference)
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

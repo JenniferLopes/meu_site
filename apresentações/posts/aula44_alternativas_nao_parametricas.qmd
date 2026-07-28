@@ -1,0 +1,329 @@
+---
+title: "Aula 44. Quando o teste t não é adequado"
+subtitle: "Alternativas não paramétricas, Mann-Whitney e Wilcoxon, e quando cada uma se aplica"
+categories: [R, Estatística, Inferência, Tidyverse]
+image: "imagens/67.png"
+description: "Aprenda a identificar quando o teste t não é adequado e a aplicar corretamente as alternativas não paramétricas de Mann-Whitney e Wilcoxon."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+# Bloco 1, duas amostras independentes
+notas_natural <- c(round(rnorm(9, mean = 84, sd = 1.8), 1), 68)
+notas_lavado  <- round(rnorm(10, mean = 86, sd = 1.5), 1)
+
+notas_sensoriais <- bind_rows(
+  tibble(processo = "Via natural", nota = notas_natural),
+  tibble(processo = "Via lavada", nota = notas_lavado))
+
+# Bloco 2, pareado
+nota_antes  <- round(rnorm(12, mean = 82, sd = 2.5), 1)
+melhoria    <- round(rnorm(12, mean = 2.3, sd = 1.8), 1)
+nota_depois <- nota_antes + melhoria
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Reconhecer quando o teste t não é adequado, e por que
+- Aplicar o **teste de Mann-Whitney** para duas amostras independentes
+- Aplicar o **teste de Wilcoxon** de postos com sinais para amostras pareadas
+- Entender o conceito de **eficiência relativa assintótica**
+- Saber quando o teste paramétrico ainda é a melhor escolha, mesmo havendo alternativa
+- Evitar os erros mais comuns na aplicação de testes não paramétricos
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Mann-Whitney, Duas Amostras Independentes
+:::
+
+------------------------------------------------------------------------
+
+## Quando usar, por que o teste t não se aplica aqui
+
+- **Contexto:** um provador certificado atribui notas sensoriais, escala SCA de 0 a 100, a lotes de café processados por via natural e por via lavada, 10 lotes em cada grupo.
+
+- Um dos lotes processados por via natural apresenta um defeito perceptível durante a avaliação, resultando em uma nota muito abaixo das demais.
+
+- Esse valor discrepante, somado ao tamanho pequeno da amostra, compromete a suposição de normalidade exigida pelo teste t. O teste de Mann-Whitney compara as duas distribuições sem depender dessa suposição.
+
+------------------------------------------------------------------------
+
+## Hipóteses e estatística do teste
+
+- O teste de Mann-Whitney, também chamado teste U, compara as **posições relativas** das observações dos dois grupos, e não suas médias diretamente.
+
+$$H_0: \text{as duas distribuições são iguais} \qquad H_1: \text{as duas distribuições diferem}$$
+
+- O procedimento ordena todas as observações dos dois grupos em conjunto, atribui postos, e calcula a estatística U a partir da soma dos postos de cada grupo.
+
+- Por trabalhar com postos, e não com os valores originais, o teste é pouco sensível a valores discrepantes.
+
+------------------------------------------------------------------------
+
+## Código: distribuição dos dados e teste de Mann-Whitney
+
+```{r}
+#| label: mann-whitney-codigo
+#| eval: false
+
+notas_sensoriais |>
+  group_by(processo) |>
+  summarise(n = n(), media = mean(nota), mediana = median(nota))
+
+shapiro.test(notas_natural)
+
+resultado_mw <- wilcox.test(nota ~ processo, data = notas_sensoriais)
+```
+
+------------------------------------------------------------------------
+
+## Output: teste de Mann-Whitney
+
+```{r}
+#| label: mann-whitney-output
+#| echo: false
+
+notas_sensoriais |>
+  group_by(processo) |>
+  summarise(n = n(), media = mean(nota), mediana = median(nota)) |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+
+resultado_shapiro <- shapiro.test(notas_natural)
+
+tibble(shapiro_estatistica = resultado_shapiro$statistic,
+       shapiro_p = resultado_shapiro$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+
+resultado_mw <- wilcox.test(nota ~ processo, data = notas_sensoriais)
+
+tibble(estatistica_w = resultado_mw$statistic,
+       valor_p       = resultado_mw$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **O teste de Shapiro-Wilk indica desvio da normalidade no grupo via natural, consequência do valor discrepante. O teste de Mann-Whitney compara as duas distribuições sem exigir essa suposição, e seu p-valor determina se há diferença estatística entre os dois processos.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Wilcoxon, Amostras Pareadas
+:::
+
+------------------------------------------------------------------------
+
+## Quando usar, mesma unidade avaliada duas vezes
+
+- **Contexto:** os mesmos 12 lotes de café recebem nota sensorial antes e depois de um ajuste no perfil de torra. Cada lote gera duas notas relacionadas, não duas amostras independentes.
+
+- Quando a suposição de normalidade das diferenças é questionável, ou quando a escala de avaliação é ordinal, o teste de Wilcoxon de postos com sinais substitui o teste t pareado, preservando a estrutura de emparelhamento.
+
+------------------------------------------------------------------------
+
+## Hipóteses e estatística do teste
+
+$$H_0: \text{a mediana das diferenças é zero} \qquad H_1: \text{a mediana das diferenças é diferente de zero}$$
+
+- O procedimento calcula as diferenças dentro de cada par, ordena essas diferenças por seu valor absoluto, atribui postos, e soma os postos separadamente conforme o sinal da diferença, positivo ou negativo.
+
+- Diferenças iguais a zero são removidas antes da atribuição dos postos, e empates recebem o posto médio.
+
+------------------------------------------------------------------------
+
+## Código: teste de Wilcoxon pareado
+
+```{r}
+#| label: wilcoxon-codigo
+#| eval: false
+
+diferencas <- nota_depois - nota_antes
+
+resultado_wilcoxon <- wilcox.test(nota_antes, nota_depois, paired = TRUE)
+
+tibble(
+  mediana_diferenca = median(diferencas),
+  estatistica_v      = resultado_wilcoxon$statistic,
+  valor_p            = resultado_wilcoxon$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Output: teste de Wilcoxon pareado
+
+```{r}
+#| label: wilcoxon-output
+#| echo: false
+
+diferencas <- nota_depois - nota_antes
+
+resultado_wilcoxon <- wilcox.test(nota_antes, nota_depois, paired = TRUE)
+
+tibble(
+  mediana_diferenca = median(diferencas),
+  estatistica_v      = resultado_wilcoxon$statistic,
+  valor_p            = resultado_wilcoxon$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **A mediana das diferenças é positiva, indicando melhora na nota sensorial após o ajuste de torra na maioria dos lotes. O p-valor do teste de Wilcoxon indica se essa melhora é estatisticamente consistente, sem exigir a suposição de normalidade das diferenças.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Eficiência Relativa Assintótica
+:::
+
+------------------------------------------------------------------------
+
+## O que é a eficiência relativa assintótica
+
+- A **eficiência relativa assintótica**, ARE, mede quanta informação um teste não paramétrico preserva em relação ao teste paramétrico correspondente, quando as suposições do teste paramétrico são de fato atendidas.
+
+- Sob normalidade perfeita, o teste de Wilcoxon mantém aproximadamente 95,5% da eficiência do teste t, uma perda pequena.
+
+- Quando a normalidade não se sustenta, a eficiência relativa pode ultrapassar 100%, o teste não paramétrico se torna mais poderoso que o teste t nessas condições.
+
+------------------------------------------------------------------------
+
+## Quando o teste paramétrico ainda é a melhor escolha
+
+- Quando a suposição de normalidade é razoável e a amostra é suficientemente grande, o teste t continua sendo a escolha mais eficiente, mesmo com a pequena perda de eficiência dos testes de postos sendo praticamente irrelevante.
+
+- O teste t também permite estimar diretamente a magnitude da diferença entre médias, com intervalo de confiança na escala original dos dados, o que os testes de postos não fornecem da mesma forma direta.
+
+- A escolha não deve ser automática. Verificar a suposição de normalidade antes de decidir é sempre o primeiro passo.
+
+------------------------------------------------------------------------
+
+## Tabela de equivalências
+
+| Situação | Teste paramétrico | Alternativa não paramétrica |
+|------------------------|------------------------|------------------------|
+| Duas amostras independentes | Teste t independente | Mann-Whitney |
+| Duas amostras pareadas | Teste t pareado | Wilcoxon de postos com sinais |
+| Três ou mais grupos independentes | ANOVA | Kruskal-Wallis |
+| Associação entre variáveis contínuas | Correlação de Pearson | Correlação de Spearman |
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, usar teste não paramétrico sempre por precaução
+
+- Aplicar sistematicamente o teste não paramétrico, sem verificar a suposição de normalidade, abre mão de poder estatístico desnecessariamente quando os dados são de fato aproximadamente normais.
+
+- A escolha do teste deve ser fundamentada na verificação da normalidade, não em uma preferência automática por segurança.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, interpretar o resultado do Mann-Whitney como comparação de médias
+
+- O teste de Mann-Whitney compara distribuições com base em postos, sua conclusão diz respeito à posição relativa dos valores, não diretamente às médias dos grupos.
+
+- Reportar o resultado do Mann-Whitney afirmando que "as médias diferem" é impreciso. O correto é afirmar que as distribuições, ou as medianas sob certas condições, diferem entre os grupos.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, aplicar o Wilcoxon pareado em dados que não são pareados
+
+- Usar `wilcox.test(x, y, paired = TRUE)` quando as observações de x e y não têm correspondência real entre si produz um resultado sem interpretação válida.
+
+- O pareamento exige uma relação de correspondência genuína entre as observações, como o mesmo lote medido duas vezes, não apenas dois vetores do mesmo tamanho.
+
+------------------------------------------------------------------------
+
+## Resumo: alternativas não paramétricas
+
+| Teste | Compara | Hipótese nula | Função no R |
+|------------------|------------------|------------------|------------------|
+| Mann-Whitney | Duas amostras independentes | Distribuições iguais | `wilcox.test(y ~ grupo)` |
+| Wilcoxon pareado | Duas amostras pareadas | Mediana das diferenças igual a zero | `wilcox.test(x, y, paired = TRUE)` |
+| ARE | Eficiência do teste não paramétrico | Não se aplica | Não se aplica |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

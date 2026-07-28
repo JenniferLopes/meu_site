@@ -1,297 +1,587 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Compreenda a distinção entre estatística descritiva e inferencial, domine as principais medidas e aplique as duas abordagens de forma integrada no R.">
+
+<title>Aula 27. Estatística Descritiva e Inferencial – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.32">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
 
-  <title>Jennifer Luz Lopes – Aula 27. Estatística Descritiva e Inferencial</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
-  <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
-      vertical-align: middle;
-    }
-    /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-        color: #aaaaaa;
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
       }
-    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-    div.sourceCode
-      { color: #003b4f; background-color: #f1f3f5; }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
     }
-    code span { color: #003b4f; } /* Normal */
-    code span.al { color: #ad0000; } /* Alert */
-    code span.an { color: #5e5e5e; } /* Annotation */
-    code span.at { color: #657422; } /* Attribute */
-    code span.bn { color: #ad0000; } /* BaseN */
-    code span.bu { } /* BuiltIn */
-    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #20794d; } /* Char */
-    code span.cn { color: #8f5902; } /* Constant */
-    code span.co { color: #5e5e5e; } /* Comment */
-    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
-    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
-    code span.dt { color: #ad0000; } /* DataType */
-    code span.dv { color: #ad0000; } /* DecVal */
-    code span.er { color: #ad0000; } /* Error */
-    code span.ex { } /* Extension */
-    code span.fl { color: #ad0000; } /* Float */
-    code span.fu { color: #4758ab; } /* Function */
-    code span.im { color: #00769e; } /* Import */
-    code span.in { color: #5e5e5e; } /* Information */
-    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
-    code span.op { color: #5e5e5e; } /* Operator */
-    code span.ot { color: #003b4f; } /* Other */
-    code span.pp { color: #ad0000; } /* Preprocessor */
-    code span.sc { color: #5e5e5e; } /* SpecialChar */
-    code span.ss { color: #20794d; } /* SpecialString */
-    code span.st { color: #20794d; } /* String */
-    code span.va { color: #111111; } /* Variable */
-    code span.vs { color: #20794d; } /* VerbatimString */
-    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
-  </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
-  <link rel="stylesheet" href="estilo_jeni.css">
-  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
-  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
-  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
-  <style type="text/css">
-    .reveal div.sourceCode {
-      margin: 0;
-      overflow: auto;
-    }
-    .reveal div.hanging-indent {
-      margin-left: 1em;
-      text-indent: -1em;
-    }
-    .reveal .slide:not(.center) {
-      height: 100%;
-      overflow-y: auto;
-    }
-    .reveal .slide.scrollable {
-      overflow-y: auto;
-    }
-    .reveal .footnotes {
-      height: 100%;
-      overflow-y: auto;
-    }
-    .reveal .slide .absolute {
-      position: absolute;
-      display: block;
-    }
-    .reveal .footnotes ol {
-      counter-reset: ol;
-      list-style-type: none; 
-      margin-left: 0;
-    }
-    .reveal .footnotes ol li:before {
-      counter-increment: ol;
-      content: counter(ol) ". "; 
-    }
-    .reveal .footnotes ol li > p:first-child {
-      display: inline-block;
-    }
-    .reveal .slide ul,
-    .reveal .slide ol {
-      margin-bottom: 0.5em;
-    }
-    .reveal .slide ul li,
-    .reveal .slide ol li {
-      margin-top: 0.4em;
-      margin-bottom: 0.2em;
-    }
-    .reveal .slide ul[role="tablist"] li {
-      margin-bottom: 0;
-    }
-    .reveal .slide ul li > *:first-child,
-    .reveal .slide ol li > *:first-child {
-      margin-block-start: 0;
-    }
-    .reveal .slide ul li > *:last-child,
-    .reveal .slide ol li > *:last-child {
-      margin-block-end: 0;
-    }
-    .reveal .slide .columns:nth-child(3) {
-      margin-block-start: 0.8em;
-    }
-    .reveal blockquote {
-      box-shadow: none;
-    }
-    .reveal .tippy-content>* {
-      margin-top: 0.2em;
-      margin-bottom: 0.7em;
-    }
-    .reveal .tippy-content>*:last-child {
-      margin-bottom: 0.2em;
-    }
-    .reveal .slide > img.stretch.quarto-figure-center,
-    .reveal .slide > img.r-stretch.quarto-figure-center {
-      display: block;
-      margin-left: auto;
-      margin-right: auto; 
-    }
-    .reveal .slide > img.stretch.quarto-figure-left,
-    .reveal .slide > img.r-stretch.quarto-figure-left  {
-      display: block;
-      margin-left: 0;
-      margin-right: auto; 
-    }
-    .reveal .slide > img.stretch.quarto-figure-right,
-    .reveal .slide > img.r-stretch.quarto-figure-right  {
-      display: block;
-      margin-left: auto;
-      margin-right: 0; 
-    }
-  </style>
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
 </head>
-<body class="quarto-light">
-  <div class="reveal">
-    <div class="slides">
 
-<section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Aula 27. Estatística Descritiva e Inferencial</h1>
-  <p class="subtitle">Fundamentos, distinções e aplicação integrada no R</p>
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
-<div class="quarto-title-authors">
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#democratização" id="toc-democratização" class="nav-link active" data-scroll-target="#democratização">Democratização</a></li>
+  <li><a href="#acompanhe-o-café-com-r" id="toc-acompanhe-o-café-com-r" class="nav-link" data-scroll-target="#acompanhe-o-café-com-r">Acompanhe o Café com R</a></li>
+  <li><a href="#objetivos-da-aula" id="toc-objetivos-da-aula" class="nav-link" data-scroll-target="#objetivos-da-aula">Objetivos da aula</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
+  <li><a href="#bloco-1" id="toc-bloco-1" class="nav-link" data-scroll-target="#bloco-1">Bloco 1</a>
+  <ul class="collapse">
+  <li><a href="#o-que-cada-estatística-responde" id="toc-o-que-cada-estatística-responde" class="nav-link" data-scroll-target="#o-que-cada-estatística-responde">O que cada estatística responde</a></li>
+  </ul></li>
+  <li><a href="#estatística-descritiva-definição" id="toc-estatística-descritiva-definição" class="nav-link" data-scroll-target="#estatística-descritiva-definição">Estatística Descritiva: definição</a></li>
+  <li><a href="#estatística-inferencial-definição-precisa" id="toc-estatística-inferencial-definição-precisa" class="nav-link" data-scroll-target="#estatística-inferencial-definição-precisa">Estatística Inferencial: definição precisa</a></li>
+  <li><a href="#comparação-descritiva-x-inferencial" id="toc-comparação-descritiva-x-inferencial" class="nav-link" data-scroll-target="#comparação-descritiva-x-inferencial">Comparação: descritiva x inferencial</a></li>
+  <li><a href="#bloco-2" id="toc-bloco-2" class="nav-link" data-scroll-target="#bloco-2">Bloco 2</a>
+  <ul class="collapse">
+  <li><a href="#estatística-descritiva" id="toc-estatística-descritiva" class="nav-link" data-scroll-target="#estatística-descritiva">Estatística Descritiva</a></li>
+  </ul></li>
+  <li><a href="#medidas-de-tendência-central" id="toc-medidas-de-tendência-central" class="nav-link" data-scroll-target="#medidas-de-tendência-central">Medidas de tendência central</a></li>
+  <li><a href="#código-tendência-central" id="toc-código-tendência-central" class="nav-link" data-scroll-target="#código-tendência-central">Código: tendência central</a></li>
+  <li><a href="#output-tendência-central" id="toc-output-tendência-central" class="nav-link" data-scroll-target="#output-tendência-central">Output: tendência central</a></li>
+  <li><a href="#medidas-de-dispersão" id="toc-medidas-de-dispersão" class="nav-link" data-scroll-target="#medidas-de-dispersão">Medidas de dispersão</a></li>
+  <li><a href="#código-dispersão" id="toc-código-dispersão" class="nav-link" data-scroll-target="#código-dispersão">Código: dispersão</a></li>
+  <li><a href="#output-dispersão" id="toc-output-dispersão" class="nav-link" data-scroll-target="#output-dispersão">Output: dispersão</a></li>
+  <li><a href="#medidas-de-posição-quartis-e-percentis" id="toc-medidas-de-posição-quartis-e-percentis" class="nav-link" data-scroll-target="#medidas-de-posição-quartis-e-percentis">Medidas de posição: quartis e percentis</a></li>
+  <li><a href="#código-quartis-e-percentis" id="toc-código-quartis-e-percentis" class="nav-link" data-scroll-target="#código-quartis-e-percentis">Código: quartis e percentis</a></li>
+  <li><a href="#output-quartis-e-percentis" id="toc-output-quartis-e-percentis" class="nav-link" data-scroll-target="#output-quartis-e-percentis">Output: quartis e percentis</a></li>
+  <li><a href="#código-boxplot-por-tipo-de-solo" id="toc-código-boxplot-por-tipo-de-solo" class="nav-link" data-scroll-target="#código-boxplot-por-tipo-de-solo">Código: boxplot por tipo de solo</a></li>
+  <li><a href="#gráfico-boxplot-por-tipo-de-solo" id="toc-gráfico-boxplot-por-tipo-de-solo" class="nav-link" data-scroll-target="#gráfico-boxplot-por-tipo-de-solo">Gráfico: boxplot por tipo de solo</a></li>
+  <li><a href="#forma-da-distribuição-assimetria-e-curtose" id="toc-forma-da-distribuição-assimetria-e-curtose" class="nav-link" data-scroll-target="#forma-da-distribuição-assimetria-e-curtose">Forma da distribuição: assimetria e curtose</a></li>
+  <li><a href="#código-distribuição-e-assimetria" id="toc-código-distribuição-e-assimetria" class="nav-link" data-scroll-target="#código-distribuição-e-assimetria">Código: distribuição e assimetria</a></li>
+  <li><a href="#gráfico-distribuição-e-assimetria" id="toc-gráfico-distribuição-e-assimetria" class="nav-link" data-scroll-target="#gráfico-distribuição-e-assimetria">Gráfico: distribuição e assimetria</a></li>
+  <li><a href="#bloco-3" id="toc-bloco-3" class="nav-link" data-scroll-target="#bloco-3">Bloco 3</a>
+  <ul class="collapse">
+  <li><a href="#estatística-inferencial" id="toc-estatística-inferencial" class="nav-link" data-scroll-target="#estatística-inferencial">Estatística Inferencial</a></li>
+  </ul></li>
+  <li><a href="#estimação-pontual-e-por-intervalo" id="toc-estimação-pontual-e-por-intervalo" class="nav-link" data-scroll-target="#estimação-pontual-e-por-intervalo">Estimação: pontual e por intervalo</a></li>
+  <li><a href="#código-estimação-por-ic" id="toc-código-estimação-por-ic" class="nav-link" data-scroll-target="#código-estimação-por-ic">Código: estimação por IC</a></li>
+  <li><a href="#output-ic-95-para-a-produtividade" id="toc-output-ic-95-para-a-produtividade" class="nav-link" data-scroll-target="#output-ic-95-para-a-produtividade">Output: IC 95% para a produtividade</a></li>
+  <li><a href="#testes-de-hipóteses-os-cinco-passos" id="toc-testes-de-hipóteses-os-cinco-passos" class="nav-link" data-scroll-target="#testes-de-hipóteses-os-cinco-passos">Testes de hipóteses: os cinco passos</a></li>
+  <li><a href="#exemplo-teste-t-entre-tipos-de-solo" id="toc-exemplo-teste-t-entre-tipos-de-solo" class="nav-link" data-scroll-target="#exemplo-teste-t-entre-tipos-de-solo">Exemplo: teste t entre tipos de solo</a></li>
+  <li><a href="#código-teste-t-entre-solos" id="toc-código-teste-t-entre-solos" class="nav-link" data-scroll-target="#código-teste-t-entre-solos">Código: teste t entre solos</a></li>
+  <li><a href="#output-teste-t-entre-solos" id="toc-output-teste-t-entre-solos" class="nav-link" data-scroll-target="#output-teste-t-entre-solos">Output: teste t entre solos</a></li>
+  <li><a href="#código-visualização-das-médias-com-ic" id="toc-código-visualização-das-médias-com-ic" class="nav-link" data-scroll-target="#código-visualização-das-médias-com-ic">Código: visualização das médias com IC</a></li>
+  <li><a href="#gráfico-médias-com-ic-95" id="toc-gráfico-médias-com-ic-95" class="nav-link" data-scroll-target="#gráfico-médias-com-ic-95">Gráfico: médias com IC 95%</a></li>
+  <li><a href="#relação-e-predição-correlação" id="toc-relação-e-predição-correlação" class="nav-link" data-scroll-target="#relação-e-predição-correlação">Relação e predição: correlação</a></li>
+  <li><a href="#código-correlação-entre-produtividade-e-parcela" id="toc-código-correlação-entre-produtividade-e-parcela" class="nav-link" data-scroll-target="#código-correlação-entre-produtividade-e-parcela">Código: correlação entre produtividade e parcela</a></li>
+  <li><a href="#output-correlação" id="toc-output-correlação" class="nav-link" data-scroll-target="#output-correlação">Output: correlação</a></li>
+  <li><a href="#código-regressão-linear-simples" id="toc-código-regressão-linear-simples" class="nav-link" data-scroll-target="#código-regressão-linear-simples">Código: regressão linear simples</a></li>
+  <li><a href="#gráfico-regressão-linear-simples" id="toc-gráfico-regressão-linear-simples" class="nav-link" data-scroll-target="#gráfico-regressão-linear-simples">Gráfico: regressão linear simples</a></li>
+  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1"></a></li>
+  <li><a href="#bloco-4" id="toc-bloco-4" class="nav-link" data-scroll-target="#bloco-4">Bloco 4</a>
+  <ul class="collapse">
+  <li><a href="#fluxo-integrado" id="toc-fluxo-integrado" class="nav-link" data-scroll-target="#fluxo-integrado">Fluxo Integrado</a></li>
+  </ul></li>
+  <li><a href="#descritiva-e-inferencial-no-mesmo-fluxo" id="toc-descritiva-e-inferencial-no-mesmo-fluxo" class="nav-link" data-scroll-target="#descritiva-e-inferencial-no-mesmo-fluxo">Descritiva e inferencial no mesmo fluxo</a></li>
+  <li><a href="#código-pipeline-completa" id="toc-código-pipeline-completa" class="nav-link" data-scroll-target="#código-pipeline-completa">Código: pipeline completa</a></li>
+  <li><a href="#output-descritivo-por-solo" id="toc-output-descritivo-por-solo" class="nav-link" data-scroll-target="#output-descritivo-por-solo">Output: descritivo por solo</a></li>
+  <li><a href="#código-ic-por-tipo-de-solo" id="toc-código-ic-por-tipo-de-solo" class="nav-link" data-scroll-target="#código-ic-por-tipo-de-solo">Código: IC por tipo de solo</a></li>
+  <li><a href="#output-ic-por-tipo-de-solo" id="toc-output-ic-por-tipo-de-solo" class="nav-link" data-scroll-target="#output-ic-por-tipo-de-solo">Output: IC por tipo de solo</a></li>
+  <li><a href="#código-visualização-final-integrada" id="toc-código-visualização-final-integrada" class="nav-link" data-scroll-target="#código-visualização-final-integrada">Código: visualização final integrada</a></li>
+  <li><a href="#gráfico-visualização-final-integrada" id="toc-gráfico-visualização-final-integrada" class="nav-link" data-scroll-target="#gráfico-visualização-final-integrada">Gráfico: visualização final integrada</a></li>
+  <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2"></a></li>
+  <li><a href="#bloco-5" id="toc-bloco-5" class="nav-link" data-scroll-target="#bloco-5">Bloco 5</a>
+  <ul class="collapse">
+  <li><a href="#erros-de-interpretação" id="toc-erros-de-interpretação" class="nav-link" data-scroll-target="#erros-de-interpretação">Erros de Interpretação</a></li>
+  </ul></li>
+  <li><a href="#erro-1---generalizar-a-partir-da-descritiva" id="toc-erro-1---generalizar-a-partir-da-descritiva" class="nav-link" data-scroll-target="#erro-1---generalizar-a-partir-da-descritiva">Erro 1 - Generalizar a partir da descritiva</a></li>
+  <li><a href="#erro-2---usar-a-média-em-distribuição-assimétrica" id="toc-erro-2---usar-a-média-em-distribuição-assimétrica" class="nav-link" data-scroll-target="#erro-2---usar-a-média-em-distribuição-assimétrica">Erro 2 - Usar a média em distribuição assimétrica</a></li>
+  <li><a href="#erro-3---pular-a-descritiva-e-ir-direto-ao-teste" id="toc-erro-3---pular-a-descritiva-e-ir-direto-ao-teste" class="nav-link" data-scroll-target="#erro-3---pular-a-descritiva-e-ir-direto-ao-teste">Erro 3 - Pular a descritiva e ir direto ao teste</a></li>
+  <li><a href="#erro-4---interpretar-p-valor-como-relevância-prática" id="toc-erro-4---interpretar-p-valor-como-relevância-prática" class="nav-link" data-scroll-target="#erro-4---interpretar-p-valor-como-relevância-prática">Erro 4 - Interpretar p-valor como relevância prática</a></li>
+  <li><a href="#resumo-descritiva-e-inferencial" id="toc-resumo-descritiva-e-inferencial" class="nav-link" data-scroll-target="#resumo-descritiva-e-inferencial">Resumo: descritiva e inferencial</a></li>
+  <li><a href="#obrigada" id="toc-obrigada" class="nav-link" data-scroll-target="#obrigada">Obrigada!</a></li>
+  <li><a href="#siga-o-café-com-r" id="toc-siga-o-café-com-r" class="nav-link" data-scroll-target="#siga-o-café-com-r">Siga o Café com R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="aula27_descritiva_inferencial.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Aula 27. Estatística Descritiva e Inferencial</h1>
+<p class="subtitle lead">Fundamentos, distinções e aplicação integrada no R</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Estatística</div>
+    <div class="quarto-category">Descritiva</div>
+    <div class="quarto-category">Inferencial</div>
+    <div class="quarto-category">Tidyverse</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Compreenda a distinção entre estatística descritiva e inferencial, domine as principais medidas e aplique as duas abordagens de forma integrada no R.
+  </div>
 </div>
 
-</section>
-<section id="democratização" class="slide level2">
-<h2>Democratização</h2>
-<blockquote>
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="democratização" class="level2">
+<h2 class="anchored" data-anchor-id="democratização">Democratização</h2>
+<blockquote class="blockquote">
 <p>Esta aula continua diretamente da Aula 26. Os dados simulados são os mesmos: produtividade do híbrido H2 em 10.000 parcelas agronômicas. A amostra de 120 parcelas extraída anteriormente é reutilizada aqui para garantir continuidade nos resultados.</p>
 </blockquote>
-
-<img data-src="imagens/meguy.jpg" class="quarto-figure quarto-figure-center r-stretch" width="420"></section>
-<section id="acompanhe-o-café-com-r" class="slide level2">
-<h2>Acompanhe o Café com R</h2>
 <div class="quarto-figure quarto-figure-center">
-<figure>
+<figure class="figure">
+<p><img src="imagens/meguy.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<hr>
+</section>
+<section id="acompanhe-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="acompanhe-o-café-com-r">Acompanhe o Café com R</h2>
 <div class="quarto-figure quarto-figure-center">
-<figure>
-<p><a href="https://jenniferlopes.quarto.pub/portifolio/"><img data-src="imagens/qrcodenovo.png" class="quarto-figure quarto-figure-center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="305"></a></p>
+<figure class="figure">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://jenniferlopes.quarto.pub/portifolio/"><img src="imagens/qrcodenovo.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="305"></a></p>
 </figure>
 </div>
 <figcaption>Escaneie o QR Code e acesse o portfólio.</figcaption>
 </figure>
 </div>
+<hr>
 </section>
-<section id="objetivos-da-aula" class="slide level2">
-<h2>Objetivos da aula</h2>
-<ul>
-<li class="fragment">Distinguir <strong>estatística descritiva</strong> e <strong>inferencial</strong> com precisão conceitual</li>
-<li class="fragment">Calcular e interpretar medidas de <strong>tendência central</strong>, <strong>dispersão</strong> e <strong>posição</strong></li>
-<li class="fragment">Identificar e visualizar a <strong>forma da distribuição</strong> de uma variável</li>
-<li class="fragment">Aplicar <strong>estimação por intervalo</strong> e <strong>teste de hipóteses</strong> com o tidyverse</li>
-<li class="fragment">Integrar descritiva e inferencial em um <strong>fluxo de análise completo</strong></li>
-<li class="fragment">Reconhecer os <strong>erros de interpretação</strong> mais frequentes em cada abordagem</li>
+<section id="objetivos-da-aula" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-da-aula">Objetivos da aula</h2>
+<div class="incremental">
+<ul class="incremental">
+<li>Distinguir <strong>estatística descritiva</strong> e <strong>inferencial</strong> com precisão conceitual</li>
+<li>Calcular e interpretar medidas de <strong>tendência central</strong>, <strong>dispersão</strong> e <strong>posição</strong></li>
+<li>Identificar e visualizar a <strong>forma da distribuição</strong> de uma variável</li>
+<li>Aplicar <strong>estimação por intervalo</strong> e <strong>teste de hipóteses</strong> com o tidyverse</li>
+<li>Integrar descritiva e inferencial em um <strong>fluxo de análise completo</strong></li>
+<li>Reconhecer os <strong>erros de interpretação</strong> mais frequentes em cada abordagem</li>
 </ul>
+</div>
+<hr>
 </section>
-<section id="section" class="slide level2" data-background-color="#E5D3B3">
-<h2></h2>
+<section id="section" class="level2" data-background-color="#E5D3B3">
+<h2 data-background-color="#E5D3B3" class="anchored" data-anchor-id="section"></h2>
 </section>
-<section>
-<section id="bloco-1" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<section id="bloco-1" class="level1" style="text-align: center; padding-top: 160px;">
 <h1>Bloco 1</h1>
-
+<section id="o-que-cada-estatística-responde" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-cada-estatística-responde">O que cada estatística responde</h2>
 </section>
-<section id="o-que-cada-estatística-responde" class="slide level2">
-<h2>O que cada estatística responde</h2>
-</section></section>
-<section id="estatística-descritiva-definição" class="slide level2">
-<h2>Estatística Descritiva: definição</h2>
+</section>
+<hr>
+<section id="estatística-descritiva-definição" class="level2">
+<h2 class="anchored" data-anchor-id="estatística-descritiva-definição">Estatística Descritiva: definição</h2>
 <ul>
 <li><p>A <strong>estatística descritiva</strong> organiza, resume e apresenta os dados observados. Seu escopo é restrito ao conjunto de dados disponível - ela não extrapola para além do que foi medido.</p></li>
 <li><p><strong>Pergunta que responde:</strong> o que os dados mostram?</p></li>
 <li><p><strong>No contexto agronômico:</strong></p></li>
 <li><p>A produtividade média das 120 parcelas amostradas é uma medida descritiva. Ela descreve aquelas 120 parcelas e apenas elas.</p></li>
 </ul>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Important</strong></p>
+<div class="callout-title-container flex-fill">
+Important
 </div>
-<div class="callout-content">
+</div>
+<div class="callout-body-container callout-body">
 <p><strong>Atenção:</strong> a estatística descritiva não permite generalizar os resultados para a população. Afirmar que “o híbrido H2 produz em média 8,4 t/ha” com base apenas na descrição da amostra é um erro de escopo. Essa generalização requer inferência.</p>
 </div>
 </div>
-</div>
+<hr>
 </section>
-<section id="estatística-inferencial-definição-precisa" class="slide level2">
-<h2>Estatística Inferencial: definição precisa</h2>
+<section id="estatística-inferencial-definição-precisa" class="level2">
+<h2 class="anchored" data-anchor-id="estatística-inferencial-definição-precisa">Estatística Inferencial: definição precisa</h2>
 <ul>
 <li><p>A <strong>estatística inferencial</strong> usa os dados da amostra para fazer afirmações sobre a população, quantificando a incerteza dessas afirmações por meio de probabilidades.</p></li>
 <li><p><strong>Pergunta que responde:</strong> o que os dados permitem concluir sobre a população?</p></li>
 <li><p><strong>No contexto agronômico:</strong></p></li>
 <li><p>O intervalo de confiança para a produtividade média do híbrido H2, calculado a partir das 120 parcelas, é uma afirmação inferencial - ela se dirige ao parâmetro populacional <span class="math inline">\(\mu\)</span>, não à amostra.</p></li>
 </ul>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Important</strong></p>
+<div class="callout-title-container flex-fill">
+Important
 </div>
-<div class="callout-content">
+</div>
+<div class="callout-body-container callout-body">
 <p><strong>Atenção:</strong> inferência sem descritiva é análise cega kkkkkk. A exploração descritiva prévia é o que permite verificar pressupostos, detectar anomalias e tomar decisões metodológicas antes de aplicar qualquer teste.</p>
 </div>
 </div>
-</div>
+<hr>
 </section>
-<section id="comparação-descritiva-x-inferencial" class="slide level2">
-<h2>Comparação: descritiva x inferencial</h2>
-<table class="caption-top">
+<section id="comparação-descritiva-x-inferencial" class="level2">
+<h2 class="anchored" data-anchor-id="comparação-descritiva-x-inferencial">Comparação: descritiva x inferencial</h2>
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Dimensão</th>
@@ -332,57 +622,59 @@
 </tr>
 </tbody>
 </table>
+<hr>
 </section>
-<section class="slide level2">
-
-</section>
-<section>
-<section id="bloco-2" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<section id="bloco-2" class="level1" style="text-align: center; padding-top: 160px;">
 <h1>Bloco 2</h1>
-
+<section id="estatística-descritiva" class="level2">
+<h2 class="anchored" data-anchor-id="estatística-descritiva">Estatística Descritiva</h2>
 </section>
-<section id="estatística-descritiva" class="slide level2">
-<h2>Estatística Descritiva</h2>
-</section></section>
-<section id="medidas-de-tendência-central" class="slide level2">
-<h2>Medidas de tendência central</h2>
+</section>
+<hr>
+<section id="medidas-de-tendência-central" class="level2">
+<h2 class="anchored" data-anchor-id="medidas-de-tendência-central">Medidas de tendência central</h2>
 <ul>
 <li><p>As medidas de tendência central descrevem o valor em torno do qual os dados se concentram.</p></li>
 <li><p><strong>Média aritmética</strong> <span class="math inline">\(\bar{x}\)</span>: soma dos valores dividida pelo número de observações. Sensível a valores extremos.</p></li>
 <li><p><strong>Mediana</strong>: valor que divide a distribuição ao meio. Robusta a valores extremos.</p></li>
 <li><p><strong>Moda</strong>: valor mais frequente. Relevante em variáveis categóricas ou discretas.</p></li>
 </ul>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Important</strong></p>
+<div class="callout-title-container flex-fill">
+Important
 </div>
-<div class="callout-content">
+</div>
+<div class="callout-body-container callout-body">
 <p><strong>Atenção:</strong> quando a distribuição é assimétrica, média e mediana divergem.</p>
 <ul>
 <li><strong>Usar apenas a média nesse caso produz uma descrição distorcida</strong> do centro dos dados. Reporte sempre as duas.</li>
 </ul>
 </div>
 </div>
-</div>
+<hr>
 </section>
-<section id="código-tendência-central" class="slide level2">
-<h2>Código: tendência central</h2>
+<section id="código-tendência-central" class="level2">
+<h2 class="anchored" data-anchor-id="código-tendência-central">Código: tendência central</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>amostra <span class="sc">|&gt;</span></span>
-<span id="cb1-2"><a></a>  <span class="fu">summarise</span>(</span>
-<span id="cb1-3"><a></a>    <span class="at">n       =</span> <span class="fu">n</span>(),</span>
-<span id="cb1-4"><a></a>    <span class="at">media   =</span> <span class="fu">mean</span>(produtividade),</span>
-<span id="cb1-5"><a></a>    <span class="at">mediana =</span> <span class="fu">median</span>(produtividade),</span>
-<span id="cb1-6"><a></a>    <span class="at">dp      =</span> <span class="fu">sd</span>(produtividade)) <span class="sc">|&gt;</span></span>
-<span id="cb1-7"><a></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">n       =</span> <span class="fu">n</span>(),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">media   =</span> <span class="fu">mean</span>(produtividade),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mediana =</span> <span class="fu">median</span>(produtividade),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">dp      =</span> <span class="fu">sd</span>(produtividade)) <span class="sc">|&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="output-tendência-central" class="slide level2">
-<h2>Output: tendência central</h2>
+<section id="output-tendência-central" class="level2">
+<h2 class="anchored" data-anchor-id="output-tendência-central">Output: tendência central</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 4
@@ -394,11 +686,12 @@
 <ul>
 <li><strong>A proximidade entre média e mediana indica que a distribuição desta amostra é aproximadamente simétrica, resultado esperado, dado que os dados foram gerados a partir de uma distribuição normal.</strong></li>
 </ul>
+<hr>
 </section>
-<section id="medidas-de-dispersão" class="slide level2">
-<h2>Medidas de dispersão</h2>
+<section id="medidas-de-dispersão" class="level2">
+<h2 class="anchored" data-anchor-id="medidas-de-dispersão">Medidas de dispersão</h2>
 <p><strong>As medidas de dispersão descrevem a variabilidade dos dados em torno do centro.</strong></p>
-<table class="caption-top">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
 <col style="width: 33%">
@@ -434,26 +727,31 @@
 </tr>
 </tbody>
 </table>
-<blockquote>
+<blockquote class="blockquote">
 <p>O <strong>coeficiente de variação</strong> é especialmente útil em experimentos agronômicos para comparar a variabilidade entre variáveis ou experimentos com médias distintas.</p>
 </blockquote>
+<hr>
 </section>
-<section id="código-dispersão" class="slide level2">
-<h2>Código: dispersão</h2>
+<section id="código-dispersão" class="level2">
+<h2 class="anchored" data-anchor-id="código-dispersão">Código: dispersão</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>amostra <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a></a>  <span class="fu">summarise</span>(</span>
-<span id="cb3-3"><a></a>    <span class="at">amplitude =</span> <span class="fu">max</span>(produtividade) <span class="sc">-</span> <span class="fu">min</span>(produtividade),</span>
-<span id="cb3-4"><a></a>    <span class="at">variancia =</span> <span class="fu">var</span>(produtividade),</span>
-<span id="cb3-5"><a></a>    <span class="at">dp        =</span> <span class="fu">sd</span>(produtividade),</span>
-<span id="cb3-6"><a></a>    <span class="at">media     =</span> <span class="fu">mean</span>(produtividade)) <span class="sc">|&gt;</span></span>
-<span id="cb3-7"><a></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-8"><a></a>    <span class="at">cv =</span> (dp <span class="sc">/</span> media) <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb3-9"><a></a>    <span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">amplitude =</span> <span class="fu">max</span>(produtividade) <span class="sc">-</span> <span class="fu">min</span>(produtividade),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">variancia =</span> <span class="fu">var</span>(produtividade),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">dp        =</span> <span class="fu">sd</span>(produtividade),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">media     =</span> <span class="fu">mean</span>(produtividade)) <span class="sc">|&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv =</span> (dp <span class="sc">/</span> media) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="output-dispersão" class="slide level2">
-<h2>Output: dispersão</h2>
+<section id="output-dispersão" class="level2">
+<h2 class="anchored" data-anchor-id="output-dispersão">Output: dispersão</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 5
@@ -462,12 +760,13 @@
 1      6.97      1.54  1.24  8.36  14.8</code></pre>
 </div>
 </div>
-<blockquote>
+<blockquote class="blockquote">
 <p><strong>O CV abaixo de 15% indica variabilidade experimental baixa a moderada</strong> - valor referencial comumente adotado em experimentação agronômica para validar a precisão do experimento.</p>
 </blockquote>
+<hr>
 </section>
-<section id="medidas-de-posição-quartis-e-percentis" class="slide level2">
-<h2>Medidas de posição: quartis e percentis</h2>
+<section id="medidas-de-posição-quartis-e-percentis" class="level2">
+<h2 class="anchored" data-anchor-id="medidas-de-posição-quartis-e-percentis">Medidas de posição: quartis e percentis</h2>
 <p><strong>As medidas de posição descrevem como os dados se distribuem ao longo de sua amplitude.</strong></p>
 <p><strong>Quartis</strong> dividem a distribuição em quatro partes iguais:</p>
 <ul>
@@ -476,23 +775,28 @@
 <li><span class="math inline">\(Q_3\)</span> (75°percentil): 75% dos dados estão abaixo deste valor</li>
 </ul>
 <p><strong>Intervalo interquartil</strong> <span class="math inline">\(IQR = Q_3 - Q_1\)</span>: medida de dispersão robusta, usada para identificar valores atípicos.</p>
+<hr>
 </section>
-<section id="código-quartis-e-percentis" class="slide level2">
-<h2>Código: quartis e percentis</h2>
+<section id="código-quartis-e-percentis" class="level2">
+<h2 class="anchored" data-anchor-id="código-quartis-e-percentis">Código: quartis e percentis</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>amostra <span class="sc">|&gt;</span></span>
-<span id="cb5-2"><a></a>  <span class="fu">summarise</span>(</span>
-<span id="cb5-3"><a></a>    <span class="at">p10 =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.10</span>),</span>
-<span id="cb5-4"><a></a>    <span class="at">q1  =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.25</span>),</span>
-<span id="cb5-5"><a></a>    <span class="at">q2  =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.50</span>),</span>
-<span id="cb5-6"><a></a>    <span class="at">q3  =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.75</span>),</span>
-<span id="cb5-7"><a></a>    <span class="at">p90 =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.90</span>),</span>
-<span id="cb5-8"><a></a>    <span class="at">iqr =</span> <span class="fu">IQR</span>(produtividade)) <span class="sc">|&gt;</span></span>
-<span id="cb5-9"><a></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">p10 =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.10</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1  =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.25</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">q2  =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.50</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">q3  =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.75</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">p90 =</span> <span class="fu">quantile</span>(produtividade, <span class="fl">0.90</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">iqr =</span> <span class="fu">IQR</span>(produtividade)) <span class="sc">|&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="output-quartis-e-percentis" class="slide level2">
-<h2>Output: quartis e percentis</h2>
+<section id="output-quartis-e-percentis" class="level2">
+<h2 class="anchored" data-anchor-id="output-quartis-e-percentis">Output: quartis e percentis</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 6
@@ -501,35 +805,49 @@
 1  6.88  7.59  8.40  9.22  9.86  1.63</code></pre>
 </div>
 </div>
+<hr>
 </section>
-<section id="código-boxplot-por-tipo-de-solo" class="slide level2">
-<h2>Código: boxplot por tipo de solo</h2>
+<section id="código-boxplot-por-tipo-de-solo" class="level2">
+<h2 class="anchored" data-anchor-id="código-boxplot-por-tipo-de-solo">Código: boxplot por tipo de solo</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>amostra <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> solo, <span class="at">y =</span> produtividade, <span class="at">fill =</span> solo)) <span class="sc">+</span></span>
-<span id="cb7-3"><a></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.75</span>, <span class="at">color =</span> <span class="st">"#3A3A3A"</span>, <span class="at">outlier.shape =</span> <span class="dv">21</span>,</span>
-<span id="cb7-4"><a></a>               <span class="at">outlier.fill =</span> cores_cafe[<span class="st">"marrom"</span>], <span class="at">outlier.size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb7-5"><a></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
-<span id="cb7-6"><a></a>    <span class="st">"Argiloso"</span> <span class="ot">=</span> cores_cafe[<span class="st">"azul_escuro"</span>],</span>
-<span id="cb7-7"><a></a>    <span class="st">"Arenoso"</span>  <span class="ot">=</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
-<span id="cb7-8"><a></a>    <span class="st">"Franco"</span>   <span class="ot">=</span> cores_cafe[<span class="st">"bege"</span>])) <span class="sc">+</span></span>
-<span id="cb7-9"><a></a>  <span class="fu">labs</span>(</span>
-<span id="cb7-10"><a></a>    <span class="at">title    =</span> <span class="st">"Distribuição da produtividade por tipo de solo"</span>,</span>
-<span id="cb7-11"><a></a>    <span class="at">subtitle =</span> <span class="st">"Boxplot com quartis, mediana e valores atípicos"</span>,</span>
-<span id="cb7-12"><a></a>    <span class="at">x        =</span> <span class="st">"Tipo de solo"</span>,</span>
-<span id="cb7-13"><a></a>    <span class="at">y        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
-<span id="cb7-14"><a></a>    <span class="at">fill     =</span> <span class="cn">NULL</span>,</span>
-<span id="cb7-15"><a></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
-<span id="cb7-16"><a></a>  tema <span class="sc">+</span></span>
-<span id="cb7-17"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> solo, <span class="at">y =</span> produtividade, <span class="at">fill =</span> solo)) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.75</span>, <span class="at">color =</span> <span class="st">"#3A3A3A"</span>, <span class="at">outlier.shape =</span> <span class="dv">21</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">outlier.fill =</span> cores_cafe[<span class="st">"marrom"</span>], <span class="at">outlier.size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Argiloso"</span> <span class="ot">=</span> cores_cafe[<span class="st">"azul_escuro"</span>],</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Arenoso"</span>  <span class="ot">=</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Franco"</span>   <span class="ot">=</span> cores_cafe[<span class="st">"bege"</span>])) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Distribuição da produtividade por tipo de solo"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Boxplot com quartis, mediana e valores atípicos"</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Tipo de solo"</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill     =</span> <span class="cn">NULL</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  tema <span class="sc">+</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="gráfico-boxplot-por-tipo-de-solo" class="slide level2">
-<h2>Gráfico: boxplot por tipo de solo</h2>
-
-<img data-src="aula27_descritiva_inferencial_files/figure-revealjs/boxplot-grafico-1.png" width="960" class="r-stretch"></section>
-<section id="forma-da-distribuição-assimetria-e-curtose" class="slide level2">
-<h2>Forma da distribuição: assimetria e curtose</h2>
+<section id="gráfico-boxplot-por-tipo-de-solo" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-boxplot-por-tipo-de-solo">Gráfico: boxplot por tipo de solo</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula27_descritiva_inferencial_files/figure-html/boxplot-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="forma-da-distribuição-assimetria-e-curtose" class="level2">
+<h2 class="anchored" data-anchor-id="forma-da-distribuição-assimetria-e-curtose">Forma da distribuição: assimetria e curtose</h2>
 <p><strong>A forma da distribuição descreve como os dados se organizam em torno do centro.</strong></p>
 <p><strong>Assimetria (skewness):</strong> mede o grau de desvio da simetria.</p>
 <ul>
@@ -538,99 +856,112 @@
 <li>Assimetria positiva: cauda à direita, maioria dos dados à esquerda</li>
 </ul>
 <p><strong>Curtose (kurtosis):</strong> mede a concentração dos dados nas caudas em relação a uma distribuição normal.</p>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Important</strong></p>
+<div class="callout-title-container flex-fill">
+Important
 </div>
-<div class="callout-content">
+</div>
+<div class="callout-body-container callout-body">
 <p><strong>Atenção:</strong> distribuições com assimetria pronunciada invalidam o uso isolado da média como medida de centro. Verifique sempre a forma antes de descrever os dados com uma única estatística.</p>
 </div>
 </div>
-</div>
+<hr>
 </section>
-<section id="código-distribuição-e-assimetria" class="slide level2">
-<h2>Código: distribuição e assimetria</h2>
+<section id="código-distribuição-e-assimetria" class="level2">
+<h2 class="anchored" data-anchor-id="código-distribuição-e-assimetria">Código: distribuição e assimetria</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>amostra <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> produtividade)) <span class="sc">+</span></span>
-<span id="cb8-3"><a></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)),</span>
-<span id="cb8-4"><a></a>                 <span class="at">bins =</span> <span class="dv">20</span>, <span class="at">fill =</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
-<span id="cb8-5"><a></a>                 <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb8-6"><a></a>  <span class="fu">geom_density</span>(<span class="at">color =</span> cores_cafe[<span class="st">"marrom"</span>],</span>
-<span id="cb8-7"><a></a>               <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb8-8"><a></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="fu">mean</span>(produtividade),</span>
-<span id="cb8-9"><a></a>                 <span class="at">linetype =</span> <span class="st">"Média"</span>),</span>
-<span id="cb8-10"><a></a>             <span class="at">color =</span> cores_cafe[<span class="st">"azul_escuro"</span>],</span>
-<span id="cb8-11"><a></a>             <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb8-12"><a></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="fu">median</span>(produtividade),</span>
-<span id="cb8-13"><a></a>                 <span class="at">linetype =</span> <span class="st">"Mediana"</span>),</span>
-<span id="cb8-14"><a></a>             <span class="at">color =</span> cores_cafe[<span class="st">"marrom"</span>],</span>
-<span id="cb8-15"><a></a>             <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb8-16"><a></a>  <span class="fu">scale_linetype_manual</span>(</span>
-<span id="cb8-17"><a></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Média"</span> <span class="ot">=</span> <span class="st">"dashed"</span>, <span class="st">"Mediana"</span> <span class="ot">=</span> <span class="st">"dotted"</span>)) <span class="sc">+</span></span>
-<span id="cb8-18"><a></a>  <span class="fu">labs</span>(</span>
-<span id="cb8-19"><a></a>    <span class="at">title    =</span> <span class="st">"Distribuição da produtividade amostral"</span>,</span>
-<span id="cb8-20"><a></a>    <span class="at">subtitle =</span> <span class="st">"Histograma com curva de densidade, média e mediana sobrepostas"</span>,</span>
-<span id="cb8-21"><a></a>    <span class="at">x        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
-<span id="cb8-22"><a></a>    <span class="at">y        =</span> <span class="st">"Densidade"</span>,</span>
-<span id="cb8-23"><a></a>    <span class="at">linetype =</span> <span class="cn">NULL</span>,</span>
-<span id="cb8-24"><a></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
-<span id="cb8-25"><a></a>  tema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> produtividade)) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">bins =</span> <span class="dv">20</span>, <span class="at">fill =</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">color =</span> cores_cafe[<span class="st">"marrom"</span>],</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="fu">mean</span>(produtividade),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">linetype =</span> <span class="st">"Média"</span>),</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> cores_cafe[<span class="st">"azul_escuro"</span>],</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> <span class="fu">median</span>(produtividade),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">linetype =</span> <span class="st">"Mediana"</span>),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> cores_cafe[<span class="st">"marrom"</span>],</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linetype_manual</span>(</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Média"</span> <span class="ot">=</span> <span class="st">"dashed"</span>, <span class="st">"Mediana"</span> <span class="ot">=</span> <span class="st">"dotted"</span>)) <span class="sc">+</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Distribuição da produtividade amostral"</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Histograma com curva de densidade, média e mediana sobrepostas"</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Densidade"</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="cn">NULL</span>,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  tema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="gráfico-distribuição-e-assimetria" class="slide level2">
-<h2>Gráfico: distribuição e assimetria</h2>
-
-<img data-src="aula27_descritiva_inferencial_files/figure-revealjs/assimetria-grafico-1.png" width="960" class="r-stretch"><blockquote>
-
+<section id="gráfico-distribuição-e-assimetria" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-distribuição-e-assimetria">Gráfico: distribuição e assimetria</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula27_descritiva_inferencial_files/figure-html/assimetria-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
 <ul>
 <li><p>A sobreposição entre média e mediana confirma a simetria da distribuição.</p></li>
 <li><p>A curva de densidade segue o formato esperado de uma distribuição normal.</p></li>
 </ul>
-
 </blockquote>
+<hr>
 </section>
-<section class="slide level2">
-
-</section>
-<section>
-<section id="bloco-3" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<section id="bloco-3" class="level1" style="text-align: center; padding-top: 160px;">
 <h1>Bloco 3</h1>
-
+<section id="estatística-inferencial" class="level2">
+<h2 class="anchored" data-anchor-id="estatística-inferencial">Estatística Inferencial</h2>
 </section>
-<section id="estatística-inferencial" class="slide level2">
-<h2>Estatística Inferencial</h2>
-</section></section>
-<section id="estimação-pontual-e-por-intervalo" class="slide level2">
-<h2>Estimação: pontual e por intervalo</h2>
+</section>
+<hr>
+<section id="estimação-pontual-e-por-intervalo" class="level2">
+<h2 class="anchored" data-anchor-id="estimação-pontual-e-por-intervalo">Estimação: pontual e por intervalo</h2>
 <p>A <strong>estimação pontual</strong> produz um único valor como aproximação do parâmetro.</p>
 <p><span class="math display">\[\hat{\mu} = \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i\]</span></p>
 <p>A <strong>estimação por intervalo</strong> produz uma faixa de valores que, com um nível de confiança especificado, contém o parâmetro:</p>
 <p><span class="math display">\[IC_{95\%} = \bar{x} \pm t_{(n-1;\, 0{,}025)} \cdot \frac{s}{\sqrt{n}}\]</span></p>
 <p>A estimação pontual é precisa, mas não quantifica a incerteza. O intervalo de confiança é a forma correta de reportar uma estimativa quando a incerteza amostral precisa ser comunicada.</p>
+<hr>
 </section>
-<section id="código-estimação-por-ic" class="slide level2">
-<h2>Código: estimação por IC</h2>
+<section id="código-estimação-por-ic" class="level2">
+<h2 class="anchored" data-anchor-id="código-estimação-por-ic">Código: estimação por IC</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>resultado_ic <span class="ot">&lt;-</span> <span class="fu">t.test</span>(</span>
-<span id="cb9-2"><a></a>  amostra<span class="sc">$</span>produtividade,</span>
-<span id="cb9-3"><a></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span>
-<span id="cb9-4"><a></a></span>
-<span id="cb9-5"><a></a><span class="fu">tibble</span>(</span>
-<span id="cb9-6"><a></a>  <span class="at">estimativa  =</span> resultado_ic<span class="sc">$</span>estimate,</span>
-<span id="cb9-7"><a></a>  <span class="at">ic_inf      =</span> resultado_ic<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
-<span id="cb9-8"><a></a>  <span class="at">ic_sup      =</span> resultado_ic<span class="sc">$</span>conf.int[<span class="dv">2</span>],</span>
-<span id="cb9-9"><a></a>  <span class="at">erro_padrao =</span> resultado_ic<span class="sc">$</span>stderr,</span>
-<span id="cb9-10"><a></a>  <span class="at">n           =</span> <span class="fu">nrow</span>(amostra)) <span class="sc">|&gt;</span></span>
-<span id="cb9-11"><a></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>resultado_ic <span class="ot">&lt;-</span> <span class="fu">t.test</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  amostra<span class="sc">$</span>produtividade,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">estimativa  =</span> resultado_ic<span class="sc">$</span>estimate,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">ic_inf      =</span> resultado_ic<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">ic_sup      =</span> resultado_ic<span class="sc">$</span>conf.int[<span class="dv">2</span>],</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">erro_padrao =</span> resultado_ic<span class="sc">$</span>stderr,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">n           =</span> <span class="fu">nrow</span>(amostra)) <span class="sc">|&gt;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="output-ic-95-para-a-produtividade" class="slide level2">
-<h2>Output: IC 95% para a produtividade</h2>
+<section id="output-ic-95-para-a-produtividade" class="level2">
+<h2 class="anchored" data-anchor-id="output-ic-95-para-a-produtividade">Output: IC 95% para a produtividade</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 5
@@ -640,50 +971,59 @@
 </div>
 </div>
 <p><strong>Interpretação:</strong> com base nesta amostra de 120 parcelas, estima-se que a produtividade média populacional do híbrido H2 está entre <code>ic_inf</code> e <code>ic_sup</code> t/ha. A confiança de 95% se refere ao procedimento de estimação - não a este intervalo específico.</p>
+<hr>
 </section>
-<section id="testes-de-hipóteses-os-cinco-passos" class="slide level2 scrollable">
-<h2>Testes de hipóteses: os cinco passos</h2>
+<section id="testes-de-hipóteses-os-cinco-passos" class="level2">
+<h2 class="anchored" data-anchor-id="testes-de-hipóteses-os-cinco-passos">Testes de hipóteses: os cinco passos</h2>
 <p>O teste de hipóteses segue uma estrutura formal invariante, independentemente do teste utilizado:</p>
-<ol type="1">
-<li class="fragment"><strong>Formular as hipóteses</strong> - <span class="math inline">\(H_0\)</span> e <span class="math inline">\(H_1\)</span> precisam ser definidas antes de ver os dados</li>
-<li class="fragment"><strong>Escolher o teste adequado</strong> - depende do tipo de variável, do número de grupos e dos pressupostos</li>
-<li class="fragment"><strong>Calcular a estatística de teste e o p-valor</strong> - quantifica a incompatibilidade dos dados com <span class="math inline">\(H_0\)</span></li>
-<li class="fragment"><strong>Tomar a decisão</strong> - rejeitar ou não rejeitar <span class="math inline">\(H_0\)</span> com base no nível de significância <span class="math inline">\(\alpha\)</span></li>
-<li class="fragment"><strong>Concluir no contexto do problema</strong> - a decisão estatística precisa ser traduzida em linguagem substantiva</li>
+<div class="incremental">
+<ol class="incremental" type="1">
+<li><strong>Formular as hipóteses</strong> - <span class="math inline">\(H_0\)</span> e <span class="math inline">\(H_1\)</span> precisam ser definidas antes de ver os dados</li>
+<li><strong>Escolher o teste adequado</strong> - depende do tipo de variável, do número de grupos e dos pressupostos</li>
+<li><strong>Calcular a estatística de teste e o p-valor</strong> - quantifica a incompatibilidade dos dados com <span class="math inline">\(H_0\)</span></li>
+<li><strong>Tomar a decisão</strong> - rejeitar ou não rejeitar <span class="math inline">\(H_0\)</span> com base no nível de significância <span class="math inline">\(\alpha\)</span></li>
+<li><strong>Concluir no contexto do problema</strong> - a decisão estatística precisa ser traduzida em linguagem substantiva</li>
 </ol>
+</div>
+<hr>
 </section>
-<section id="exemplo-teste-t-entre-tipos-de-solo" class="slide level2">
-<h2>Exemplo: teste t entre tipos de solo</h2>
+<section id="exemplo-teste-t-entre-tipos-de-solo" class="level2">
+<h2 class="anchored" data-anchor-id="exemplo-teste-t-entre-tipos-de-solo">Exemplo: teste t entre tipos de solo</h2>
 <p><strong>Hipóteses:</strong></p>
 <p><span class="math inline">\(H_0: \mu_{Argiloso} = \mu_{Arenoso}\)</span> - não há diferença na produtividade média entre os dois solos</p>
 <p><span class="math inline">\(H_1: \mu_{Argiloso} \neq \mu_{Arenoso}\)</span> - há diferença na produtividade média entre os dois solos</p>
 <p><strong>Nível de significância:</strong> <span class="math inline">\(\alpha = 0{,}05\)</span></p>
 <p><strong>Teste utilizado:</strong> teste t de Welch - não assume igualdade de variâncias entre os grupos.</p>
+<hr>
 </section>
-<section id="código-teste-t-entre-solos" class="slide level2">
-<h2>Código: teste t entre solos</h2>
+<section id="código-teste-t-entre-solos" class="level2">
+<h2 class="anchored" data-anchor-id="código-teste-t-entre-solos">Código: teste t entre solos</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>amostra_solos <span class="ot">&lt;-</span> amostra <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a></a>  <span class="fu">filter</span>(solo <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Argiloso"</span>, <span class="st">"Arenoso"</span>))</span>
-<span id="cb11-3"><a></a></span>
-<span id="cb11-4"><a></a>resultado_t <span class="ot">&lt;-</span> <span class="fu">t.test</span>(</span>
-<span id="cb11-5"><a></a>  produtividade <span class="sc">~</span> solo,</span>
-<span id="cb11-6"><a></a>  <span class="at">data       =</span> amostra_solos,</span>
-<span id="cb11-7"><a></a>  <span class="at">var.equal  =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb11-8"><a></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span>
-<span id="cb11-9"><a></a></span>
-<span id="cb11-10"><a></a><span class="fu">tibble</span>(</span>
-<span id="cb11-11"><a></a>  <span class="at">estatistica_t    =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>statistic, <span class="dv">3</span>),</span>
-<span id="cb11-12"><a></a>  <span class="at">gl               =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>parameter, <span class="dv">1</span>),</span>
-<span id="cb11-13"><a></a>  <span class="at">p_valor          =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>p.value, <span class="dv">4</span>),</span>
-<span id="cb11-14"><a></a>  <span class="at">ic_inf           =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>conf.int[<span class="dv">1</span>], <span class="dv">3</span>),</span>
-<span id="cb11-15"><a></a>  <span class="at">ic_sup           =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>conf.int[<span class="dv">2</span>], <span class="dv">3</span>),</span>
-<span id="cb11-16"><a></a>  <span class="at">media_argiloso   =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>estimate[<span class="dv">1</span>], <span class="dv">3</span>),</span>
-<span id="cb11-17"><a></a>  <span class="at">media_arenoso    =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>estimate[<span class="dv">2</span>], <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>amostra_solos <span class="ot">&lt;-</span> amostra <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(solo <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Argiloso"</span>, <span class="st">"Arenoso"</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>resultado_t <span class="ot">&lt;-</span> <span class="fu">t.test</span>(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  produtividade <span class="sc">~</span> solo,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> amostra_solos,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">var.equal  =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">estatistica_t    =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>statistic, <span class="dv">3</span>),</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">gl               =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>parameter, <span class="dv">1</span>),</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_valor          =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>p.value, <span class="dv">4</span>),</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">ic_inf           =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>conf.int[<span class="dv">1</span>], <span class="dv">3</span>),</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">ic_sup           =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>conf.int[<span class="dv">2</span>], <span class="dv">3</span>),</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">media_argiloso   =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>estimate[<span class="dv">1</span>], <span class="dv">3</span>),</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">media_arenoso    =</span> <span class="fu">round</span>(resultado_t<span class="sc">$</span>estimate[<span class="dv">2</span>], <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="output-teste-t-entre-solos" class="slide level2">
-<h2>Output: teste t entre solos</h2>
+<section id="output-teste-t-entre-solos" class="level2">
+<h2 class="anchored" data-anchor-id="output-teste-t-entre-solos">Output: teste t entre solos</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 7
@@ -692,44 +1032,58 @@
 1          1.54  86.6   0.127 -0.112  0.883           8.64          8.25</code></pre>
 </div>
 </div>
+<hr>
 </section>
-<section id="código-visualização-das-médias-com-ic" class="slide level2">
-<h2>Código: visualização das médias com IC</h2>
+<section id="código-visualização-das-médias-com-ic" class="level2">
+<h2 class="anchored" data-anchor-id="código-visualização-das-médias-com-ic">Código: visualização das médias com IC</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>amostra_solos <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a></a>  <span class="fu">group_by</span>(solo) <span class="sc">|&gt;</span></span>
-<span id="cb13-3"><a></a>  <span class="fu">summarise</span>(</span>
-<span id="cb13-4"><a></a>    <span class="at">media  =</span> <span class="fu">mean</span>(produtividade),</span>
-<span id="cb13-5"><a></a>    <span class="at">ic_inf =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
-<span id="cb13-6"><a></a>    <span class="at">ic_sup =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">2</span>],</span>
-<span id="cb13-7"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb13-8"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> solo, <span class="at">y =</span> media, <span class="at">color =</span> solo)) <span class="sc">+</span></span>
-<span id="cb13-9"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb13-10"><a></a>  <span class="fu">geom_errorbar</span>(</span>
-<span id="cb13-11"><a></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> ic_inf, <span class="at">ymax =</span> ic_sup),</span>
-<span id="cb13-12"><a></a>    <span class="at">width =</span> <span class="fl">0.15</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb13-13"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
-<span id="cb13-14"><a></a>    <span class="st">"Argiloso"</span> <span class="ot">=</span> cores_cafe[<span class="st">"azul_escuro"</span>],</span>
-<span id="cb13-15"><a></a>    <span class="st">"Arenoso"</span>  <span class="ot">=</span> cores_cafe[<span class="st">"azul_claro"</span>])) <span class="sc">+</span></span>
-<span id="cb13-16"><a></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-17"><a></a>    <span class="at">title    =</span> <span class="st">"Produtividade média por tipo de solo com IC 95%"</span>,</span>
-<span id="cb13-18"><a></a>    <span class="at">subtitle =</span> <span class="st">"Barras de erro representam o intervalo de confiança de 95% para a média"</span>,</span>
-<span id="cb13-19"><a></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
-<span id="cb13-20"><a></a>    <span class="at">y        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
-<span id="cb13-21"><a></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
-<span id="cb13-22"><a></a>  tema <span class="sc">+</span></span>
-<span id="cb13-23"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>amostra_solos <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(solo) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">media  =</span> <span class="fu">mean</span>(produtividade),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">ic_inf =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ic_sup =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">2</span>],</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> solo, <span class="at">y =</span> media, <span class="at">color =</span> solo)) <span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> ic_inf, <span class="at">ymax =</span> ic_sup),</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.15</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Argiloso"</span> <span class="ot">=</span> cores_cafe[<span class="st">"azul_escuro"</span>],</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Arenoso"</span>  <span class="ot">=</span> cores_cafe[<span class="st">"azul_claro"</span>])) <span class="sc">+</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Produtividade média por tipo de solo com IC 95%"</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Barras de erro representam o intervalo de confiança de 95% para a média"</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  tema <span class="sc">+</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="gráfico-médias-com-ic-95" class="slide level2">
-<h2>Gráfico: médias com IC 95%</h2>
-
-<img data-src="aula27_descritiva_inferencial_files/figure-revealjs/medias-ic-grafico-1.png" width="960" class="r-stretch"></section>
-<section id="relação-e-predição-correlação" class="slide level2">
-<h2>Relação e predição: correlação</h2>
+<section id="gráfico-médias-com-ic-95" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-médias-com-ic-95">Gráfico: médias com IC 95%</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula27_descritiva_inferencial_files/figure-html/medias-ic-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="relação-e-predição-correlação" class="level2">
+<h2 class="anchored" data-anchor-id="relação-e-predição-correlação">Relação e predição: correlação</h2>
 <p>A <strong>correlação</strong> mede a direção e a intensidade da associação linear entre duas variáveis numéricas.</p>
 <p>O coeficiente de correlação de Pearson <span class="math inline">\(r\)</span> varia entre <span class="math inline">\(-1\)</span> e <span class="math inline">\(+1\)</span>:</p>
-<table class="caption-top">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Valor de <span class="math inline">\(|r|\)</span></th>
@@ -759,40 +1113,45 @@
 </tr>
 </tbody>
 </table>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Important</strong></p>
+<div class="callout-title-container flex-fill">
+Important
 </div>
-<div class="callout-content">
+</div>
+<div class="callout-body-container callout-body">
 <p><strong>Atenção:</strong> correlação mede associação linear, não causalidade. Duas variáveis podem ter <span class="math inline">\(r = 0\)</span> e ainda apresentar associação não linear relevante.</p>
 </div>
 </div>
-</div>
+<hr>
 </section>
-<section id="código-correlação-entre-produtividade-e-parcela" class="slide level2">
-<h2>Código: correlação entre produtividade e parcela</h2>
+<section id="código-correlação-entre-produtividade-e-parcela" class="level2">
+<h2 class="anchored" data-anchor-id="código-correlação-entre-produtividade-e-parcela">Código: correlação entre produtividade e parcela</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="co"># Criar variável contínua auxiliar: índice de fertilidade simulado</span></span>
-<span id="cb14-2"><a></a>amostra_cor <span class="ot">&lt;-</span> amostra <span class="sc">|&gt;</span></span>
-<span id="cb14-3"><a></a>  <span class="fu">mutate</span>(<span class="at">fertilidade =</span> produtividade <span class="sc">*</span> <span class="fl">0.6</span> <span class="sc">+</span></span>
-<span id="cb14-4"><a></a>           <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">1.5</span>))</span>
-<span id="cb14-5"><a></a></span>
-<span id="cb14-6"><a></a>amostra_cor <span class="sc">|&gt;</span></span>
-<span id="cb14-7"><a></a>  <span class="fu">summarise</span>(</span>
-<span id="cb14-8"><a></a>    <span class="at">r       =</span> <span class="fu">cor</span>(produtividade, fertilidade,</span>
-<span id="cb14-9"><a></a>                  <span class="at">method =</span> <span class="st">"pearson"</span>),</span>
-<span id="cb14-10"><a></a>    <span class="at">r2      =</span> r<span class="sc">^</span><span class="dv">2</span>,</span>
-<span id="cb14-11"><a></a>    <span class="at">p_valor =</span> <span class="fu">cor.test</span>(produtividade,</span>
-<span id="cb14-12"><a></a>                       fertilidade)<span class="sc">$</span>p.value) <span class="sc">|&gt;</span></span>
-<span id="cb14-13"><a></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar variável contínua auxiliar: índice de fertilidade simulado</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>amostra_cor <span class="ot">&lt;-</span> amostra <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fertilidade =</span> produtividade <span class="sc">*</span> <span class="fl">0.6</span> <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">1.5</span>))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>amostra_cor <span class="sc">|&gt;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">r       =</span> <span class="fu">cor</span>(produtividade, fertilidade,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">method =</span> <span class="st">"pearson"</span>),</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">r2      =</span> r<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">p_valor =</span> <span class="fu">cor.test</span>(produtividade,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                       fertilidade)<span class="sc">$</span>p.value) <span class="sc">|&gt;</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="output-correlação" class="slide level2">
-<h2>Output: correlação</h2>
+<section id="output-correlação" class="level2">
+<h2 class="anchored" data-anchor-id="output-correlação">Output: correlação</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 3
@@ -801,71 +1160,91 @@
 1 0.466 0.217       0</code></pre>
 </div>
 </div>
+<hr>
 </section>
-<section id="código-regressão-linear-simples" class="slide level2">
-<h2>Código: regressão linear simples</h2>
+<section id="código-regressão-linear-simples" class="level2">
+<h2 class="anchored" data-anchor-id="código-regressão-linear-simples">Código: regressão linear simples</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>amostra_cor <span class="sc">|&gt;</span></span>
-<span id="cb16-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> fertilidade, <span class="at">y =</span> produtividade)) <span class="sc">+</span></span>
-<span id="cb16-3"><a></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
-<span id="cb16-4"><a></a>             <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">size =</span> <span class="fl">2.2</span>) <span class="sc">+</span></span>
-<span id="cb16-5"><a></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb16-6"><a></a>              <span class="at">color    =</span> cores_cafe[<span class="st">"marrom"</span>],</span>
-<span id="cb16-7"><a></a>              <span class="at">fill     =</span> cores_cafe[<span class="st">"bege"</span>],</span>
-<span id="cb16-8"><a></a>              <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb16-9"><a></a>  <span class="fu">labs</span>(</span>
-<span id="cb16-10"><a></a>    <span class="at">title    =</span> <span class="st">"Relação entre fertilidade e produtividade do híbrido H2"</span>,</span>
-<span id="cb16-11"><a></a>    <span class="at">subtitle =</span> <span class="st">"Linha de regressão linear com intervalo de confiança de 95%"</span>,</span>
-<span id="cb16-12"><a></a>    <span class="at">x        =</span> <span class="st">"Índice de fertilidade"</span>,</span>
-<span id="cb16-13"><a></a>    <span class="at">y        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
-<span id="cb16-14"><a></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
-<span id="cb16-15"><a></a>  tema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>amostra_cor <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> fertilidade, <span class="at">y =</span> produtividade)) <span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">size =</span> <span class="fl">2.2</span>) <span class="sc">+</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">color    =</span> cores_cafe[<span class="st">"marrom"</span>],</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill     =</span> cores_cafe[<span class="st">"bege"</span>],</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Relação entre fertilidade e produtividade do híbrido H2"</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Linha de regressão linear com intervalo de confiança de 95%"</span>,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Índice de fertilidade"</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  tema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="gráfico-regressão-linear-simples" class="slide level2">
-<h2>Gráfico: regressão linear simples</h2>
-
-<img data-src="aula27_descritiva_inferencial_files/figure-revealjs/regressao-grafico-1.png" width="960" class="r-stretch"></section>
-<section id="section-1" class="slide level2" data-background-color="#E5D3B3">
-<h2></h2>
+<section id="gráfico-regressão-linear-simples" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-regressão-linear-simples">Gráfico: regressão linear simples</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula27_descritiva_inferencial_files/figure-html/regressao-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section>
-<section id="bloco-4" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<section id="section-1" class="level2" data-background-color="#E5D3B3">
+<h2 data-background-color="#E5D3B3" class="anchored" data-anchor-id="section-1"></h2>
+</section>
+<section id="bloco-4" class="level1" style="text-align: center; padding-top: 160px;">
 <h1>Bloco 4</h1>
-
+<section id="fluxo-integrado" class="level2">
+<h2 class="anchored" data-anchor-id="fluxo-integrado">Fluxo Integrado</h2>
 </section>
-<section id="fluxo-integrado" class="slide level2">
-<h2>Fluxo Integrado</h2>
-</section></section>
-<section id="descritiva-e-inferencial-no-mesmo-fluxo" class="slide level2 scrollable">
-<h2>Descritiva e inferencial no mesmo fluxo</h2>
+</section>
+<hr>
+<section id="descritiva-e-inferencial-no-mesmo-fluxo" class="level2">
+<h2 class="anchored" data-anchor-id="descritiva-e-inferencial-no-mesmo-fluxo">Descritiva e inferencial no mesmo fluxo</h2>
 <p><strong>A prática correta de análise de dados não separa as duas abordagens em etapas estanques, ela as integra em sequência lógica:</strong></p>
-<ol type="1">
-<li class="fragment"><strong>Importar e inspecionar</strong> - verificar estrutura, tipos e valores ausentes</li>
-<li class="fragment"><strong>Explorar descritivamente</strong> - medidas, distribuição, gráficos</li>
-<li class="fragment"><strong>Verificar pressupostos</strong> - normalidade, homocedasticidade, independência</li>
-<li class="fragment"><strong>Aplicar inferência</strong> - estimação, teste de hipóteses, modelagem</li>
-<li class="fragment"><strong>Interpretar no contexto</strong> - traduzir o resultado estatístico em resposta à pergunta original</li>
+<div class="incremental">
+<ol class="incremental" type="1">
+<li><strong>Importar e inspecionar</strong> - verificar estrutura, tipos e valores ausentes</li>
+<li><strong>Explorar descritivamente</strong> - medidas, distribuição, gráficos</li>
+<li><strong>Verificar pressupostos</strong> - normalidade, homocedasticidade, independência</li>
+<li><strong>Aplicar inferência</strong> - estimação, teste de hipóteses, modelagem</li>
+<li><strong>Interpretar no contexto</strong> - traduzir o resultado estatístico em resposta à pergunta original</li>
 </ol>
-</section>
-<section id="código-pipeline-completa" class="slide level2">
-<h2>Código: pipeline completa</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="co"># Passo 1: resumo descritivo por tipo de solo</span></span>
-<span id="cb17-2"><a></a>amostra <span class="sc">|&gt;</span></span>
-<span id="cb17-3"><a></a>  <span class="fu">group_by</span>(solo) <span class="sc">|&gt;</span></span>
-<span id="cb17-4"><a></a>  <span class="fu">summarise</span>(</span>
-<span id="cb17-5"><a></a>    <span class="at">n       =</span> <span class="fu">n</span>(),</span>
-<span id="cb17-6"><a></a>    <span class="at">media   =</span> <span class="fu">mean</span>(produtividade),</span>
-<span id="cb17-7"><a></a>    <span class="at">mediana =</span> <span class="fu">median</span>(produtividade),</span>
-<span id="cb17-8"><a></a>    <span class="at">dp      =</span> <span class="fu">sd</span>(produtividade),</span>
-<span id="cb17-9"><a></a>    <span class="at">cv      =</span> (dp <span class="sc">/</span> media) <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb17-10"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-11"><a></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<hr>
 </section>
-<section id="output-descritivo-por-solo" class="slide level2">
-<h2>Output: descritivo por solo</h2>
+<section id="código-pipeline-completa" class="level2">
+<h2 class="anchored" data-anchor-id="código-pipeline-completa">Código: pipeline completa</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Passo 1: resumo descritivo por tipo de solo</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(solo) <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n       =</span> <span class="fu">n</span>(),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">media   =</span> <span class="fu">mean</span>(produtividade),</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">mediana =</span> <span class="fu">median</span>(produtividade),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dp      =</span> <span class="fu">sd</span>(produtividade),</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv      =</span> (dp <span class="sc">/</span> media) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-descritivo-por-solo" class="level2">
+<h2 class="anchored" data-anchor-id="output-descritivo-por-solo">Output: descritivo por solo</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 6
@@ -876,23 +1255,28 @@
 3 Franco      21  8.19    8.07  1.10  13.4</code></pre>
 </div>
 </div>
+<hr>
 </section>
-<section id="código-ic-por-tipo-de-solo" class="slide level2">
-<h2>Código: IC por tipo de solo</h2>
+<section id="código-ic-por-tipo-de-solo" class="level2">
+<h2 class="anchored" data-anchor-id="código-ic-por-tipo-de-solo">Código: IC por tipo de solo</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="co"># Passo 2: IC 95% para a média de cada solo</span></span>
-<span id="cb19-2"><a></a>amostra <span class="sc">|&gt;</span></span>
-<span id="cb19-3"><a></a>  <span class="fu">group_by</span>(solo) <span class="sc">|&gt;</span></span>
-<span id="cb19-4"><a></a>  <span class="fu">summarise</span>(</span>
-<span id="cb19-5"><a></a>    <span class="at">media  =</span> <span class="fu">mean</span>(produtividade),</span>
-<span id="cb19-6"><a></a>    <span class="at">ic_inf =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
-<span id="cb19-7"><a></a>    <span class="at">ic_sup =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">2</span>],</span>
-<span id="cb19-8"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb19-9"><a></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Passo 2: IC 95% para a média de cada solo</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(solo) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">media  =</span> <span class="fu">mean</span>(produtividade),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ic_inf =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">ic_sup =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">2</span>],</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="output-ic-por-tipo-de-solo" class="slide level2">
-<h2>Output: IC por tipo de solo</h2>
+<section id="output-ic-por-tipo-de-solo" class="level2">
+<h2 class="anchored" data-anchor-id="output-ic-por-tipo-de-solo">Output: IC por tipo de solo</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 4
@@ -903,82 +1287,99 @@
 3 Franco    8.19   7.69   8.69</code></pre>
 </div>
 </div>
+<hr>
 </section>
-<section id="código-visualização-final-integrada" class="slide level2">
-<h2>Código: visualização final integrada</h2>
+<section id="código-visualização-final-integrada" class="level2">
+<h2 class="anchored" data-anchor-id="código-visualização-final-integrada">Código: visualização final integrada</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>amostra <span class="sc">|&gt;</span></span>
-<span id="cb21-2"><a></a>  <span class="fu">group_by</span>(solo) <span class="sc">|&gt;</span></span>
-<span id="cb21-3"><a></a>  <span class="fu">summarise</span>(</span>
-<span id="cb21-4"><a></a>    <span class="at">media  =</span> <span class="fu">mean</span>(produtividade),</span>
-<span id="cb21-5"><a></a>    <span class="at">ic_inf =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
-<span id="cb21-6"><a></a>    <span class="at">ic_sup =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">2</span>],</span>
-<span id="cb21-7"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb21-8"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> solo, <span class="at">y =</span> media, <span class="at">color =</span> solo)) <span class="sc">+</span></span>
-<span id="cb21-9"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
-<span id="cb21-10"><a></a>  <span class="fu">geom_errorbar</span>(</span>
-<span id="cb21-11"><a></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> ic_inf, <span class="at">ymax =</span> ic_sup),</span>
-<span id="cb21-12"><a></a>    <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="fl">1.3</span>) <span class="sc">+</span></span>
-<span id="cb21-13"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
-<span id="cb21-14"><a></a>    <span class="st">"Argiloso"</span> <span class="ot">=</span> cores_cafe[<span class="st">"azul_escuro"</span>],</span>
-<span id="cb21-15"><a></a>    <span class="st">"Arenoso"</span>  <span class="ot">=</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
-<span id="cb21-16"><a></a>    <span class="st">"Franco"</span>   <span class="ot">=</span> cores_cafe[<span class="st">"marrom"</span>])) <span class="sc">+</span></span>
-<span id="cb21-17"><a></a>  <span class="fu">labs</span>(</span>
-<span id="cb21-18"><a></a>    <span class="at">title    =</span> <span class="st">"Produtividade média por tipo de solo - IC 95%"</span>,</span>
-<span id="cb21-19"><a></a>    <span class="at">subtitle =</span> <span class="st">"Estimativa pontual e intervalo de confiança calculados a partir da amostra"</span>,</span>
-<span id="cb21-20"><a></a>    <span class="at">x        =</span> <span class="st">"Tipo de solo"</span>,</span>
-<span id="cb21-21"><a></a>    <span class="at">y        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
-<span id="cb21-22"><a></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
-<span id="cb21-23"><a></a>  tema <span class="sc">+</span></span>
-<span id="cb21-24"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(solo) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">media  =</span> <span class="fu">mean</span>(produtividade),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">ic_inf =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ic_sup =</span> <span class="fu">t.test</span>(produtividade)<span class="sc">$</span>conf.int[<span class="dv">2</span>],</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> solo, <span class="at">y =</span> media, <span class="at">color =</span> solo)) <span class="sc">+</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">ymin =</span> ic_inf, <span class="at">ymax =</span> ic_sup),</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="fl">1.3</span>) <span class="sc">+</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Argiloso"</span> <span class="ot">=</span> cores_cafe[<span class="st">"azul_escuro"</span>],</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Arenoso"</span>  <span class="ot">=</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Franco"</span>   <span class="ot">=</span> cores_cafe[<span class="st">"marrom"</span>])) <span class="sc">+</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Produtividade média por tipo de solo - IC 95%"</span>,</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Estimativa pontual e intervalo de confiança calculados a partir da amostra"</span>,</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Tipo de solo"</span>,</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>  tema <span class="sc">+</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<hr>
 </section>
-<section id="gráfico-visualização-final-integrada" class="slide level2">
-<h2>Gráfico: visualização final integrada</h2>
-
-<img data-src="aula27_descritiva_inferencial_files/figure-revealjs/pipeline-grafico-1.png" width="960" class="r-stretch"></section>
-<section id="section-2" class="slide level2" data-background-color="#E5D3B3">
-<h2></h2>
+<section id="gráfico-visualização-final-integrada" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-visualização-final-integrada">Gráfico: visualização final integrada</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula27_descritiva_inferencial_files/figure-html/pipeline-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section>
-<section id="bloco-5" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<section id="section-2" class="level2" data-background-color="#E5D3B3">
+<h2 data-background-color="#E5D3B3" class="anchored" data-anchor-id="section-2"></h2>
+</section>
+<section id="bloco-5" class="level1" style="text-align: center; padding-top: 160px;">
 <h1>Bloco 5</h1>
-
+<section id="erros-de-interpretação" class="level2">
+<h2 class="anchored" data-anchor-id="erros-de-interpretação">Erros de Interpretação</h2>
 </section>
-<section id="erros-de-interpretação" class="slide level2">
-<h2>Erros de Interpretação</h2>
-</section></section>
-<section id="erro-1---generalizar-a-partir-da-descritiva" class="slide level2">
-<h2>Erro 1 - Generalizar a partir da descritiva</h2>
+</section>
+<hr>
+<section id="erro-1---generalizar-a-partir-da-descritiva" class="level2">
+<h2 class="anchored" data-anchor-id="erro-1---generalizar-a-partir-da-descritiva">Erro 1 - Generalizar a partir da descritiva</h2>
 <ul>
 <li><p>Descrever a amostra e concluir sobre a população sem inferência é um dos erros mais frequentes em relatórios técnicos.</p></li>
 <li><p>A média amostral de 8,4 t/ha descreve as 120 parcelas observadas. Afirmar que “o híbrido H2 tem produtividade média de 8,4 t/ha” como fato populacional requer um IC ou um teste - não apenas o <code>summarise()</code>.</p></li>
 </ul>
+<hr>
 </section>
-<section id="erro-2---usar-a-média-em-distribuição-assimétrica" class="slide level2">
-<h2>Erro 2 - Usar a média em distribuição assimétrica</h2>
+<section id="erro-2---usar-a-média-em-distribuição-assimétrica" class="level2">
+<h2 class="anchored" data-anchor-id="erro-2---usar-a-média-em-distribuição-assimétrica">Erro 2 - Usar a média em distribuição assimétrica</h2>
 <ul>
 <li><p>Quando a distribuição é assimétrica, a média é puxada na direção da cauda. A mediana representa melhor o centro típico dos dados.</p></li>
 <li><p>Antes de reportar a média como medida-resumo, verifique o histograma e compare média com mediana. Se a diferença for relevante, reporte as duas ou justifique a escolha.</p></li>
 </ul>
+<hr>
 </section>
-<section id="erro-3---pular-a-descritiva-e-ir-direto-ao-teste" class="slide level2">
-<h2>Erro 3 - Pular a descritiva e ir direto ao teste</h2>
+<section id="erro-3---pular-a-descritiva-e-ir-direto-ao-teste" class="level2">
+<h2 class="anchored" data-anchor-id="erro-3---pular-a-descritiva-e-ir-direto-ao-teste">Erro 3 - Pular a descritiva e ir direto ao teste</h2>
 <ul>
 <li><p>Aplicar um teste t sem antes verificar a distribuição, detectar valores atípicos ou checar o tamanho dos grupos é uma prática metodologicamente inadequada.</p></li>
 <li><p>A descritiva não é etapa opcional - é o que permite validar os pressupostos do teste e detectar problemas nos dados antes que eles contaminem a inferência.</p></li>
 </ul>
+<hr>
 </section>
-<section id="erro-4---interpretar-p-valor-como-relevância-prática" class="slide level2">
-<h2>Erro 4 - Interpretar p-valor como relevância prática</h2>
+<section id="erro-4---interpretar-p-valor-como-relevância-prática" class="level2">
+<h2 class="anchored" data-anchor-id="erro-4---interpretar-p-valor-como-relevância-prática">Erro 4 - Interpretar p-valor como relevância prática</h2>
 <ul>
 <li><p>Um p-valor pequeno indica que os dados são incompatíveis com <span class="math inline">\(H_0\)</span> ao nível de significância adotado. Não indica que a diferença encontrada é grande, importante ou relevante para a decisão agronômica.</p></li>
 <li><p>Com amostras suficientemente grandes, diferenças de 0,01 t/ha entre solos produzem p-valores abaixo de 0,001. Sempre reporte o tamanho do efeito junto ao resultado do teste.</p></li>
 </ul>
+<hr>
 </section>
-<section id="resumo-descritiva-e-inferencial" class="slide level2">
-<h2>Resumo: descritiva e inferencial</h2>
-<table class="caption-top">
+<section id="resumo-descritiva-e-inferencial" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-descritiva-e-inferencial">Resumo: descritiva e inferencial</h2>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
 <col style="width: 25%">
@@ -1044,487 +1445,465 @@
 </tr>
 </tbody>
 </table>
+<hr>
 </section>
-<section id="obrigada" class="slide level2">
-<h2>Obrigada!</h2>
-
-<img data-src="imagens/comunidade.png" class="quarto-figure quarto-figure-center r-stretch" width="420"><p><strong>Continue praticando e explorando.</strong></p>
+<section id="obrigada" class="level2">
+<h2 class="anchored" data-anchor-id="obrigada">Obrigada!</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/comunidade.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<p><strong>Continue praticando e explorando.</strong></p>
 <p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+<hr>
 </section>
-<section id="siga-o-café-com-r" class="slide level2">
-<h2>Siga o Café com R</h2>
-<blockquote>
+<section id="siga-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="siga-o-café-com-r">Siga o Café com R</h2>
+<blockquote class="blockquote">
 <p>Que cada gole desperte uma nova ideia. Que cada script abra uma nova conversa. Que o Café com R se torne um ponto de encontro nosso.</p>
 </blockquote>
 <div class="quarto-figure quarto-figure-center">
-<figure>
-<p><a href="https://jenniferlopes.quarto.pub/portifolio/"><img data-src="imagens/qrcodenovo.png" class="quarto-figure quarto-figure-center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="295"></a></p>
+<figure class="figure">
+<p><a href="https://jenniferlopes.quarto.pub/portifolio/"><img src="imagens/qrcodenovo.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="295"></a></p>
 </figure>
 </div>
 
 
 </section>
-    </div>
-  <div class="quarto-auto-generated-content" style="display: none;">
-<p><img src="imagens/logo.png" class="slide-logo"></p>
-<div class="footer footer-default">
-<p>Jennifer Lopes | Café com R</p>
-</div>
-</div></div>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
-  <!-- reveal.js plugins -->
-  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
-  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
-  
-
-  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
-  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
-
-  <script>
-
-      // Full list of configuration options available at:
-      // https://revealjs.com/config/
-      Reveal.initialize({
-'controlsAuto': true,
-'previewLinksAuto': true,
-'pdfSeparateFragments': false,
-'autoAnimateEasing': "ease",
-'autoAnimateDuration': 1,
-'autoAnimateUnmatched': true,
-'jumpToSlide': true,
-'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
-'chalkboard': {"buttons":true},
-'smaller': true,
- 
-        // Display controls in the bottom right corner
-        controls: false,
-
-        // Help the user learn the controls by providing hints, for example by
-        // bouncing the down arrow when they first encounter a vertical slide
-        controlsTutorial: false,
-
-        // Determines where controls appear, "edges" or "bottom-right"
-        controlsLayout: 'edges',
-
-        // Visibility rule for backwards navigation arrows; "faded", "hidden"
-        // or "visible"
-        controlsBackArrows: 'faded',
-
-        // Display a presentation progress bar
-        progress: true,
-
-        // Display the page number of the current slide
-        slideNumber: 'c/t',
-
-        // 'all', 'print', or 'speaker'
-        showSlideNumber: 'all',
-
-        // Add the current slide number to the URL hash so that reloading the
-        // page/copying the URL will return you to the same slide
-        hash: true,
-
-        // Start with 1 for the hash rather than 0
-        hashOneBasedIndex: false,
-
-        // Flags if we should monitor the hash and change slides accordingly
-        respondToHashChanges: true,
-
-        // Push each slide change to the browser history
-        history: true,
-
-        // Enable keyboard shortcuts for navigation
-        keyboard: true,
-
-        // Enable the slide overview mode
-        overview: true,
-
-        // Disables the default reveal.js slide layout (scaling and centering)
-        // so that you can use custom CSS layout
-        disableLayout: false,
-
-        // Vertical centering of slides
-        center: false,
-
-        // Enables touch navigation on devices with touch input
-        touch: true,
-
-        // Loop the presentation
-        loop: false,
-
-        // Change the presentation direction to be RTL
-        rtl: false,
-
-        // see https://revealjs.com/vertical-slides/#navigation-mode
-        navigationMode: 'linear',
-
-        // Randomizes the order of slides each time the presentation loads
-        shuffle: false,
-
-        // Turns fragments on and off globally
-        fragments: true,
-
-        // Flags whether to include the current fragment in the URL,
-        // so that reloading brings you to the same fragment position
-        fragmentInURL: false,
-
-        // Flags if the presentation is running in an embedded mode,
-        // i.e. contained within a limited portion of the screen
-        embedded: false,
-
-        // Flags if we should show a help overlay when the questionmark
-        // key is pressed
-        help: true,
-
-        // Flags if it should be possible to pause the presentation (blackout)
-        pause: true,
-
-        // Flags if speaker notes should be visible to all viewers
-        showNotes: false,
-
-        // Global override for autoplaying embedded media (null/true/false)
-        autoPlayMedia: null,
-
-        // Global override for preloading lazy-loaded iframes (null/true/false)
-        preloadIframes: null,
-
-        // Number of milliseconds between automatically proceeding to the
-        // next slide, disabled when set to 0, this value can be overwritten
-        // by using a data-autoslide attribute on your slides
-        autoSlide: 0,
-
-        // Stop auto-sliding after user input
-        autoSlideStoppable: true,
-
-        // Use this method for navigation when auto-sliding
-        autoSlideMethod: null,
-
-        // Specify the average time in seconds that you think you will spend
-        // presenting each slide. This is used to show a pacing timer in the
-        // speaker view
-        defaultTiming: null,
-
-        // Enable slide navigation via mouse wheel
-        mouseWheel: false,
-
-        // The display mode that will be used to show slides
-        display: 'block',
-
-        // Hide cursor if inactive
-        hideInactiveCursor: true,
-
-        // Time before the cursor is hidden (in ms)
-        hideCursorTime: 5000,
-
-        // Opens links in an iframe preview overlay
-        previewLinks: false,
-
-        // Transition style (none/fade/slide/convex/concave/zoom)
-        transition: 'slide',
-
-        // Transition speed (default/fast/slow)
-        transitionSpeed: 'default',
-
-        // Transition style for full page slide backgrounds
-        // (none/fade/slide/convex/concave/zoom)
-        backgroundTransition: 'fade',
-
-        // Number of slides away from the current that are visible
-        viewDistance: 3,
-
-        // Number of slides away from the current that are visible on mobile
-        // devices. It is advisable to set this to a lower number than
-        // viewDistance in order to save resources.
-        mobileViewDistance: 2,
-
-        // The "normal" size of the presentation, aspect ratio will be preserved
-        // when the presentation is scaled to fit different resolutions. Can be
-        // specified using percentage units.
-        width: 1050,
-
-        height: 700,
-
-        // Factor of the display size that should remain empty around the content
-        margin: 0.1,
-
-        math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
-          config: 'TeX-AMS_HTML-full',
-          tex2jax: {
-            inlineMath: [['\\(','\\)']],
-            displayMath: [['\\[','\\]']],
-            balanceBraces: true,
-            processEscapes: false,
-            processRefs: true,
-            processEnvironments: true,
-            preview: 'TeX',
-            skipTags: ['script','noscript','style','textarea','pre','code'],
-            ignoreClass: 'tex2jax_ignore',
-            processClass: 'tex2jax_process'
-          },
-        },
-
-        // reveal.js plugins
-        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
-
-          RevealMath,
-          RevealNotes,
-          RevealSearch,
-          RevealZoom
-        ]
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
       });
-    </script>
-    
-
-    <script>
-
-      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-
-      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-
-      // slide changes (different for each slide format).
-
-      (function () {
-
-        // dispatch for htmlwidgets
-
-        function fireSlideEnter() {
-
-          const event = window.document.createEvent("Event");
-
-          event.initEvent("slideenter", true, true);
-
-          window.document.dispatchEvent(event);
-
-        }
-
-    
-
-        function fireSlideChanged(previousSlide, currentSlide) {
-
-          fireSlideEnter();
-
-    
-
-          // dispatch for shiny
-
-          if (window.jQuery) {
-
-            if (previousSlide) {
-
-              window.jQuery(previousSlide).trigger("hidden");
-
-            }
-
-            if (currentSlide) {
-
-              window.jQuery(currentSlide).trigger("shown");
-
-            }
-
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
           }
-
         }
-
-    
-
-        // hookup for slidy
-
-        if (window.w3c_slidy) {
-
-          window.w3c_slidy.add_observer(function (slide_num) {
-
-            // slide_num starts at position 1
-
-            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-
-          });
-
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
         }
-
-    
-
-      })();
-
-    </script>
-
-    
-
-    <script id="quarto-html-after-body" type="application/javascript">
-      window.document.addEventListener("DOMContentLoaded", function (event) {
-        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
-        tabsets.forEach(function(tabset) {
-          const tabby = new Tabby('#' + tabset.id);
-        });
-        const isCodeAnnotation = (el) => {
-          for (const clz of el.classList) {
-            if (clz.startsWith('code-annotation-')) {                     
-              return true;
-            }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
           }
-          return false;
         }
-        const onCopySuccess = function(e) {
-          // button target
-          const button = e.trigger;
-          // don't keep focus
-          button.blur();
-          // flash "checked"
-          button.classList.add('code-copy-button-checked');
-          var currentTitle = button.getAttribute("title");
-          button.setAttribute("title", "Copied!");
-          let tooltip;
-          if (window.bootstrap) {
-            button.setAttribute("data-bs-toggle", "tooltip");
-            button.setAttribute("data-bs-placement", "left");
-            button.setAttribute("data-bs-title", "Copied!");
-            tooltip = new bootstrap.Tooltip(button, 
-              { trigger: "manual", 
-                customClass: "code-copy-button-tooltip",
-                offset: [0, -8]});
-            tooltip.show();    
-          }
-          setTimeout(function() {
-            if (tooltip) {
-              tooltip.hide();
-              button.removeAttribute("data-bs-title");
-              button.removeAttribute("data-bs-toggle");
-              button.removeAttribute("data-bs-placement");
-            }
-            button.setAttribute("title", currentTitle);
-            button.classList.remove('code-copy-button-checked');
-          }, 1000);
-          // clear code selection
-          e.clearSelection();
-        }
-        const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
-            }
-            return codeEl.innerText;
-        }
-        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-          text: getTextToCopy
-        });
-        clipboard.on('success', onCopySuccess);
-        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-            text: getTextToCopy,
-            container: window.document.getElementById('quarto-embedded-source-code-modal')
-          });
-          clipboardModal.on('success', onCopySuccess);
-        }
-          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-          var mailtoRegex = new RegExp(/^mailto:/);
-            var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
-          var isInternal = (href) => {
-              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-          }
-          // Inspect non-navigation links and adorn them if external
-         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-          for (var i=0; i<links.length; i++) {
-            const link = links[i];
-            if (!isInternal(link.href)) {
-              // undo the damage that might have been done by quarto-nav.js in the case of
-              // links that we want to consider external
-              if (link.dataset.originalHref !== undefined) {
-                link.href = link.dataset.originalHref;
-              }
-            }
-          }
-        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-          const config = {
-            allowHTML: true,
-            maxWidth: 500,
-            delay: 100,
-            arrow: false,
-            appendTo: function(el) {
-                return el.closest('section.slide') || el.parentElement;
-            },
-            interactive: true,
-            interactiveBorder: 10,
-            theme: 'light-border',
-            placement: 'bottom-start',
-          };
-          if (contentFn) {
-            config.content = contentFn;
-          }
-          if (onTriggerFn) {
-            config.onTrigger = onTriggerFn;
-          }
-          if (onUntriggerFn) {
-            config.onUntrigger = onUntriggerFn;
-          }
-            config['offset'] = [0,0];
-            config['maxWidth'] = 700;
-          window.tippy(el, config); 
-        }
-        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-        for (var i=0; i<noterefs.length; i++) {
-          const ref = noterefs[i];
-          tippyHover(ref, function() {
-            // use id or data attribute instead here
-            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-            try { href = new URL(href).hash; } catch {}
-            const id = href.replace(/^#\/?/, "");
-            const note = window.document.getElementById(id);
-            if (note) {
-              return note.innerHTML;
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
             } else {
-              return "";
+              container.appendChild(child.cloneNode(true));
+              break;
             }
-          });
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
         }
-        const findCites = (el) => {
-          const parentEl = el.parentElement;
-          if (parentEl) {
-            const cites = parentEl.dataset.cites;
-            if (cites) {
-              return {
-                el,
-                cites: cites.split(' ')
-              };
-            } else {
-              return findCites(el.parentElement)
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
             }
           } else {
-            return undefined;
-          }
-        };
-        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-        for (var i=0; i<bibliorefs.length; i++) {
-          const ref = bibliorefs[i];
-          const citeInfo = findCites(ref);
-          if (citeInfo) {
-            tippyHover(citeInfo.el, function() {
-              var popup = window.document.createElement('div');
-              citeInfo.cites.forEach(function(cite) {
-                var citeDiv = window.document.createElement('div');
-                citeDiv.classList.add('hanging-indent');
-                citeDiv.classList.add('csl-entry');
-                var biblioDiv = window.document.getElementById('ref-' + cite);
-                if (biblioDiv) {
-                  citeDiv.innerHTML = biblioDiv.innerHTML;
-                }
-                popup.appendChild(citeDiv);
-              });
-              return popup.innerHTML;
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
             });
           }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
         }
+      }, function(instance) {
       });
-      </script>
-    
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
 
 </body></html>

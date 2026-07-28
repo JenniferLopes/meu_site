@@ -1,0 +1,445 @@
+---
+title: "Aula 61. DBI, Delineamento em Blocos Incompletos"
+subtitle: "Quando o bloco completo não cabe em campo, croqui, modelo e comparação ajustada"
+categories: [R, Estatística, Delineamento Experimental, Tidyverse]
+image: "imagens/61.png"
+description: "Entenda quando usar blocos incompletos, gere o croqui com FielDHub e conduza a análise respeitando a estrutura de blocos dentro de repetição."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(FielDHub)
+library(metan)
+library(emmeans)
+library(multcomp)
+library(multcompView)
+
+set.seed(2026)
+
+n_linhagens <- 10
+
+# t recebe um número inteiro, o FielDHub gera seus próprios identificadores
+# de tratamento, evitando qualquer suposição sobre rótulos customizados
+croqui_dbi <- incomplete_blocks(t = n_linhagens, k = 5, r = 3, seed = 2026)
+
+fieldBook <- croqui_dbi$fieldBook
+
+# Passo obrigatório antes de programar em cima do resultado, nunca assumir
+# nomes de coluna ou rótulos de tratamento sem conferir
+glimpse(fieldBook)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Entender quando um bloco completo não cabe fisicamente em campo
+- Distinguir blocos incompletos balanceados de delineamentos alfa-látice
+- Gerar o croqui de um Delineamento em Blocos Incompletos com `FielDHub`
+- Conferir a estrutura real retornada pelo pacote antes de programar em cima dela
+- Ajustar o modelo respeitando a estrutura de bloco dentro de repetição
+- Comparar médias com o ajuste apropriado a essa estrutura
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O Delineamento
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, quando blocos completos não cabem
+
+- **Contexto:** um programa de melhoramento genético avalia 10 novas linhagens quanto à produtividade. A área disponível permite blocos com apenas 5 parcelas cada, metade do número de linhagens.
+
+- Quando o número de tratamentos excede o tamanho prático de um bloco homogêneo em campo, o **Delineamento em Blocos Incompletos**, DBI, permite manter o controle local mesmo sem caber todos os tratamentos no mesmo bloco.
+
+- Cada bloco incompleto recebe apenas um subconjunto dos tratamentos, e o delineamento é construído de forma que, ao longo das repetições, todos os tratamentos sejam comparados de forma equilibrada.
+
+------------------------------------------------------------------------
+
+## Blocos incompletos balanceados x alfa-látice
+
+| Estrutura | Característica |
+|---------------------|---------------------------------------------------|
+| Blocos incompletos balanceados | Todo par de tratamentos aparece junto no mesmo bloco o mesmo número de vezes |
+| Alfa-látice | Estrutura resolúvel mais flexível, não exige balanceamento perfeito entre todos os pares, prática para números grandes de tratamentos |
+
+- Com 10 linhagens e blocos de tamanho 5, uma estrutura resolúvel do tipo alfa-látice é a solução prática mais comum, e é o tipo de delineamento que o `FielDHub` gera pela função `incomplete_blocks()`.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Gerando o Croqui
+:::
+
+------------------------------------------------------------------------
+
+## FielDHub para blocos incompletos
+
+```{r}
+#| label: fieldhub-dbi-codigo
+#| eval: false
+
+n_linhagens <- 10
+
+croqui_dbi <- incomplete_blocks(t = n_linhagens, k = 5, r = 3, seed = 2026)
+
+fieldBook <- croqui_dbi$fieldBook
+```
+
+- Os parâmetros centrais são `t`, o número de tratamentos, `k`, o tamanho de cada bloco incompleto, e `r`, o número de repetições completas do experimento.
+
+::: callout-important
+**Atenção:** passar `t` como um número inteiro, em vez de um vetor de rótulos personalizados, deixa o `FielDHub` responsável por gerar seus próprios identificadores de tratamento. Isso evita divergência entre o rótulo que você imagina e o rótulo que a função realmente devolve.
+:::
+
+------------------------------------------------------------------------
+
+## Conferindo a estrutura antes de programar em cima dela
+
+```{r}
+#| label: inspecao-fieldbook-codigo
+#| eval: false
+
+names(fieldBook)
+
+fieldBook |> distinct(ENTRY, TREATMENT) |> arrange(ENTRY)
+```
+
+------------------------------------------------------------------------
+
+## Output: a estrutura real do fieldBook
+
+```{r}
+#| label: inspecao-fieldbook-output
+#| echo: false
+
+names(fieldBook)
+
+fieldBook |> distinct(ENTRY, TREATMENT) |> arrange(ENTRY) |> head(10)
+
+plot(croqui_dbi)
+```
+
+- **A coluna `ENTRY` guarda o número inteiro do tratamento, de 1 a 10, o mesmo índice usado para gerar o delineamento. É essa coluna, numérica e estável, que usaremos para vincular a produtividade simulada a cada linhagem, em vez de comparar rótulos de texto que podem variar entre versões do pacote.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Estrutura do Modelo
+:::
+
+------------------------------------------------------------------------
+
+## Modelo estatístico do DBI, bloco dentro de repetição
+
+$$Y_{ijk} = \mu + \tau_i + \rho_j + \beta_{k(j)} + \epsilon_{ijk}$$
+
+| Termo          | Significado                                             |
+|----------------|---------------------------------------------------------|
+| $\tau_i$       | Efeito da linhagem $i$                                  |
+| $\rho_j$       | Efeito da repetição $j$                                 |
+| $\beta_{k(j)}$ | Efeito do bloco incompleto $k$, dentro da repetição $j$ |
+
+- A notação $\beta_{k(j)}$ indica que o bloco está **aninhado** dentro da repetição, cada bloco pertence a exatamente uma repetição, e blocos de repetições diferentes não são comparáveis diretamente entre si.
+
+------------------------------------------------------------------------
+
+## Particularidade, nem todo tratamento aparece em todo bloco
+
+- Diferente do DBC, em que cada bloco contém todos os tratamentos, no DBI cada bloco contém apenas um subconjunto. A diferença entre duas linhagens específicas pode ser estimada com base em blocos diferentes, dependendo de quais pares de linhagens compartilharam o mesmo bloco.
+
+- Como consequência, nem todos os contrastes entre linhagens têm exatamente a mesma precisão, uma particularidade que a análise clássica intra-bloco captura apenas parcialmente, e que modelos mistos, tema da próxima aula, tratam de forma mais completa ao recuperar também a informação entre blocos.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Simulando a Produtividade
+:::
+
+------------------------------------------------------------------------
+
+## Código: vínculo por índice numérico, não por rótulo de texto
+
+```{r}
+#| label: simulacao-codigo
+#| eval: false
+
+efeito_linhagem <- round(rnorm(n_linhagens, mean = 0, sd = 18), 1)
+medias_reais    <- 200 + efeito_linhagem
+
+# Vincula pela coluna ENTRY, numérica e estável, em vez de comparar texto
+dados_dbi <- fieldBook |>
+  mutate(
+    REP      = factor(REP),
+    IBLOCK   = factor(IBLOCK),
+    bloco_id = factor(paste(REP, IBLOCK, sep = "_")),
+    entry_idx = as.integer(ENTRY),
+    produtividade = medias_reais[entry_idx] + rnorm(n(), 0, 12))
+
+# Confirma que não sobrou nenhum valor não vinculado antes de seguir
+stopifnot(!anyNA(dados_dbi$produtividade))
+```
+
+------------------------------------------------------------------------
+
+## Output: dados simulados prontos para análise
+
+```{r}
+#| label: simulacao-output
+#| echo: false
+
+efeito_linhagem <- round(rnorm(n_linhagens, mean = 0, sd = 18), 1)
+medias_reais    <- 200 + efeito_linhagem
+
+dados_dbi <- fieldBook |>
+  mutate(
+    REP      = factor(REP),
+    IBLOCK   = factor(IBLOCK),
+    bloco_id = factor(paste(REP, IBLOCK, sep = "_")),
+    entry_idx = as.integer(ENTRY),
+    produtividade = medias_reais[entry_idx] + rnorm(n(), 0, 12))
+
+stopifnot(!anyNA(dados_dbi$produtividade))
+
+dados_dbi |>
+  dplyr::select(REP, IBLOCK, bloco_id, ENTRY, TREATMENT, produtividade) |>
+  head(10)
+```
+
+- **O vínculo pela coluna `ENTRY` garante correspondência exata entre cada linha do `fieldBook` e a média simulada da linhagem correspondente, sem depender de rótulos de texto que podem divergir entre versões do pacote. O `stopifnot()` interrompe a execução imediatamente, com uma causa clara, caso algo saia fora do esperado.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Descritiva
+:::
+
+------------------------------------------------------------------------
+
+## Código: desc_stat()
+
+```{r}
+#| label: desc-stat-dbi-codigo
+#| eval: false
+
+dados_dbi |>
+  group_by(TREATMENT) |>
+  desc_stat(produtividade)
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: desc-stat-dbi-output
+#| echo: false
+
+dados_dbi |>
+  group_by(TREATMENT) |>
+  desc_stat(produtividade)
+```
+
+- **A produtividade média varia entre as 10 linhagens, com amplitude relevante entre a maior e a menor média observada, consistente com os efeitos de linhagem simulados.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Análise
+:::
+
+------------------------------------------------------------------------
+
+## Código: ajuste do modelo à estrutura incompleta
+
+```{r}
+#| label: anova-dbi-codigo
+#| eval: false
+
+# bloco_id já combina REP e IBLOCK num único fator, evita a notação REP/IBLOCK
+# e o risco de sobrar um único nível de IBLOCK dentro de algum REP
+modelo_dbi <- aov(produtividade ~ REP + bloco_id + TREATMENT, data = dados_dbi)
+
+summary(modelo_dbi)
+```
+
+------------------------------------------------------------------------
+
+## Output
+
+```{r}
+#| label: anova-dbi-output
+#| echo: false
+
+modelo_dbi <- aov(produtividade ~ REP + bloco_id + TREATMENT, data = dados_dbi)
+
+summary(modelo_dbi)[[1]] |>
+  as_tibble(rownames = "fonte_variacao") |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Interpretação, graus de liberdade e eficiência
+
+- O fator `bloco_id`, já combinando repetição e bloco incompleto num único identificador, expressa a mesma estrutura hierárquica de `REP / IBLOCK`, sem depender da reconstrução automática dos contrastes de interação que, no fieldBook real, pode falhar quando algum `REP` fica com um único nível de `IBLOCK` remanescente após qualquer filtragem.
+
+- Essa análise é chamada **intra-bloco**, ela usa apenas a informação disponível dentro de cada bloco. Parte da informação entre blocos, potencialmente relevante, não é recuperada por essa abordagem clássica de efeitos fixos, o que motiva a análise por modelos mistos apresentada na próxima aula.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 7
+
+## Comparação de Médias Ajustada
+:::
+
+------------------------------------------------------------------------
+
+## Por que a comparação em blocos incompletos exige ajuste
+
+- Como nem todo par de linhagens compartilha o mesmo conjunto de blocos, a diferença entre duas médias precisa ser ajustada pela estrutura do delineamento, e não pode ser calculada como uma diferença simples de médias observadas, sob risco de ignorar o desenho experimental.
+
+- O `emmeans`, aplicado sobre o modelo já ajustado com a estrutura correta de bloco dentro de repetição, calcula essas médias ajustadas automaticamente.
+
+------------------------------------------------------------------------
+
+## Código: emmeans
+
+```{r}
+#| label: emmeans-dbi-codigo
+#| eval: false
+
+medias_dbi <- emmeans(modelo_dbi, ~ TREATMENT)
+
+cld(medias_dbi, Letters = letters, adjust = "tukey")
+```
+
+------------------------------------------------------------------------
+
+## Output
+
+```{r}
+#| label: emmeans-dbi-output
+#| echo: false
+
+medias_dbi <- emmeans(modelo_dbi, ~ TREATMENT)
+
+cld(medias_dbi, Letters = letters, adjust = "tukey") |>
+  as_tibble() |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+- **As médias ajustadas e as letras de agrupamento consideram corretamente a estrutura de bloco dentro de repetição, diferente de uma simples média aritmética por linhagem, que ignoraria essa estrutura.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 8
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, assumir rótulos de tratamento sem conferir
+
+- Criar um vetor de rótulos personalizados, como `"L1"` a `"L10"`, e assumir que o `FielDHub` vai devolvê-los exatamente dessa forma na coluna `TREATMENT`, sem antes inspecionar `names(fieldBook)` e os valores reais retornados, é a causa mais comum de erro silencioso, ou de erro de contraste no `aov()`, nesse tipo de análise.
+
+- Vincular dados simulados pela coluna `ENTRY`, numérica e gerada pelo próprio pacote, evita esse problema por completo.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, tratar blocos incompletos como se fossem completos
+
+- Ajustar o modelo com `aov(produtividade ~ bloco + tratamento)`, sem reconhecer que os blocos são incompletos e aninhados dentro de repetições, produz uma análise incorreta, que não reflete a real estrutura de comparação entre tratamentos.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, ignorar que nem todos os contrastes têm a mesma precisão
+
+- Comparar duas linhagens que nunca compartilharam o mesmo bloco, e reportar essa comparação com a mesma confiança de uma comparação entre linhagens que compartilharam vários blocos, ignora uma limitação real e conhecida da estrutura incompleta.
+
+------------------------------------------------------------------------
+
+## Resumo: DBI
+
+| Etapa                              | Função no R                            |
+|----------------------------------|--------------------------------------|
+| Croqui de blocos incompletos       | `FielDHub::incomplete_blocks()`        |
+| Conferência da estrutura retornada | `names()`, `distinct()`                |
+| Vínculo de dados simulados         | Pela coluna `ENTRY`, numérica          |
+| Estatística descritiva             | `metan::desc_stat()`                   |
+| Modelo com bloco aninhado          | `aov(y ~ rep + bloco_id + tratamento)` |
+| Comparação de médias ajustada      | `emmeans::cld()`                       |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

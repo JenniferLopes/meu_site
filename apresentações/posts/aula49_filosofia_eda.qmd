@@ -1,0 +1,253 @@
+---
+title: "Aula 49. Filosofia da EDA"
+subtitle: "Por que olhar antes de modelar, e o que a inspeção inicial deve responder"
+categories: [R, Estatística, EDA, Tidyverse]
+image: "imagens/49.png"
+description: "Entenda o que é a análise exploratória de dados, por que ela é obrigatória antes de qualquer modelo, e como conduzir a primeira inspeção de um conjunto de dados novo."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+produtividade_milho <- tibble(
+  municipio           = sample(c("Município A", "Município B", "Município C", "Município D"),
+                                200, replace = TRUE),
+  area_ha             = round(rnorm(200, mean = 45, sd = 15), 1),
+  produtividade_sc_ha = round(rnorm(200, mean = 110, sd = 20), 1),
+  ano_safra           = sample(2020:2024, 200, replace = TRUE))
+
+produtividade_milho$area_ha[3] <- -12
+produtividade_milho$produtividade_sc_ha[7] <- 850
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Definir o que é análise exploratória de dados, EDA
+- Entender por que a EDA é uma etapa obrigatória, e não opcional, em dados agronômicos
+- Reconhecer os quatro tipos de EDA
+- Conduzir a inspeção inicial de um conjunto de dados novo
+- Entender por que pular a EDA compromete todas as etapas seguintes da análise
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O que é EDA e por que é obrigatória
+:::
+
+------------------------------------------------------------------------
+
+## O que é EDA, definição
+
+- **Análise exploratória de dados**, EDA, é o processo sistemático de examinar um conjunto de dados antes de qualquer modelagem ou teste formal, com o objetivo de entender sua estrutura, sua qualidade e seu comportamento.
+
+- O termo foi cunhado por **John Tukey**, que a descreveu como uma atitude de investigação, não como um conjunto fixo de gráficos ou tabelas a serem produzidos mecanicamente.
+
+- A EDA responde a uma pergunta central, antes de qualquer outra: **o que estes dados realmente são, e o que eles podem me dizer?**
+
+------------------------------------------------------------------------
+
+## Por que a EDA é obrigatória em dados agronômicos
+
+- Dados de campo carregam variabilidade ambiental, erro de medição, e condições de coleta que não aparecem em nenhum manual de análise estatística.
+
+- Um talhão medido sob chuva, um sensor com falha momentânea, uma digitação trocada na planilha de campo, tudo isso está presente nos dados antes de qualquer teste ser aplicado.
+
+- Aplicar um teste estatístico direto, sem antes examinar os dados, corre o risco de tratar um erro de coleta como se fosse um resultado biológico real.
+
+------------------------------------------------------------------------
+
+## Os quatro tipos de EDA
+
+| Tipo | Examina | Exemplo |
+|------------------|------------------------|------------------------------|
+| Univariada gráfica | Uma variável, visualmente | Histograma da produtividade |
+| Univariada numérica | Uma variável, por resumo numérico | Média, mediana, desvio padrão |
+| Multivariada gráfica | Relação entre variáveis, visualmente | Gráfico de dispersão, pairs plot |
+| Multivariada numérica | Relação entre variáveis, por resumo numérico | Matriz de correlação |
+
+- Uma EDA completa combina os quatro tipos. Depender apenas de um resumo numérico, sem visualização, ou apenas de um gráfico, sem resumo numérico, deixa lacunas na compreensão dos dados.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Inspeção Inicial
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, as perguntas que a inspeção inicial responde
+
+- **Contexto:** um novo conjunto de dados de produtividade de milho, com 200 observações de quatro municípios, chega para uma primeira análise.
+
+- A inspeção inicial deve responder, antes de qualquer outra etapa: quantas observações e quantas variáveis existem, qual o tipo de cada variável, existem valores ausentes, e existem valores fora do intervalo fisicamente plausível.
+
+------------------------------------------------------------------------
+
+## Código: dim(), glimpse() e head()
+
+```{r}
+#| label: inspecao-codigo
+#| eval: false
+
+dim(produtividade_milho)
+
+produtividade_milho |> glimpse()
+
+produtividade_milho |> head()
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: inspecao-output
+#| echo: false
+
+dim(produtividade_milho)
+
+produtividade_milho |> glimpse()
+
+produtividade_milho |> head()
+```
+
+- **A inspeção já revela um problema, a variável `area_ha` contém um valor negativo, fisicamente impossível, e `produtividade_sc_ha` contém um valor muito acima do intervalo esperado para a cultura. Nenhum teste estatístico deve ser aplicado antes desses pontos serem investigados.**
+
+------------------------------------------------------------------------
+
+## Checklist do analista antes de seguir adiante
+
+::: incremental
+- O número de observações e variáveis corresponde ao esperado, sem duplicidade ou perda de linhas
+- Cada variável está armazenada no tipo correto, numérica, categórica ou data
+- Não há valores fisicamente implausíveis sem explicação registrada
+- O volume de dados ausentes foi quantificado, mesmo que a análise detalhada venha em etapa posterior
+- As categorias de variáveis qualitativas estão escritas de forma consistente, sem duplicidade por diferença de grafia
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## A EDA como Investigação
+:::
+
+------------------------------------------------------------------------
+
+## A EDA como investigação, não como formalidade
+
+- Tratar a EDA como uma etapa burocrática, um conjunto fixo de gráficos gerados sem propósito, perde o valor central do processo.
+
+- A EDA é uma investigação guiada por perguntas, o que se espera encontrar nos dados, o que seria surpreendente encontrar, e o que precisaria ser verdade para que a análise seguinte fizesse sentido.
+
+- Essa postura investigativa é o que diferencia alguém que apenas executa código de alguém que efetivamente entende os dados que está analisando.
+
+------------------------------------------------------------------------
+
+## Erro comum 1, pular a EDA e ir direto para o teste estatístico
+
+- Aplicar um teste t ou uma ANOVA diretamente, sem examinar a distribuição, os valores ausentes ou possíveis erros de digitação, arrisca produzir um resultado estatisticamente válido, mas baseado em dados incorretos.
+
+- O tempo investido na EDA é, quase sempre, menor que o tempo perdido corrigindo uma análise construída sobre dados não verificados.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, confundir inspeção inicial com EDA completa
+
+- A inspeção inicial, `dim()`, `glimpse()`, `head()`, é o primeiro passo, não a EDA completa.
+
+- Distribuições univariadas, relações bivariadas, tratamento de outliers e estrutura de dados ausentes, temas das próximas aulas, fazem parte da mesma investigação e não devem ser pulados após a inspeção inicial.
+
+------------------------------------------------------------------------
+
+## Resumo: filosofia da EDA
+
+| Etapa | Pergunta central | Ferramenta típica |
+|------------------|------------------------------|------------------------|
+| Inspeção inicial | Os dados têm a estrutura esperada? | `dim()`, `glimpse()` |
+| EDA univariada | Como cada variável se distribui? | Histograma, `summary()` |
+| EDA bivariada | Como as variáveis se relacionam? | Dispersão, correlação |
+| Postura geral | O que estes dados realmente são? | Investigação guiada por perguntas |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+>
+> ------------------------------------------------------------------------

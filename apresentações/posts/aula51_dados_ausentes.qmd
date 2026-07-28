@@ -1,0 +1,294 @@
+---
+title: "Aula 51. Dados ausentes"
+subtitle: "Estrutura antes de imputar, os três mecanismos de Little e Rubin"
+categories: [R, Estatística, EDA, Tidyverse]
+image: "imagens/51.png"
+description: "Entenda os três mecanismos de dados ausentes antes de decidir como tratá-los, e evite o erro de imputar sem entender o padrão de ausência."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(naniar)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+n <- 200
+tipo_produto     <- sample(c("Químico", "Biológico"), n, replace = TRUE,
+                            prob = c(0.60, 0.40))
+dose_ml_l        <- round(rnorm(n, mean = 2.5, sd = 0.6), 2)
+area_tratada_ha  <- round(rnorm(n, mean = 8, sd = 3), 1)
+
+prob_ausente <- ifelse(tipo_produto == "Biológico", 0.35, 0.05)
+ausente      <- rbinom(n, 1, prob_ausente) == 1
+dose_ml_l[ausente] <- NA
+
+registros_aplicacao <- tibble(talhao = 1:n, tipo_produto, dose_ml_l, area_tratada_ha)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Entender por que imputar dados ausentes sem antes examinar seu padrão é um risco metodológico
+- Definir os três mecanismos de dados ausentes de Little e Rubin
+- Diagnosticar, na prática, se a ausência está relacionada a outra variável observada
+- Escolher o tratamento adequado conforme o mecanismo identificado
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O Problema de Imputar sem Entender
+:::
+
+------------------------------------------------------------------------
+
+## O erro de imputar direto, sem checar o padrão
+
+- **Contexto:** um registro de 200 aplicações de defensivo agrícola apresenta valores ausentes na variável dose aplicada, `dose_ml_l`.
+
+- A prática comum de substituir todo valor ausente pela média da variável assume, implicitamente, que a ausência ocorre de forma completamente aleatória.
+
+- Quando essa suposição não é verdadeira, e a ausência está relacionada a outra característica dos dados, a imputação pela média distorce a análise, em vez de corrigi-la.
+
+::: callout-important
+**Atenção:** o tratamento correto de dados ausentes começa pela pergunta "por que este valor está faltando?", não pela escolha do método de imputação.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Os Três Mecanismos, Little e Rubin
+:::
+
+------------------------------------------------------------------------
+
+## MCAR, ausência completamente aleatória
+
+- **Missing Completely At Random.** A probabilidade de um valor estar ausente não depende de nenhuma variável, observada ou não observada, do conjunto de dados.
+
+- **Exemplo:** uma falha aleatória do sensor de campo, sem relação com o produto aplicado, o talhão ou a dose real.
+
+- Sob MCAR, a exclusão simples das linhas com dados ausentes não introduz viés, apenas reduz o tamanho da amostra.
+
+------------------------------------------------------------------------
+
+## MAR, ausência aleatória condicional
+
+- **Missing At Random.** A probabilidade de um valor estar ausente depende de outra variável **observada** no conjunto de dados, mas não do próprio valor ausente.
+
+- **Exemplo:** a dose de produtos biológicos é registrada com menor frequência em campo, uma prática associada ao tipo de produto, variável observada, não à dose em si.
+
+- Sob MAR, a exclusão simples pode introduzir viés, mas a imputação baseada nas variáveis observadas relacionadas à ausência é apropriada.
+
+------------------------------------------------------------------------
+
+## MNAR, ausência dependente do próprio valor
+
+- **Missing Not At Random.** A probabilidade de um valor estar ausente depende do próprio valor que está faltando, mesmo depois de considerar as demais variáveis observadas.
+
+- **Exemplo:** doses fora do intervalo recomendado por bula deixarem de ser registradas propositalmente pelo aplicador, por receio de repreensão.
+
+- Sob MNAR, nenhum método de imputação baseado apenas nos dados observados corrige o viés sem informação externa adicional.
+
+------------------------------------------------------------------------
+
+## Código: visualização do padrão de ausência
+
+```{r}
+#| label: vis-missing-codigo
+#| eval: false
+
+registros_aplicacao |> vis_miss()
+
+registros_aplicacao |>
+  summarise(proporcao_ausente = mean(is.na(dose_ml_l)))
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: vis-missing-output
+#| echo: false
+#| fig-height: 4.2
+
+registros_aplicacao |> vis_miss()
+```
+
+```{r}
+#| label: vis-missing-output-prop
+#| echo: false
+
+registros_aplicacao |>
+  summarise(proporcao_ausente = mean(is.na(dose_ml_l))) |>
+  mutate(proporcao_ausente = round(proporcao_ausente, 3))
+```
+
+- **A visualização confirma que apenas a variável de dose apresenta valores ausentes, em torno de 17% do total. Esse percentual isolado não diz, ainda, se o mecanismo é MCAR, MAR ou MNAR.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Diagnosticando o Mecanismo na Prática
+:::
+
+------------------------------------------------------------------------
+
+## Código: teste de Little e verificação direta
+
+```{r}
+#| label: mcar-codigo
+#| eval: false
+
+registros_aplicacao |>
+  select(dose_ml_l, area_tratada_ha) |>
+  mcar_test()
+
+registros_aplicacao |>
+  mutate(dose_ausente = is.na(dose_ml_l)) |>
+  group_by(tipo_produto) |>
+  summarise(proporcao_ausente = mean(dose_ausente))
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: mcar-output
+#| echo: false
+
+registros_aplicacao |>
+  select(dose_ml_l, area_tratada_ha) |>
+  mcar_test()
+
+registros_aplicacao |>
+  mutate(dose_ausente = is.na(dose_ml_l)) |>
+  group_by(tipo_produto) |>
+  summarise(proporcao_ausente = round(mean(dose_ausente), 3))
+```
+
+- **O teste de Little, aplicado apenas às variáveis numéricas, não indica evidência contra MCAR, porque a variável que realmente explica a ausência, o tipo de produto, é categórica e não entra nesse teste. A comparação direta por grupo revela o que o teste global não capturou, a proporção de ausência é muito maior entre produtos biológicos, evidência de um mecanismo MAR.**
+
+------------------------------------------------------------------------
+
+## Decisão, conforme o mecanismo identificado
+
+| Mecanismo identificado | Tratamento apropriado |
+|-------------------------|-----------------------------------------------|
+| MCAR | Exclusão simples aceitável, ou imputação simples |
+| MAR | Imputação baseada nas variáveis observadas relacionadas à ausência, como o tipo de produto |
+| MNAR | Nenhum método baseado apenas nos dados observados corrige completamente o viés, é necessária informação externa ou nova coleta |
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, imputar pela média sem checar o mecanismo
+
+- Substituir todo valor ausente pela média da variável, sem verificar se a ausência está relacionada a outra variável, distorce a distribuição e pode enviesar comparações entre grupos.
+
+- **No contexto deste estudo:** imputar a dose ausente pela média geral ignoraria que a maior parte da ausência vem de produtos biológicos, que podem ter uma dose típica diferente da média geral.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, assumir MCAR sem verificar
+
+- Tratar todo dado ausente como MCAR, por padrão, sem testar essa suposição contra as variáveis observadas disponíveis, é a origem mais comum de viés silencioso em análises com dados faltantes.
+
+- A verificação direta por grupos, como demonstrado no Bloco 3, deve ser feita mesmo quando um teste formal global não indica evidência contra MCAR.
+
+------------------------------------------------------------------------
+
+## Resumo: dados ausentes
+
+| Mecanismo | Depende de | Tratamento indicado |
+|------------------|---------------------------|---------------------------|
+| MCAR | Nada, aleatório puro | Exclusão simples aceitável |
+| MAR | Variável observada | Imputação condicionada à variável observada |
+| MNAR | O próprio valor ausente | Requer informação externa |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+>
+> ------------------------------------------------------------------------

@@ -1,0 +1,1281 @@
+---
+title: "Aula 41. Ecossistema easystats"
+subtitle: "parameters, performance, see, effectsize, correlation, report, modelbased e bayestestR"
+categories: [R, Estatística, easystats, Modelagem, Tidyverse]
+image: "imagens/capa_aula35.png"
+description: "Conheça o ecossistema easystats em profundidade: oito pacotes integrados para extrair, avaliar, visualizar e comunicar resultados de modelos estatísticos no R."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(easystats)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+populacao <- tibble(
+  parcela       = 1:10000,
+  produtividade = rnorm(10000, mean = 8.45, sd = 1.20),
+  solo          = sample(c("Argiloso", "Arenoso", "Franco"), 10000,
+                         replace = TRUE, prob = c(0.45, 0.30, 0.25)),
+  clima         = sample(c("Favorável", "Moderado", "Desfavorável"), 10000,
+                         replace = TRUE, prob = c(0.40, 0.40, 0.20)))
+
+amostra <- populacao |>
+  slice_sample(n = 120) |>
+  mutate(
+    nitrogenio  = runif(n(), min = 0, max = 200),
+    fertilidade = produtividade * 0.6 + rnorm(n(), mean = 0, sd = 1.5),
+    produtividade = produtividade + nitrogenio * 0.012 +
+      rnorm(n(), mean = 0, sd = 0.3))
+
+amostra_solos <- amostra |>
+  filter(solo %in% c("Argiloso", "Arenoso"))
+
+modelo_anova <- lm(produtividade ~ solo, data = amostra)
+
+resultado_t <- t.test(
+  produtividade ~ solo,
+  data      = amostra_solos,
+  var.equal = FALSE)
+
+m1 <- lm(produtividade ~ nitrogenio,         data = amostra)
+m2 <- lm(produtividade ~ nitrogenio + solo,   data = amostra)
+m3 <- lm(produtividade ~ nitrogenio * solo,   data = amostra)
+```
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula apresenta o ecossistema **easystats**, um conjunto de oito pacotes do R projetados para trabalhar de forma integrada na análise e comunicação de modelos estatísticos. Os dados são os mesmos das aulas anteriores: híbrido H2, dose de nitrogênio e tipo de solo.
+
+![](/apresentações/posts/imagens/meguy.jpg){fig-align="center" width="438"}
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Compreender o que é o **ecossistema easystats** e como os pacotes se integram
+- Extrair e formatar coeficientes de modelos com **`parameters`**
+- Avaliar qualidade e pressupostos com **`performance`**
+- Gerar visualizações automáticas com **`see`**
+- Calcular tamanho do efeito com **`effectsize`**
+- Analisar correlações com múltiplos métodos com **`correlation`**
+- Gerar descrições textuais automáticas com **`report`**
+- Estimar médias marginais e predições com **`modelbased`**
+- Compreender os fundamentos da inferência bayesiana com **`bayestestR`**
+:::
+
+------------------------------------------------------------------------
+
+## O que é o easystats
+
+O **easystats** é um ecossistema de pacotes do R desenvolvido para tornar a análise estatística mais acessível, consistente e comunicável. Ele não substitui o tidyverse nem os pacotes de modelagem, ele complementa, organizando o que vem depois do ajuste do modelo.
+
+![](/apresentações/posts/imagens/easystats.png){fig-align="center" width="449"}
+
+## **O problema que ele resolve:**
+
+- Após ajustar um modelo com `lm()`, `glm()` ou `lmer()`, o R retorna um objeto com estrutura complexa.
+
+- Extrair coeficientes, calcular intervalos de confiança, verificar pressupostos, comparar modelos e comunicar resultados exige conhecimento de múltiplas funções e pacotes distintos, com sintaxes inconsistentes entre si.
+
+**O easystats unifica esse processo em uma interface coerente.**
+
+------------------------------------------------------------------------
+
+## Como instalar o easystats
+
+```{r}
+#| label: instalacao
+#| eval: false
+
+# install.packages("easystats")
+#install.packages("marginaleffects")
+library(easystats)
+library(marginaleffects)
+
+```
+
+- Ao carregar `easystats`, os oito pacotes são carregados automaticamente: `parameters`, `performance`, `see`, `effectsize`, `correlation`, `report`, `modelbased` e `bayestestR`.
+
+------------------------------------------------------------------------
+
+## Os oito pacotes do ecossistema
+
+| Pacote        | Função principal                                    |
+|---------------|-----------------------------------------------------|
+| `parameters`  | Extrai e formata coeficientes de modelos            |
+| `performance` | Avalia qualidade do ajuste e verifica pressupostos  |
+| `see`         | Visualizações integradas, ativado automaticamente   |
+| `effectsize`  | Calcula tamanho do efeito padronizado               |
+| `correlation` | Análise de correlação com múltiplos métodos         |
+| `report`      | Gera texto científico automático a partir do modelo |
+| `modelbased`  | Predições, médias marginais e contrastes            |
+| `bayestestR`  | Inferência bayesiana acessível                      |
+
+------------------------------------------------------------------------
+
+## Como os pacotes se conectam
+
+**O ecossistema foi projetado para que os pacotes trabalhem em sequência natural:**
+
+```         
+Ajustar o modelo
+      |
+      v
+parameters  →  extrair coeficientes
+      |
+      v
+performance →  avaliar qualidade e pressupostos
+      |
+      v
+effectsize  →  quantificar a magnitude do efeito
+      |
+      v
+modelbased  →  estimar predições e médias ajustadas
+      |
+      v
+report      →  comunicar em linguagem científica
+```
+
+> O `see` opera em segundo plano, fornecendo as visualizações para todos os outros pacotes quando `plot()` é chamado sobre seus objetos.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 120px; color: white;"}
+# `parameters`
+
+### Extrai, formata e organiza coeficientes de qualquer modelo estatístico
+
+*Substitui `summary()` com uma interface tidy, consistente e visualmente clara*
+:::
+
+------------------------------------------------------------------------
+
+## parameters: o que é e por que usar
+
+O pacote `parameters` resolve um problema específico: o `summary()` do R retorna os coeficientes de um modelo, mas em um formato difícil de manipular, comparar ou incluir em relatórios.
+
+**O que `parameters` oferece:**
+
+- Tabela de coeficientes em formato tidy, compatível com o tidyverse
+- Intervalos de confiança calculados automaticamente
+- Coeficientes padronizados para comparação entre variáveis em escalas diferentes
+- Compatibilidade com mais de 200 classes de modelos no R
+- Integração direta com `see` para visualização
+
+::: callout-important
+**Atenção:** `parameters` não ajusta modelos, ele extrai e organiza o que já foi ajustado. O modelo precisa ser criado primeiro com `lm()`, `glm()`, `lmer()` ou equivalente.
+:::
+
+------------------------------------------------------------------------
+
+## parameters: função principal - `model_parameters()`
+
+A função `model_parameters()` é o núcleo do pacote. Ela aceita qualquer objeto de modelo e retorna uma tabela estruturada com os coeficientes e suas métricas associadas.
+
+**Argumentos principais:**
+
+| Argumento      | Função                          | Padrão      |
+|----------------|---------------------------------|-------------|
+| `model`        | O objeto de modelo ajustado     | obrigatório |
+| `ci`           | Nível de confiança para o IC    | `0.95`      |
+| `standardize`  | Padronizar os coeficientes?     | `NULL`      |
+| `effects`      | Fixos, aleatórios ou ambos      | `"fixed"`   |
+| `exponentiate` | Exponenciar coeficientes (GLM)? | `FALSE`     |
+| `p_adjust`     | Correção para múltiplos testes  | `NULL`      |
+
+------------------------------------------------------------------------
+
+## Código: coeficientes com model_parameters()
+
+```{r}
+#| label: parameters-basico-codigo
+#| eval: false
+
+model_parameters(m2, ci = 0.95)
+```
+
+------------------------------------------------------------------------
+
+## Output: coeficientes com model_parameters()
+
+```{r}
+#| label: parameters-basico-output
+#| echo: false
+
+model_parameters(m2, ci = 0.95)
+```
+
+**Como ler a tabela:**
+
+- `Coefficient`: estimativa pontual do parâmetro $\hat{\beta}$
+- `CI_low` / `CI_high`: limites inferior e superior do IC 95%
+- `t`: estatística t do teste $H_0: \beta = 0$
+- `df_error`: graus de liberdade do erro
+- `p`: p-valor do teste
+
+------------------------------------------------------------------------
+
+## parameters: coeficientes padronizados
+
+Quando as variáveis explicativas estão em escalas diferentes, dose de nitrogênio em kg/ha e uma variável categórica, por exemplo, os coeficientes brutos não são diretamente comparáveis em magnitude.
+
+A padronização transforma cada coeficiente para a escala do desvio padrão, permitindo comparar a contribuição relativa de cada variável.
+
+**Método `"refit"`:** reajusta o modelo com todas as variáveis numéricas padronizadas antes da estimação. É o método mais preciso.
+
+**Método `"basic"`:** divide o coeficiente pelo desvio padrão da variável. Mais rápido, menos preciso.
+
+------------------------------------------------------------------------
+
+## Código: coeficientes padronizados
+
+```{r}
+#| label: parameters-std-codigo
+#| eval: false
+
+model_parameters(m2, ci = 0.95, standardize = "refit")
+```
+
+------------------------------------------------------------------------
+
+## Output: coeficientes padronizados
+
+```{r}
+#| label: parameters-std-output
+#| echo: false
+
+model_parameters(m2, ci = 0.95, standardize = "refit")
+```
+
+Os coeficientes padronizados permitem comparar diretamente a magnitude do efeito de `nitrogenio` com o efeito de `solo`, algo impossível com os coeficientes na escala original.
+
+------------------------------------------------------------------------
+
+## Código: visualização dos coeficientes com see
+
+```{r}
+#| label: parameters-plot-codigo
+#| eval: false
+
+model_parameters(m2, ci = 0.95) |>
+  plot() +
+  labs(
+    title   = "Coeficientes do modelo com IC 95%",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: coeficientes com IC 95%
+
+```{r}
+#| label: parameters-plot-grafico
+#| echo: false
+#| fig-height: 4.5
+
+model_parameters(m2, ci = 0.95) |>
+  plot() +
+  labs(
+    title   = "Coeficientes do modelo com IC 95%",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+O gráfico de coeficientes é preferível à tabela quando o objetivo é comunicar visualmente quais efeitos são detectáveis e qual a precisão das estimativas. Coeficientes cujo IC atravessa zero não são distinguíveis de zero ao nível de confiança adotado.
+
+------------------------------------------------------------------------
+
+## parameters: comparar coeficientes entre modelos
+
+`compare_parameters()` permite comparar os coeficientes de dois ou mais modelos lado a lado, útil para avaliar como os efeitos mudam com a adição de variáveis.
+
+------------------------------------------------------------------------
+
+## Código: compare_parameters()
+
+```{r}
+#| label: parameters-compare-codigo
+#| eval: false
+
+compare_parameters(m1, m2, m3)
+```
+
+------------------------------------------------------------------------
+
+## Output: compare_parameters()
+
+```{r}
+#| label: parameters-compare-output
+#| echo: false
+
+compare_parameters(m1, m2, m3)
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 120px; color: white;"}
+# `performance`
+
+### Avalia a qualidade do ajuste e verifica os pressupostos do modelo
+
+*Substitui a inspeção manual de resíduos com um painel diagnóstico automático e padronizado*
+:::
+
+------------------------------------------------------------------------
+
+## performance: o que é e por que usar
+
+O pacote `performance` centraliza a avaliação de modelos estatísticos. Ele responde duas perguntas fundamentais que todo modelo precisa responder antes de ser usado para inferência:
+
+**1. O modelo ajusta bem os dados?** Métricas como $R^2$, AIC, BIC, RMSE e erro padrão residual quantificam a qualidade do ajuste.
+
+**2. Os pressupostos do modelo são atendidos?** Normalidade dos resíduos, homocedasticidade, ausência de multicolinearidade e pontos influentes precisam ser verificados antes de interpretar qualquer coeficiente.
+
+::: callout-important
+**Atenção:** um modelo com boas métricas de ajuste pode ainda ter pressupostos violados. As duas verificações são independentes e igualmente necessárias.
+:::
+
+------------------------------------------------------------------------
+
+## performance: função model_performance()
+
+`model_performance()` retorna as principais métricas de qualidade do ajuste em uma única tabela.
+
+**Métricas retornadas para modelos lineares:**
+
+| Métrica        | O que mede                                                 |
+|-------------------|-----------------------------------------------------|
+| $R^2$          | Proporção da variância de $Y$ explicada pelo modelo        |
+| $R^2$ ajustado | $R^2$ penalizado pelo número de parâmetros                 |
+| AIC            | Critério de informação de Akaike, penaliza complexidade    |
+| BIC            | Critério bayesiano de informação, penalidade maior que AIC |
+| RMSE           | Raiz do erro quadrático médio, na escala de $Y$            |
+| Sigma          | Estimativa do desvio padrão dos resíduos                   |
+
+------------------------------------------------------------------------
+
+## Código: model_performance()
+
+```{r}
+#| label: performance-basico-codigo
+#| eval: false
+
+model_performance(m2)
+```
+
+------------------------------------------------------------------------
+
+## Output: model_performance()
+
+```{r}
+#| label: performance-basico-output
+#| echo: false
+
+model_performance(m2)
+```
+
+------------------------------------------------------------------------
+
+## performance: comparar modelos com compare_performance()
+
+`compare_performance()` aplica `model_performance()` a múltiplos modelos e retorna uma tabela comparativa. O argumento `rank = TRUE` adiciona uma coluna de ranqueamento baseada em múltiplos critérios combinados.
+
+------------------------------------------------------------------------
+
+## Código: compare_performance()
+
+```{r}
+#| label: performance-compare-codigo
+#| eval: false
+
+compare_performance(m1, m2, m3, rank = TRUE)
+```
+
+------------------------------------------------------------------------
+
+## Output: compare_performance()
+
+```{r}
+#| label: performance-compare-output
+#| echo: false
+
+compare_performance(m1, m2, m3, rank = TRUE)
+```
+
+O modelo com menor AIC e BIC e maior $R^2$ ajustado é o preferido pelo critério de parcimônia. O ranqueamento combina esses critérios automaticamente.
+
+------------------------------------------------------------------------
+
+## performance: diagnóstico com check_model()
+
+`check_model()` é a função mais poderosa do pacote. Ela gera um painel com seis gráficos diagnósticos que verificam simultaneamente os pressupostos do modelo linear:
+
+| Gráfico                | Pressuposto verificado          |
+|------------------------|---------------------------------|
+| Resíduos vs. ajustados | Linearidade e homocedasticidade |
+| QQ-plot dos resíduos   | Normalidade dos erros           |
+| Scale-location         | Homocedasticidade               |
+| Cook's distance        | Pontos influentes               |
+| VIF                    | Multicolinearidade              |
+| Resíduos vs. leverage  | Pontos alavancados              |
+
+------------------------------------------------------------------------
+
+## Código: check_model()
+
+```{r}
+#| label: check-model-codigo
+#| eval: false
+
+check_model(m2)
+```
+
+------------------------------------------------------------------------
+
+## Output: check_model()
+
+```{r}
+#| label: check-model-output
+#| echo: false
+#| fig-height: 6.0
+
+check_model(m2)
+```
+
+------------------------------------------------------------------------
+
+## Como interpretar o painel de diagnóstico
+
+**Resíduos vs. ajustados:** a linha de referência deve ser aproximadamente horizontal e os pontos distribuídos sem padrão sistemático. Curvatura indica não linearidade.
+
+**QQ-plot:** os pontos devem seguir a linha diagonal. Desvios nas caudas indicam afastamento da normalidade.
+
+**Scale-location:** a linha deve ser horizontal. Tendência crescente indica heterocedasticidade, variância dos erros aumenta com os valores ajustados.
+
+**Cook's distance:** valores acima de 1 indicam pontos com influência excessiva sobre os coeficientes estimados.
+
+**VIF:** valores acima de 5 indicam multicolinearidade moderada; acima de 10, severa.
+
+------------------------------------------------------------------------
+
+## performance: verificações individuais
+
+```{r}
+#| label: performance-checks-codigo
+#| eval: false
+
+check_normality(m2)
+check_heteroscedasticity(m2)
+check_collinearity(m2)
+check_outliers(m2)
+```
+
+------------------------------------------------------------------------
+
+## Output: verificações individuais
+
+```{r}
+#| label: performance-checks-output
+#| echo: false
+
+check_normality(m2)
+check_heteroscedasticity(m2)
+check_collinearity(m2)
+check_outliers(m2)
+```
+
+Cada função retorna uma mensagem estruturada indicando se o pressuposto foi atendido, com referência ao teste utilizado e ao nível de significância adotado.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 120px; color: white;"}
+# `see`
+
+### Sistema de visualização integrado ao ecossistema easystats
+
+*Não é chamado diretamente, é ativado automaticamente quando plot() é aplicado sobre objetos do easystats*
+:::
+
+------------------------------------------------------------------------
+
+## see: o que é e como funciona
+
+O pacote `see` é o sistema de visualização do ecossistema easystats. Ele não é chamado diretamente pelo analista, ele opera em segundo plano, redefinindo o método `plot()` para os objetos gerados pelos outros pacotes.
+
+**O que isso significa na prática:**
+
+Quando você executa `plot(model_parameters(m2))`, o R chama automaticamente o método `plot` do `see`, que sabe como transformar aquele objeto específico em um gráfico adequado.
+
+O mesmo acontece com `plot(model_performance())`, `plot(check_model())`, `plot(correlation())` e todos os outros objetos do ecossistema.
+
+::: callout-important
+**Atenção:** `see` precisa estar carregado para que os métodos `plot()` funcionem. Ao carregar `library(easystats)`, o `see` é carregado automaticamente. Se você carregar apenas `library(parameters)`, por exemplo, o `plot()` pode não funcionar como esperado.
+:::
+
+------------------------------------------------------------------------
+
+## see: paletas de cores
+
+O `see` também oferece paletas de cores projetadas para visualizações estatísticas, acessíveis via `scale_color_see()` e `scale_fill_see()` no `ggplot2`.
+
+------------------------------------------------------------------------
+
+## Código: paletas do see no ggplot2
+
+```{r}
+#| label: see-paleta-codigo
+#| eval: false
+
+amostra |>
+  ggplot(aes(x = nitrogenio, y = produtividade,
+             color = solo)) +
+  geom_point(alpha = 0.7, size = 2) +
+  scale_color_see() +
+  labs(
+    title   = "Produtividade ~ nitrogênio por tipo de solo",
+    x       = "Dose de nitrogênio (kg/ha)",
+    y       = "Produtividade (t/ha)",
+    color   = "Solo",
+    caption = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: paleta do see
+
+```{r}
+#| label: see-paleta-grafico
+#| echo: false
+#| fig-height: 4.5
+
+amostra |>
+  ggplot(aes(x = nitrogenio, y = produtividade,
+             color = solo)) +
+  geom_point(alpha = 0.7, size = 2) +
+  scale_color_see() +
+  labs(
+    title   = "Produtividade ~ nitrogênio por tipo de solo",
+    x       = "Dose de nitrogênio (kg/ha)",
+    y       = "Produtividade (t/ha)",
+    color   = "Solo",
+    caption = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 120px; color: white;"}
+# `effectsize`
+
+### Calcula e interpreta o tamanho do efeito padronizado
+
+*Complementa o p-valor com a magnitude prática do efeito observado*
+:::
+
+------------------------------------------------------------------------
+
+## effectsize: o que é e por que importa
+
+O **tamanho do efeito** quantifica a magnitude de uma diferença ou associação, independentemente do tamanho da amostra. Ele responde à pergunta que o p-valor não responde: **o efeito detectado é grande o suficiente para ter relevância prática?**
+
+Com amostras grandes, diferenças triviais produzem p-valores muito pequenos. Com amostras pequenas, efeitos relevantes podem não atingir significância estatística. O tamanho do efeito é a medida que desacopla essas duas informações.
+
+**O pacote `effectsize` calcula os principais índices padronizados usados em ciências aplicadas:**
+
+| Índice              | Contexto de uso                           |
+|---------------------|-------------------------------------------|
+| Cohen's *d*         | Diferença entre duas médias               |
+| $\eta^2$ (eta²)     | Proporção da variância explicada, ANOVA   |
+| $\omega^2$ (omega²) | Versão menos viesada do $\eta^2$          |
+| $r$ de correlação   | Associação entre duas variáveis contínuas |
+| Odds Ratio          | Modelos logísticos, variável binária      |
+
+------------------------------------------------------------------------
+
+## effectsize: Cohen's d, interpretação
+
+O **Cohen's d** mede a diferença entre duas médias em unidades de desvio padrão:
+
+$$d = \frac{\bar{x}_1 - \bar{x}_2}{s_{pooled}}$$
+
+**Convenções de interpretação (Cohen, 1988):**
+
+| Valor de $|d|$ | Magnitude |
+|----------------|-----------|
+| $0{,}20$       | Pequeno   |
+| $0{,}50$       | Médio     |
+| $0{,}80$       | Grande    |
+
+::: callout-important
+**Atenção:** as convenções de Cohen são referências gerais, não regras absolutas. Um efeito "pequeno" pode ser relevante em determinados contextos agronômicos, por exemplo, um ganho de 0,2 t/ha por ciclo em larga escala comercial. A relevância prática é uma decisão substantiva, não estatística.
+:::
+
+------------------------------------------------------------------------
+
+## Código: Cohen's d entre tipos de solo
+
+```{r}
+#| label: cohens-d-codigo
+#| eval: false
+
+amostra_solos <- amostra |>
+  filter(solo %in% c("Argiloso", "Arenoso"))
+
+cohens_d(produtividade ~ solo, data = amostra_solos)
+```
+
+------------------------------------------------------------------------
+
+## Output: Cohen's d
+
+```{r}
+#| label: cohens-d-output
+#| echo: false
+
+cohens_d(produtividade ~ solo, data = amostra_solos)
+```
+
+------------------------------------------------------------------------
+
+## effectsize: eta² e omega², ANOVA
+
+Para modelos com mais de dois grupos ou com múltiplas variáveis explicativas, o **eta²** e o **omega²** quantificam a proporção da variância total de $Y$ explicada por cada fator.
+
+**Diferença entre os dois:**
+
+$\eta^2$: estimativa direta da proporção de variância explicada na amostra. Levemente viesado para cima.
+
+$\omega^2$: versão corrigida, com estimativa menos viesada da magnitude do efeito na população. Preferível para reportar.
+
+**Convenções:**
+
+| Valor    | Magnitude |
+|----------|-----------|
+| $0{,}01$ | Pequeno   |
+| $0{,}06$ | Médio     |
+| $0{,}14$ | Grande    |
+
+------------------------------------------------------------------------
+
+## Código: eta² e omega²
+
+```{r}
+#| label: eta-omega-codigo
+#| eval: false
+
+modelo_anova <- lm(produtividade ~ solo, data = amostra)
+
+eta_squared(modelo_anova, partial = FALSE)
+omega_squared(modelo_anova, partial = FALSE)
+```
+
+------------------------------------------------------------------------
+
+## Output: eta² e omega²
+
+```{r}
+#| label: eta-omega-output
+#| echo: false
+
+eta_squared(modelo_anova, partial = FALSE)
+omega_squared(modelo_anova, partial = FALSE)
+```
+
+------------------------------------------------------------------------
+
+## Código: visualização do tamanho do efeito
+
+```{r}
+#| label: effectsize-plot-codigo
+#| eval: false
+
+eta_squared(modelo_anova, partial = FALSE) |>
+  plot() +
+  labs(
+    title   = "Tamanho do efeito: eta² por fator",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: tamanho do efeito
+
+```{r}
+#| label: effectsize-plot-grafico
+#| echo: false
+#| fig-height: 4.0
+
+eta_squared(modelo_anova, partial = FALSE) |>
+  plot() +
+  labs(
+    title   = "Tamanho do efeito: eta² por fator",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 120px; color: white;"}
+# `correlation`
+
+### Análise de correlação com múltiplos métodos, estruturas e visualizações
+
+*Vai além do cor(), suporta correlação parcial, policórica, de Kendall, Spearman e mais*
+:::
+
+------------------------------------------------------------------------
+
+## correlation: o que é e por que usar
+
+A função `cor()` do R calcula correlações, mas retorna apenas uma matriz numérica sem métricas de incerteza, sem p-valores e sem suporte a métodos alternativos de forma integrada.
+
+O pacote `correlation` resolve isso com uma interface unificada que:
+
+- Retorna coeficiente, IC, estatística de teste e p-valor para cada par de variáveis
+- Suporta múltiplos métodos: Pearson, Spearman, Kendall, policórico, tetracórico, parcial e semi-parcial
+- Integra com `see` para visualização automática da matriz de correlação
+- É compatível com `group_by()` do tidyverse para correlações por grupo
+
+------------------------------------------------------------------------
+
+## correlation: métodos disponíveis
+
+| Método | Quando usar |
+|------------------------------------|------------------------------------|
+| `"pearson"` | Variáveis contínuas com relação linear |
+| `"spearman"` | Variáveis ordinais ou relação monotônica não linear |
+| `"kendall"` | Amostras pequenas ou com muitos empates |
+| `"partial"` | Correlação controlada por terceiras variáveis |
+| `"semi"` | Correlação semi-parcial, controla apenas uma das variáveis |
+| `"polychoric"` | Variáveis ordinais, estima correlação latente |
+| `"tetrachoric"` | Variáveis binárias, estima correlação latente |
+
+------------------------------------------------------------------------
+
+## Código: correlação entre variáveis numéricas
+
+```{r}
+#| label: correlation-basico-codigo
+#| eval: false
+
+amostra |>
+  select(produtividade, nitrogenio, fertilidade) |>
+  correlation(method = "pearson")
+```
+
+------------------------------------------------------------------------
+
+## Output: matriz de correlação
+
+```{r}
+#| label: correlation-basico-output
+#| echo: false
+
+amostra |>
+  select(produtividade, nitrogenio, fertilidade) |>
+  correlation(method = "pearson")
+```
+
+**Como ler:** cada linha representa um par de variáveis. `r` é o coeficiente de Pearson, `CI_low` e `CI_high` são os limites do IC 95%, `t` é a estatística do teste $H_0: \rho = 0$ e `p` é o p-valor correspondente.
+
+------------------------------------------------------------------------
+
+## Código: correlação por grupo
+
+```{r}
+#| label: correlation-grupo-codigo
+#| eval: false
+
+amostra |>
+  select(produtividade, nitrogenio, solo) |>
+  group_by(solo) |>
+  correlation(method = "pearson")
+```
+
+------------------------------------------------------------------------
+
+## Output: correlação por grupo
+
+```{r}
+#| label: correlation-grupo-output
+#| echo: false
+
+amostra |>
+  select(produtividade, nitrogenio, solo) |>
+  group_by(solo) |>
+  correlation(method = "pearson")
+```
+
+------------------------------------------------------------------------
+
+## Código: visualização da matriz de correlação
+
+```{r}
+#| label: correlation-plot-codigo
+#| eval: false
+
+amostra |>
+  select(produtividade, nitrogenio, fertilidade) |>
+  correlation() |>
+  summary() |>
+  plot() +
+  labs(
+    title   = "Matriz de correlação, híbrido H2",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: matriz de correlação
+
+```{r}
+#| label: correlation-plot-grafico
+#| echo: false
+#| fig-height: 4.5
+
+amostra |>
+  select(produtividade, nitrogenio, fertilidade) |>
+  correlation() |>
+  summary() |>
+  plot() +
+  labs(
+    title   = "Matriz de correlação, híbrido H2",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 120px; color: white;"}
+# `report`
+
+### Gera descrições textuais automáticas de modelos e testes em linguagem científica
+
+*Traduz objetos estatísticos em texto pronto para relatório, com as ressalvas que isso exige*
+:::
+
+------------------------------------------------------------------------
+
+## report: o que é e como funciona
+
+O pacote `report` gera automaticamente um parágrafo descrevendo os resultados de um modelo ou teste estatístico, seguindo as convenções de redação científica da área de psicologia e ciências comportamentais, que são amplamente adotadas em outras áreas.
+
+**Ele reconhece e descreve:**
+
+- Modelos lineares e generalizados (`lm`, `glm`)
+- Testes t, qui-quadrado, correlações e ANOVAs
+- Modelos mistos (`lmer`, `glmer`)
+- Objetos do tidymodels e do easystats
+
+::: callout-important
+**Atenção:** o texto gerado pelo `report` é um ponto de partida, não um produto final. Ele segue convenções gerais que podem não capturar nuances específicas do contexto agronômico. O pesquisador precisa revisar, adaptar e complementar o texto gerado com interpretação substantiva.
+:::
+
+------------------------------------------------------------------------
+
+## Código: report() sobre um modelo linear
+
+```{r}
+#| label: report-lm-codigo
+#| eval: false
+
+report(m2)
+```
+
+------------------------------------------------------------------------
+
+## Output: report() sobre modelo linear
+
+```{r}
+#| label: report-lm-output
+#| echo: false
+
+report(m2)
+```
+
+------------------------------------------------------------------------
+
+## Código: report() sobre um teste t
+
+```{r}
+#| label: report-ttest-codigo
+#| eval: false
+
+resultado_t <- t.test(
+  produtividade ~ solo,
+  data      = amostra_solos,
+  var.equal = FALSE)
+
+report(resultado_t)
+```
+
+------------------------------------------------------------------------
+
+## Output: report() sobre teste t
+
+```{r}
+#| label: report-ttest-output
+#| echo: false
+
+report(resultado_t)
+```
+
+------------------------------------------------------------------------
+
+## report: resumo em tabela
+
+`report_table()` retorna os mesmos resultados do `report()` em formato tabular, mais fácil de manipular e incluir em documentos Quarto.
+
+------------------------------------------------------------------------
+
+## Código: report_table()
+
+```{r}
+#| label: report-table-codigo
+#| eval: false
+
+report_table(m2)
+```
+
+------------------------------------------------------------------------
+
+## Output: report_table()
+
+```{r}
+#| label: report-table-output
+#| echo: false
+
+report_table(m2)
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 120px; color: white;"}
+# `modelbased`
+
+### Predições, médias marginais estimadas e contrastes a partir de modelos ajustados
+
+*Vai além dos coeficientes, estima o que o modelo prediz para combinações específicas de variáveis*
+:::
+
+------------------------------------------------------------------------
+
+## modelbased: o que é e por que usar
+
+Coeficientes descrevem relações entre variáveis no modelo. Mas muitas vezes o que se quer saber não é o coeficiente em si, e sim: **qual é a produtividade esperada para solo Argiloso com 100 kg/ha de nitrogênio?** Ou: **qual é a diferença entre os solos, mantendo o nitrogênio constante?**
+
+O pacote `modelbased` responde a essas perguntas por meio de:
+
+- **`estimate_means()`**: médias marginais estimadas, valor esperado de $Y$ para cada nível de um fator, com as demais variáveis mantidas na média
+- **`estimate_contrasts()`**: diferenças entre grupos com IC e p-valor ajustado
+- **`estimate_relation()`**: curva de predição ao longo de uma variável contínua
+- **`estimate_expectation()`**: predição para combinações específicas de valores
+
+------------------------------------------------------------------------
+
+## modelbased: médias marginais versus médias amostrais
+
+**Média amostral:** média calculada diretamente dos dados observados. Não controla por outras variáveis.
+
+**Média marginal estimada:** valor esperado de $Y$ para cada nível do fator, com as demais variáveis numéricas fixadas na média da amostra. É o que o modelo prediz, não o que os dados mostram diretamente.
+
+A distinção é importante quando os grupos têm composições diferentes nas demais variáveis, por exemplo, se o solo Argiloso concentra parcelas com mais nitrogênio, a média amostral confunde o efeito do solo com o efeito do nitrogênio.
+
+------------------------------------------------------------------------
+
+## Código: médias marginais por solo
+
+```{r}
+#| label: modelbased-means-codigo
+#| eval: false
+
+estimate_means(m2, by = "solo")
+```
+
+------------------------------------------------------------------------
+
+## Output: médias marginais por solo
+
+```{r}
+#| label: modelbased-means-output
+#| echo: false
+
+estimate_means(m2, by = "solo")
+```
+
+------------------------------------------------------------------------
+
+## Código: contrastes entre grupos
+
+```{r}
+#| label: modelbased-contrasts-codigo
+#| eval: false
+
+estimate_contrasts(m2, contrast = "solo")
+```
+
+------------------------------------------------------------------------
+
+## Output: contrastes entre grupos
+
+```{r}
+#| label: modelbased-contrasts-output
+#| echo: false
+
+estimate_contrasts(m2, contrast = "solo")
+```
+
+------------------------------------------------------------------------
+
+## Código: curva de predição, estimate_relation()
+
+```{r}
+#| label: modelbased-relation-codigo
+#| eval: false
+
+estimate_relation(m2, by = "nitrogenio") |>
+  plot() +
+  labs(
+    title   = "Curva de predição: produtividade ~ nitrogênio",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: curva de predição
+
+```{r}
+#| label: modelbased-relation-grafico
+#| echo: false
+#| fig-height: 4.5
+
+estimate_relation(m2, by = "nitrogenio") |>
+  plot() +
+  labs(
+    title   = "Curva de predição: produtividade ~ nitrogênio",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+------------------------------------------------------------------------
+
+## Código: predição por solo e nitrogênio
+
+```{r}
+#| label: modelbased-expectation-codigo
+#| eval: false
+
+estimate_relation(m2, by = c("nitrogenio", "solo")) |>
+  plot() +
+  labs(
+    title   = "Predição por solo e dose de nitrogênio",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: predição por solo e nitrogênio
+
+```{r}
+#| label: modelbased-expectation-grafico
+#| echo: false
+#| fig-height: 4.8
+
+estimate_relation(m2, by = c("nitrogenio", "solo")) |>
+  plot() +
+  labs(
+    title   = "Predição por solo e dose de nitrogênio",
+    caption = "Jennifer Lopes | Café com R")
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 120px; color: white;"}
+# `bayestestR`
+
+### Inferência bayesiana acessível, sem MCMC manual
+
+*Ferramentas para descrever e interpretar distribuições posteriores de modelos bayesianos*
+:::
+
+------------------------------------------------------------------------
+
+## bayestestR: o que é
+
+O pacote `bayestestR` fornece ferramentas para trabalhar com a saída de modelos bayesianos de forma padronizada, as mesmas funções que `parameters` e `performance` oferecem para modelos frequentistas.
+
+Ele não ajusta modelos bayesianos, isso é feito por pacotes como `rstanarm` ou `brms`. O `bayestestR` processa e interpreta a distribuição posterior gerada por esses pacotes.
+
+------------------------------------------------------------------------
+
+## bayestestR: conceitos fundamentais
+
+A inferência bayesiana parte de uma lógica diferente da frequentista:
+
+| Conceito | Frequentista | Bayesiano |
+|------------------------|------------------------|------------------------|
+| Parâmetro | Fixo, desconhecido | Variável aleatória com distribuição |
+| Prior | Não existe | Distribuição a priori, crença antes dos dados |
+| Posterior | Não existe | Distribuição atualizada após os dados |
+| IC | Intervalo de confiança, procedimento | Intervalo de credibilidade, probabilidade direta |
+| p-valor | $P(\text{dados} \mid H_0)$ | Não existe, substituído por outras métricas |
+
+------------------------------------------------------------------------
+
+## bayestestR: principais funções
+
+| Função | O que faz |
+|------------------------------------|------------------------------------|
+| `describe_posterior()` | Resumo completo da distribuição posterior |
+| `bayesfactor_parameters()` | Fator de Bayes para cada parâmetro |
+| `hdi()` | Intervalo de maior densidade posterior (HDI) |
+| `rope()` | Região de equivalência prática, alternativa ao teste nulo |
+| `p_direction()` | Probabilidade de que o efeito seja positivo ou negativo |
+| `equivalence_test()` | Teste de equivalência bayesiano |
+
+------------------------------------------------------------------------
+
+## bayestestR: como usar na prática
+
+```{r}
+#| label: bayestestr-exemplo
+#| eval: false
+
+library(rstanarm)
+
+modelo_bayes <- stan_glm(
+  produtividade ~ nitrogenio + solo,
+  data   = amostra,
+  family = gaussian(),
+  prior  = normal(0, 2.5),
+  seed   = 2026)
+
+describe_posterior(modelo_bayes, ci = 0.95)
+bayesfactor_parameters(modelo_bayes)
+hdi(modelo_bayes, ci = 0.95)
+```
+
+::: callout-important
+**Atenção:** o código acima requer `rstanarm` instalado e pode levar alguns minutos para rodar, pois ajusta o modelo por amostragem MCMC. Os outputs são apresentados na próxima aula, dedicada à modelagem bayesiana.
+:::
+
+------------------------------------------------------------------------
+
+## bayestestR: ROPE, região de equivalência prática
+
+O **ROPE** (Region of Practical Equivalence) é uma das contribuições mais úteis do `bayestestR`. Ele responde à pergunta que nem o p-valor nem o IC frequentista respondem diretamente:
+
+**O efeito é grande o suficiente para ter relevância prática?**
+
+O pesquisador define uma faixa de valores ao redor de zero que considera "praticamente equivalente a zero", por exemplo, $[-0{,}1, +0{,}1]$ t/ha. O ROPE calcula a proporção da distribuição posterior que cai dentro dessa faixa.
+
+Se a maior parte da posterior está dentro do ROPE, o efeito é praticamente nulo. Se está fora, o efeito é relevante.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Resumo do Ecossistema
+
+## Os oito pacotes e suas funções principais
+:::
+
+------------------------------------------------------------------------
+
+## Resumo: funções principais por pacote
+
+| Pacote        | Função principal        | O que retorna                     |
+|------------------|-----------------------|-------------------------------|
+| `parameters`  | `model_parameters()`    | Coeficientes com IC               |
+| `parameters`  | `compare_parameters()`  | Coeficientes de múltiplos modelos |
+| `performance` | `model_performance()`   | $R^2$, AIC, BIC, RMSE             |
+| `performance` | `check_model()`         | Painel de diagnóstico             |
+| `performance` | `compare_performance()` | Métricas de múltiplos modelos     |
+| `see`         | `plot()`                | Visualizações automáticas         |
+| `effectsize`  | `cohens_d()`            | Cohen's *d* com IC                |
+| `effectsize`  | `eta_squared()`         | $\eta^2$ por fator                |
+| `correlation` | `correlation()`         | Matriz com IC e p-valor           |
+| `report`      | `report()`              | Texto científico automático       |
+| `modelbased`  | `estimate_means()`      | Médias marginais estimadas        |
+| `modelbased`  | `estimate_contrasts()`  | Diferenças entre grupos           |
+| `modelbased`  | `estimate_relation()`   | Curva de predição                 |
+| `bayestestR`  | `describe_posterior()`  | Resumo da distribuição posterior  |
+
+------------------------------------------------------------------------
+
+## Referências
+
+- Lüdecke, D. et al. (2021). easystats: Framework for Easy Statistical Modeling. *Journal of Open Source Software*, 6(59), 3139. [easystats.github.io](https://easystats.github.io/easystats/)
+- Lüdecke, D. et al. (2020). parameters: Extracting, Computing and Exploring the Parameters of Statistical Models. *JOSS*, 5(53), 2445.
+- Lüdecke, D. et al. (2021). performance: An R Package for Assessment, Comparison and Testing of Statistical Models. *JOSS*, 6(60), 3139.
+- Ben-Shachar, M. et al. (2020). effectsize: Estimation of Effect Size Indices and Standardized Parameters. *JOSS*, 5(56), 2815.
+- Makowski, D. et al. (2019). bayestestR: Describing Effects and their Uncertainty, Existence and Significance within the Bayesian Framework. *JOSS*, 4(40), 1541.
+- Documentação completa: [easystats.github.io/easystats](https://easystats.github.io/easystats/)
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](/apresentações/posts/imagens/comunidade.png){fig-align="center" width="551"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

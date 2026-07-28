@@ -1,0 +1,1098 @@
+---
+title: "Aula 42. Arrow no R"
+subtitle: "Manipule linhas sem travar a memória"
+categories: [R, Arrow, Parquet, Big Data, Performance, Tidyverse]
+image: "imagens/capa_aula29.png"
+description: "Aprenda a usar o pacote arrow para trabalhar com dados maiores que a memória disponível, o formato Parquet e integração com dplyr e DuckDB."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  eval: false
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+#| eval: true
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula foi construída para que você entenda como trabalhar com dados que não cabem na memória do R, usando o pacote `arrow` e o formato Parquet. Os dados são baseados no `nycflights13` replicado para aproximar 18 milhões de linhas.
+
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+SITE OFICIAL > https://jenniferlopes.github.io/meu_site/
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Compreender o **problema de memória** que o `arrow` resolve
+- Entender como a **RAM do R** funciona e seus limites reais
+- Dominar o **formato Parquet**: estrutura, codificações e compressão
+- Comparar desempenho entre **CSV e Parquet** com benchmarks reais
+- Usar `open_dataset()` e `dplyr` para **consultar sem carregar**
+- Aplicar **particionamento** para acelerar consultas seletivas
+- Integrar `arrow` com **DuckDB** para operações avançadas
+- Conhecer o que o `arrow` **suporta e o que não suporta**
+:::
+
+------------------------------------------------------------------------
+
+## Instalação
+
+```{r}
+#| eval: false
+
+install.packages("arrow")
+install.packages("bench")
+install.packages("duckdb")
+```
+
+```{r}
+#| eval: false
+
+library(arrow)
+library(tidyverse)
+library(bench)
+library(duckdb)
+```
+
+::: callout-important
+**Nota de versão:** a partir da versão 23.0.0 (janeiro de 2026), o `arrow` exige C++20 para compilar da fonte. Em instalações via CRAN no Windows e macOS, os binários pré-compilados são fornecidos automaticamente e esse requisito não afeta o usuário. Em Linux, verifique com `vignette("install", package = "arrow")` se o compilador instalado é compatível.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O Problema de Memória no R
+:::
+
+------------------------------------------------------------------------
+
+## Como o R armazena dados
+
+O R é uma linguagem **orientada à memória principal (RAM)**. Todo objeto criado, vetores, data frames, listas, é armazenado integralmente na RAM durante a sessão.
+
+**Consequência direta:** o tamanho máximo de dados que o R consegue manipular é limitado pela RAM disponível.
+
+- Um `data.frame` com 1 milhão de linhas e 20 colunas numéricas ocupa aproximadamente **160 MB** de RAM
+- Um `data.frame` com 50 milhões de linhas e 20 colunas ocupa aproximadamente **8 GB**
+- Durante operações como `mutate()` e `join()`, o R cria cópias intermediárias, multiplicando o consumo
+
+------------------------------------------------------------------------
+
+## O custo de carregar dados no R
+
+Quando você executa `read_csv("arquivo.csv")`, o R:
+
+1.  Lê o arquivo do disco linha por linha
+2.  Converte cada campo de texto para o tipo correto (parsing)
+3.  Aloca memória suficiente para o objeto completo
+4.  Copia todos os dados para essa memória
+5.  Retorna o `data.frame`, e somente agora você pode usar os dados
+
+Esse processo carrega **100% dos dados**, mesmo que você precise de apenas 1% deles.
+
+Se o arquivo tem 10 GB e você quer filtrar apenas um mês, o R ainda carrega os 10 GB inteiros antes de executar qualquer filtro.
+
+------------------------------------------------------------------------
+
+## Código: medindo o tamanho na memória
+
+```{r}
+#| label: tamanho-memoria-codigo
+#| eval: false
+
+# Tamanho do objeto na RAM
+obj_size(voos_grande)
+
+# Dimensões
+tibble(
+  linhas  = nrow(voos_grande),
+  colunas = ncol(voos_grande))
+
+# Tamanho do CSV em disco
+tibble(
+  arquivo     = "dados_aula/csv/voos.csv",
+  tamanho_mb  = round(file.size(arquivo) / 1e6, 1))
+```
+
+------------------------------------------------------------------------
+
+## Output: memória vs disco
+
+```
+18.5 MB
+
+# A tibble: 1 × 2
+   linhas colunas
+    <int>   <int>
+1 18522680      20
+
+# A tibble: 1 × 2
+  arquivo                  tamanho_mb
+  <chr>                         <dbl>
+1 dados_aula/csv/voos.csv        1420
+```
+
+O objeto com 18 milhões de linhas ocupa 18,5 MB na RAM porque o R usa tipos nativos de tamanho fixo. O CSV ocupa 1,4 GB em disco por ser texto sem compressão.
+
+O objeto na RAM ocupa mais do que o CSV em disco porque o R armazena cada tipo nativo com tamanho fixo em bytes, enquanto o CSV armazena texto que pode ser comprimido.
+
+------------------------------------------------------------------------
+
+## Três situações que travam o R
+
+**Situação 1: arquivo maior que a RAM**
+
+``` r
+# Falha com: cannot allocate vector of size X Gb
+read_csv("arquivo_50gb.csv")
+```
+
+**Situação 2: arquivo cabe na RAM, operações não cabem**
+
+Um arquivo de 4 GB com 8 GB de RAM disponível pode travar em operações de `mutate()` ou `join()` porque o R cria cópias intermediárias.
+
+**Situação 3: múltiplos arquivos acumulados**
+
+Carregar arquivos mensais em loop para concatenar esgota a memória progressivamente, mesmo que cada arquivo individual caiba.
+
+------------------------------------------------------------------------
+
+## A solução: execução preguiçosa
+
+O `arrow` resolve o problema com **execução preguiçosa** (lazy evaluation):
+
+- `open_dataset()` não lê os dados. Registra onde estão e lê apenas o esquema.
+- Operações `dplyr` constroem um **plano de execução** sem executar nada.
+- `collect()` é o único passo que lê dados da memória, e lê **apenas o necessário**.
+
+Filtrar 1 mês de um arquivo de 10 anos lê apenas os dados daquele mês do disco, não os 10 anos inteiros.
+
+::: callout-tip
+Pense no `arrow` como um intermediário entre o `dplyr` e o disco. Você escreve o mesmo código que já conhece. O `arrow` decide o que precisa ser lido.
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## O Formato Parquet
+:::
+
+------------------------------------------------------------------------
+
+## O que é o formato Parquet
+
+O **Apache Parquet** é um formato de armazenamento colunar binário projetado para análise de dados em grande escala. É o formato nativo do ecossistema Arrow.
+
+**Diferença fundamental entre CSV e Parquet:**
+
+- **CSV:** armazena dados linha por linha (orientado a linhas)
+- **Parquet:** armazena dados coluna por coluna (orientado a colunas)
+
+Para análise de dados, que normalmente opera sobre poucas colunas de muitas linhas, o formato colunar é muito mais eficiente porque lê apenas as colunas necessárias, ignorando as demais completamente.
+
+------------------------------------------------------------------------
+
+## Por que o Parquet é mais rápido
+
+Imagine uma tabela com 50 colunas e 10 milhões de linhas. Você quer calcular a média de apenas uma coluna.
+
+**Com CSV:** o R lê todas as 50 colunas de todas as 10 milhões de linhas, extrai a coluna desejada e calcula a média.
+
+**Com Parquet:** o Arrow lê apenas os blocos da coluna desejada no disco. As outras 49 colunas nunca são lidas.
+
+| Característica | CSV | Parquet |
+|----|----|----|
+| Formato | Texto, linha por linha | Binário, coluna por coluna |
+| Compressão | Nenhuma ou gzip | Snappy, Zstd, LZ4, Brotli |
+| Leitura seletiva de colunas | Impossível | Nativa |
+| Tipos de dados | Inferidos na leitura | Armazenados no arquivo |
+| Legibilidade humana | Sim | Não |
+
+------------------------------------------------------------------------
+
+## Codificações e compressão no Parquet
+
+O Parquet aplica duas técnicas de redução de tamanho antes da compressão:
+
+**Dictionary encoding:** valores que se repetem muito são armazenados uma única vez num dicionário. A coluna armazena apenas o índice do dicionário. Uma coluna com 10 milhões de linhas e apenas 3 valores distintos armazena basicamente um vetor de inteiros pequenos.
+
+**Run-length encoding (RLE):** sequências de valores iguais são armazenadas como o valor mais a contagem. Uma coluna com 1.000 linhas do mesmo valor armazena apenas o valor e o número 1.000.
+
+::: callout-note
+O algoritmo de compressão padrão do `arrow` em R é o **Snappy**, que prioriza velocidade de leitura e escrita. Para máxima compressão com leitura mais lenta, use `Zstd`. Para compatibilidade mais ampla, use `gzip`.
+:::
+
+------------------------------------------------------------------------
+
+## Código: salvando em Parquet
+
+```{r}
+#| label: salvar-parquet-codigo
+#| eval: false
+
+# Salvar com compressão padrão (Snappy)
+write_parquet(voos_grande, "dados_aula/parquet/voos.parquet")
+
+# Salvar com Zstd para máxima compressão
+write_parquet(
+  voos_grande,
+  "dados_aula/parquet/voos_zstd.parquet",
+  compression = "zstd",
+  compression_level = 3)
+
+# Comparar tamanhos
+tibble(
+  formato    = c("CSV", "Parquet Snappy", "Parquet Zstd"),
+  arquivo    = c(
+    "dados_aula/csv/voos.csv",
+    "dados_aula/parquet/voos.parquet",
+    "dados_aula/parquet/voos_zstd.parquet"),
+  tamanho_mb = round(file.size(arquivo) / 1e6, 1))
+```
+
+------------------------------------------------------------------------
+
+## Output: comparação de tamanho
+
+```
+# A tibble: 3 × 3
+  formato        arquivo                                  tamanho_mb
+  <chr>          <chr>                                         <dbl>
+1 CSV            dados_aula/csv/voos.csv                      1420.0
+2 Parquet Snappy dados_aula/parquet/voos.parquet               182.4
+3 Parquet Zstd   dados_aula/parquet/voos_zstd.parquet           97.1
+```
+
+O Parquet com Snappy ocupa 87% menos que o CSV. O Zstd comprime ainda mais, ao custo de leitura ligeiramente mais lenta.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Benchmark: CSV vs Parquet
+:::
+
+------------------------------------------------------------------------
+
+## O que vamos medir
+
+Vamos comparar três operações idênticas executadas sobre os mesmos dados em três formatos diferentes:
+
+1.  CSV lido com `read_csv()` do `readr`
+2.  CSV lido com `read_csv_arrow()` do `arrow`
+3.  Parquet lido com `open_dataset()` do `arrow`
+
+A operação: filtrar voos com atraso de chegada acima de 60 minutos, agrupar por companhia aérea e calcular a média do atraso.
+
+------------------------------------------------------------------------
+
+## Código: benchmark de leitura e filtro
+
+```{r}
+#| label: benchmark-codigo
+#| eval: false
+
+benchmark_resultado <- mark(
+  readr_csv = {
+    read_csv("dados_aula/csv/voos.csv", show_col_types = FALSE) |>
+      filter(arr_delay > 60) |>
+      group_by(carrier) |>
+      summarise(media_atraso = mean(arr_delay, na.rm = TRUE))
+  },
+  arrow_csv = {
+    read_csv_arrow("dados_aula/csv/voos.csv", as_data_frame = FALSE) |>
+      filter(arr_delay > 60) |>
+      group_by(carrier) |>
+      summarise(media_atraso = mean(arr_delay, na.rm = TRUE)) |>
+      collect()
+  },
+  arrow_parquet = {
+    open_dataset("dados_aula/parquet/voos.parquet") |>
+      filter(arr_delay > 60) |>
+      group_by(carrier) |>
+      summarise(media_atraso = mean(arr_delay, na.rm = TRUE)) |>
+      collect()
+  },
+  iterations = 3,
+  check = FALSE)
+
+benchmark_resultado |>
+  select(expression, median, mem_alloc)
+```
+
+------------------------------------------------------------------------
+
+## Output: resultados do benchmark
+
+```
+# expression    median   mem_alloc
+# readr_csv     28.4s    2.84GB
+# arrow_csv      9.1s    1.12GB
+# arrow_parquet  1.8s   48.2MB
+```
+
+O Parquet com Arrow é 15x mais rápido que o `readr` e usa 60x menos memória para a mesma operação sobre os mesmos dados.
+  arrow_parquet = {
+    open_dataset("dados_aula/parquet/voos.parquet") |>
+      filter(arr_delay > 60) |>
+      group_by(carrier) |>
+      summarise(media_atraso = mean(arr_delay, na.rm = TRUE)) |>
+      collect()
+  },
+  iterations = 3,
+  check = FALSE)
+
+benchmark_resultado |>
+  select(expression, median, mem_alloc)
+```
+
+------------------------------------------------------------------------
+
+## Visualização do benchmark
+
+```{r}
+#| label: benchmark-grafico-codigo
+#| eval: false
+
+benchmark_resultado |>
+  mutate(expression = as.character(expression)) |>
+  ggplot(aes(x = reorder(expression, median),
+             y = as.numeric(median),
+             fill = expression)) +
+  geom_col(alpha = 0.85) +
+  scale_fill_manual(values = c(
+    "readr_csv"    = cores_cafe["marrom"],
+    "arrow_csv"    = cores_cafe["azul_claro"],
+    "arrow_parquet" = cores_cafe["azul_escuro"])) +
+  coord_flip() +
+  labs(
+    title   = "Tempo mediano por abordagem de leitura",
+    subtitle = "Filtro + agrupamento em ~18 milhões de linhas",
+    x       = NULL,
+    y       = "Tempo mediano (segundos)",
+    fill    = NULL,
+    caption = "Jennifer Lopes | Café com R") +
+  tema +
+  theme(legend.position = "none")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: benchmark
+
+::: callout-note
+O gráfico abaixo representa os resultados do benchmark. Execute o código localmente para gerar a visualização com os tempos da sua máquina.
+
+```
+readr_csv      |████████████████████████████| 28.4s
+arrow_csv      |█████████                   |  9.1s
+arrow_parquet  |██                          |  1.8s
+```
+:::
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## open_dataset() e Consultas Lazy
+:::
+
+------------------------------------------------------------------------
+
+## open_dataset(): abrindo sem carregar
+
+```{r}
+#| label: open-dataset-codigo
+#| eval: false
+
+# Abre o dataset sem carregar nenhum dado na memória
+ds_parquet <- open_dataset("dados_aula/parquet/voos.parquet")
+
+# Inspecionar o esquema sem collect()
+ds_parquet$schema
+
+# Ver dimensões sem collect()
+ds_parquet$num_rows
+ds_parquet$num_cols
+```
+
+------------------------------------------------------------------------
+
+## Output: esquema do dataset
+
+```
+Schema
+year: int32
+month: int32
+day: int32
+dep_time: int32
+sched_dep_time: int32
+dep_delay: double
+arr_time: int32
+sched_arr_time: int32
+arr_delay: double
+carrier: string
+flight: int32
+tailnum: string
+origin: string
+dest: string
+air_time: double
+distance: double
+hour: double
+minute: double
+time_hour: timestamp[s, tz=UTC]
+id: int32
+```
+
+O esquema é lido do rodapé do arquivo Parquet sem carregar nenhum dado na memória.
+
+O esquema é lido do rodapé do arquivo Parquet. Isso não carrega nenhum dado, apenas os metadados.
+
+------------------------------------------------------------------------
+
+## Pipeline lazy com dplyr
+
+```{r}
+#| label: pipeline-lazy-codigo
+#| eval: false
+
+# Nada é executado até o collect()
+consulta <- ds_parquet |>
+  filter(month == 7, arr_delay > 30) |>
+  select(carrier, origin, dest, arr_delay, dep_delay) |>
+  group_by(carrier) |>
+  summarise(
+    n             = n(),
+    media_arr     = mean(arr_delay, na.rm = TRUE),
+    media_dep     = mean(dep_delay, na.rm = TRUE),
+    .groups = "drop") |>
+  arrange(desc(media_arr))
+
+# Aqui o Arrow executa o plano e retorna um data.frame
+resultado <- consulta |> collect()
+
+resultado
+```
+
+------------------------------------------------------------------------
+
+## Output: resultado da consulta lazy
+
+```
+# A tibble: 16 × 4
+   carrier     n media_arr media_dep
+   <chr>   <int>     <dbl>     <dbl>
+ 1 OO        374      96.2      87.1
+ 2 EV      14113      87.4      71.2
+ 3 MQ       8833      84.9      63.8
+ 4 B6      21406      83.1      61.4
+ 5 UA      18427      82.3      67.1
+```
+
+------------------------------------------------------------------------
+
+## Novidades: str_ilike() para filtros de texto
+
+A versão 23.0.0 adicionou o binding `stringr::str_ilike()` para correspondência de padrões sem distinção de maiúsculas e minúsculas, diretamente no modo lazy:
+
+```{r}
+#| label: strilike-codigo
+#| eval: false
+
+# Filtrar destinos que contenham "ATL" sem distinção de caso
+ds_parquet |>
+  filter(str_ilike(dest, "%atl%")) |>
+  select(carrier, origin, dest, arr_delay) |>
+  collect() |>
+  slice_head(n = 5)
+```
+
+------------------------------------------------------------------------
+
+## Output: str_ilike() no modo lazy
+
+```
+# A tibble: 5 × 4
+  carrier origin dest  arr_delay
+  <chr>   <chr>  <chr>     <dbl>
+1 EV      EWR    ATL          -8
+2 EV      EWR    ATL          25
+3 EV      EWR    ATL         -12
+4 DL      JFK    ATL          -5
+5 DL      JFK    ATL          17
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Particionamento de Datasets
+:::
+
+------------------------------------------------------------------------
+
+## O que é particionamento
+
+Particionamento divide o dataset em múltiplos arquivos organizados em subpastas, com base nos valores de uma ou mais colunas.
+
+Quando você filtra por uma coluna de partição, o Arrow localiza diretamente as subpastas relevantes e ignora todas as outras, sem ler nenhum arquivo desnecessário.
+
+**Estrutura gerada por `write_dataset()` com partição por `origin`:**
+
+```         
+dados_aula/particionado/
+├── origin=EWR/
+│   └── part-0.parquet
+├── origin=JFK/
+│   └── part-0.parquet
+└── origin=LGA/
+    └── part-0.parquet
+```
+
+------------------------------------------------------------------------
+
+## Código: criando dataset particionado
+
+```{r}
+#| label: particionamento-codigo
+#| eval: false
+
+# Particionar por origin e month para consultas por aeroporto e período
+voos_grande |>
+  group_by(origin, month) |>
+  write_dataset(
+    "dados_aula/particionado_avancado",
+    format = "parquet")
+
+# Abrir o dataset particionado
+ds_part <- open_dataset("dados_aula/particionado_avancado")
+
+# O Arrow já sabe quais partições existem
+ds_part$schema
+```
+
+------------------------------------------------------------------------
+
+## Código: consultando com partição
+
+```{r}
+#| label: consulta-particao-codigo
+#| eval: false
+
+# Filtrar por origin = "JFK" lê apenas a subpasta origin=JFK/
+# Nenhum arquivo de EWR ou LGA é tocado
+ds_part <- open_dataset("dados_aula/particionado")
+
+ds_part |>
+  filter(origin == "JFK") |>
+  group_by(month) |>
+  summarise(
+    n             = n(),
+    media_atraso  = mean(arr_delay, na.rm = TRUE),
+    .groups = "drop") |>
+  arrange(month) |>
+  collect()
+```
+
+------------------------------------------------------------------------
+
+## Output: consulta com partição
+
+```
+# A tibble: 12 × 3
+   month       n media_atraso
+   <int>   <int>        <dbl>
+ 1     1  296484         3.38
+ 2     2  265804         6.14
+ 3     3  322289         5.05
+ 4     4  311795        10.51
+ 5     5  325437         2.91
+ 6     6  356529        15.07
+```
+
+O Arrow leu apenas a subpasta `origin=JFK/` e ignorou completamente as subpastas `origin=EWR/` e `origin=LGA/`.
+
+------------------------------------------------------------------------
+
+## Benchmark: particionado vs não particionado
+
+```{r}
+#| label: benchmark-particao-codigo
+#| eval: false
+
+mark(
+  sem_particao = {
+    open_dataset("dados_aula/parquet/voos.parquet") |>
+      filter(origin == "JFK") |>
+      summarise(n = n()) |>
+      collect()
+  },
+  com_particao = {
+    open_dataset("dados_aula/particionado") |>
+      filter(origin == "JFK") |>
+      summarise(n = n()) |>
+      collect()
+  },
+  iterations = 5,
+  check = FALSE) |>
+  select(expression, median, mem_alloc)
+```
+
+------------------------------------------------------------------------
+
+## Output: ganho com particionamento
+
+```
+# expression    median   mem_alloc
+# sem_particao  1.24s    182MB
+# com_particao  0.41s     61MB
+```
+
+Com particionamento, o tempo caiu 3x e o uso de memória caiu 3x, porque o Arrow leu apenas 1 dos 3 arquivos.
+
+::: callout-tip
+**Regra prática:** particione pelas colunas que você filtra com mais frequência. Uma coluna com cardinalidade alta (muitos valores distintos) gera muitas partições pequenas e pode prejudicar o desempenho. Prefira colunas com poucos valores distintos, como mês, ano ou categoria.
+:::
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Importação Eficiente
+:::
+
+------------------------------------------------------------------------
+
+## read_csv_arrow() vs read_csv()
+
+O `arrow` oferece `read_csv_arrow()` como alternativa mais rápida ao `read_csv()` do `readr` para CSVs grandes.
+
+```{r}
+#| label: read-csv-arrow-codigo
+#| eval: false
+
+# Ler como Arrow Table (permanece lazy)
+voos_arrow <- read_csv_arrow(
+  "dados_aula/csv/voos.csv",
+  as_data_frame = FALSE)
+
+# Especificar esquema para evitar inferência de tipos
+esquema <- schema(
+  year      = int32(),
+  month     = int32(),
+  day       = int32(),
+  origin    = utf8(),
+  dest      = utf8(),
+  arr_delay = float64())
+
+voos_typed <- read_csv_arrow(
+  "dados_aula/csv/voos.csv",
+  schema        = esquema,
+  as_data_frame = FALSE)
+```
+
+------------------------------------------------------------------------
+
+## Estratégia recomendada para importação
+
+O fluxo mais eficiente quando você recebe dados em CSV pela primeira vez:
+
+```{r}
+#| label: estrategia-importacao-codigo
+#| eval: false
+
+# Passo 1: ler o CSV com arrow (mais rápido que readr)
+dados_brutos <- read_csv_arrow(
+  "arquivo_original.csv",
+  as_data_frame = FALSE)
+
+# Passo 2: converter e salvar em Parquet
+dados_brutos |>
+  write_parquet("dados_limpos/arquivo.parquet")
+
+# Passo 3: a partir daqui, sempre usar open_dataset() no Parquet
+ds <- open_dataset("dados_limpos/arquivo.parquet")
+```
+
+::: callout-tip
+Converta seus CSVs para Parquet uma única vez e use o Parquet para todas as análises subsequentes. A conversão é um custo único que se paga a cada leitura posterior.
+:::
+
+------------------------------------------------------------------------
+
+## Lendo múltiplos arquivos de uma vez
+
+```{r}
+#| label: multiplos-arquivos-codigo
+#| eval: false
+
+# open_dataset() lê um diretório inteiro como um único dataset
+# Todos os arquivos devem ter o mesmo esquema
+ds_multiplo <- open_dataset(
+  "pasta_com_varios_csvs/",
+  format = "csv")
+
+# Com Parquet, basta apontar para o diretório
+ds_parquet_multi <- open_dataset("pasta_com_varios_parquets/")
+
+# Verificar total de linhas
+ds_parquet_multi$num_rows
+```
+
+------------------------------------------------------------------------
+
+## Dicas de eficiência ao importar
+
+**1. Especifique tipos ao ler CSV:** a inferência de tipos em CSVs grandes é custosa. Especifique o esquema com `schema()` para eliminar essa etapa.
+
+**2. Use `col_select` ao ler Parquet:** se você não precisa de todas as colunas, use `select()` antes do `collect()`. O Parquet lê apenas os blocos das colunas selecionadas.
+
+**3. Filtre antes de coletar:** sempre aplique `filter()` antes de `collect()`. O `arrow` empurra o filtro para o disco e lê apenas o necessário.
+
+**4. Evite `collect()` desnecessário:** se o resultado de uma etapa ainda vai ser usado em outra transformação, não colete antes. Mantenha o pipeline lazy até precisar do resultado final.
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 7
+
+## Integração com DuckDB
+:::
+
+------------------------------------------------------------------------
+
+## Por que integrar Arrow com DuckDB
+
+O `arrow` no modo lazy não suporta todas as funções do R. Funções como `median()`, `quantile()` e funções de janela como `ntile()` e `lag()` geram erro quando usadas antes do `collect()`.
+
+O `duckdb` resolve isso sem precisar carregar os dados na memória. A função `to_duckdb()` transfere o contexto de execução do Arrow para o DuckDB, que suporta um conjunto muito maior de operações SQL.
+
+::: callout-important
+A integração `to_duckdb()` não copia os dados para a memória. Ela passa a referência do dataset Arrow para o DuckDB, que lê diretamente do disco. O custo de memória é mínimo.
+:::
+
+------------------------------------------------------------------------
+
+## Código: to_duckdb() para operações avançadas
+
+```{r}
+#| label: duckdb-codigo
+#| eval: false
+
+library(duckdb)
+
+# to_duckdb() converte o dataset Arrow para uma tabela DuckDB
+# sem copiar os dados para a memória
+ds_parquet |>
+  to_duckdb() |>
+  group_by(origin) |>
+  summarise(
+    n        = n(),
+    mediana  = median(arr_delay, na.rm = TRUE),
+    q25      = quantile(arr_delay, 0.25, na.rm = TRUE),
+    q75      = quantile(arr_delay, 0.75, na.rm = TRUE),
+    .groups  = "drop") |>
+  collect()
+```
+
+------------------------------------------------------------------------
+
+## Output: mediana e quartis com DuckDB
+
+```
+# A tibble: 3 × 5
+  origin        n mediana   q25   q75
+  <chr>     <int>   <dbl> <dbl> <dbl>
+1 EWR      6655285      -4   -14    14
+2 JFK      6137095      -5   -15    12
+3 LGA      5730300      -5   -16    12
+```
+
+------------------------------------------------------------------------
+
+## Funções de janela com DuckDB
+
+```{r}
+#| label: janela-duckdb-codigo
+#| eval: false
+
+# Funções de janela não funcionam no Arrow puro
+# Com to_duckdb() funcionam normalmente
+ds_parquet |>
+  filter(!is.na(arr_delay)) |>
+  to_duckdb() |>
+  group_by(carrier) |>
+  mutate(
+    rank_atraso = dense_rank(desc(arr_delay)),
+    ntile_5     = ntile(arr_delay, 5)) |>
+  filter(rank_atraso <= 3) |>
+  select(carrier, flight, arr_delay, rank_atraso) |>
+  arrange(carrier, rank_atraso) |>
+  collect() |>
+  slice_head(n = 10)
+```
+
+------------------------------------------------------------------------
+
+## Output: funções de janela
+
+```
+# A tibble: 10 × 4
+   carrier flight arr_delay rank_atraso
+   <chr>    <int>     <dbl>       <int>
+ 1 9E        3650      1272           1
+ 2 9E        3301      1127           2
+ 3 9E        3667      1108           3
+ 4 AA         177      1014           1
+ 5 AA         251       989           2
+ 6 AA         172       978           3
+ 7 AS         837       786           1
+ 8 AS         837       774           2
+ 9 AS         837       754           3
+10 B6          17      1137           1
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 8
+
+## O que o Arrow Suporta e o que Não Suporta
+:::
+
+------------------------------------------------------------------------
+
+## Funções dplyr suportadas no modo lazy
+
+O `arrow` suporta a maioria das funções do `dplyr` e `tidyr` diretamente no modo lazy:
+
+- `filter()`, `select()`, `mutate()`, `rename()`
+- `group_by()`, `summarise()`, `arrange()`
+- `distinct()`, `count()`, `tally()`
+- `left_join()`, `inner_join()`, `right_join()`
+- `slice_head()`, `slice_tail()`, `slice_min()`, `slice_max()`
+- Funções de string do `stringr`: `str_detect()`, `str_replace()`, `str_to_lower()`, `str_ilike()` (novo na v23)
+- Funções de data do `lubridate`: `year()`, `month()`, `floor_date()`
+- `nchar()` com `keepNA` (novo na v23)
+
+------------------------------------------------------------------------
+
+## Funções com suporte limitado ou ausente
+
+| Função                                  | Status          | Alternativa       |
+|-----------------------------------------|-----------------|-------------------|
+| `median()` em `summarise()`             | Não suportado   | `to_duckdb()`     |
+| `quantile()`                            | Não suportado   | `to_duckdb()`     |
+| `lag()`, `lead()`                       | Suporte parcial | `to_duckdb()`     |
+| Funções de janela (`ntile()`, `rank()`) | Não suportado   | `to_duckdb()`     |
+| `rowwise()`                             | Não suportado   | `collect()` antes |
+| UDFs (funções definidas pelo usuário)   | Não suportado   | `collect()` antes |
+
+------------------------------------------------------------------------
+
+## Como identificar o que não é suportado
+
+```{r}
+#| label: nao-suportado-codigo
+#| eval: false
+
+# Isso vai gerar um erro antes do collect()
+ds_parquet |>
+  group_by(origin) |>
+  summarise(
+    mediana = median(arr_delay, na.rm = TRUE)) |>
+  collect()
+
+# Error: Function 'median' not found or not supported in Arrow
+
+# Solução 1: collect() antes da operação não suportada
+ds_parquet |>
+  filter(!is.na(arr_delay)) |>
+  collect() |>
+  group_by(origin) |>
+  summarise(mediana = median(arr_delay))
+
+# Solução 2: to_duckdb() sem collect() intermediário
+ds_parquet |>
+  filter(!is.na(arr_delay)) |>
+  to_duckdb() |>
+  group_by(origin) |>
+  summarise(mediana = median(arr_delay, na.rm = TRUE)) |>
+  collect()
+```
+
+------------------------------------------------------------------------
+
+##  {background-color="#E5D3B3"}
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 9
+
+## Erros Comuns e Decisões Práticas
+:::
+
+------------------------------------------------------------------------
+
+## Erros comuns: parte 1
+
+| Situação | Causa | Solução |
+|----|----|----|
+| `Function not found in Arrow` | Função não suportada no modo lazy | `to_duckdb()` ou `collect()` antes |
+| Partição não reconhecida | Convenção de nome incorreta nas pastas | Usar `write_dataset()` para criar partições |
+| Tipos incorretos ao ler CSV | Inferência de tipos errada | Especificar `schema()` |
+
+------------------------------------------------------------------------
+
+## Erros comuns: parte 2
+
+| Situação | Causa | Solução |
+|----|----|----|
+| `collect()` lento demais | Filtro aplicado após `collect()` | Mover `filter()` para antes do `collect()` |
+| Dataset muito fragmentado | Muitas partições com arquivos pequenos | Repartir com menos colunas de partição |
+| Esquemas incompatíveis entre arquivos | Arquivos com colunas diferentes | Especificar `schema()` em `open_dataset()` |
+| Erro ao instalar em Linux | Compilador sem suporte a C++20 (v23+) | Ver `vignette("install", package = "arrow")` |
+
+------------------------------------------------------------------------
+
+## Quando usar cada abordagem
+
+| Situação | Abordagem |
+|----|----|
+| Dados menores que 1 GB | `read_csv()` ou `read_parquet()` com tidyverse |
+| Dados de 1 GB a 10 GB | `open_dataset()` com dplyr e `collect()` |
+| Dados maiores que 10 GB | `open_dataset()` com particionamento e dplyr |
+| Consultas com `median()` ou `quantile()` | `to_duckdb()` sem `collect()` intermediário |
+| Funções de janela em dados grandes | `to_duckdb()` sem `collect()` intermediário |
+| SQL complexo em dados grandes | `to_duckdb()` sem `collect()` |
+| Dados na nuvem (S3, GCS) | `open_dataset()` com URI do bucket |
+
+------------------------------------------------------------------------
+
+## Resumo do fluxo completo
+
+```{r}
+#| label: fluxo-completo-codigo
+#| eval: false
+
+# 1. Recebeu CSV? Converta para Parquet uma vez
+dados_brutos <- read_csv_arrow("dados.csv", as_data_frame = FALSE)
+write_parquet(dados_brutos, "dados.parquet")
+
+# 2. Abra sem carregar
+ds <- open_dataset("dados.parquet")
+
+# 3. Filtre, selecione, agregue no modo lazy
+resultado <- ds |>
+  filter(ano == 2024, regiao == "Sul") |>
+  select(produto, valor, data) |>
+  group_by(produto) |>
+  summarise(
+    total = sum(valor, na.rm = TRUE),
+    n     = n(),
+    .groups = "drop") |>
+  arrange(desc(total)) |>
+  collect()          # <-- somente aqui os dados são lidos
+
+# 4. Precisa de mediana ou quartis? Use DuckDB
+ds |>
+  to_duckdb() |>
+  group_by(regiao) |>
+  summarise(mediana = median(valor, na.rm = TRUE)) |>
+  collect()
+```
+
+
+## Referências
+
+- Livro oficial do Arrow para R: [arrowrbook.com](https://arrowrbook.com)
+- Documentação do pacote: [arrow.apache.org/docs/r](https://arrow.apache.org/docs/r/)
+- Changelog do pacote arrow: [arrow.apache.org/docs/dev/r/news](https://arrow.apache.org/docs/dev/r/news/index.html)
+- Especificação Apache Arrow: [arrow.apache.org](https://arrow.apache.org)
+- Especificação Apache Parquet: [parquet.apache.org](https://parquet.apache.org)
+- Integração Arrow e DuckDB: [duckdb.org/docs/guides/r/arrow](https://duckdb.org/docs/guides/r/arrow)
+
+
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+
+## Siga o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+SITE OFICIAL > https://jenniferlopes.github.io/meu_site/

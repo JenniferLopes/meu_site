@@ -1,0 +1,398 @@
+---
+title: "Aula 40. Teste t na prática"
+subtitle: "Uma amostra, duas amostras independentes e teste pareado, e como escolher o correto"
+categories: [R, Estatística, Inferência, Tidyverse]
+image: "imagens/40.png"
+description: "Aplique os três tipos de teste t em um único contexto de controle de qualidade e aprenda a escolher o teste correto para cada estrutura de dados."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+# Bloco 1, uma amostra
+populacao_lote <- tibble(medicao = 1:2000, umidade = rnorm(2000, mean = 11.6, sd = 0.45))
+amostra_lote   <- populacao_lote |> slice_sample(n = 30)
+valor_referencia <- 12
+
+# Bloco 2, duas amostras independentes
+populacao_secadores <- bind_rows(
+  tibble(lote = 1:3000, secador = "Secador A", umidade = rnorm(3000, mean = 11.8, sd = 0.55)),
+  tibble(lote = 3001:6000, secador = "Secador B", umidade = rnorm(3000, mean = 12.3, sd = 0.75)))
+
+amostra_secadores <- populacao_secadores |>
+  group_by(secador) |>
+  slice_sample(n = 22) |>
+  ungroup()
+
+# Bloco 3, pareado
+amostra_pareada <- tibble(
+  lote          = 1:18,
+  umidade_antes = rnorm(18, mean = 17.5, sd = 1.2),
+  reducao       = rnorm(18, mean = 5.8, sd = 0.6)) |>
+  mutate(umidade_depois = umidade_antes - reducao) |>
+  select(-reducao)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Conteúdos relacionados para estudar mais:
+
+- Acesse a [Newsletter](https://jenniferlopes.github.io/meu_site/cafecomr/);
+
+- Acesse as [aulas](https://jenniferlopes.github.io/meu_site/apresenta%C3%A7%C3%B5es/);
+
+- Acesse a apostila de [Estatística com R](https://jenniferlopes.github.io/meu_site/apostila.html).
+
+## Objetivos da aula
+
+::: incremental
+- Aplicar o **teste t para uma amostra**, comparando uma média a um valor de referência
+- Aplicar o **teste t para duas amostras independentes**, verificando a homogeneidade de variâncias antes do teste
+- Aplicar o **teste t pareado**, quando a mesma unidade é medida duas vezes
+- Entender por que o pareamento aumenta o poder do teste
+- Escolher corretamente qual dos três testes se aplica a cada estrutura de dados
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Teste t para Uma Amostra
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, quando usar
+
+- O teste t para uma amostra compara a média de um único grupo a um valor de referência fixo e conhecido.
+
+- **No contexto deste estudo:** um lote de café tem sua umidade medida em 30 pontos de amostragem, e o objetivo é verificar se a umidade média do lote é compatível com o valor de referência de mercado, 12%.
+
+- $H_0: \mu = 12$ contra $H_1: \mu \neq 12$, teste bicaudal, pois o desvio pode ocorrer em qualquer direção.
+
+------------------------------------------------------------------------
+
+## Fórmula do teste t para uma amostra
+
+$$t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}}, \quad \text{com } n-1 \text{ graus de liberdade}$$
+
+| Símbolo      | Significado                   |
+|--------------|-------------------------------|
+| $\bar{x}$    | Média amostral da umidade     |
+| $\mu_0$      | Valor de referência, 12%      |
+| $s/\sqrt{n}$ | Erro padrão da média amostral |
+
+------------------------------------------------------------------------
+
+## Código: umidade do lote x referência
+
+```{r}
+#| label: t-uma-amostra-codigo
+#| eval: false
+
+resultado_uma_amostra <- t.test(amostra_lote$umidade, mu = valor_referencia)
+
+tibble(
+  media           = mean(amostra_lote$umidade),
+  estatistica_t   = resultado_uma_amostra$statistic,
+  graus_liberdade = resultado_uma_amostra$parameter,
+  valor_p         = resultado_uma_amostra$p.value,
+  ic_inf          = resultado_uma_amostra$conf.int[1],
+  ic_sup          = resultado_uma_amostra$conf.int[2]) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Output: teste t uma amostra
+
+```{r}
+#| label: t-uma-amostra-output
+#| echo: false
+
+resultado_uma_amostra <- t.test(amostra_lote$umidade, mu = valor_referencia)
+
+tibble(
+  media           = mean(amostra_lote$umidade),
+  estatistica_t   = resultado_uma_amostra$statistic,
+  graus_liberdade = resultado_uma_amostra$parameter,
+  valor_p         = resultado_uma_amostra$p.value,
+  ic_inf          = resultado_uma_amostra$conf.int[1],
+  ic_sup          = resultado_uma_amostra$conf.int[2]) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **O intervalo de confiança não contém o valor de referência de 12%, e o p-valor é pequeno, o que indica que a umidade média deste lote difere estatisticamente do valor esperado.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Teste t para Duas Amostras Independentes
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, quando usar
+
+- O teste t para duas amostras independentes compara as médias de dois grupos formados por unidades diferentes, sem qualquer relação de emparelhamento entre elas.
+
+- **No contexto deste estudo:** lotes secados no Secador A são unidades diferentes dos lotes secados no Secador B, cada lote passa por apenas um dos dois equipamentos.
+
+- $H_0: \mu_A = \mu_B$ contra $H_1: \mu_A \neq \mu_B$.
+
+------------------------------------------------------------------------
+
+## Verificação da homogeneidade de variâncias
+
+- Antes de aplicar o teste t independente, é necessário verificar se os dois grupos apresentam variância semelhante.
+
+- Quando as variâncias são homogêneas, usa-se a versão do teste t com variância combinada (pooled). Quando não são, usa-se a correção de Welch, que ajusta os graus de liberdade.
+
+- O teste F de razão de variâncias, `var.test()`, fornece essa verificação.
+
+------------------------------------------------------------------------
+
+## Código: teste de variâncias e teste t independente
+
+```{r}
+#| label: t-duas-amostras-codigo
+#| eval: false
+
+resultado_variancia <- var.test(umidade ~ secador, data = amostra_secadores)
+
+resultado_duas_amostras <- t.test(umidade ~ secador, data = amostra_secadores,
+                                   var.equal = FALSE)
+
+tibble(
+  f_variancia     = resultado_variancia$statistic,
+  p_variancia     = resultado_variancia$p.value,
+  estatistica_t   = resultado_duas_amostras$statistic,
+  graus_liberdade = resultado_duas_amostras$parameter,
+  valor_p         = resultado_duas_amostras$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Output: teste t independente
+
+```{r}
+#| label: t-duas-amostras-output
+#| echo: false
+
+resultado_variancia <- var.test(umidade ~ secador, data = amostra_secadores)
+
+resultado_duas_amostras <- t.test(umidade ~ secador, data = amostra_secadores,
+                                   var.equal = FALSE)
+
+tibble(
+  f_variancia     = resultado_variancia$statistic,
+  p_variancia     = resultado_variancia$p.value,
+  estatistica_t   = resultado_duas_amostras$statistic,
+  graus_liberdade = resultado_duas_amostras$parameter,
+  valor_p         = resultado_duas_amostras$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **O teste de variâncias indica heterogeneidade entre os grupos, o que justifica o uso da correção de Welch. O p-valor do teste t indica se a diferença de umidade média entre os dois secadores é estatisticamente significativa.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Teste t Pareado
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, quando usar
+
+- O teste t pareado compara duas medições feitas na mesma unidade experimental, eliminando a variabilidade natural entre unidades diferentes.
+
+- **No contexto deste estudo:** o mesmo lote de café é medido antes e depois do processo de secagem, as duas medições pertencem à mesma unidade.
+
+- $H_0: \mu_d = 0$ contra $H_1: \mu_d \neq 0$, em que $\mu_d$ é a média das diferenças antes menos depois.
+
+------------------------------------------------------------------------
+
+## Por que o pareamento aumenta o poder do teste
+
+$$t = \frac{\bar{d}}{s_d/\sqrt{n}}, \quad \text{com } n-1 \text{ graus de liberdade}$$
+
+- Ao trabalhar com as diferenças dentro de cada lote, o teste pareado remove a variabilidade entre lotes, que normalmente aumenta o erro padrão em um teste independente.
+
+- Como resultado, o mesmo tamanho de efeito é detectado com maior facilidade no teste pareado do que seria no teste independente, para o mesmo número de observações.
+
+------------------------------------------------------------------------
+
+## Código: umidade antes x depois da secagem
+
+```{r}
+#| label: t-pareado-codigo
+#| eval: false
+
+resultado_pareado <- t.test(amostra_pareada$umidade_antes,
+                             amostra_pareada$umidade_depois,
+                             paired = TRUE)
+
+tibble(
+  diferenca_media = mean(amostra_pareada$umidade_antes - amostra_pareada$umidade_depois),
+  estatistica_t    = resultado_pareado$statistic,
+  graus_liberdade  = resultado_pareado$parameter,
+  valor_p          = resultado_pareado$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Output: teste t pareado
+
+```{r}
+#| label: t-pareado-output
+#| echo: false
+
+resultado_pareado <- t.test(amostra_pareada$umidade_antes,
+                             amostra_pareada$umidade_depois,
+                             paired = TRUE)
+
+resultado_independente_ilustrativo <- t.test(amostra_pareada$umidade_antes,
+                                              amostra_pareada$umidade_depois,
+                                              paired = FALSE)
+
+tibble(
+  diferenca_media = mean(amostra_pareada$umidade_antes - amostra_pareada$umidade_depois),
+  estatistica_t    = resultado_pareado$statistic,
+  graus_liberdade  = resultado_pareado$parameter,
+  valor_p_pareado  = resultado_pareado$p.value,
+  valor_p_se_independente = resultado_independente_ilustrativo$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 5)))
+```
+
+- **A umidade reduz de forma consistente após a secagem, com p-valor muito pequeno no teste pareado. A última coluna mostra o que aconteceria se os mesmos dados fossem, incorretamente, tratados como independentes, o p-valor resultante é maior, evidenciando a perda de poder ao ignorar o pareamento.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Qual Teste Usar
+:::
+
+------------------------------------------------------------------------
+
+## Árvore de decisão
+
+| Pergunta | Resposta | Teste indicado |
+|------------------------|------------------------|------------------------|
+| Estou comparando a média de um grupo a um valor fixo? | Sim | Teste t para uma amostra |
+| Estou comparando dois grupos formados por unidades diferentes? | Sim | Teste t para duas amostras independentes |
+| A mesma unidade foi medida duas vezes? | Sim | Teste t pareado |
+| As variâncias dos dois grupos independentes são homogêneas? | Verificar com `var.test()` | Pooled ou correção de Welch |
+
+------------------------------------------------------------------------
+
+## Erro comum 1, aplicar teste independente em dados pareados
+
+- Tratar medições repetidas na mesma unidade como se fossem de unidades diferentes ignora a correlação entre as duas medições.
+
+- Essa prática infla o erro padrão da diferença e reduz o poder do teste, como demonstrado na comparação do Bloco 3.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, não verificar homogeneidade de variância antes do teste independente
+
+- Assumir variâncias iguais sem verificação pode distorcer o erro padrão da diferença de médias e, consequentemente, o valor de p.
+
+- O teste `var.test()` deve preceder a escolha entre a versão pooled e a correção de Welch do teste t.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, aplicar teste t sem checar normalidade em amostra pequena
+
+- O teste t assume que os dados provêm de uma distribuição aproximadamente normal, especialmente relevante quando o tamanho da amostra é pequeno.
+
+- Em amostras pequenas com forte assimetria, a alternativa não paramétrica correspondente deve ser considerada antes de aplicar o teste t.
+
+------------------------------------------------------------------------
+
+## Resumo: teste t na prática
+
+| Tipo de teste | Estrutura dos dados | Hipótese nula | Função no R |
+|------------------|------------------|------------------|------------------|
+| Uma amostra | Um grupo x valor de referência | $\mu = \mu_0$ | `t.test(x, mu = valor)` |
+| Duas amostras independentes | Dois grupos, unidades diferentes | $\mu_1 = \mu_2$ | `t.test(y ~ grupo)` |
+| Pareado | Mesma unidade, duas medições | $\mu_d = 0$ | `t.test(x, y, paired = TRUE)` |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

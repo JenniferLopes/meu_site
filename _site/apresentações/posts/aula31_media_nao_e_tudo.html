@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Domine as cinco medidas de tendência central e as principais medidas de dispersão, e entenda por que a média sozinha pode distorcer a leitura dos dados.">
+
+<title>Aula 31. Média não é tudo: tendência central e dispersão – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#democratização" id="toc-democratização" class="nav-link active" data-scroll-target="#democratização">Democratização</a></li>
+  <li><a href="#acompanhe-o-café-com-r" id="toc-acompanhe-o-café-com-r" class="nav-link" data-scroll-target="#acompanhe-o-café-com-r">Acompanhe o Café com R</a></li>
+  <li><a href="#objetivos-da-aula" id="toc-objetivos-da-aula" class="nav-link" data-scroll-target="#objetivos-da-aula">Objetivos da aula</a></li>
+  <li><a href="#bloco-1" id="toc-bloco-1" class="nav-link" data-scroll-target="#bloco-1">Bloco 1</a>
+  <ul class="collapse">
+  <li><a href="#medidas-de-tendência-central" id="toc-medidas-de-tendência-central" class="nav-link" data-scroll-target="#medidas-de-tendência-central">Medidas de Tendência Central</a></li>
+  </ul></li>
+  <li><a href="#média-aritmética" id="toc-média-aritmética" class="nav-link" data-scroll-target="#média-aritmética">Média aritmética</a></li>
+  <li><a href="#mediana" id="toc-mediana" class="nav-link" data-scroll-target="#mediana">Mediana</a></li>
+  <li><a href="#moda" id="toc-moda" class="nav-link" data-scroll-target="#moda">Moda</a></li>
+  <li><a href="#média-geométrica" id="toc-média-geométrica" class="nav-link" data-scroll-target="#média-geométrica">Média geométrica</a></li>
+  <li><a href="#média-harmônica" id="toc-média-harmônica" class="nav-link" data-scroll-target="#média-harmônica">Média harmônica</a></li>
+  <li><a href="#código-tendência-central" id="toc-código-tendência-central" class="nav-link" data-scroll-target="#código-tendência-central">Código: tendência central</a></li>
+  <li><a href="#output-tendência-central" id="toc-output-tendência-central" class="nav-link" data-scroll-target="#output-tendência-central">Output: tendência central</a></li>
+  <li><a href="#bloco-2" id="toc-bloco-2" class="nav-link" data-scroll-target="#bloco-2">Bloco 2</a>
+  <ul class="collapse">
+  <li><a href="#medidas-de-dispersão" id="toc-medidas-de-dispersão" class="nav-link" data-scroll-target="#medidas-de-dispersão">Medidas de Dispersão</a></li>
+  </ul></li>
+  <li><a href="#variância-e-desvio-padrão" id="toc-variância-e-desvio-padrão" class="nav-link" data-scroll-target="#variância-e-desvio-padrão">Variância e desvio padrão</a></li>
+  <li><a href="#amplitude-e-iqr" id="toc-amplitude-e-iqr" class="nav-link" data-scroll-target="#amplitude-e-iqr">Amplitude e IQR</a></li>
+  <li><a href="#mad-desvio-absoluto-mediano" id="toc-mad-desvio-absoluto-mediano" class="nav-link" data-scroll-target="#mad-desvio-absoluto-mediano">MAD, desvio absoluto mediano</a></li>
+  <li><a href="#coeficiente-de-variação-cv" id="toc-coeficiente-de-variação-cv" class="nav-link" data-scroll-target="#coeficiente-de-variação-cv">Coeficiente de variação, CV%</a></li>
+  <li><a href="#código-dispersão" id="toc-código-dispersão" class="nav-link" data-scroll-target="#código-dispersão">Código: dispersão</a></li>
+  <li><a href="#output-dispersão" id="toc-output-dispersão" class="nav-link" data-scroll-target="#output-dispersão">Output: dispersão</a></li>
+  <li><a href="#bloco-3" id="toc-bloco-3" class="nav-link" data-scroll-target="#bloco-3">Bloco 3</a>
+  <ul class="collapse">
+  <li><a href="#quando-a-média-engana" id="toc-quando-a-média-engana" class="nav-link" data-scroll-target="#quando-a-média-engana">Quando a Média Engana</a></li>
+  </ul></li>
+  <li><a href="#cenário-um-erro-de-registro-na-amostra" id="toc-cenário-um-erro-de-registro-na-amostra" class="nav-link" data-scroll-target="#cenário-um-erro-de-registro-na-amostra">Cenário: um erro de registro na amostra</a></li>
+  <li><a href="#código-construção-do-cenário" id="toc-código-construção-do-cenário" class="nav-link" data-scroll-target="#código-construção-do-cenário">Código: construção do cenário</a></li>
+  <li><a href="#código-média-e-mediana-antes-e-depois" id="toc-código-média-e-mediana-antes-e-depois" class="nav-link" data-scroll-target="#código-média-e-mediana-antes-e-depois">Código: média e mediana, antes e depois</a></li>
+  <li><a href="#output-média-e-mediana-antes-e-depois" id="toc-output-média-e-mediana-antes-e-depois" class="nav-link" data-scroll-target="#output-média-e-mediana-antes-e-depois">Output: média e mediana, antes e depois</a></li>
+  <li><a href="#código-visualização-do-deslocamento" id="toc-código-visualização-do-deslocamento" class="nav-link" data-scroll-target="#código-visualização-do-deslocamento">Código: visualização do deslocamento</a></li>
+  <li><a href="#gráfico-visualização-do-deslocamento" id="toc-gráfico-visualização-do-deslocamento" class="nav-link" data-scroll-target="#gráfico-visualização-do-deslocamento">Gráfico: visualização do deslocamento</a></li>
+  <li><a href="#mad-e-desvio-padrão-diante-do-mesmo-valor-extremo" id="toc-mad-e-desvio-padrão-diante-do-mesmo-valor-extremo" class="nav-link" data-scroll-target="#mad-e-desvio-padrão-diante-do-mesmo-valor-extremo">MAD e desvio padrão diante do mesmo valor extremo</a></li>
+  <li><a href="#código-mad-e-desvio-padrão" id="toc-código-mad-e-desvio-padrão" class="nav-link" data-scroll-target="#código-mad-e-desvio-padrão">Código: MAD e desvio padrão</a></li>
+  <li><a href="#output-mad-e-desvio-padrão" id="toc-output-mad-e-desvio-padrão" class="nav-link" data-scroll-target="#output-mad-e-desvio-padrão">Output: MAD e desvio padrão</a></li>
+  <li><a href="#bloco-4" id="toc-bloco-4" class="nav-link" data-scroll-target="#bloco-4">Bloco 4</a>
+  <ul class="collapse">
+  <li><a href="#erros-comuns" id="toc-erros-comuns" class="nav-link" data-scroll-target="#erros-comuns">Erros Comuns</a></li>
+  </ul></li>
+  <li><a href="#erro-1-reportar-a-média-sem-medida-de-dispersão" id="toc-erro-1-reportar-a-média-sem-medida-de-dispersão" class="nav-link" data-scroll-target="#erro-1-reportar-a-média-sem-medida-de-dispersão">Erro 1, reportar a média sem medida de dispersão</a></li>
+  <li><a href="#erro-2-usar-a-média-em-distribuição-assimétrica" id="toc-erro-2-usar-a-média-em-distribuição-assimétrica" class="nav-link" data-scroll-target="#erro-2-usar-a-média-em-distribuição-assimétrica">Erro 2, usar a média em distribuição assimétrica</a></li>
+  <li><a href="#erro-3-confundir-a-robustez-do-mad-com-a-do-desvio-padrão" id="toc-erro-3-confundir-a-robustez-do-mad-com-a-do-desvio-padrão" class="nav-link" data-scroll-target="#erro-3-confundir-a-robustez-do-mad-com-a-do-desvio-padrão">Erro 3, confundir a robustez do MAD com a do desvio padrão</a></li>
+  <li><a href="#erro-4-não-reportar-o-cv-em-tabela-de-resultado" id="toc-erro-4-não-reportar-o-cv-em-tabela-de-resultado" class="nav-link" data-scroll-target="#erro-4-não-reportar-o-cv-em-tabela-de-resultado">Erro 4, não reportar o CV% em tabela de resultado</a></li>
+  <li><a href="#resumo-tendência-central-e-dispersão" id="toc-resumo-tendência-central-e-dispersão" class="nav-link" data-scroll-target="#resumo-tendência-central-e-dispersão">Resumo: tendência central e dispersão</a></li>
+  <li><a href="#obrigada" id="toc-obrigada" class="nav-link" data-scroll-target="#obrigada">Obrigada!</a></li>
+  <li><a href="#siga-o-café-com-r" id="toc-siga-o-café-com-r" class="nav-link" data-scroll-target="#siga-o-café-com-r">Siga o Café com R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="aula31_media_nao_e_tudo.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Aula 31. Média não é tudo: tendência central e dispersão</h1>
+<p class="subtitle lead">Moda, mediana, médias geométrica e harmônica, variância, CV e MAD, com o caso do outlier que desloca a média sem mover a mediana</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Estatística</div>
+    <div class="quarto-category">Descritiva</div>
+    <div class="quarto-category">Tidyverse</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Domine as cinco medidas de tendência central e as principais medidas de dispersão, e entenda por que a média sozinha pode distorcer a leitura dos dados.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="democratização" class="level2">
+<h2 class="anchored" data-anchor-id="democratização">Democratização</h2>
+<blockquote class="blockquote">
+<p>Esta aula continua diretamente da Aula 27. Os dados simulados são os mesmos, produtividade do híbrido H2 em 10.000 parcelas agronômicas. A amostra de 120 parcelas extraída anteriormente é reutilizada aqui para garantir continuidade nos resultados.</p>
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/meguy.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<hr>
+</section>
+<section id="acompanhe-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="acompanhe-o-café-com-r">Acompanhe o Café com R</h2>
+<p>SITE OFICIAL&gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+</section>
+<section id="objetivos-da-aula" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-da-aula">Objetivos da aula</h2>
+<div class="incremental">
+<ul class="incremental">
+<li>Calcular e interpretar as cinco medidas de <strong>tendência central</strong>, média aritmética, mediana, moda, média geométrica e média harmônica</li>
+<li>Calcular e interpretar as principais medidas de <strong>dispersão</strong>, variância, desvio padrão, amplitude, IQR, MAD e CV%</li>
+<li>Identificar quando a média deixa de representar bem o centro dos dados</li>
+<li>Comparar a robustez da mediana e do MAD frente a valores extremos</li>
+<li>Reconhecer os erros mais frequentes na escolha e no relato dessas medidas</li>
+</ul>
+</div>
+<hr>
+</section>
+<section id="bloco-1" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+<section id="medidas-de-tendência-central" class="level2">
+<h2 class="anchored" data-anchor-id="medidas-de-tendência-central">Medidas de Tendência Central</h2>
+</section>
+</section>
+<hr>
+<section id="média-aritmética" class="level2">
+<h2 class="anchored" data-anchor-id="média-aritmética">Média aritmética</h2>
+<ul>
+<li>A <strong>média aritmética</strong> é a soma dos valores dividida pelo número de observações.</li>
+</ul>
+<p><span class="math display">\[\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i\]</span></p>
+<ul>
+<li><p>Cada observação entra no cálculo com o mesmo peso, incluindo valores extremos.</p></li>
+<li><p><strong>No contexto agronômico:</strong> a produtividade média das 120 parcelas amostradas resume o centro da distribuição, desde que ela seja aproximadamente simétrica.</p></li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Atenção:</strong> a média é sensível a valores extremos. Um único valor discrepante desloca seu resultado, mesmo que represente um erro de medição ou um evento isolado.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="mediana" class="level2">
+<h2 class="anchored" data-anchor-id="mediana">Mediana</h2>
+<ul>
+<li>A <strong>mediana</strong> é o valor que ocupa a posição central dos dados ordenados.</li>
+</ul>
+<p><span class="math display">\[\tilde{x} = \begin{cases} x_{(n+1)/2} &amp; \text{se } n \text{ é ímpar} \\ \dfrac{x_{(n/2)} + x_{(n/2+1)}}{2} &amp; \text{se } n \text{ é par} \end{cases}\]</span></p>
+<ul>
+<li><p>Depende apenas da posição dos valores, não de sua magnitude.</p></li>
+<li><p><strong>No contexto agronômico:</strong> a mediana permanece estável mesmo diante de uma leitura de produtividade fisiologicamente implausível.</p></li>
+</ul>
+<hr>
+</section>
+<section id="moda" class="level2">
+<h2 class="anchored" data-anchor-id="moda">Moda</h2>
+<ul>
+<li><p>A <strong>moda</strong> é o valor ou categoria de maior frequência no conjunto de dados.</p></li>
+<li><p>É a única medida de tendência central aplicável a variáveis qualitativas.</p></li>
+<li><p><strong>No contexto agronômico:</strong> entre os tipos de solo amostrados, argiloso, arenoso e franco, a moda identifica a classe predominante.</p></li>
+<li><p>Em variáveis contínuas, a moda é obtida após arredondamento ou agrupamento em classes, e pode não ser única.</p></li>
+</ul>
+<hr>
+</section>
+<section id="média-geométrica" class="level2">
+<h2 class="anchored" data-anchor-id="média-geométrica">Média geométrica</h2>
+<ul>
+<li>A <strong>média geométrica</strong> é a raiz de ordem <span class="math inline">\(n\)</span> do produto dos valores.</li>
+</ul>
+<p><span class="math display">\[\bar{x}_g = \sqrt[n]{\prod_{i=1}^{n} x_i} = \exp\left(\frac{1}{n}\sum_{i=1}^{n} \ln(x_i)\right)\]</span></p>
+<ul>
+<li><p>Adequada para dados que representam taxas de crescimento, variações percentuais ou séries multiplicativas.</p></li>
+<li><p><strong>No contexto agronômico:</strong> o crescimento médio de produtividade entre safras consecutivas deve ser calculado pela média geométrica, não pela aritmética.</p></li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Atenção:</strong> aplicar a média aritmética sobre taxas de crescimento composto produz um resultado superestimado.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="média-harmônica" class="level2">
+<h2 class="anchored" data-anchor-id="média-harmônica">Média harmônica</h2>
+<ul>
+<li>A <strong>média harmônica</strong> é o inverso da média dos inversos dos valores.</li>
+</ul>
+<p><span class="math display">\[\bar{x}_h = \frac{n}{\displaystyle\sum_{i=1}^{n} \frac{1}{x_i}}\]</span></p>
+<ul>
+<li><p>Adequada para dados expressos como razões, como eficiência de uso de insumo por área ou velocidade média em percursos de mesma distância.</p></li>
+<li><p>É a mais sensível às três médias a valores próximos de zero.</p></li>
+</ul>
+<hr>
+</section>
+<section id="código-tendência-central" class="level2">
+<h2 class="anchored" data-anchor-id="código-tendência-central">Código: tendência central</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">media     =</span> <span class="fu">mean</span>(produtividade),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mediana   =</span> <span class="fu">median</span>(produtividade),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">moda      =</span> <span class="fu">moda</span>(<span class="fu">round</span>(produtividade, <span class="dv">1</span>))[<span class="dv">1</span>],</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_geo =</span> <span class="fu">exp</span>(<span class="fu">mean</span>(<span class="fu">log</span>(produtividade))),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">media_har =</span> <span class="fu">n</span>() <span class="sc">/</span> <span class="fu">sum</span>(<span class="dv">1</span> <span class="sc">/</span> produtividade)) <span class="sc">|&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-tendência-central" class="level2">
+<h2 class="anchored" data-anchor-id="output-tendência-central">Output: tendência central</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  media mediana  moda media_geo media_har
+  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1  8.36    8.40   7.9      8.26      8.16</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>A proximidade entre média, mediana e as médias geométrica e harmônica confirma que esta amostra segue distribuição aproximadamente simétrica, sem valores próximos de zero ou taxas multiplicativas envolvidas.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-2" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+<section id="medidas-de-dispersão" class="level2">
+<h2 class="anchored" data-anchor-id="medidas-de-dispersão">Medidas de Dispersão</h2>
+</section>
+</section>
+<hr>
+<section id="variância-e-desvio-padrão" class="level2">
+<h2 class="anchored" data-anchor-id="variância-e-desvio-padrão">Variância e desvio padrão</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Medida</th>
+<th>Definição</th>
+<th>Interpretação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Variância</td>
+<td><span class="math inline">\(s^2 = \dfrac{\sum(x_i - \bar{x})^2}{n-1}\)</span></td>
+<td>Dispersão média ao quadrado</td>
+</tr>
+<tr class="even">
+<td>Desvio padrão</td>
+<td><span class="math inline">\(s = \sqrt{s^2}\)</span></td>
+<td>Dispersão na mesma unidade dos dados</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>O desvio padrão descreve a variabilidade dos dados individuais em torno da média, e não deve ser confundido com o erro padrão da média, que descreve a precisão da estimativa.</li>
+</ul>
+<hr>
+</section>
+<section id="amplitude-e-iqr" class="level2">
+<h2 class="anchored" data-anchor-id="amplitude-e-iqr">Amplitude e IQR</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Medida</th>
+<th>Definição</th>
+<th>Interpretação</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Amplitude</td>
+<td><span class="math inline">\(x_{max} - x_{min}\)</span></td>
+<td>Alcance total dos dados</td>
+</tr>
+<tr class="even">
+<td>IQR</td>
+<td><span class="math inline">\(Q_3 - Q_1\)</span></td>
+<td>Alcance dos 50% centrais dos dados</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>A amplitude é determinada exclusivamente pelos dois valores extremos, e ignora toda a estrutura intermediária da distribuição.</p></li>
+<li><p>O IQR é uma medida de dispersão robusta, pouco sensível a valores atípicos.</p></li>
+</ul>
+<hr>
+</section>
+<section id="mad-desvio-absoluto-mediano" class="level2">
+<h2 class="anchored" data-anchor-id="mad-desvio-absoluto-mediano">MAD, desvio absoluto mediano</h2>
+<ul>
+<li>O <strong>MAD</strong> é a mediana dos desvios absolutos em relação à mediana, multiplicada por uma constante de consistência.</li>
+</ul>
+<p><span class="math display">\[MAD = 1{,}4826 \times \text{mediana}\left(|x_i - \tilde{x}|\right)\]</span></p>
+<ul>
+<li><p>A constante 1,4826 torna o MAD comparável ao desvio padrão sob distribuição normal.</p></li>
+<li><p>É o análogo robusto do desvio padrão, apropriado quando há suspeita de valores extremos nos dados.</p></li>
+</ul>
+<hr>
+</section>
+<section id="coeficiente-de-variação-cv" class="level2">
+<h2 class="anchored" data-anchor-id="coeficiente-de-variação-cv">Coeficiente de variação, CV%</h2>
+<p><span class="math display">\[CV = \frac{s}{\bar{x}} \times 100\]</span></p>
+<ul>
+<li><p>Expressa a dispersão em termos relativos à média, permitindo comparar variáveis com unidades ou magnitudes diferentes.</p></li>
+<li><p><strong>No contexto agronômico:</strong> CV abaixo de 15% indica variabilidade experimental baixa a moderada, valor referencial comumente adotado na experimentação agronômica.</p></li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Atenção:</strong> CV% alto não significa necessariamente falha experimental. Algumas variáveis, como contagens e proporções, apresentam CV% elevado por característica intrínseca.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-dispersão" class="level2">
+<h2 class="anchored" data-anchor-id="código-dispersão">Código: dispersão</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>amostra <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">variancia =</span> <span class="fu">var</span>(produtividade),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">dp        =</span> <span class="fu">sd</span>(produtividade),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">amplitude =</span> <span class="fu">max</span>(produtividade) <span class="sc">-</span> <span class="fu">min</span>(produtividade),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">iqr       =</span> <span class="fu">IQR</span>(produtividade),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">mad       =</span> <span class="fu">mad</span>(produtividade),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">media     =</span> <span class="fu">mean</span>(produtividade)) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv =</span> (dp <span class="sc">/</span> media) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-dispersão" class="level2">
+<h2 class="anchored" data-anchor-id="output-dispersão">Output: dispersão</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 7
+  variancia    dp amplitude   iqr   mad media    cv
+      &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1      1.54  1.24      6.97  1.63  1.22  8.36  14.8</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>O CV próximo de 14% está de acordo com o valor esperado para dados de produtividade gerados a partir de uma distribuição normal com desvio padrão de 1,20 t/ha e média de 8,45 t/ha.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-3" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+<section id="quando-a-média-engana" class="level2">
+<h2 class="anchored" data-anchor-id="quando-a-média-engana">Quando a Média Engana</h2>
+</section>
+</section>
+<hr>
+<section id="cenário-um-erro-de-registro-na-amostra" class="level2">
+<h2 class="anchored" data-anchor-id="cenário-um-erro-de-registro-na-amostra">Cenário: um erro de registro na amostra</h2>
+<ul>
+<li><p>Suponha que, durante a coleta, a produtividade de uma das 120 parcelas seja registrada como 25 t/ha, um valor fisiologicamente implausível para o híbrido H2.</p></li>
+<li><p>Esse tipo de valor extremo pode ter origem em erro de digitação, falha do equipamento de colheita ou evento isolado não representativo do experimento.</p></li>
+<li><p>A seguir, comparamos a amostra original com essa mesma amostra contendo o valor extremo.</p></li>
+</ul>
+<hr>
+</section>
+<section id="código-construção-do-cenário" class="level2">
+<h2 class="anchored" data-anchor-id="código-construção-do-cenário">Código: construção do cenário</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>amostra_outlier <span class="ot">&lt;-</span> amostra <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">produtividade =</span> <span class="fu">if_else</span>(<span class="fu">row_number</span>() <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">25</span>, produtividade))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="código-média-e-mediana-antes-e-depois" class="level2">
+<h2 class="anchored" data-anchor-id="código-média-e-mediana-antes-e-depois">Código: média e mediana, antes e depois</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  amostra <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">cenario =</span> <span class="st">"Original"</span>, <span class="at">media =</span> <span class="fu">mean</span>(produtividade),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">mediana =</span> <span class="fu">median</span>(produtividade)),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  amostra_outlier <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">cenario =</span> <span class="st">"Com valor extremo"</span>, <span class="at">media =</span> <span class="fu">mean</span>(produtividade),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">mediana =</span> <span class="fu">median</span>(produtividade))) <span class="sc">|&gt;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-média-e-mediana-antes-e-depois" class="level2">
+<h2 class="anchored" data-anchor-id="output-média-e-mediana-antes-e-depois">Output: média e mediana, antes e depois</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  cenario           media mediana
+  &lt;chr&gt;             &lt;dbl&gt;   &lt;dbl&gt;
+1 Original           8.36    8.40
+2 Com valor extremo  8.50    8.40</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>A média se desloca de forma perceptível com a inclusão de um único valor extremo, enquanto a mediana permanece praticamente inalterada, pois depende apenas da posição dos dados ordenados.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="código-visualização-do-deslocamento" class="level2">
+<h2 class="anchored" data-anchor-id="código-visualização-do-deslocamento">Código: visualização do deslocamento</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dados_cenarios <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  amostra <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">cenario =</span> <span class="st">"Original"</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  amostra_outlier <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">cenario =</span> <span class="st">"Com valor extremo"</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>resumo_cenarios <span class="ot">&lt;-</span> dados_cenarios <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cenario) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(produtividade), <span class="at">mediana =</span> <span class="fu">median</span>(produtividade),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>dados_cenarios <span class="sc">|&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> produtividade, <span class="at">fill =</span> cenario)) <span class="sc">+</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data =</span> resumo_cenarios,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">xintercept =</span> media, <span class="at">color =</span> cenario),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data =</span> resumo_cenarios,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">xintercept =</span> mediana, <span class="at">color =</span> cenario),</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Original"</span>          <span class="ot">=</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Com valor extremo"</span> <span class="ot">=</span> cores_cafe[<span class="st">"marrom"</span>])) <span class="sc">+</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Original"</span>          <span class="ot">=</span> cores_cafe[<span class="st">"azul_escuro"</span>],</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Com valor extremo"</span> <span class="ot">=</span> cores_cafe[<span class="st">"marrom"</span>])) <span class="sc">+</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Efeito de um valor extremo sobre média e mediana"</span>,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Linha tracejada, média. Linha pontilhada, mediana."</span>,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Produtividade (t/ha)"</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Densidade"</span>,</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill     =</span> <span class="st">"Cenário"</span>,</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">color    =</span> <span class="st">"Cenário"</span>,</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  tema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="gráfico-visualização-do-deslocamento" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-visualização-do-deslocamento">Gráfico: visualização do deslocamento</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula31_media_nao_e_tudo_files/figure-html/outlier-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="mad-e-desvio-padrão-diante-do-mesmo-valor-extremo" class="level2">
+<h2 class="anchored" data-anchor-id="mad-e-desvio-padrão-diante-do-mesmo-valor-extremo">MAD e desvio padrão diante do mesmo valor extremo</h2>
+<ul>
+<li><p>O desvio padrão é calculado a partir dos quadrados dos desvios em relação à média, o que amplia o efeito de um valor extremo sobre seu resultado.</p></li>
+<li><p>O MAD é calculado a partir da mediana dos desvios em relação à mediana, medida que permanece estável diante do mesmo valor extremo.</p></li>
+<li><p>Essa diferença de comportamento é o motivo pelo qual o MAD é preferido como medida de dispersão em conjuntos de dados com suspeita de valores atípicos.</p></li>
+</ul>
+<hr>
+</section>
+<section id="código-mad-e-desvio-padrão" class="level2">
+<h2 class="anchored" data-anchor-id="código-mad-e-desvio-padrão">Código: MAD e desvio padrão</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  amostra <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">cenario =</span> <span class="st">"Original"</span>, <span class="at">dp =</span> <span class="fu">sd</span>(produtividade),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">mad =</span> <span class="fu">mad</span>(produtividade)),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  amostra_outlier <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">cenario =</span> <span class="st">"Com valor extremo"</span>, <span class="at">dp =</span> <span class="fu">sd</span>(produtividade),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">mad =</span> <span class="fu">mad</span>(produtividade))) <span class="sc">|&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-mad-e-desvio-padrão" class="level2">
+<h2 class="anchored" data-anchor-id="output-mad-e-desvio-padrão">Output: MAD e desvio padrão</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  cenario              dp   mad
+  &lt;chr&gt;             &lt;dbl&gt; &lt;dbl&gt;
+1 Original           1.24  1.22
+2 Com valor extremo  1.96  1.23</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>O desvio padrão aumenta de forma acentuada com a inclusão do valor extremo, enquanto o MAD permanece praticamente no mesmo patamar, confirmando sua robustez.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-4" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 4</h1>
+<section id="erros-comuns" class="level2">
+<h2 class="anchored" data-anchor-id="erros-comuns">Erros Comuns</h2>
+</section>
+</section>
+<hr>
+<section id="erro-1-reportar-a-média-sem-medida-de-dispersão" class="level2">
+<h2 class="anchored" data-anchor-id="erro-1-reportar-a-média-sem-medida-de-dispersão">Erro 1, reportar a média sem medida de dispersão</h2>
+<ul>
+<li><p>Uma média sem desvio padrão, erro padrão ou intervalo de confiança é estatisticamente incompleta.</p></li>
+<li><p>Reportar apenas o valor central impede o leitor de avaliar a variabilidade e a confiabilidade da estimativa.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-2-usar-a-média-em-distribuição-assimétrica" class="level2">
+<h2 class="anchored" data-anchor-id="erro-2-usar-a-média-em-distribuição-assimétrica">Erro 2, usar a média em distribuição assimétrica</h2>
+<ul>
+<li><p>Quando a distribuição é claramente assimétrica, como contagem de insetos ou incidência de doença, a média deixa de representar bem o centro dos dados.</p></li>
+<li><p>Nessas situações, a mediana ou a moda descrevem melhor o comportamento típico da variável.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-3-confundir-a-robustez-do-mad-com-a-do-desvio-padrão" class="level2">
+<h2 class="anchored" data-anchor-id="erro-3-confundir-a-robustez-do-mad-com-a-do-desvio-padrão">Erro 3, confundir a robustez do MAD com a do desvio padrão</h2>
+<ul>
+<li><p>Tratar o MAD como equivalente ao desvio padrão desconsidera sua principal vantagem, a resistência a valores extremos.</p></li>
+<li><p>Usar o desvio padrão em conjuntos de dados com suspeita de outliers sem avaliar o MAD como alternativa produz uma medida de dispersão inflada.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-4-não-reportar-o-cv-em-tabela-de-resultado" class="level2">
+<h2 class="anchored" data-anchor-id="erro-4-não-reportar-o-cv-em-tabela-de-resultado">Erro 4, não reportar o CV% em tabela de resultado</h2>
+<ul>
+<li><p>O CV% é exigido pelas principais revistas agronômicas brasileiras, e por parte das internacionais, como indicador da qualidade experimental.</p></li>
+<li><p>Omitir o CV% impede a avaliação comparativa da precisão entre experimentos com médias distintas.</p></li>
+</ul>
+<hr>
+</section>
+<section id="resumo-tendência-central-e-dispersão" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-tendência-central-e-dispersão">Resumo: tendência central e dispersão</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Medida</th>
+<th>Robustez a outliers</th>
+<th>Função no R</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Média aritmética</td>
+<td>Baixa</td>
+<td><code>mean()</code></td>
+<td>Distribuição simétrica, sem outliers</td>
+</tr>
+<tr class="even">
+<td>Mediana</td>
+<td>Alta</td>
+<td><code>median()</code></td>
+<td>Distribuição assimétrica ou com outliers</td>
+</tr>
+<tr class="odd">
+<td>Moda</td>
+<td>Alta</td>
+<td>Sem função nativa</td>
+<td>Variáveis categóricas ou discretas</td>
+</tr>
+<tr class="even">
+<td>Média geométrica</td>
+<td>Baixa</td>
+<td><code>exp(mean(log()))</code></td>
+<td>Taxas de crescimento, séries multiplicativas</td>
+</tr>
+<tr class="odd">
+<td>Média harmônica</td>
+<td>Baixa</td>
+<td><code>n()/sum(1/x)</code></td>
+<td>Razões, velocidades médias</td>
+</tr>
+<tr class="even">
+<td>Desvio padrão</td>
+<td>Baixa</td>
+<td><code>sd()</code></td>
+<td>Dispersão em torno da média, dados simétricos</td>
+</tr>
+<tr class="odd">
+<td>MAD</td>
+<td>Alta</td>
+<td><code>mad()</code></td>
+<td>Dispersão robusta, suspeita de outliers</td>
+</tr>
+<tr class="even">
+<td>CV%</td>
+<td>Baixa</td>
+<td><code>sd()/mean()*100</code></td>
+<td>Comparação de variabilidade entre experimentos</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="obrigada" class="level2">
+<h2 class="anchored" data-anchor-id="obrigada">Obrigada!</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/comunidade.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="489"></p>
+</figure>
+</div>
+<p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+<hr>
+</section>
+<section id="siga-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="siga-o-café-com-r">Siga o Café com R</h2>
+<blockquote class="blockquote">
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+</blockquote>
+<p>SITE OFICIAL&gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

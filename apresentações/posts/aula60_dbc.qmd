@@ -1,0 +1,424 @@
+---
+title: "Aula 60. DBC, Delineamento em Blocos Casualizados"
+subtitle: "Controle local, croqui em blocos, ANOVA e eficiência relativa ao DIC"
+categories: [R, Estatística, Delineamento Experimental, Tidyverse]
+image: "imagens/60.png"
+description: "Entenda o papel do controle local no Delineamento em Blocos Casualizados, gere o croqui com FielDHub e calcule a eficiência relativa ao DIC."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(FielDHub)
+library(metan)
+library(emmeans)
+library(multcomp)
+library(multcompView)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+cultivares    <- paste0("Cultivar ", 1:5)
+medias_reais  <- c(185, 210, 175, 230, 198)
+efeito_bloco  <- c(-15, -5, 0, 8, 20)
+
+dados_dbc <- expand_grid(bloco = factor(1:5), cultivar = cultivares) |>
+  mutate(
+    cultivar_idx  = match(cultivar, cultivares),
+    bloco_idx     = as.integer(bloco),
+    produtividade = medias_reais[cultivar_idx] + efeito_bloco[bloco_idx] +
+      rnorm(n(), 0, 8)) |>
+  dplyr::select(bloco, cultivar, produtividade)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Entender o conceito de controle local e por que blocar
+- Gerar o croqui em blocos com `FielDHub`
+- Conduzir a ANOVA com o efeito de bloco corretamente separado
+- Calcular a eficiência relativa do DBC em relação ao DIC
+- Comparar médias e evitar os erros mais comuns na interpretação do bloco
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O Delineamento
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, controle local e por que blocar
+
+- **Contexto:** os mesmos 5 cultivares de milho agora são avaliados em campo, onde existe um gradiente de fertilidade do solo conhecido, uma condição que a casa de vegetação da aula anterior não tinha.
+
+- **Controle local** consiste em agrupar unidades experimentais semelhantes dentro de cada bloco, de forma que a variação entre blocos absorva parte da variação ambiental, deixando o resíduo mais limpo para a comparação entre tratamentos.
+
+- Blocar só melhora a precisão quando o critério de blocagem captura, de fato, uma fonte relevante de variação ambiental.
+
+------------------------------------------------------------------------
+
+## Modelo estatístico do DBC
+
+$$Y_{ij} = \mu + \tau_i + \beta_j + \epsilon_{ij}$$
+
+| Termo           | Significado              |
+|-----------------|--------------------------|
+| $\tau_i$        | Efeito do tratamento $i$ |
+| $\beta_j$       | Efeito do bloco $j$      |
+| $\epsilon_{ij}$ | Erro experimental        |
+
+- A diferença central em relação ao DIC é a inclusão de $\beta_j$, que remove a variação entre blocos do resíduo antes da comparação entre tratamentos.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Gerando o Croqui
+:::
+
+------------------------------------------------------------------------
+
+## FielDHub, RCBD()
+
+```{r}
+#| label: fieldhub-dbc-codigo
+#| eval: false
+
+croqui_dbc <- RCBD(
+  t          = cultivares,
+  reps       = 5,
+  plotNumber = 101,
+  seed       = 2026)
+
+croqui_dbc$fieldBook
+```
+
+------------------------------------------------------------------------
+
+## Output: o croqui em blocos
+
+```{r}
+#| label: fieldhub-dbc-output
+#| echo: false
+
+croqui_dbc <- RCBD(
+  t          = cultivares,
+  reps       = 5,
+  plotNumber = 101,
+  seed       = 2026)
+
+croqui_dbc$fieldBook |> head(10)
+
+plot(croqui_dbc)
+```
+
+- **Cada bloco recebe exatamente uma parcela de cada cultivar, com a ordem de instalação dentro do bloco sorteada de forma independente entre blocos, o croqui documenta essa estrutura para a instalação em campo.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Descritiva
+:::
+
+------------------------------------------------------------------------
+
+## Código: desc_stat() por cultivar e bloco
+
+```{r}
+#| label: desc-stat-dbc-codigo
+#| eval: false
+
+dados_dbc |>
+  group_by(cultivar) |>
+  desc_stat(produtividade)
+
+dados_dbc |>
+  group_by(bloco) |>
+  desc_stat(produtividade)
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: desc-stat-dbc-output
+#| echo: false
+
+dados_dbc |>
+  group_by(cultivar) |>
+  desc_stat(produtividade)
+
+dados_dbc |>
+  group_by(bloco) |>
+  desc_stat(produtividade)
+```
+
+- **A produtividade média cresce de forma consistente do Bloco 1 ao Bloco 5, evidência direta do gradiente de fertilidade que motivou a blocagem.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## ANOVA
+:::
+
+------------------------------------------------------------------------
+
+## Código: aov() com bloco no modelo
+
+```{r}
+#| label: anova-dbc-codigo
+#| eval: false
+
+modelo_dbc <- aov(produtividade ~ bloco + cultivar, data = dados_dbc)
+
+summary(modelo_dbc)
+```
+
+------------------------------------------------------------------------
+
+## Output: tabela de ANOVA
+
+```{r}
+#| label: anova-dbc-output
+#| echo: false
+
+modelo_dbc <- aov(produtividade ~ bloco + cultivar, data = dados_dbc)
+
+summary(modelo_dbc)[[1]] |>
+  as_tibble(rownames = "fonte_variacao") |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Interpretação, separando a soma de quadrados de bloco
+
+- A soma de quadrados de bloco é retirada do resíduo antes do cálculo do quadrado médio residual, deixando o teste F de cultivar mais sensível à diferença real entre tratamentos.
+
+- O bloco entra no modelo por convenção como efeito fixo nesta ANOVA clássica, mas é frequentemente tratado como efeito aleatório em uma abordagem de modelos mistos, tema da última aula desta sequência.
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Eficiência Relativa do DBC
+:::
+
+------------------------------------------------------------------------
+
+## Fórmula e conceito
+
+$$RE \approx \frac{QM_{\text{resíduo, DIC}}}{QM_{\text{resíduo, DBC}}}$$
+
+- Essa razão simplificada compara o quadrado médio do resíduo que se obteria tratando o experimento como DIC, ignorando os blocos, ao quadrado médio do resíduo realmente obtido no DBC.
+
+- Um valor de RE acima de 1 indica que a blocagem reduziu a variabilidade residual, aumentando a precisão do experimento para o mesmo número de parcelas.
+
+------------------------------------------------------------------------
+
+## Código: cálculo
+
+```{r}
+#| label: eficiencia-codigo
+#| eval: false
+
+modelo_dic_equivalente <- aov(produtividade ~ cultivar, data = dados_dbc)
+
+qm_residuo_dic <- summary(modelo_dic_equivalente)[[1]]["Residuals", "Mean Sq"]
+qm_residuo_dbc <- summary(modelo_dbc)[[1]]["Residuals", "Mean Sq"]
+
+eficiencia_relativa <- qm_residuo_dic / qm_residuo_dbc
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: eficiencia-output
+#| echo: false
+
+modelo_dic_equivalente <- aov(produtividade ~ cultivar, data = dados_dbc)
+
+qm_residuo_dic <- summary(modelo_dic_equivalente)[[1]]["Residuals", "Mean Sq"]
+qm_residuo_dbc <- summary(modelo_dbc)[[1]]["Residuals", "Mean Sq"]
+
+tibble(
+  qm_residuo_dic      = qm_residuo_dic,
+  qm_residuo_dbc      = qm_residuo_dbc,
+  eficiencia_relativa = qm_residuo_dic / qm_residuo_dbc) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+- **A eficiência relativa aproximada é bem maior que 1, confirmando que a blocagem por gradiente de fertilidade reduziu substancialmente a variabilidade residual em relação a ignorar os blocos, ganho de precisão obtido sem aumentar o número de parcelas.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Comparação de Médias
+:::
+
+------------------------------------------------------------------------
+
+## Código: emmeans e cld
+
+```{r}
+#| label: emmeans-dbc-codigo
+#| eval: false
+
+medias_dbc <- emmeans(modelo_dbc, ~ cultivar)
+
+cld(medias_dbc, Letters = letters, adjust = "tukey")
+```
+
+------------------------------------------------------------------------
+
+## Output
+
+```{r}
+#| label: emmeans-dbc-output
+#| echo: false
+
+medias_dbc <- emmeans(modelo_dbc, ~ cultivar)
+
+cld(medias_dbc, Letters = letters, adjust = "tukey") |>
+  as_tibble() |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico
+
+```{r}
+#| label: grafico-medias-dbc
+#| echo: false
+#| fig-height: 4.8
+
+medias_dbc <- emmeans(modelo_dbc, ~ cultivar)
+
+cld(medias_dbc, Letters = letters, adjust = "tukey") |>
+  as_tibble() |>
+  ggplot(aes(x = cultivar, y = emmean)) +
+  geom_col(fill = cores_cafe["azul_claro"], width = 0.6) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  geom_text(aes(label = trimws(.group), y = upper.CL + 8), size = 4.5) +
+  labs(
+    title    = "Produtividade média por cultivar, ajustada pelo bloco",
+    subtitle = "Cultivares que não compartilham nenhuma letra diferem estatisticamente",
+    x        = NULL,
+    y        = "Produtividade (g/planta)",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 7
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, blocar por critério que não captura variação real
+
+- Definir blocos por um critério arbitrário, sem relação com uma fonte real de variação ambiental, reduz os graus de liberdade do resíduo sem ganho correspondente de precisão, podendo até reduzir o poder do teste em relação ao DIC.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, interpretar a soma de quadrados de bloco como se fosse tratamento
+
+- A soma de quadrados de bloco não deve ser interpretada com o mesmo interesse científico da soma de quadrados de tratamento, o bloco existe para controle da variação ambiental, não como um fator de interesse a ser testado e discutido como resultado principal do experimento.
+
+------------------------------------------------------------------------
+
+## Resumo: DBC
+
+| Etapa                     | Função no R                           |
+|---------------------------|---------------------------------------|
+| Croqui de campo em blocos | `FielDHub::RCBD()`                    |
+| Estatística descritiva    | `metan::desc_stat()`                  |
+| ANOVA com bloco           | `aov(y ~ bloco + tratamento)`         |
+| Eficiência relativa       | Razão dos quadrados médios do resíduo |
+| Comparação de médias      | `emmeans::cld()`                      |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

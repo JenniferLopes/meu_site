@@ -1,0 +1,2290 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Aprenda a integrar o dbt Core ao R usando reticulate, transformar dados no PostgreSQL com SQL versionado e testado, e consumir os resultados no R.">
+
+<title>Aula 32. dbt com R – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#democratização" id="toc-democratização" class="nav-link active" data-scroll-target="#democratização">Democratização</a></li>
+  <li><a href="#acompanhe-o-café-com-r" id="toc-acompanhe-o-café-com-r" class="nav-link" data-scroll-target="#acompanhe-o-café-com-r">Acompanhe o Café com R</a></li>
+  <li><a href="#objetivos-da-aula" id="toc-objetivos-da-aula" class="nav-link" data-scroll-target="#objetivos-da-aula">Objetivos da aula</a></li>
+  <li><a href="#bloco-1" id="toc-bloco-1" class="nav-link" data-scroll-target="#bloco-1">Bloco 1</a>
+  <ul class="collapse">
+  <li><a href="#o-que-é-o-dbt-e-por-que-ele-existe" id="toc-o-que-é-o-dbt-e-por-que-ele-existe" class="nav-link" data-scroll-target="#o-que-é-o-dbt-e-por-que-ele-existe">O que é o dbt e por que ele existe</a></li>
+  </ul></li>
+  <li><a href="#o-problema-que-o-dbt-resolve" id="toc-o-problema-que-o-dbt-resolve" class="nav-link" data-scroll-target="#o-problema-que-o-dbt-resolve">O problema que o dbt resolve</a></li>
+  <li><a href="#o-que-é-o-dbt" id="toc-o-que-é-o-dbt" class="nav-link" data-scroll-target="#o-que-é-o-dbt">O que é o dbt</a></li>
+  <li><a href="#o-modelo-elt-e-onde-o-dbt-se-encaixa" id="toc-o-modelo-elt-e-onde-o-dbt-se-encaixa" class="nav-link" data-scroll-target="#o-modelo-elt-e-onde-o-dbt-se-encaixa">O modelo ELT e onde o dbt se encaixa</a></li>
+  <li><a href="#dbt-core-e-dbt-cloud" id="toc-dbt-core-e-dbt-cloud" class="nav-link" data-scroll-target="#dbt-core-e-dbt-cloud">dbt Core e dbt Cloud</a></li>
+  <li><a href="#dbt-e-targets-quando-usar-cada-um" id="toc-dbt-e-targets-quando-usar-cada-um" class="nav-link" data-scroll-target="#dbt-e-targets-quando-usar-cada-um">dbt e targets: quando usar cada um</a></li>
+  <li><a href="#bloco-2" id="toc-bloco-2" class="nav-link" data-scroll-target="#bloco-2">Bloco 2</a>
+  <ul class="collapse">
+  <li><a href="#configurando-o-ambiente-com-reticulate" id="toc-configurando-o-ambiente-com-reticulate" class="nav-link" data-scroll-target="#configurando-o-ambiente-com-reticulate">Configurando o Ambiente com reticulate</a></li>
+  </ul></li>
+  <li><a href="#o-que-é-o-reticulate" id="toc-o-que-é-o-reticulate" class="nav-link" data-scroll-target="#o-que-é-o-reticulate">O que é o reticulate</a></li>
+  <li><a href="#por-que-usar-reticulate-em-vez-do-terminal" id="toc-por-que-usar-reticulate-em-vez-do-terminal" class="nav-link" data-scroll-target="#por-que-usar-reticulate-em-vez-do-terminal">Por que usar reticulate em vez do terminal</a></li>
+  <li><a href="#instalação-do-reticulate" id="toc-instalação-do-reticulate" class="nav-link" data-scroll-target="#instalação-do-reticulate">Instalação do reticulate</a></li>
+  <li><a href="#verificando-se-python-está-disponível" id="toc-verificando-se-python-está-disponível" class="nav-link" data-scroll-target="#verificando-se-python-está-disponível">Verificando se Python está disponível</a></li>
+  <li><a href="#output-configuração-do-python" id="toc-output-configuração-do-python" class="nav-link" data-scroll-target="#output-configuração-do-python">Output: configuração do Python</a></li>
+  <li><a href="#instalando-python-gerenciado-pelo-reticulate" id="toc-instalando-python-gerenciado-pelo-reticulate" class="nav-link" data-scroll-target="#instalando-python-gerenciado-pelo-reticulate">Instalando Python gerenciado pelo reticulate</a></li>
+  <li><a href="#criando-o-ambiente-virtual-python" id="toc-criando-o-ambiente-virtual-python" class="nav-link" data-scroll-target="#criando-o-ambiente-virtual-python">Criando o ambiente virtual Python</a></li>
+  <li><a href="#output-ambiente-virtual-ativo" id="toc-output-ambiente-virtual-ativo" class="nav-link" data-scroll-target="#output-ambiente-virtual-ativo">Output: ambiente virtual ativo</a></li>
+  <li><a href="#o-que-é-um-ambiente-virtual-python" id="toc-o-que-é-um-ambiente-virtual-python" class="nav-link" data-scroll-target="#o-que-é-um-ambiente-virtual-python">O que é um ambiente virtual Python</a></li>
+  <li><a href="#instalando-o-dbt-core-e-o-adaptador-postgresql" id="toc-instalando-o-dbt-core-e-o-adaptador-postgresql" class="nav-link" data-scroll-target="#instalando-o-dbt-core-e-o-adaptador-postgresql">Instalando o dbt Core e o adaptador PostgreSQL</a></li>
+  <li><a href="#verificando-a-instalação-do-dbt" id="toc-verificando-a-instalação-do-dbt" class="nav-link" data-scroll-target="#verificando-a-instalação-do-dbt">Verificando a instalação do dbt</a></li>
+  <li><a href="#output-versão-do-dbt-instalada" id="toc-output-versão-do-dbt-instalada" class="nav-link" data-scroll-target="#output-versão-do-dbt-instalada">Output: versão do dbt instalada</a></li>
+  <li><a href="#configurando-o-path-para-o-dbt" id="toc-configurando-o-path-para-o-dbt" class="nav-link" data-scroll-target="#configurando-o-path-para-o-dbt">Configurando o PATH para o dbt</a></li>
+  <li><a href="#bloco-3" id="toc-bloco-3" class="nav-link" data-scroll-target="#bloco-3">Bloco 3</a>
+  <ul class="collapse">
+  <li><a href="#configurando-o-projeto-dbt" id="toc-configurando-o-projeto-dbt" class="nav-link" data-scroll-target="#configurando-o-projeto-dbt">Configurando o Projeto dbt</a></li>
+  </ul></li>
+  <li><a href="#inicializando-o-projeto-dbt" id="toc-inicializando-o-projeto-dbt" class="nav-link" data-scroll-target="#inicializando-o-projeto-dbt">Inicializando o projeto dbt</a></li>
+  <li><a href="#o-arquivo-dbt_project.yml" id="toc-o-arquivo-dbt_project.yml" class="nav-link" data-scroll-target="#o-arquivo-dbt_project.yml">O arquivo dbt_project.yml</a></li>
+  <li><a href="#o-arquivo-profiles.yml" id="toc-o-arquivo-profiles.yml" class="nav-link" data-scroll-target="#o-arquivo-profiles.yml">O arquivo profiles.yml</a></li>
+  <li><a href="#credenciais-seguras-com-.renviron" id="toc-credenciais-seguras-com-.renviron" class="nav-link" data-scroll-target="#credenciais-seguras-com-.renviron">Credenciais seguras com .Renviron</a></li>
+  <li><a href="#criando-o-arquivo-profiles.yml-a-partir-do-r" id="toc-criando-o-arquivo-profiles.yml-a-partir-do-r" class="nav-link" data-scroll-target="#criando-o-arquivo-profiles.yml-a-partir-do-r">Criando o arquivo profiles.yml a partir do R</a></li>
+  <li><a href="#testando-a-conexão-com-dbt-debug" id="toc-testando-a-conexão-com-dbt-debug" class="nav-link" data-scroll-target="#testando-a-conexão-com-dbt-debug">Testando a conexão com dbt debug</a></li>
+  <li><a href="#bloco-4" id="toc-bloco-4" class="nav-link" data-scroll-target="#bloco-4">Bloco 4</a>
+  <ul class="collapse">
+  <li><a href="#seeds-carregando-dados-com-dbt" id="toc-seeds-carregando-dados-com-dbt" class="nav-link" data-scroll-target="#seeds-carregando-dados-com-dbt">Seeds: Carregando Dados com dbt</a></li>
+  </ul></li>
+  <li><a href="#o-que-são-seeds-no-dbt" id="toc-o-que-são-seeds-no-dbt" class="nav-link" data-scroll-target="#o-que-são-seeds-no-dbt">O que são seeds no dbt</a></li>
+  <li><a href="#exportando-dados-do-r-para-seeds" id="toc-exportando-dados-do-r-para-seeds" class="nav-link" data-scroll-target="#exportando-dados-do-r-para-seeds">Exportando dados do R para seeds</a></li>
+  <li><a href="#output-arquivos-de-seed-criados" id="toc-output-arquivos-de-seed-criados" class="nav-link" data-scroll-target="#output-arquivos-de-seed-criados">Output: arquivos de seed criados</a></li>
+  <li><a href="#carregando-os-seeds-no-postgresql" id="toc-carregando-os-seeds-no-postgresql" class="nav-link" data-scroll-target="#carregando-os-seeds-no-postgresql">Carregando os seeds no PostgreSQL</a></li>
+  <li><a href="#output-dbt-seed-com-sucesso" id="toc-output-dbt-seed-com-sucesso" class="nav-link" data-scroll-target="#output-dbt-seed-com-sucesso">Output: dbt seed com sucesso</a></li>
+  <li><a href="#bloco-5" id="toc-bloco-5" class="nav-link" data-scroll-target="#bloco-5">Bloco 5</a>
+  <ul class="collapse">
+  <li><a href="#models-sql-transformando-os-dados" id="toc-models-sql-transformando-os-dados" class="nav-link" data-scroll-target="#models-sql-transformando-os-dados">Models SQL: Transformando os Dados</a></li>
+  </ul></li>
+  <li><a href="#o-que-são-models-no-dbt" id="toc-o-que-são-models-no-dbt" class="nav-link" data-scroll-target="#o-que-são-models-no-dbt">O que são models no dbt</a></li>
+  <li><a href="#model-de-staging-stg_flights.sql" id="toc-model-de-staging-stg_flights.sql" class="nav-link" data-scroll-target="#model-de-staging-stg_flights.sql">Model de staging: stg_flights.sql</a></li>
+  <li><a href="#model-de-staging-stg_airlines.sql" id="toc-model-de-staging-stg_airlines.sql" class="nav-link" data-scroll-target="#model-de-staging-stg_airlines.sql">Model de staging: stg_airlines.sql</a></li>
+  <li><a href="#o-operador-ref-rastreamento-de-dependências" id="toc-o-operador-ref-rastreamento-de-dependências" class="nav-link" data-scroll-target="#o-operador-ref-rastreamento-de-dependências">O operador ref(): rastreamento de dependências</a></li>
+  <li><a href="#model-analítico-fct_atrasos.sql" id="toc-model-analítico-fct_atrasos.sql" class="nav-link" data-scroll-target="#model-analítico-fct_atrasos.sql">Model analítico: fct_atrasos.sql</a></li>
+  <li><a href="#executando-os-models-com-dbt-run" id="toc-executando-os-models-com-dbt-run" class="nav-link" data-scroll-target="#executando-os-models-com-dbt-run">Executando os models com dbt run</a></li>
+  <li><a href="#output-dbt-run-com-sucesso" id="toc-output-dbt-run-com-sucesso" class="nav-link" data-scroll-target="#output-dbt-run-com-sucesso">Output: dbt run com sucesso</a></li>
+  <li><a href="#output-dbt-run-com-erro" id="toc-output-dbt-run-com-erro" class="nav-link" data-scroll-target="#output-dbt-run-com-erro">Output: dbt run com erro</a></li>
+  <li><a href="#bloco-6" id="toc-bloco-6" class="nav-link" data-scroll-target="#bloco-6">Bloco 6</a>
+  <ul class="collapse">
+  <li><a href="#testes-e-documentação" id="toc-testes-e-documentação" class="nav-link" data-scroll-target="#testes-e-documentação">Testes e Documentação</a></li>
+  </ul></li>
+  <li><a href="#o-que-são-testes-no-dbt" id="toc-o-que-são-testes-no-dbt" class="nav-link" data-scroll-target="#o-que-são-testes-no-dbt">O que são testes no dbt</a></li>
+  <li><a href="#os-quatro-testes-genéricos-do-dbt" id="toc-os-quatro-testes-genéricos-do-dbt" class="nav-link" data-scroll-target="#os-quatro-testes-genéricos-do-dbt">Os quatro testes genéricos do dbt</a></li>
+  <li><a href="#criando-o-schema.yml-de-staging" id="toc-criando-o-schema.yml-de-staging" class="nav-link" data-scroll-target="#criando-o-schema.yml-de-staging">Criando o schema.yml de staging</a></li>
+  <li><a href="#executando-os-testes" id="toc-executando-os-testes" class="nav-link" data-scroll-target="#executando-os-testes">Executando os testes</a></li>
+  <li><a href="#output-dbt-test-com-sucesso" id="toc-output-dbt-test-com-sucesso" class="nav-link" data-scroll-target="#output-dbt-test-com-sucesso">Output: dbt test com sucesso</a></li>
+  <li><a href="#output-dbt-test-com-falha" id="toc-output-dbt-test-com-falha" class="nav-link" data-scroll-target="#output-dbt-test-com-falha">Output: dbt test com falha</a></li>
+  <li><a href="#documentação-automática" id="toc-documentação-automática" class="nav-link" data-scroll-target="#documentação-automática">Documentação automática</a></li>
+  <li><a href="#bloco-7" id="toc-bloco-7" class="nav-link" data-scroll-target="#bloco-7">Bloco 7</a>
+  <ul class="collapse">
+  <li><a href="#lendo-os-resultados-no-r" id="toc-lendo-os-resultados-no-r" class="nav-link" data-scroll-target="#lendo-os-resultados-no-r">Lendo os Resultados no R</a></li>
+  </ul></li>
+  <li><a href="#conectar-ao-postgresql-e-ler-a-tabela-do-dbt" id="toc-conectar-ao-postgresql-e-ler-a-tabela-do-dbt" class="nav-link" data-scroll-target="#conectar-ao-postgresql-e-ler-a-tabela-do-dbt">Conectar ao PostgreSQL e ler a tabela do dbt</a></li>
+  <li><a href="#output-tabela-fct_atrasos" id="toc-output-tabela-fct_atrasos" class="nav-link" data-scroll-target="#output-tabela-fct_atrasos">Output: tabela fct_atrasos</a></li>
+  <li><a href="#código-visualização-a-partir-do-dbt" id="toc-código-visualização-a-partir-do-dbt" class="nav-link" data-scroll-target="#código-visualização-a-partir-do-dbt">Código: visualização a partir do dbt</a></li>
+  <li><a href="#gráfico-atraso-médio-por-companhia" id="toc-gráfico-atraso-médio-por-companhia" class="nav-link" data-scroll-target="#gráfico-atraso-médio-por-companhia">Gráfico: atraso médio por companhia</a></li>
+  <li><a href="#o-fluxo-completo-em-um-único-script-r" id="toc-o-fluxo-completo-em-um-único-script-r" class="nav-link" data-scroll-target="#o-fluxo-completo-em-um-único-script-r">O fluxo completo em um único script R</a></li>
+  <li><a href="#bloco-8" id="toc-bloco-8" class="nav-link" data-scroll-target="#bloco-8">Bloco 8</a>
+  <ul class="collapse">
+  <li><a href="#boas-práticas-e-mercado" id="toc-boas-práticas-e-mercado" class="nav-link" data-scroll-target="#boas-práticas-e-mercado">Boas Práticas e Mercado</a></li>
+  </ul></li>
+  <li><a href="#convenção-de-nomenclatura-dos-models" id="toc-convenção-de-nomenclatura-dos-models" class="nav-link" data-scroll-target="#convenção-de-nomenclatura-dos-models">Convenção de nomenclatura dos models</a></li>
+  <li><a href="#versionamento-do-projeto-dbt-com-git" id="toc-versionamento-do-projeto-dbt-com-git" class="nav-link" data-scroll-target="#versionamento-do-projeto-dbt-com-git">Versionamento do projeto dbt com Git</a></li>
+  <li><a href="#o-que-o-dbt-não-faz" id="toc-o-que-o-dbt-não-faz" class="nav-link" data-scroll-target="#o-que-o-dbt-não-faz">O que o dbt não faz</a></li>
+  <li><a href="#o-papel-do-analytics-engineer" id="toc-o-papel-do-analytics-engineer" class="nav-link" data-scroll-target="#o-papel-do-analytics-engineer">O papel do analytics engineer</a></li>
+  <li><a href="#quando-usar-dbt-e-quando-usar-targets" id="toc-quando-usar-dbt-e-quando-usar-targets" class="nav-link" data-scroll-target="#quando-usar-dbt-e-quando-usar-targets">Quando usar dbt e quando usar targets</a></li>
+  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências">Referências</a></li>
+  <li><a href="#obrigada" id="toc-obrigada" class="nav-link" data-scroll-target="#obrigada">Obrigada!</a></li>
+  <li><a href="#siga-o-café-com-r" id="toc-siga-o-café-com-r" class="nav-link" data-scroll-target="#siga-o-café-com-r">Siga o Café com R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="aula32_dbt_v2.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Aula 32. dbt com R</h1>
+<p class="subtitle lead">SQL versionado e testado no pipeline de dados com reticulate e PostgreSQL</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">dbt</div>
+    <div class="quarto-category">reticulate</div>
+    <div class="quarto-category">PostgreSQL</div>
+    <div class="quarto-category">Engenharia de Dados</div>
+    <div class="quarto-category">Pipeline</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Aprenda a integrar o dbt Core ao R usando reticulate, transformar dados no PostgreSQL com SQL versionado e testado, e consumir os resultados no R.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="democratização" class="level2">
+<h2 class="anchored" data-anchor-id="democratização">Democratização</h2>
+<blockquote class="blockquote">
+<p>Esta aula foi construída para que você entenda como integrar o dbt ao seu projeto R, transformar dados no PostgreSQL com SQL versionado e testado, e consumir os resultados diretamente no R para análise. O <code>reticulate</code> é a ponte que torna tudo isso possível sem sair do RStudio.</p>
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/meguy.jpg" class="img-fluid figure-img" width="437"></p>
+<figcaption><strong>Essa é a Meguy mascote do Café com R.</strong></figcaption>
+</figure>
+</div>
+<hr>
+</section>
+<section id="acompanhe-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="acompanhe-o-café-com-r">Acompanhe o Café com R</h2>
+<p>SITE OFICIAL&gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+<hr>
+</section>
+<section id="objetivos-da-aula" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-da-aula">Objetivos da aula</h2>
+<div class="incremental">
+<ul class="incremental">
+<li>Compreender o que é o <strong>dbt</strong> e qual problema ele resolve</li>
+<li>Configurar o ambiente Python com <strong>reticulate</strong> dentro do projeto R</li>
+<li>Instalar o <strong>dbt Core</strong> e o adaptador <strong>dbt-postgres</strong> via R</li>
+<li>Criar e configurar um <strong>projeto dbt</strong> com conexão ao PostgreSQL</li>
+<li>Escrever <strong>models SQL</strong> com materializações e dependências</li>
+<li>Aplicar <strong>testes automáticos</strong> sobre os dados transformados</li>
+<li><strong>Ler os resultados</strong> no R e visualizar com ggplot2</li>
+</ul>
+</div>
+<hr>
+</section>
+<section id="bloco-1" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+<section id="o-que-é-o-dbt-e-por-que-ele-existe" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-o-dbt-e-por-que-ele-existe">O que é o dbt e por que ele existe</h2>
+</section>
+</section>
+<hr>
+<section id="o-problema-que-o-dbt-resolve" class="level2">
+<h2 class="anchored" data-anchor-id="o-problema-que-o-dbt-resolve">O problema que o dbt resolve</h2>
+<p><strong>Em times de dados, é comum encontrar a seguinte situação:</strong></p>
+<ul>
+<li>Dezenas de <strong>scripts SQL</strong> espalhados em pastas locais, sem organização</li>
+<li><strong>Nenhum controle de versão</strong> sobre as transformações</li>
+<li>Nenhum teste para verificar se os dados transformados estão corretos</li>
+<li>Documentação inexistente ou desatualizada</li>
+<li>Dependências entre queries gerenciadas manualmente, na memória de quem escreveu</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Quando um analista sai da equipe ou quando uma query muda, ninguém sabe o impacto. Resultados divergem. Dashboards quebram. Decisões são tomadas com dados inconsistentes.</strong></p>
+</blockquote>
+<hr>
+</section>
+<section id="o-que-é-o-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-o-dbt">O que é o dbt</h2>
+<p><strong>dbt</strong> (data build tool) é uma ferramenta de código aberto que permite transformar dados diretamente no banco de dados usando SQL, aplicando as mesmas práticas de engenharia de software usadas no desenvolvimento de aplicações:</p>
+<ul>
+<li><strong>Controle de versão:</strong> cada transformação é um arquivo <code>.sql</code> versionado no Git</li>
+<li><strong>Modularidade:</strong> transformações se referenciam umas às outras com <code>ref()</code></li>
+<li><strong>Testes automáticos:</strong> validações sobre unicidade, nulos e integridade referencial</li>
+<li><strong>Documentação gerada automaticamente</strong> a partir dos arquivos <code>.yml</code></li>
+<li><strong>Linhagem dos dados:</strong> DAG visual mostrando as dependências entre transformações</li>
+</ul>
+<p>O dbt <strong>não</strong> extrai dados, <strong>não</strong> carrega dados e <strong>não</strong> substitui o R na análise. Ele cuida exclusivamente da camada de <strong>transformação</strong> dentro do banco.</p>
+<hr>
+</section>
+<section id="o-modelo-elt-e-onde-o-dbt-se-encaixa" class="level2">
+<h2 class="anchored" data-anchor-id="o-modelo-elt-e-onde-o-dbt-se-encaixa">O modelo ELT e onde o dbt se encaixa</h2>
+<p>O dbt foi construído para o modelo <strong>ELT</strong> (Extract, Load, Transform):</p>
+<pre><code>Fonte de dados
+    |
+    | Extract + Load (feito por ferramentas como Airbyte, Fivetran ou R)
+    v
+Banco de dados / Data Warehouse (PostgreSQL, BigQuery, Snowflake)
+    |
+    | Transform (feito pelo dbt: SQL versionado e testado)
+    v
+Tabelas analíticas prontas para consumo
+    |
+    | Analyze (feito pelo R, Python ou ferramentas de BI)
+    v
+Relatórios, modelos estatísticos, dashboards</code></pre>
+<p>No contexto desta aula: o <strong>R</strong> exporta os dados brutos para o PostgreSQL, o <strong>dbt</strong> transforma, e o <strong>R</strong> consome o resultado final para análise.</p>
+<hr>
+</section>
+<section id="dbt-core-e-dbt-cloud" class="level2">
+<h2 class="anchored" data-anchor-id="dbt-core-e-dbt-cloud">dbt Core e dbt Cloud</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Característica</th>
+<th>dbt Core</th>
+<th>dbt Cloud</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Custo</td>
+<td>Gratuito e open source</td>
+<td>Plano pago (free tier limitado)</td>
+</tr>
+<tr class="even">
+<td>Interface</td>
+<td>Linha de comando (CLI)</td>
+<td>Interface web completa</td>
+</tr>
+<tr class="odd">
+<td>Orquestração</td>
+<td>Manual ou via Airflow/GitHub Actions</td>
+<td>Nativa com agendamento</td>
+</tr>
+<tr class="even">
+<td>Ambiente</td>
+<td>Local ou servidor próprio</td>
+<td>Gerenciado pela dbt Labs</td>
+</tr>
+<tr class="odd">
+<td>Documentação</td>
+<td><code>dbt docs serve</code> local</td>
+<td>Hospedada na plataforma</td>
+</tr>
+</tbody>
+</table>
+<p>Nesta aula usamos o <strong>dbt Core</strong>, instalado via <code>pip</code> e operado pela linha de comando, acessível diretamente do R via <code>reticulate</code> e <code>system()</code>.</p>
+<hr>
+</section>
+<section id="dbt-e-targets-quando-usar-cada-um" class="level2">
+<h2 class="anchored" data-anchor-id="dbt-e-targets-quando-usar-cada-um">dbt e targets: quando usar cada um</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dimensão</th>
+<th>dbt</th>
+<th>targets</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Linguagem de transformação</td>
+<td>SQL com Jinja</td>
+<td>R com funções R</td>
+</tr>
+<tr class="even">
+<td>Onde executa</td>
+<td>Dentro do banco de dados</td>
+<td>Na memória do R</td>
+</tr>
+<tr class="odd">
+<td>Volume de dados</td>
+<td>Escala para bilhões de linhas</td>
+<td>Limitado pela RAM do R</td>
+</tr>
+<tr class="even">
+<td>Colaboração</td>
+<td>Times com analistas SQL</td>
+<td>Times R</td>
+</tr>
+<tr class="odd">
+<td>Versionamento</td>
+<td>Git com arquivos <code>.sql</code></td>
+<td>Git com arquivos <code>.R</code></td>
+</tr>
+<tr class="even">
+<td>Testes</td>
+<td>Nativos no dbt</td>
+<td>Pacote <code>testthat</code></td>
+</tr>
+</tbody>
+</table>
+<p>Não são concorrentes. Em pipelines maduros, o <strong>dbt transforma no banco</strong> e o <strong>targets orquestra a análise em R</strong>. Os dois podem coexistir no mesmo projeto.</p>
+<hr>
+</section>
+<section id="bloco-2" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+<section id="configurando-o-ambiente-com-reticulate" class="level2">
+<h2 class="anchored" data-anchor-id="configurando-o-ambiente-com-reticulate">Configurando o Ambiente com reticulate</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-é-o-reticulate" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-o-reticulate">O que é o reticulate</h2>
+<p><strong>reticulate</strong> é o pacote R que cria uma <strong>interface bidirecional entre R e Python</strong>. Ele permite:</p>
+<ul>
+<li>Instalar e gerenciar ambientes virtuais Python a partir do R</li>
+<li>Executar código Python dentro de um script R com <code>py_run_string()</code></li>
+<li>Importar módulos Python com <code>import()</code></li>
+<li>Transferir objetos entre R e Python durante a mesma sessão</li>
+</ul>
+<p>No contexto desta aula, o <code>reticulate</code> é usado para:</p>
+<ol type="1">
+<li>Criar um <strong>ambiente virtual Python</strong> isolado dentro do projeto R</li>
+<li>Instalar o <strong>dbt Core</strong> e o adaptador <strong>dbt-postgres</strong> nesse ambiente</li>
+<li>Verificar se a instalação está correta</li>
+</ol>
+<hr>
+</section>
+<section id="por-que-usar-reticulate-em-vez-do-terminal" class="level2">
+<h2 class="anchored" data-anchor-id="por-que-usar-reticulate-em-vez-do-terminal">Por que usar reticulate em vez do terminal</h2>
+<p>Usar o <code>reticulate</code> para configurar o ambiente Python oferece três vantagens para usuários de R:</p>
+<p><strong>1. Reprodutibilidade:</strong> o ambiente Python é criado e configurado dentro do próprio projeto R, com o mesmo código que você versiona no Git. Qualquer colaborador reproduz o ambiente com um único script.</p>
+<p><strong>2. Isolamento:</strong> o <code>reticulate</code> cria um <strong>ambiente virtual</strong> específico para o projeto, evitando conflitos com outras instalações Python do sistema.</p>
+<p><strong>3. Integração:</strong> após configurado, o dbt é invocado de dentro do R com <code>system()</code> ou <code>reticulate::py_run_string()</code>, sem sair do RStudio.</p>
+<hr>
+</section>
+<section id="instalação-do-reticulate" class="level2">
+<h2 class="anchored" data-anchor-id="instalação-do-reticulate">Instalação do reticulate</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"reticulate"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reticulate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="verificando-se-python-está-disponível" class="level2">
+<h2 class="anchored" data-anchor-id="verificando-se-python-está-disponível">Verificando se Python está disponível</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar se o Python está disponível no sistema</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">py_available</span>()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver qual Python está sendo usado</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">py_config</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-configuração-do-python" class="level2">
+<h2 class="anchored" data-anchor-id="output-configuração-do-python">Output: configuração do Python</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<p><code>py_available()</code> retorna <code>TRUE</code> se o Python estiver acessível. Se retornar <code>FALSE</code>, o <code>reticulate</code> pode instalar uma versão gerenciada do Python automaticamente com <code>install_python()</code>.</p>
+<hr>
+</section>
+<section id="instalando-python-gerenciado-pelo-reticulate" class="level2">
+<h2 class="anchored" data-anchor-id="instalando-python-gerenciado-pelo-reticulate">Instalando Python gerenciado pelo reticulate</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar uma versão específica do Python gerenciada pelo reticulate</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Isso é opcional se o Python já estiver instalado no sistema</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install_python</span>(<span class="at">version =</span> <span class="st">"3.11"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar versões disponíveis</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">py_versions_windows</span>()  <span class="co"># Windows</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># No macOS e Linux, usar python3 --version no terminal integrado do RStudio</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O <code>reticulate</code> instala o Python em uma pasta gerenciada por ele (<code>~/.pyenv</code> no macOS/Linux), separada da instalação do sistema. Isso evita conflitos com o Python global.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="criando-o-ambiente-virtual-python" class="level2">
+<h2 class="anchored" data-anchor-id="criando-o-ambiente-virtual-python">Criando o ambiente virtual Python</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar um ambiente virtual Python específico para este projeto</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># O nome "dbt-env" é uma convenção — pode ser qualquer nome</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">virtualenv_create</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">envname =</span> <span class="st">"dbt-env"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">python  =</span> <span class="st">"3.11"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Ativar o ambiente virtual na sessão R atual</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">use_virtualenv</span>(<span class="st">"dbt-env"</span>, <span class="at">required =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar qual Python está ativo</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">py_config</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-ambiente-virtual-ativo" class="level2">
+<h2 class="anchored" data-anchor-id="output-ambiente-virtual-ativo">Output: ambiente virtual ativo</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>python:         C:/Users/User/AppData/Local/R/cache/R/reticulate/uv/cache/archive-v0/LqMizUITI1PrPgE-/Scripts/python.exe
+libpython:      C:/Users/User/AppData/Local/R/cache/R/reticulate/uv/python/cpython-3.12.13-windows-x86_64-none/python312.dll
+pythonhome:     C:/Users/User/AppData/Local/R/cache/R/reticulate/uv/cache/archive-v0/LqMizUITI1PrPgE-
+virtualenv:     C:/Users/User/AppData/Local/R/cache/R/reticulate/uv/cache/archive-v0/LqMizUITI1PrPgE-/Scripts/activate_this.py
+version:        3.12.13 (main, Jul 18 2026, 17:08:38) [MSC v.1944 64 bit (AMD64)]
+Architecture:   64bit
+numpy:          C:/Users/User/AppData/Local/R/cache/R/reticulate/uv/cache/archive-v0/LqMizUITI1PrPgE-/Lib/site-packages/numpy
+numpy_version:  2.5.1
+
+NOTE: Python version was forced by py_require()</code></pre>
+</div>
+</div>
+<p>O campo <code>python</code> indica qual executável Python está sendo usado. O campo <code>virtualenv</code> confirma que um ambiente virtual está ativo. Todos os pacotes instalados a partir daqui vão para esse ambiente isolado.</p>
+<hr>
+</section>
+<section id="o-que-é-um-ambiente-virtual-python" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-um-ambiente-virtual-python">O que é um ambiente virtual Python</h2>
+<p>Um <strong>ambiente virtual</strong> é um diretório isolado que contém uma instalação independente do Python e seus pacotes.</p>
+<p><strong>Por que isso importa:</strong></p>
+<p>Sem ambiente virtual, todos os projetos compartilham a mesma instalação Python global. Uma atualização do <code>dbt-core</code> em um projeto pode quebrar outro que depende de uma versão anterior.</p>
+<p>Com ambiente virtual, cada projeto tem suas próprias versões de cada pacote, completamente isoladas.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O ambiente virtual Python é equivalente ao que o <code>renv</code> faz para pacotes R: cada projeto tem sua biblioteca isolada.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="instalando-o-dbt-core-e-o-adaptador-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="instalando-o-dbt-core-e-o-adaptador-postgresql">Instalando o dbt Core e o adaptador PostgreSQL</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar o dbt Core e o adaptador para PostgreSQL</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dbt-core: o motor principal</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dbt-postgres: o adaptador que conecta o dbt ao PostgreSQL</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">py_install</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">packages =</span> <span class="fu">c</span>(<span class="st">"dbt-core"</span>, <span class="st">"dbt-postgres"</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">envname  =</span> <span class="st">"dbt-env"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">pip      =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>dbt-core</code> e <code>dbt-postgres</code> são pacotes Python instalados via <code>pip</code>. O adaptador <code>dbt-postgres</code> instala automaticamente as dependências necessárias para comunicação com o PostgreSQL, incluindo o <code>psycopg2</code>.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="verificando-a-instalação-do-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="verificando-a-instalação-do-dbt">Verificando a instalação do dbt</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar a versão do dbt instalada</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt --version"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternativa via reticulate</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">py_run_string</span>(<span class="st">"</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="st">import subprocess</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="st">result = subprocess.run(['dbt', '--version'],</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="st">                       capture_output=True, text=True)</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="st">print(result.stdout)</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-versão-do-dbt-instalada" class="level2">
+<h2 class="anchored" data-anchor-id="output-versão-do-dbt-instalada">Output: versão do dbt instalada</h2>
+<pre><code>Core:
+  - installed: 1.8.x
+  - latest:    1.8.x - Up to date!
+
+Plugins:
+  - postgres: 1.8.x - Up to date!</code></pre>
+<p>A saída confirma a versão do <code>dbt-core</code> e do adaptador <code>dbt-postgres</code>. O campo <code>Plugins</code> lista os adaptadores instalados: apenas <code>postgres</code> aparece porque é o único que instalamos.</p>
+<hr>
+</section>
+<section id="configurando-o-path-para-o-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="configurando-o-path-para-o-dbt">Configurando o PATH para o dbt</h2>
+<p>Em alguns sistemas, o executável <code>dbt</code> não está automaticamente no PATH após a instalação em ambiente virtual. Para garantir que o <code>system("dbt ...")</code> funcione:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Localizar o executável do dbt no ambiente virtual</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>dbt_path <span class="ot">&lt;-</span> <span class="fu">virtualenv_python</span>(<span class="st">"dbt-env"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dirname</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.path</span>(<span class="st">"dbt"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Função auxiliar para chamar o dbt com o caminho completo</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>dbt <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">system</span>(<span class="fu">paste</span>(dbt_path, ...))</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar assim:</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dbt</span>(<span class="st">"--version"</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="fu">dbt</span>(<span class="st">"run"</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">dbt</span>(<span class="st">"test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="bloco-3" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+<section id="configurando-o-projeto-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="configurando-o-projeto-dbt">Configurando o Projeto dbt</h2>
+</section>
+</section>
+<hr>
+<section id="inicializando-o-projeto-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="inicializando-o-projeto-dbt">Inicializando o projeto dbt</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar o projeto dbt dentro do projeto R</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt init voos_analytics"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estrutura criada:</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># voos_analytics/</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ├── dbt_project.yml     # configuração principal do projeto</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ├── models/             # modelos SQL de transformação</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># │   └── example/        # modelos de exemplo (pode remover)</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ├── seeds/              # CSVs pequenos para carregar no banco</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ├── tests/              # testes customizados</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ├── macros/             # funções Jinja reutilizáveis</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ├── snapshots/          # capturas históricas de tabelas</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># └── analyses/           # queries ad hoc (não materializadas)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="o-arquivo-dbt_project.yml" class="level2">
+<h2 class="anchored" data-anchor-id="o-arquivo-dbt_project.yml">O arquivo dbt_project.yml</h2>
+<p>O <code>dbt_project.yml</code> é o arquivo de configuração principal do projeto. Ele define:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="st">'voos_analytics'</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">'1.0.0'</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">config-version</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">profile</span><span class="kw">:</span><span class="at"> </span><span class="st">'voos_analytics'</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">model-paths</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"models"</span><span class="kw">]</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">seed-paths</span><span class="kw">:</span><span class="at">  </span><span class="kw">[</span><span class="st">"seeds"</span><span class="kw">]</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">test-paths</span><span class="kw">:</span><span class="at">  </span><span class="kw">[</span><span class="st">"tests"</span><span class="kw">]</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">macro-paths</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"macros"</span><span class="kw">]</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">models</span><span class="kw">:</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">voos_analytics</span><span class="kw">:</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">staging</span><span class="kw">:</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">+materialized</span><span class="kw">:</span><span class="at"> view</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">marts</span><span class="kw">:</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">+materialized</span><span class="kw">:</span><span class="at"> table</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="o-arquivo-profiles.yml" class="level2">
+<h2 class="anchored" data-anchor-id="o-arquivo-profiles.yml">O arquivo profiles.yml</h2>
+<p>O <code>profiles.yml</code> armazena as configurações de conexão com o banco. Ele fica fora do projeto dbt, em <code>~/.dbt/profiles.yml</code>, para não ser versionado junto com o código.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">voos_analytics</span><span class="kw">:</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">target</span><span class="kw">:</span><span class="at"> dev</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">dev</span><span class="kw">:</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> postgres</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">host</span><span class="kw">:</span><span class="at"> </span><span class="st">"{{ env_var('PG_HOST', 'localhost') }}"</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">port</span><span class="kw">:</span><span class="at"> </span><span class="st">"{{ env_var('PG_PORT', '5432') | int }}"</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">dbname</span><span class="kw">:</span><span class="at"> </span><span class="st">"{{ env_var('PG_DBNAME') }}"</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">user</span><span class="kw">:</span><span class="at"> </span><span class="st">"{{ env_var('PG_USER') }}"</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">password</span><span class="kw">:</span><span class="at"> </span><span class="st">"{{ env_var('PG_PASSWORD') }}"</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">schema</span><span class="kw">:</span><span class="at"> dbt_dev</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">threads</span><span class="kw">:</span><span class="at"> </span><span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>A notação <code>env_var()</code> é uma macro Jinja do dbt que lê variáveis de ambiente. As credenciais nunca ficam no arquivo: ficam no <code>.Renviron</code>.</p>
+<hr>
+</section>
+<section id="credenciais-seguras-com-.renviron" class="level2">
+<h2 class="anchored" data-anchor-id="credenciais-seguras-com-.renviron">Credenciais seguras com .Renviron</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Abrir o .Renviron para edição</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Adicionar as variáveis de ambiente no .Renviron:</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># PG_HOST=localhost</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># PG_PORT=5432</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># PG_DBNAME=voos_db</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># PG_USER=postgres</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># PG_PASSWORD=sua_senha_segura</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Após salvar o .Renviron, reiniciar o R:</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># CTRL + SHIFT + F10 (Windows/Linux)</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co"># CMD + SHIFT + F10 (macOS)</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar que as variáveis foram carregadas</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.getenv</span>(<span class="st">"PG_DBNAME"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>O <code>.Renviron</code> deve estar listado no <code>.gitignore</code>. Nunca versione credenciais no Git. O dbt lê as variáveis de ambiente automaticamente via <code>env_var()</code> no <code>profiles.yml</code>.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="criando-o-arquivo-profiles.yml-a-partir-do-r" class="level2">
+<h2 class="anchored" data-anchor-id="criando-o-arquivo-profiles.yml-a-partir-do-r">Criando o arquivo profiles.yml a partir do R</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>profiles_dir <span class="ot">&lt;-</span> <span class="fu">path.expand</span>(<span class="st">"~/.dbt"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(profiles_dir, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>profiles_content <span class="ot">&lt;-</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">'</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="st">voos_analytics:</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="st">  target: dev</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="st">  outputs:</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="st">    dev:</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="st">      type: postgres</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="st">      host: "{Sys.getenv("PG_HOST", "localhost")}"</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="st">      port: {Sys.getenv("PG_PORT", "5432")}</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="st">      dbname: "{Sys.getenv("PG_DBNAME")}"</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="st">      user: "{Sys.getenv("PG_USER")}"</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="st">      password: "{Sys.getenv("PG_PASSWORD")}"</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="st">      schema: dbt_dev</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="st">      threads: 4</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="st">'</span>)</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(profiles_content,</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>           <span class="fu">file.path</span>(profiles_dir, <span class="st">"profiles.yml"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="testando-a-conexão-com-dbt-debug" class="level2">
+<h2 class="anchored" data-anchor-id="testando-a-conexão-com-dbt-debug">Testando a conexão com dbt debug</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dbt debug verifica:</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Se o profiles.yml está correto</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Se a conexão com o banco funciona</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Se os caminhos do projeto estão configurados</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"voos_analytics"</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt debug"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="bloco-4" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 4</h1>
+<section id="seeds-carregando-dados-com-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="seeds-carregando-dados-com-dbt">Seeds: Carregando Dados com dbt</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-são-seeds-no-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-são-seeds-no-dbt">O que são seeds no dbt</h2>
+<p><strong>Seeds</strong> são arquivos CSV pequenos que o dbt carrega diretamente no banco de dados com o comando <code>dbt seed</code>. Eles são versionados junto com o projeto e são ideais para tabelas de referência estáticas.</p>
+<p><strong>Quando usar seeds:</strong></p>
+<ul>
+<li>Tabelas de referência que raramente mudam: países, categorias, mapeamentos</li>
+<li>Dados de teste para desenvolvimento local</li>
+<li>Dados pequenos que fazem sentido viver junto com o código</li>
+</ul>
+<p><strong>Quando não usar seeds:</strong></p>
+<ul>
+<li>Tabelas grandes que mudam com frequência: use ferramentas de ingestão como Fivetran ou R</li>
+<li>Dados sensíveis: seeds são versionados no Git</li>
+</ul>
+<hr>
+</section>
+<section id="exportando-dados-do-r-para-seeds" class="level2">
+<h2 class="anchored" data-anchor-id="exportando-dados-do-r-para-seeds">Exportando dados do R para seeds</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar a pasta de seeds</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"voos_analytics/seeds"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Exportar as tabelas do nycflights13 como seeds</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(nycflights13<span class="sc">::</span>flights,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>          <span class="st">"voos_analytics/seeds/raw_flights.csv"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(nycflights13<span class="sc">::</span>airlines,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">"voos_analytics/seeds/raw_airlines.csv"</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(nycflights13<span class="sc">::</span>airports,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>          <span class="st">"voos_analytics/seeds/raw_airports.csv"</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar os arquivos criados</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">arquivo   =</span> <span class="fu">list.files</span>(<span class="st">"voos_analytics/seeds"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">tamanho   =</span> <span class="fu">file.size</span>(arquivo),</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">tamanho_mb =</span> <span class="fu">round</span>(tamanho <span class="sc">/</span> <span class="fl">1e6</span>, <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-arquivos-de-seed-criados" class="level2">
+<h2 class="anchored" data-anchor-id="output-arquivos-de-seed-criados">Output: arquivos de seed criados</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  arquivo                linhas tamanho_mb
+  &lt;chr&gt;                   &lt;int&gt;      &lt;dbl&gt;
+1 seeds/raw_flights.csv  336776       28.4
+2 seeds/raw_airlines.csv     16        0  
+3 seeds/raw_airports.csv   1458        0.1</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="carregando-os-seeds-no-postgresql" class="level2">
+<h2 class="anchored" data-anchor-id="carregando-os-seeds-no-postgresql">Carregando os seeds no PostgreSQL</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Carregar todos os seeds no banco</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt seed"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Carregar um seed específico</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt seed --select raw_flights"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-dbt-seed-com-sucesso" class="level2">
+<h2 class="anchored" data-anchor-id="output-dbt-seed-com-sucesso">Output: dbt seed com sucesso</h2>
+<pre><code>Running with dbt=1.8.x
+Found 0 models, 3 seeds, 0 tests
+
+1 of 3 START seed file dbt_dev.raw_airlines ............. [RUN]
+1 of 3 OK loaded seed file dbt_dev.raw_airlines ......... [INSERT 16 in 0.18s]
+2 of 3 START seed file dbt_dev.raw_airports ............. [RUN]
+2 of 3 OK loaded seed file dbt_dev.raw_airports ......... [INSERT 1458 in 0.31s]
+3 of 3 START seed file dbt_dev.raw_flights .............. [RUN]
+3 of 3 OK loaded seed file dbt_dev.raw_flights .......... [INSERT 336776 in 8.42s]
+
+Finished running 3 seeds in 8.91s.
+
+Done. PASS=3 WARN=0 ERROR=0 SKIP=0 TOTAL=3</code></pre>
+<hr>
+</section>
+<section id="bloco-5" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 5</h1>
+<section id="models-sql-transformando-os-dados" class="level2">
+<h2 class="anchored" data-anchor-id="models-sql-transformando-os-dados">Models SQL: Transformando os Dados</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-são-models-no-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-são-models-no-dbt">O que são models no dbt</h2>
+<p><strong>Models</strong> são arquivos <code>.sql</code> que definem transformações sobre os dados brutos. Cada model produz uma tabela ou view no banco de dados.</p>
+<p><strong>Materializações disponíveis:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Materialização</th>
+<th>O que cria no banco</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>view</code></td>
+<td>View SQL</td>
+<td>Staging: transformações leves</td>
+</tr>
+<tr class="even">
+<td><code>table</code></td>
+<td>Tabela física</td>
+<td>Marts: resultados finais consultados com frequência</td>
+</tr>
+<tr class="odd">
+<td><code>incremental</code></td>
+<td>Tabela com append</td>
+<td>Grandes volumes com dados novos diários</td>
+</tr>
+<tr class="even">
+<td><code>ephemeral</code></td>
+<td>CTE inline, sem objeto no banco</td>
+<td>Transformações intermediárias descartáveis</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="model-de-staging-stg_flights.sql" class="level2">
+<h2 class="anchored" data-anchor-id="model-de-staging-stg_flights.sql">Model de staging: stg_flights.sql</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"voos_analytics/models/staging"</span>,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">showWarnings =</span> <span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>stg_flights_sql <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="st">-- models/staging/stg_flights.sql</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="st">{{ config(materialized = "view") }}</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="st">    CAST(year  AS INTEGER)        AS ano,</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="st">    CAST(month AS INTEGER)        AS mes,</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="st">    CAST(day   AS INTEGER)        AS dia,</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="st">    carrier                       AS codigo_companhia,</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="st">    flight                        AS numero_voo,</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="st">    origin                        AS aeroporto_origem,</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="st">    dest                          AS aeroporto_destino,</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="st">    CAST(arr_delay  AS FLOAT)     AS atraso_chegada_min,</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="st">    CAST(dep_delay  AS FLOAT)     AS atraso_partida_min,</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="st">    CAST(air_time   AS FLOAT)     AS tempo_voo_min,</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="st">    CAST(distance   AS INTEGER)   AS distancia_milhas,</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="st">    CONCAT(year, "-",</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="st">           LPAD(CAST(month AS TEXT), 2, "0"), "-",</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="st">           LPAD(CAST(day   AS TEXT), 2, "0"))</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="st">                                  AS data_voo,</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="st">    CONCAT(carrier, CAST(flight AS TEXT))</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="st">                                  AS flight_id</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="st">FROM {{ ref("raw_flights") }}</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="st">WHERE arr_delay IS NOT NULL</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(stg_flights_sql,</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>           <span class="st">"voos_analytics/models/staging/stg_flights.sql"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="model-de-staging-stg_airlines.sql" class="level2">
+<h2 class="anchored" data-anchor-id="model-de-staging-stg_airlines.sql">Model de staging: stg_airlines.sql</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>stg_airlines_sql <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="st">-- models/staging/stg_airlines.sql</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="st">{{ config(materialized = "view") }}</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="st">    carrier  AS codigo_companhia,</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="st">    name     AS nome_companhia</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="st">FROM {{ ref("raw_airlines") }}</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(stg_airlines_sql,</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>           <span class="st">"voos_analytics/models/staging/stg_airlines.sql"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="o-operador-ref-rastreamento-de-dependências" class="level2">
+<h2 class="anchored" data-anchor-id="o-operador-ref-rastreamento-de-dependências">O operador ref(): rastreamento de dependências</h2>
+<div class="sourceCode" id="cb24"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Ao escrever:</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> {{ <span class="fu">ref</span>(<span class="ot">"stg_flights"</span>) }}</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- O dbt substitui por:</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> dbt_dev.stg_flights</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- E registra automaticamente que este model</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- DEPENDE de stg_flights</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Por que <code>ref()</code> é fundamental:</strong></p>
+<ul>
+<li>O dbt constrói o <strong>DAG</strong> (Directed Acyclic Graph) de dependências a partir de todos os <code>ref()</code> do projeto</li>
+<li>Ele garante que <code>stg_flights</code> seja criado antes de qualquer model que o referencie</li>
+<li>Se você renomear uma tabela, basta alterar o <code>ref()</code> e o dbt propaga a mudança</li>
+</ul>
+<hr>
+</section>
+<section id="model-analítico-fct_atrasos.sql" class="level2">
+<h2 class="anchored" data-anchor-id="model-analítico-fct_atrasos.sql">Model analítico: fct_atrasos.sql</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"voos_analytics/models/marts"</span>,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">showWarnings =</span> <span class="cn">FALSE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>fct_atrasos_sql <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="st">-- models/marts/fct_atrasos.sql</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="st">{{ config(materialized = "table") }}</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="st">    a.nome_companhia,</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="st">    f.mes,</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="st">    f.aeroporto_origem,</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="st">    COUNT(*)                                        AS total_voos,</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="st">    ROUND(AVG(f.atraso_chegada_min)::numeric, 2)    AS atraso_medio_min,</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="st">    ROUND(AVG(f.atraso_partida_min)::numeric, 2)    AS atraso_partida_medio_min,</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="st">    SUM(CASE WHEN f.atraso_chegada_min &gt; 15</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="st">             THEN 1 ELSE 0 END)                     AS voos_atrasados_graves,</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="st">    ROUND(</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="st">        100.0 * SUM(CASE WHEN f.atraso_chegada_min &gt; 15</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="st">                         THEN 1 ELSE 0 END)</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="st">             / COUNT(*), 2)                         AS pct_atrasados_graves</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="st">FROM {{ ref("stg_flights") }}   AS f</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="st">LEFT JOIN {{ ref("stg_airlines") }} AS a</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a><span class="st">    ON f.codigo_companhia = a.codigo_companhia</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a><span class="st">GROUP BY</span></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a><span class="st">    a.nome_companhia,</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a><span class="st">    f.mes,</span></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="st">    f.aeroporto_origem</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(fct_atrasos_sql,</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>           <span class="st">"voos_analytics/models/marts/fct_atrasos.sql"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="executando-os-models-com-dbt-run" class="level2">
+<h2 class="anchored" data-anchor-id="executando-os-models-com-dbt-run">Executando os models com dbt run</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Executar todos os models do projeto</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt run"</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Executar apenas um model específico</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt run --select stg_flights"</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Executar um model e todos que dependem dele</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt run --select stg_flights+"</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Executar apenas os models da pasta marts</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt run --select marts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-dbt-run-com-sucesso" class="level2">
+<h2 class="anchored" data-anchor-id="output-dbt-run-com-sucesso">Output: dbt run com sucesso</h2>
+<pre><code>Running with dbt=1.8.x
+Found 3 models, 3 seeds, 0 tests
+
+Concurrency: 4 threads (target='dev')
+
+1 of 3 START sql view model dbt_dev.stg_airlines ......... [RUN]
+1 of 3 OK created sql view model dbt_dev.stg_airlines ..... [CREATE VIEW in 0.31s]
+2 of 3 START sql view model dbt_dev.stg_flights .......... [RUN]
+2 of 3 OK created sql view model dbt_dev.stg_flights ....... [CREATE VIEW in 0.28s]
+3 of 3 START sql table model dbt_dev.fct_atrasos ......... [RUN]
+3 of 3 OK created sql table model dbt_dev.fct_atrasos ...... [SELECT 612 in 4.12s]
+
+Finished running 3 models in 4.71s.
+
+Done. PASS=3 WARN=0 ERROR=0 SKIP=0 TOTAL=3</code></pre>
+<hr>
+</section>
+<section id="output-dbt-run-com-erro" class="level2">
+<h2 class="anchored" data-anchor-id="output-dbt-run-com-erro">Output: dbt run com erro</h2>
+<pre><code>2 of 3 START sql view model dbt_dev.stg_flights .......... [RUN]
+2 of 3 ERROR creating sql view model dbt_dev.stg_flights ... [ERROR in 0.18s]
+
+Completed with 1 error and 0 warnings:
+
+Database Error in model stg_flights (models/staging/stg_flights.sql)
+  column "arr_time" does not exist
+  LINE 33: WHERE arr_time IS NOT NULL
+  HINT:  Perhaps you meant to reference the column "dep_time".
+  compiled Code at target/run/voos_analytics/models/staging/stg_flights.sql</code></pre>
+<p>O dbt indica o arquivo, a linha e a mensagem de erro do banco. O caminho <code>target/run/</code> contém o SQL compilado, útil para depurar o que o dbt enviou ao banco.</p>
+<hr>
+</section>
+<section id="bloco-6" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 6</h1>
+<section id="testes-e-documentação" class="level2">
+<h2 class="anchored" data-anchor-id="testes-e-documentação">Testes e Documentação</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-são-testes-no-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-são-testes-no-dbt">O que são testes no dbt</h2>
+<p><strong>Testes</strong> são validações automáticas que verificam se os dados transformados atendem às expectativas definidas. O dbt executa os testes com <code>dbt test</code> e reporta quais passaram e quais falharam.</p>
+<p><strong>Dois tipos de testes:</strong></p>
+<p><strong>Testes genéricos:</strong> definidos no arquivo <code>schema.yml</code> com configurações YAML. São os mais comuns e cobrem a maioria dos casos.</p>
+<p><strong>Testes singulares:</strong> arquivos <code>.sql</code> na pasta <code>tests/</code> que retornam linhas que violam uma condição. Se retornar zero linhas, o teste passa.</p>
+<hr>
+</section>
+<section id="os-quatro-testes-genéricos-do-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="os-quatro-testes-genéricos-do-dbt">Os quatro testes genéricos do dbt</h2>
+<p><strong>not_null:</strong> verifica que nenhum valor da coluna é nulo. Falha se existir qualquer <code>NULL</code>.</p>
+<p><strong>unique:</strong> verifica que todos os valores da coluna são únicos. Falha se existir duplicata.</p>
+<p><strong>accepted_values:</strong> verifica que todos os valores da coluna estão dentro de uma lista permitida. Falha se existir valor fora da lista.</p>
+<p><strong>relationships:</strong> verifica integridade referencial, que todos os valores de uma coluna existem em outra tabela. Equivalente a uma <code>FOREIGN KEY</code>.</p>
+<hr>
+</section>
+<section id="criando-o-schema.yml-de-staging" class="level2">
+<h2 class="anchored" data-anchor-id="criando-o-schema.yml-de-staging">Criando o schema.yml de staging</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>schema_staging <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="st">version: 2</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="st">models:</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="st">  - name: stg_flights</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="st">    description: "Voos do aeroporto de Nova York em 2013, limpos e padronizados."</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="st">    columns:</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="st">      - name: flight_id</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="st">        description: "Número do voo."</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="st">        tests:</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="st">          - not_null</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="st">      - name: aeroporto_origem</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="st">        description: "Código IATA do aeroporto de origem."</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="st">        tests:</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="st">          - not_null</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="st">          - accepted_values:</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="st">              values: ["EWR", "JFK", "LGA"]</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a><span class="st">      - name: codigo_companhia</span></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a><span class="st">        description: "Código IATA da companhia aérea."</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a><span class="st">        tests:</span></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a><span class="st">          - not_null</span></span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a><span class="st">          - relationships:</span></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a><span class="st">              to: ref("stg_airlines")</span></span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a><span class="st">              field: codigo_companhia</span></span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a><span class="st">  - name: stg_airlines</span></span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a><span class="st">    description: "Companhias aéreas com nomes padronizados."</span></span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a><span class="st">    columns:</span></span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a><span class="st">      - name: codigo_companhia</span></span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a><span class="st">        description: "Código IATA da companhia."</span></span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a><span class="st">        tests:</span></span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a><span class="st">          - not_null</span></span>
+<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a><span class="st">          - unique</span></span>
+<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(schema_staging,</span>
+<span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a>           <span class="st">"voos_analytics/models/staging/schema.yml"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="executando-os-testes" class="level2">
+<h2 class="anchored" data-anchor-id="executando-os-testes">Executando os testes</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Executar todos os testes do projeto</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt test"</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Executar testes de um model específico</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt test --select stg_flights"</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Executar apenas os testes de um tipo específico</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt test --select test_type:not_null"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-dbt-test-com-sucesso" class="level2">
+<h2 class="anchored" data-anchor-id="output-dbt-test-com-sucesso">Output: dbt test com sucesso</h2>
+<pre><code>Running with dbt=1.8.x
+Found 3 models, 3 seeds, 5 tests
+
+Concurrency: 4 threads (target='dev')
+
+1 of 5 PASS not_null_stg_flights_flight_id ............... [PASS in 0.42s]
+2 of 5 PASS not_null_stg_flights_aeroporto_origem ......... [PASS in 0.38s]
+3 of 5 PASS accepted_values_aeroporto_origem .............. [PASS in 0.51s]
+4 of 5 PASS relationships_stg_flights_codigo .............. [PASS in 0.67s]
+5 of 5 PASS unique_stg_airlines_codigo_companhia .......... [PASS in 0.29s]
+
+Done. PASS=5 WARN=0 ERROR=0 SKIP=0 TOTAL=5</code></pre>
+<hr>
+</section>
+<section id="output-dbt-test-com-falha" class="level2">
+<h2 class="anchored" data-anchor-id="output-dbt-test-com-falha">Output: dbt test com falha</h2>
+<pre><code>3 of 5 FAIL 12 accepted_values_aeroporto_origem .......... [FAIL 12 in 0.51s]
+
+Failure in test accepted_values_aeroporto_origem
+  Got 12 results, configured to fail if != 0
+
+  compiled Code at target/compiled/voos_analytics/models/
+  staging/schema.yml/accepted_values_stg_flights_...sql</code></pre>
+<p>O número <code>12</code> indica quantas linhas violaram a condição. O arquivo compilado em <code>target/compiled/</code> contém o SQL do teste. Execute-o diretamente no banco para inspecionar os registros problemáticos.</p>
+<hr>
+</section>
+<section id="documentação-automática" class="level2">
+<h2 class="anchored" data-anchor-id="documentação-automática">Documentação automática</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gerar a documentação do projeto</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt docs generate"</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Servir a documentação em um servidor local (porta 8080)</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt docs serve --port 8080"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>A documentação gerada inclui:</p>
+<ul>
+<li>Descrição de cada model e coluna (do <code>schema.yml</code>)</li>
+<li><strong>DAG interativo</strong> mostrando todas as dependências entre models, seeds e sources</li>
+<li>SQL compilado de cada model</li>
+<li>Resultados dos testes</li>
+</ul>
+<hr>
+</section>
+<section id="bloco-7" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 7</h1>
+<section id="lendo-os-resultados-no-r" class="level2">
+<h2 class="anchored" data-anchor-id="lendo-os-resultados-no-r">Lendo os Resultados no R</h2>
+</section>
+</section>
+<hr>
+<section id="conectar-ao-postgresql-e-ler-a-tabela-do-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="conectar-ao-postgresql-e-ler-a-tabela-do-dbt">Conectar ao PostgreSQL e ler a tabela do dbt</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RPostgres)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">drv      =</span> RPostgres<span class="sc">::</span><span class="fu">Postgres</span>(),</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">host     =</span> <span class="fu">Sys.getenv</span>(<span class="st">"PG_HOST"</span>),</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">port     =</span> <span class="fu">as.integer</span>(<span class="fu">Sys.getenv</span>(<span class="st">"PG_PORT"</span>)),</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">dbname   =</span> <span class="fu">Sys.getenv</span>(<span class="st">"PG_DBNAME"</span>),</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">user     =</span> <span class="fu">Sys.getenv</span>(<span class="st">"PG_USER"</span>),</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">password =</span> <span class="fu">Sys.getenv</span>(<span class="st">"PG_PASSWORD"</span>))</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Ler a tabela fct_atrasos gerada pelo dbt</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>fct_atrasos <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, dbplyr<span class="sc">::</span><span class="fu">in_schema</span>(<span class="st">"dbt_dev"</span>, <span class="st">"fct_atrasos"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fct_atrasos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-tabela-fct_atrasos" class="level2">
+<h2 class="anchored" data-anchor-id="output-tabela-fct_atrasos">Output: tabela fct_atrasos</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 8
+  nome_companhia   mes aeroporto_origem total_voos atraso_medio_min
+  &lt;chr&gt;          &lt;int&gt; &lt;chr&gt;                 &lt;int&gt;            &lt;dbl&gt;
+1 American           1 JFK                    1812             8.72
+2 Delta              1 JFK                    2242             5.14
+3 United             1 EWR                    2893            11.3 
+4 JetBlue            1 JFK                    1244            14.2 
+5 Southwest          1 EWR                    1598             3.21
+# ℹ 3 more variables: atraso_partida_medio_min &lt;dbl&gt;,
+#   voos_atrasados_graves &lt;int&gt;, pct_atrasados_graves &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-visualização-a-partir-do-dbt" class="level2">
+<h2 class="anchored" data-anchor-id="código-visualização-a-partir-do-dbt">Código: visualização a partir do dbt</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fct_atrasos <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(nome_companhia) <span class="sc">|&gt;</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">atraso_medio =</span> <span class="fu">mean</span>(atraso_medio_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_voos   =</span> <span class="fu">sum</span>(total_voos),</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(total_voos <span class="sc">&gt;</span> <span class="dv">1000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x    =</span> <span class="fu">reorder</span>(nome_companhia, atraso_medio),</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y    =</span> atraso_medio,</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> atraso_medio <span class="sc">&gt;</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.7</span>, <span class="at">alpha =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TRUE"</span>  <span class="ot">=</span> cores_cafe[<span class="st">"marrom"</span>],</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FALSE"</span> <span class="ot">=</span> cores_cafe[<span class="st">"azul_claro"</span>])) <span class="sc">+</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Atraso médio de chegada por companhia aérea"</span>,</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Tabela transformada pelo dbt, consumida no R"</span>,</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Atraso médio de chegada (minutos)"</span>,</span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>  tema <span class="sc">+</span></span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="gráfico-atraso-médio-por-companhia" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-atraso-médio-por-companhia">Gráfico: atraso médio por companhia</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula32_dbt_v2_files/figure-html/grafico-output-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="o-fluxo-completo-em-um-único-script-r" class="level2">
+<h2 class="anchored" data-anchor-id="o-fluxo-completo-em-um-único-script-r">O fluxo completo em um único script R</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reticulate)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RPostgres)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Configurar o ambiente Python</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="fu">use_virtualenv</span>(<span class="st">"dbt-env"</span>, <span class="at">required =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Exportar dados brutos para seeds</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(flights,  <span class="st">"voos_analytics/seeds/raw_flights.csv"</span>)</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(airlines, <span class="st">"voos_analytics/seeds/raw_airlines.csv"</span>)</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(airports, <span class="st">"voos_analytics/seeds/raw_airports.csv"</span>)</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Executar o pipeline dbt completo</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"voos_analytics"</span>)</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt seed"</span>)</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt run"</span>)</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="st">"dbt test"</span>)</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Conectar ao PostgreSQL e ler os resultados</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">drv      =</span> RPostgres<span class="sc">::</span><span class="fu">Postgres</span>(),</span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">host     =</span> <span class="fu">Sys.getenv</span>(<span class="st">"PG_HOST"</span>),</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">port     =</span> <span class="fu">as.integer</span>(<span class="fu">Sys.getenv</span>(<span class="st">"PG_PORT"</span>)),</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">dbname   =</span> <span class="fu">Sys.getenv</span>(<span class="st">"PG_DBNAME"</span>),</span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">user     =</span> <span class="fu">Sys.getenv</span>(<span class="st">"PG_USER"</span>),</span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">password =</span> <span class="fu">Sys.getenv</span>(<span class="st">"PG_PASSWORD"</span>))</span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>fct_atrasos <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con,</span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a>  dbplyr<span class="sc">::</span><span class="fu">in_schema</span>(<span class="st">"dbt_dev"</span>, <span class="st">"fct_atrasos"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Análise no R</span></span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a>fct_atrasos <span class="sc">|&gt;</span></span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(nome_companhia) <span class="sc">|&gt;</span></span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">atraso_medio =</span> <span class="fu">mean</span>(atraso_medio_min)) <span class="sc">|&gt;</span></span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(atraso_medio))</span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="bloco-8" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 8</h1>
+<section id="boas-práticas-e-mercado" class="level2">
+<h2 class="anchored" data-anchor-id="boas-práticas-e-mercado">Boas Práticas e Mercado</h2>
+</section>
+</section>
+<hr>
+<section id="convenção-de-nomenclatura-dos-models" class="level2">
+<h2 class="anchored" data-anchor-id="convenção-de-nomenclatura-dos-models">Convenção de nomenclatura dos models</h2>
+<p>Adotar uma convenção consistente é fundamental para projetos com múltiplos colaboradores:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Prefixo</th>
+<th>Camada</th>
+<th>O que contém</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>stg_</code></td>
+<td>Staging</td>
+<td>Limpeza e padronização das fontes brutas. Um model por tabela de origem.</td>
+</tr>
+<tr class="even">
+<td><code>int_</code></td>
+<td>Intermediate</td>
+<td>Transformações intermediárias complexas que não são consumidas diretamente.</td>
+</tr>
+<tr class="odd">
+<td><code>fct_</code></td>
+<td>Fact</td>
+<td>Tabelas de fatos: eventos mensuráveis (vendas, voos, transações).</td>
+</tr>
+<tr class="even">
+<td><code>dim_</code></td>
+<td>Dimension</td>
+<td>Tabelas de dimensão: entidades (clientes, produtos, aeroportos).</td>
+</tr>
+<tr class="odd">
+<td><code>rpt_</code></td>
+<td>Report</td>
+<td>Tabelas finais específicas para relatórios ou dashboards.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="versionamento-do-projeto-dbt-com-git" class="level2">
+<h2 class="anchored" data-anchor-id="versionamento-do-projeto-dbt-com-git">Versionamento do projeto dbt com Git</h2>
+<p>O projeto dbt inteiro, models, tests, seeds, macros e <code>dbt_project.yml</code>, deve ser versionado no Git junto com o projeto R.</p>
+<p><strong>O que versionar:</strong></p>
+<pre><code>.gitignore recomendado para projetos dbt + R:
+
+# dbt
+voos_analytics/target/
+voos_analytics/dbt_packages/
+voos_analytics/logs/
+
+# Credenciais
+.Renviron
+~/.dbt/profiles.yml</code></pre>
+<hr>
+</section>
+<section id="o-que-o-dbt-não-faz" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-o-dbt-não-faz">O que o dbt não faz</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>É comum superestimar o escopo do dbt. Ele faz uma coisa bem: transformar dados já carregados no banco com SQL versionado e testado.</p>
+<p><strong>O dbt não faz:</strong></p>
+<ul>
+<li>Extração de dados de fontes externas (APIs, arquivos, bancos de origem)</li>
+<li>Carregamento de dados no warehouse (isso é responsabilidade de ferramentas como Airbyte, Fivetran ou do próprio R)</li>
+<li>Orquestração de pipelines (para isso: Airflow, Dagster ou GitHub Actions)</li>
+<li>Análise estatística, modelagem preditiva ou visualização</li>
+<li>Substituição do R na análise: são ferramentas complementares</li>
+</ul>
+</div>
+</div>
+<hr>
+</section>
+<section id="o-papel-do-analytics-engineer" class="level2">
+<h2 class="anchored" data-anchor-id="o-papel-do-analytics-engineer">O papel do analytics engineer</h2>
+<p>O dbt popularizou o papel do <strong>analytics engineer</strong> nos times de dados:</p>
+<ul>
+<li>Profissional que une habilidades de engenharia de dados e análise</li>
+<li>Responsável pela camada de transformação: modelos SQL limpos, testados e documentados</li>
+<li>Trabalha entre o engenheiro de dados (que entrega os dados brutos) e o analista (que consome os dados transformados)</li>
+<li>O <code>dbt</code> é a ferramenta central desse papel</li>
+</ul>
+<p>Para quem vem do R, dominar o dbt representa uma expansão significativa de empregabilidade em times de dados modernos.</p>
+<hr>
+</section>
+<section id="quando-usar-dbt-e-quando-usar-targets" class="level2">
+<h2 class="anchored" data-anchor-id="quando-usar-dbt-e-quando-usar-targets">Quando usar dbt e quando usar targets</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Use dbt</th>
+<th>Use targets</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Transformações em SQL no banco</td>
+<td>Sim</td>
+<td>Não</td>
+</tr>
+<tr class="even">
+<td>Transformações em R na memória</td>
+<td>Não</td>
+<td>Sim</td>
+</tr>
+<tr class="odd">
+<td>Dados maiores que a RAM</td>
+<td>Sim</td>
+<td>Não</td>
+</tr>
+<tr class="even">
+<td>Pipeline de análise estatística</td>
+<td>Não</td>
+<td>Sim</td>
+</tr>
+<tr class="odd">
+<td>Time com analistas SQL</td>
+<td>Sim</td>
+<td>Opcional</td>
+</tr>
+<tr class="even">
+<td>Time exclusivamente R</td>
+<td>Opcional</td>
+<td>Sim</td>
+</tr>
+<tr class="odd">
+<td>Modelos preditivos com tidymodels</td>
+<td>Não</td>
+<td>Sim</td>
+</tr>
+<tr class="even">
+<td>Documentação de linhagem visual</td>
+<td>Sim (DAG nativo)</td>
+<td>Limitado</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="referências" class="level2">
+<h2 class="anchored" data-anchor-id="referências">Referências</h2>
+<ul>
+<li>Documentação oficial do dbt: <a href="https://docs.getdbt.com">docs.getdbt.com</a></li>
+<li>dbt Core no PyPI: <a href="https://pypi.org/project/dbt-core/">pypi.org/project/dbt-core</a></li>
+<li>Adaptador dbt-postgres: <a href="https://docs.getdbt.com/docs/core/connect-data-platform/postgres-setup">docs.getdbt.com/docs/core/connect-data-platform/postgres-setup</a></li>
+<li>Documentação reticulate: <a href="https://rstudio.github.io/reticulate">rstudio.github.io/reticulate</a></li>
+<li>Boas práticas dbt: <a href="https://docs.getdbt.com/guides/best-practices">docs.getdbt.com/guides/best-practices</a></li>
+</ul>
+<hr>
+</section>
+<section id="obrigada" class="level2">
+<h2 class="anchored" data-anchor-id="obrigada">Obrigada!</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/comunidade.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+<hr>
+</section>
+<section id="siga-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="siga-o-café-com-r">Siga o Café com R</h2>
+<blockquote class="blockquote">
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+</blockquote>
+<p>SITE OFICIAL &gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Construa a estrutura formal de um teste de hipóteses e entenda, com precisão, o que o p-valor mede e o que ele não mede.">
+
+<title>Aula 39. Teste de hipóteses – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#acompanhe-o-café-com-r" id="toc-acompanhe-o-café-com-r" class="nav-link active" data-scroll-target="#acompanhe-o-café-com-r">Acompanhe o Café com R</a></li>
+  <li><a href="#conteúdos-relacionados-para-estudar-mais" id="toc-conteúdos-relacionados-para-estudar-mais" class="nav-link" data-scroll-target="#conteúdos-relacionados-para-estudar-mais">Conteúdos relacionados para estudar mais:</a></li>
+  <li><a href="#objetivos-da-aula" id="toc-objetivos-da-aula" class="nav-link" data-scroll-target="#objetivos-da-aula">Objetivos da aula</a></li>
+  <li><a href="#bloco-1" id="toc-bloco-1" class="nav-link" data-scroll-target="#bloco-1">Bloco 1</a>
+  <ul class="collapse">
+  <li><a href="#teste-de-hipóteses-estrutura-formal" id="toc-teste-de-hipóteses-estrutura-formal" class="nav-link" data-scroll-target="#teste-de-hipóteses-estrutura-formal">Teste de Hipóteses, Estrutura Formal</a></li>
+  </ul></li>
+  <li><a href="#o-problema-da-inferência-como-decisão" id="toc-o-problema-da-inferência-como-decisão" class="nav-link" data-scroll-target="#o-problema-da-inferência-como-decisão">O problema da inferência como decisão</a></li>
+  <li><a href="#h_0-e-h_1-definição-formal" id="toc-h_0-e-h_1-definição-formal" class="nav-link" data-scroll-target="#h_0-e-h_1-definição-formal"><span class="math inline">\(H_0\)</span> e <span class="math inline">\(H_1\)</span>, definição formal</a></li>
+  <li><a href="#hipótese-unicaudal-x-bicaudal" id="toc-hipótese-unicaudal-x-bicaudal" class="nav-link" data-scroll-target="#hipótese-unicaudal-x-bicaudal">Hipótese unicaudal x bicaudal</a></li>
+  <li><a href="#os-quatro-resultados-possíveis-de-um-teste" id="toc-os-quatro-resultados-possíveis-de-um-teste" class="nav-link" data-scroll-target="#os-quatro-resultados-possíveis-de-um-teste">Os quatro resultados possíveis de um teste</a></li>
+  <li><a href="#o-trade-off-entre-os-dois-erros" id="toc-o-trade-off-entre-os-dois-erros" class="nav-link" data-scroll-target="#o-trade-off-entre-os-dois-erros">O trade-off entre os dois erros</a></li>
+  <li><a href="#código-formulação-do-teste" id="toc-código-formulação-do-teste" class="nav-link" data-scroll-target="#código-formulação-do-teste">Código: formulação do teste</a></li>
+  <li><a href="#output-teste-aplicado" id="toc-output-teste-aplicado" class="nav-link" data-scroll-target="#output-teste-aplicado">Output: teste aplicado</a></li>
+  <li><a href="#bloco-2" id="toc-bloco-2" class="nav-link" data-scroll-target="#bloco-2">Bloco 2</a>
+  <ul class="collapse">
+  <li><a href="#o-p-valor" id="toc-o-p-valor" class="nav-link" data-scroll-target="#o-p-valor">O p-valor</a></li>
+  </ul></li>
+  <li><a href="#definição-formal-do-p-valor" id="toc-definição-formal-do-p-valor" class="nav-link" data-scroll-target="#definição-formal-do-p-valor">Definição formal do p-valor</a></li>
+  <li><a href="#o-que-o-p-valor-não-é" id="toc-o-que-o-p-valor-não-é" class="nav-link" data-scroll-target="#o-que-o-p-valor-não-é">O que o p-valor NÃO é</a></li>
+  <li><a href="#o-que-o-p-valor-é-com-precisão" id="toc-o-que-o-p-valor-é-com-precisão" class="nav-link" data-scroll-target="#o-que-o-p-valor-é-com-precisão">O que o p-valor É, com precisão</a></li>
+  <li><a href="#código-visualização-geométrica-do-p-valor" id="toc-código-visualização-geométrica-do-p-valor" class="nav-link" data-scroll-target="#código-visualização-geométrica-do-p-valor">Código: visualização geométrica do p-valor</a></li>
+  <li><a href="#gráfico-área-do-p-valor-sobre-a-curva-t" id="toc-gráfico-área-do-p-valor-sobre-a-curva-t" class="nav-link" data-scroll-target="#gráfico-área-do-p-valor-sobre-a-curva-t">Gráfico: área do p-valor sobre a curva t</a></li>
+  <li><a href="#significância-estatística-x-relevância-prática" id="toc-significância-estatística-x-relevância-prática" class="nav-link" data-scroll-target="#significância-estatística-x-relevância-prática">Significância estatística x relevância prática</a></li>
+  <li><a href="#as-recomendações-da-asa" id="toc-as-recomendações-da-asa" class="nav-link" data-scroll-target="#as-recomendações-da-asa">As recomendações da ASA</a></li>
+  <li><a href="#código-reportando-corretamente-um-resultado" id="toc-código-reportando-corretamente-um-resultado" class="nav-link" data-scroll-target="#código-reportando-corretamente-um-resultado">Código: reportando corretamente um resultado</a></li>
+  <li><a href="#output-relatório-correto" id="toc-output-relatório-correto" class="nav-link" data-scroll-target="#output-relatório-correto">Output: relatório correto</a></li>
+  <li><a href="#bloco-3" id="toc-bloco-3" class="nav-link" data-scroll-target="#bloco-3">Bloco 3</a>
+  <ul class="collapse">
+  <li><a href="#erros-comuns" id="toc-erros-comuns" class="nav-link" data-scroll-target="#erros-comuns">Erros Comuns</a></li>
+  </ul></li>
+  <li><a href="#erro-comum-1-interpretar-o-p-valor-como-a-probabilidade-de-h_0-ser-verdadeira" id="toc-erro-comum-1-interpretar-o-p-valor-como-a-probabilidade-de-h_0-ser-verdadeira" class="nav-link" data-scroll-target="#erro-comum-1-interpretar-o-p-valor-como-a-probabilidade-de-h_0-ser-verdadeira">Erro comum 1, interpretar o p-valor como a probabilidade de <span class="math inline">\(H_0\)</span> ser verdadeira</a></li>
+  <li><a href="#erro-comum-2-achar-que-p-igual-a-0049-é-muito-diferente-de-p-igual-a-0051" id="toc-erro-comum-2-achar-que-p-igual-a-0049-é-muito-diferente-de-p-igual-a-0051" class="nav-link" data-scroll-target="#erro-comum-2-achar-que-p-igual-a-0049-é-muito-diferente-de-p-igual-a-0051">Erro comum 2, achar que p igual a 0,049 é muito diferente de p igual a 0,051</a></li>
+  <li><a href="#erro-comum-3-confundir-significância-estatística-com-relevância-prática" id="toc-erro-comum-3-confundir-significância-estatística-com-relevância-prática" class="nav-link" data-scroll-target="#erro-comum-3-confundir-significância-estatística-com-relevância-prática">Erro comum 3, confundir significância estatística com relevância prática</a></li>
+  <li><a href="#resumo-teste-de-hipóteses-e-p-valor" id="toc-resumo-teste-de-hipóteses-e-p-valor" class="nav-link" data-scroll-target="#resumo-teste-de-hipóteses-e-p-valor">Resumo: teste de hipóteses e p-valor</a></li>
+  <li><a href="#obrigada" id="toc-obrigada" class="nav-link" data-scroll-target="#obrigada">Obrigada!</a></li>
+  <li><a href="#siga-o-café-com-r" id="toc-siga-o-café-com-r" class="nav-link" data-scroll-target="#siga-o-café-com-r">Siga o Café com R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="aula39_teste_hipoteses_p_valor.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Aula 39. Teste de hipóteses</h1>
+<p class="subtitle lead">Estrutura formal da decisão estatística e o p-valor</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Estatística</div>
+    <div class="quarto-category">Inferência</div>
+    <div class="quarto-category">Tidyverse</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Construa a estrutura formal de um teste de hipóteses e entenda, com precisão, o que o p-valor mede e o que ele não mede.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="acompanhe-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="acompanhe-o-café-com-r">Acompanhe o Café com R</h2>
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p>SITE OFICIAL &gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+<hr>
+</section>
+<section id="conteúdos-relacionados-para-estudar-mais" class="level2">
+<h2 class="anchored" data-anchor-id="conteúdos-relacionados-para-estudar-mais">Conteúdos relacionados para estudar mais:</h2>
+<ul>
+<li><p>Acesse a <a href="https://jenniferlopes.github.io/meu_site/cafecomr/">Newsletter</a>;</p></li>
+<li><p>Acesse as <a href="https://jenniferlopes.github.io/meu_site/apresenta%C3%A7%C3%B5es/">aulas</a>;</p></li>
+<li><p>Acesse a apostila de <a href="https://jenniferlopes.github.io/meu_site/apostila.html">Estatística com R</a>.</p></li>
+</ul>
+</section>
+<section id="objetivos-da-aula" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-da-aula">Objetivos da aula</h2>
+<div class="incremental">
+<ul class="incremental">
+<li>Construir a estrutura formal de um teste de hipóteses, <span class="math inline">\(H_0\)</span> e <span class="math inline">\(H_1\)</span></li>
+<li>Distinguir hipótese <strong>unicaudal</strong> de hipótese <strong>bicaudal</strong></li>
+<li>Reconhecer os quatro resultados possíveis de um teste, e o trade-off entre erro tipo I e erro tipo II</li>
+<li>Definir formalmente o <strong>p-valor</strong>, e reconhecer o que ele não é</li>
+<li>Diferenciar significância estatística de relevância prática</li>
+<li>Reportar corretamente um resultado, com p-valor, tamanho de efeito e intervalo de confiança</li>
+</ul>
+</div>
+<hr>
+</section>
+<section id="bloco-1" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+<section id="teste-de-hipóteses-estrutura-formal" class="level2">
+<h2 class="anchored" data-anchor-id="teste-de-hipóteses-estrutura-formal">Teste de Hipóteses, Estrutura Formal</h2>
+</section>
+</section>
+<hr>
+<section id="o-problema-da-inferência-como-decisão" class="level2">
+<h2 class="anchored" data-anchor-id="o-problema-da-inferência-como-decisão">O problema da inferência como decisão</h2>
+<ul>
+<li><p><strong>Contexto:</strong> um inseticida é aplicado em parcelas de soja para controlar percevejo. Parcelas controle não recebem o produto. A pergunta é se o inseticida reduz, de fato, a contagem de percevejos por metro linear, ou se a diferença observada entre os grupos é apenas variação amostral.</p></li>
+<li><p>Um teste de hipóteses formaliza essa pergunta em uma estrutura de decisão, com regras explícitas sobre quando considerar a evidência suficiente para afirmar que existe um efeito real.</p></li>
+</ul>
+<hr>
+</section>
+<section id="h_0-e-h_1-definição-formal" class="level2">
+<h2 class="anchored" data-anchor-id="h_0-e-h_1-definição-formal"><span class="math inline">\(H_0\)</span> e <span class="math inline">\(H_1\)</span>, definição formal</h2>
+<ul>
+<li>A <strong>hipótese nula</strong>, <span class="math inline">\(H_0\)</span>, representa a ausência de efeito, a situação padrão que se assume verdadeira até que haja evidência suficiente em contrário.</li>
+</ul>
+<p><span class="math display">\[H_0: \mu_{\text{controle}} = \mu_{\text{tratado}}\]</span></p>
+<ul>
+<li>A <strong>hipótese alternativa</strong>, <span class="math inline">\(H_1\)</span>, representa o efeito que se deseja evidenciar.</li>
+</ul>
+<p><span class="math display">\[H_1: \mu_{\text{controle}} &gt; \mu_{\text{tratado}}\]</span></p>
+<ul>
+<li>O teste nunca prova <span class="math inline">\(H_0\)</span> verdadeira. Ele apenas determina se há evidência suficiente para rejeitá-la.</li>
+</ul>
+<hr>
+</section>
+<section id="hipótese-unicaudal-x-bicaudal" class="level2">
+<h2 class="anchored" data-anchor-id="hipótese-unicaudal-x-bicaudal">Hipótese unicaudal x bicaudal</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Formulação</th>
+<th>Quando usar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Bicaudal</td>
+<td><span class="math inline">\(H_1: \mu_1 \neq \mu_2\)</span></td>
+<td>Direção do efeito desconhecida a priori</td>
+</tr>
+<tr class="even">
+<td>Unicaudal</td>
+<td><span class="math inline">\(H_1: \mu_1 &gt; \mu_2\)</span> ou <span class="math inline">\(H_1: \mu_1 &lt; \mu_2\)</span></td>
+<td>Direção do efeito definida antes da coleta dos dados</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>No contexto deste estudo:</strong> a expectativa de que o inseticida reduza a contagem de percevejos é definida antes da coleta, o que justifica um teste unicaudal.</li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Atenção:</strong> a escolha entre unicaudal e bicaudal deve ser feita antes de observar os dados. Escolher a direção do teste depois de ver o resultado invalida a interpretação do p-valor.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="os-quatro-resultados-possíveis-de-um-teste" class="level2">
+<h2 class="anchored" data-anchor-id="os-quatro-resultados-possíveis-de-um-teste">Os quatro resultados possíveis de um teste</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decisão</th>
+<th><span class="math inline">\(H_0\)</span> verdadeira</th>
+<th><span class="math inline">\(H_0\)</span> falsa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Não rejeitar <span class="math inline">\(H_0\)</span></td>
+<td>Decisão correta</td>
+<td>Erro tipo II (<span class="math inline">\(\beta\)</span>)</td>
+</tr>
+<tr class="even">
+<td>Rejeitar <span class="math inline">\(H_0\)</span></td>
+<td>Erro tipo I (<span class="math inline">\(\alpha\)</span>)</td>
+<td>Decisão correta (poder, <span class="math inline">\(1-\beta\)</span>)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p><strong>Erro tipo I:</strong> concluir que o inseticida funciona quando, na realidade, não há efeito.</p></li>
+<li><p><strong>Erro tipo II:</strong> concluir que o inseticida não funciona quando, na realidade, ele reduz a contagem de percevejos.</p></li>
+</ul>
+<hr>
+</section>
+<section id="o-trade-off-entre-os-dois-erros" class="level2">
+<h2 class="anchored" data-anchor-id="o-trade-off-entre-os-dois-erros">O trade-off entre os dois erros</h2>
+<ul>
+<li><p>Reduzir <span class="math inline">\(\alpha\)</span>, o nível de significância, torna o critério de rejeição mais rígido, o que reduz o erro tipo I, mas aumenta o erro tipo II, para um tamanho de amostra fixo.</p></li>
+<li><p>A única forma de reduzir os dois erros simultaneamente é aumentar o tamanho da amostra.</p></li>
+<li><p>Essa é a razão pela qual a análise de poder estatístico, antes da coleta de dados, é parte essencial do planejamento experimental.</p></li>
+</ul>
+<hr>
+</section>
+<section id="código-formulação-do-teste" class="level2">
+<h2 class="anchored" data-anchor-id="código-formulação-do-teste">Código: formulação do teste</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>amostra_percevejo <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(grupo) <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n     =</span> <span class="fu">n</span>(),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">media =</span> <span class="fu">mean</span>(percevejos),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">dp    =</span> <span class="fu">sd</span>(percevejos))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>resultado_t <span class="ot">&lt;-</span> <span class="fu">t.test</span>(controle, tratado, <span class="at">alternative =</span> <span class="st">"greater"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-teste-aplicado" class="level2">
+<h2 class="anchored" data-anchor-id="output-teste-aplicado">Output: teste aplicado</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  grupo        n media    dp
+  &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 Controle    25  7.75  2.62
+2 Tratado     25  5.40  2.46</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  estatistica_t graus_liberdade valor_p
+          &lt;dbl&gt;           &lt;dbl&gt;   &lt;dbl&gt;
+1          3.26            47.8   0.001</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>A média do grupo controle é maior que a média do grupo tratado, na direção esperada por</strong> <span class="math inline">\(H_1\)</span>. O valor de p obtido determina se essa diferença é suficiente para rejeitar <span class="math inline">\(H_0\)</span> ao nível de significância adotado.</li>
+</ul>
+<hr>
+</section>
+<section id="bloco-2" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+<section id="o-p-valor" class="level2">
+<h2 class="anchored" data-anchor-id="o-p-valor">O p-valor</h2>
+</section>
+</section>
+<hr>
+<section id="definição-formal-do-p-valor" class="level2">
+<h2 class="anchored" data-anchor-id="definição-formal-do-p-valor">Definição formal do p-valor</h2>
+<ul>
+<li>O <strong>p-valor</strong> é a probabilidade de observar uma estatística de teste tão extrema quanto, ou mais extrema que, a estatística observada, <strong>assumindo que</strong> <span class="math inline">\(H_0\)</span> é verdadeira.</li>
+</ul>
+<p><span class="math display">\[p = P(T \geq t_{\text{observado}} \mid H_0 \text{ verdadeira})\]</span></p>
+<ul>
+<li>O p-valor é calculado sob a suposição de que não há efeito. Ele descreve a compatibilidade dos dados com <span class="math inline">\(H_0\)</span>, não a probabilidade de <span class="math inline">\(H_0\)</span> estar certa.</li>
+</ul>
+<hr>
+</section>
+<section id="o-que-o-p-valor-não-é" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-o-p-valor-não-é">O que o p-valor NÃO é</h2>
+<ul>
+<li><p><strong>Não é a probabilidade de</strong> <span class="math inline">\(H_0\)</span> ser verdadeira.</p></li>
+<li><p><strong>Não é a probabilidade de</strong> <span class="math inline">\(H_1\)</span> ser verdadeira.</p></li>
+<li><p><strong>Não é a probabilidade de o resultado ter ocorrido por acaso.</strong></p></li>
+<li><p><strong>Não mede o tamanho do efeito</strong>, nem a importância prática do resultado.</p></li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Atenção:</strong> essas quatro interpretações são as mais frequentes em artigos e relatórios técnicos, e todas estão incorretas segundo a definição formal do p-valor.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="o-que-o-p-valor-é-com-precisão" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-o-p-valor-é-com-precisão">O que o p-valor É, com precisão</h2>
+<ul>
+<li><p>O p-valor mede o quão incompatíveis os dados observados são com <span class="math inline">\(H_0\)</span>, sob o modelo estatístico assumido.</p></li>
+<li><p>Um p-valor pequeno indica que os dados seriam raros se <span class="math inline">\(H_0\)</span> fosse verdadeira, o que fornece evidência contra <span class="math inline">\(H_0\)</span>, não uma prova contra ela.</p></li>
+<li><p>Um p-valor grande não é evidência de que <span class="math inline">\(H_0\)</span> é verdadeira, apenas indica ausência de evidência suficiente para rejeitá-la.</p></li>
+</ul>
+<hr>
+</section>
+<section id="código-visualização-geométrica-do-p-valor" class="level2">
+<h2 class="anchored" data-anchor-id="código-visualização-geométrica-do-p-valor">Código: visualização geométrica do p-valor</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>gl     <span class="ot">&lt;-</span> resultado_t<span class="sc">$</span>parameter</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>t_obs  <span class="ot">&lt;-</span> resultado_t<span class="sc">$</span>statistic</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>curva_t <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">t =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="at">length.out =</span> <span class="dv">600</span>), <span class="at">y =</span> <span class="fu">dt</span>(t, <span class="at">df =</span> gl))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>area_p  <span class="ot">&lt;-</span> curva_t <span class="sc">|&gt;</span> <span class="fu">filter</span>(t <span class="sc">&gt;=</span> t_obs)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(curva_t, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> cores_cafe[<span class="st">"azul_escuro"</span>], <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_area</span>(<span class="at">data =</span> area_p, <span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> y),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> cores_cafe[<span class="st">"marrom"</span>], <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> t_obs, <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> cores_cafe[<span class="st">"marrom"</span>], <span class="at">linewidth =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="gráfico-área-do-p-valor-sobre-a-curva-t" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-área-do-p-valor-sobre-a-curva-t">Gráfico: área do p-valor sobre a curva t</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula39_teste_hipoteses_p_valor_files/figure-html/p-valor-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="significância-estatística-x-relevância-prática" class="level2">
+<h2 class="anchored" data-anchor-id="significância-estatística-x-relevância-prática">Significância estatística x relevância prática</h2>
+<ul>
+<li><p>Um resultado pode ser estatisticamente significativo, p pequeno, e ainda assim ter efeito irrelevante na prática, quando o tamanho da amostra é grande o suficiente para detectar diferenças mínimas.</p></li>
+<li><p>Um resultado pode não ser estatisticamente significativo, p grande, e ainda ter um efeito relevante, quando o tamanho da amostra é pequeno demais para detectá-lo com confiança.</p></li>
+<li><p><strong>No contexto deste estudo:</strong> uma redução de meio percevejo por metro linear pode ser estatisticamente detectável, mas não justificar, sozinha, o custo da aplicação do inseticida.</p></li>
+</ul>
+<hr>
+</section>
+<section id="as-recomendações-da-asa" class="level2">
+<h2 class="anchored" data-anchor-id="as-recomendações-da-asa">As recomendações da ASA</h2>
+<ul>
+<li><p>A American Statistical Association publicou, em 2016, uma declaração formal sobre o uso do p-valor. Os pontos centrais incluem:</p></li>
+<li><p>O p-valor não mede a probabilidade de a hipótese estudada ser verdadeira, nem a probabilidade de os dados terem sido produzidos apenas pelo acaso.</p></li>
+<li><p>Conclusões científicas não devem se basear apenas na ultrapassagem de um limiar numérico, como p menor que 0,05.</p></li>
+<li><p>Uma decisão científica adequada exige relatar o tamanho de efeito, o intervalo de confiança e o contexto do estudo, e não apenas o valor de p isolado.</p></li>
+</ul>
+<hr>
+</section>
+<section id="código-reportando-corretamente-um-resultado" class="level2">
+<h2 class="anchored" data-anchor-id="código-reportando-corretamente-um-resultado">Código: reportando corretamente um resultado</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>resultado_ic <span class="ot">&lt;-</span> <span class="fu">t.test</span>(controle, tratado)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>diff_medias <span class="ot">&lt;-</span> <span class="fu">mean</span>(controle) <span class="sc">-</span> <span class="fu">mean</span>(tratado)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>sd_pooled   <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(((<span class="fu">length</span>(controle) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">sd</span>(controle)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                      (<span class="fu">length</span>(tratado) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">sd</span>(tratado)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                     (<span class="fu">length</span>(controle) <span class="sc">+</span> <span class="fu">length</span>(tratado) <span class="sc">-</span> <span class="dv">2</span>))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>cohens_d    <span class="ot">&lt;-</span> diff_medias <span class="sc">/</span> sd_pooled</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">diferenca_medias =</span> diff_medias,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ic_inf            =</span> resultado_ic<span class="sc">$</span>conf.int[<span class="dv">1</span>],</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">ic_sup            =</span> resultado_ic<span class="sc">$</span>conf.int[<span class="dv">2</span>],</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohens_d          =</span> cohens_d,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">valor_p           =</span> resultado_t<span class="sc">$</span>p.value) <span class="sc">|&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">3</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-relatório-correto" class="level2">
+<h2 class="anchored" data-anchor-id="output-relatório-correto">Output: relatório correto</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  diferenca_medias ic_inf ic_sup cohens_d valor_p
+             &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+1             2.34  0.898   3.79    0.922   0.001</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>O relatório completo inclui a magnitude da diferença, sua incerteza representada pelo intervalo de confiança, o tamanho de efeito padronizado pelo d de Cohen, e o p-valor. Nenhum desses quatro elementos, isoladamente, conta a história completa do resultado.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-3" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+<section id="erros-comuns" class="level2">
+<h2 class="anchored" data-anchor-id="erros-comuns">Erros Comuns</h2>
+</section>
+</section>
+<hr>
+<section id="erro-comum-1-interpretar-o-p-valor-como-a-probabilidade-de-h_0-ser-verdadeira" class="level2">
+<h2 class="anchored" data-anchor-id="erro-comum-1-interpretar-o-p-valor-como-a-probabilidade-de-h_0-ser-verdadeira">Erro comum 1, interpretar o p-valor como a probabilidade de <span class="math inline">\(H_0\)</span> ser verdadeira</h2>
+<ul>
+<li><p>O p-valor é calculado assumindo que <span class="math inline">\(H_0\)</span> é verdadeira, ele não pode, ao mesmo tempo, medir a probabilidade dessa suposição.</p></li>
+<li><p>Essa é a confusão mais frequente na literatura, e inverte a lógica condicional da definição formal do p-valor.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-comum-2-achar-que-p-igual-a-0049-é-muito-diferente-de-p-igual-a-0051" class="level2">
+<h2 class="anchored" data-anchor-id="erro-comum-2-achar-que-p-igual-a-0049-é-muito-diferente-de-p-igual-a-0051">Erro comum 2, achar que p igual a 0,049 é muito diferente de p igual a 0,051</h2>
+<ul>
+<li><p>O limiar de 0,05 é uma convenção, não uma fronteira natural entre evidência e ausência de evidência.</p></li>
+<li><p>Dois resultados com p tão próximos representam praticamente a mesma força de evidência contra <span class="math inline">\(H_0\)</span>, apesar de um estar de um lado do limiar e o outro do outro lado.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-comum-3-confundir-significância-estatística-com-relevância-prática" class="level2">
+<h2 class="anchored" data-anchor-id="erro-comum-3-confundir-significância-estatística-com-relevância-prática">Erro comum 3, confundir significância estatística com relevância prática</h2>
+<ul>
+<li><p>Reportar apenas “diferença significativa, p menor que 0,05” sem informar a magnitude da diferença omite a informação mais relevante para a tomada de decisão.</p></li>
+<li><p>A pergunta que importa na prática não é apenas se existe diferença, mas se essa diferença é grande o suficiente para justificar uma ação, como a adoção de um novo produto ou prática de manejo.</p></li>
+</ul>
+<hr>
+</section>
+<section id="resumo-teste-de-hipóteses-e-p-valor" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-teste-de-hipóteses-e-p-valor">Resumo: teste de hipóteses e p-valor</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Conceito</th>
+<th>Definição resumida</th>
+<th>Função no R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(H_0\)</span></td>
+<td>Hipótese de ausência de efeito</td>
+<td>Não se aplica</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(H_1\)</span></td>
+<td>Hipótese do efeito esperado</td>
+<td>Argumento <code>alternative</code></td>
+</tr>
+<tr class="odd">
+<td>Erro tipo I</td>
+<td>Rejeitar <span class="math inline">\(H_0\)</span> sendo ela verdadeira</td>
+<td>Controlado por <span class="math inline">\(\alpha\)</span></td>
+</tr>
+<tr class="even">
+<td>Erro tipo II</td>
+<td>Não rejeitar <span class="math inline">\(H_0\)</span> sendo ela falsa</td>
+<td>Controlado pelo poder do teste</td>
+</tr>
+<tr class="odd">
+<td>p-valor</td>
+<td>Probabilidade dos dados sob <span class="math inline">\(H_0\)</span>, não probabilidade de <span class="math inline">\(H_0\)</span></td>
+<td><code>t.test()$p.value</code></td>
+</tr>
+<tr class="even">
+<td>Tamanho de efeito</td>
+<td>Magnitude da diferença, independente de n</td>
+<td><code>cohens_d</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="obrigada" class="level2">
+<h2 class="anchored" data-anchor-id="obrigada">Obrigada!</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/comunidade.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+<hr>
+</section>
+<section id="siga-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="siga-o-café-com-r">Siga o Café com R</h2>
+<blockquote class="blockquote">
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+</blockquote>
+<p>SITE OFICIAL &gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

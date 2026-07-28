@@ -1,0 +1,840 @@
+---
+title: "Aula 43. Machine Learning no R"
+subtitle: "Conceitos, etapas e métricas para quem está começando"
+categories: [R, Machine Learning, tidymodels, Conceitos, Estatística]
+image: "imagens/66.png"
+description: "Entenda o que é machine learning supervisionado, como funciona cada etapa do processo e como interpretar as métricas de avaliação antes de rodar a primeira linha de código."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  eval: false
+  warning: false
+  message: false
+editor: visual
+---
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula é conceitual. Não há código que precise rodar. O objetivo é que você entenda o que acontece em cada etapa do processo de machine learning antes de escrever qualquer linha, para que quando você vir o código, saiba exatamente o que ele está fazendo e por quê.
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Entender o que é **machine learning supervisionado** e onde ele é usado
+- Compreender a diferença entre **regressão e classificação**
+- Entender por que os dados precisam ser **divididos**
+- Compreender o que é **pré-processamento** e por que ele importa
+- Saber o que cada **etapa do pipeline** faz e em que ordem
+- Interpretar as **métricas de regressão**: RMSE, MAE e RSQ
+- Interpretar as **métricas de classificação**: acurácia, ROC-AUC e F1
+- Entender o que é **overfitting** e como evitá-lo
+- Saber como tomar **decisões práticas** com base nos resultados
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O que é Machine Learning Supervisionado
+:::
+
+------------------------------------------------------------------------
+
+## Aprender com exemplos
+
+**Machine learning supervisionado** é um processo em que um algoritmo aprende padrões a partir de dados históricos com resposta conhecida para fazer previsões em dados novos, onde a resposta é desconhecida.
+
+A palavra-chave é **supervisionado**: você fornece exemplos com a resposta certa. O algoritmo aprende a partir desses exemplos.
+
+**Analogia:** você mostra para um estagiário 1.000 contratos com a classificação "aprovado" ou "reprovado". Depois ele classifica contratos novos sozinho, com base nos padrões que aprendeu.
+
+------------------------------------------------------------------------
+
+## O que é o $Y$ e o $X$
+
+Em ML supervisionado, o problema sempre tem a mesma estrutura:
+
+$Y$ (variável resposta): o que você quer prever. É o que o modelo aprende a estimar.
+
+$X$ (variáveis preditoras): as informações disponíveis que o modelo usa para prever $Y$.
+
+**Exemplos do dia a dia:**
+
+| $Y$                   | $X$                                       |
+|-----------------------|-------------------------------------------|
+| Preço de um imóvel    | Área, localização, ano de construção      |
+| Churn do cliente      | Tempo de contrato, uso do produto, ticket |
+| Diagnóstico de doença | Exames laboratoriais, idade, sintomas     |
+| Nota de crédito       | Renda, histórico de pagamentos, dívidas   |
+
+------------------------------------------------------------------------
+
+## Regressão: quando Y é contínuo
+
+**Regressão** é usada quando a variável resposta é um número contínuo.
+
+O modelo aprende a prever um valor numérico, não uma categoria.
+
+**Perguntas de regressão:** - Qual será o faturamento do próximo mês? - Qual o preço justo deste imóvel? - Quantas unidades serão vendidas? - Qual a temperatura média amanhã?
+
+**O que o modelo entrega:** um número. A avaliação mede o quanto esse número se afasta do valor real.
+
+------------------------------------------------------------------------
+
+## Classificação: quando Y é uma categoria
+
+**Classificação** é usada quando a variável resposta é uma categoria.
+
+O modelo aprende a identificar a qual grupo cada observação pertence.
+
+**Perguntas de classificação:** - Este cliente vai cancelar o contrato? - Este e-mail é spam ou não é spam? - Qual espécie é este animal com base nas medidas corporais? - Este exame indica diagnóstico positivo ou negativo?
+
+**O que o modelo entrega:** uma classe e, geralmente, a probabilidade de pertencer a cada classe.
+
+------------------------------------------------------------------------
+
+## A diferença que importa na prática
+
+|                     | Regressão         | Classificação                    |
+|---------------------|-------------------|----------------------------------|
+| Tipo de Y           | Número contínuo   | Categoria                        |
+| Output do modelo    | Um valor numérico | Uma classe + probabilidades      |
+| Pergunta típica     | "Quanto?"         | "Qual?" ou "Vai ou não vai?"     |
+| Métricas principais | RMSE, MAE, RSQ    | Acurácia, ROC-AUC, F1            |
+| Exemplo prático     | Prever salário    | Prever se o funcionário vai sair |
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## As Etapas do Processo
+:::
+
+------------------------------------------------------------------------
+
+## O processo completo de ML
+
+Todo projeto de ML supervisionado segue as mesmas etapas, independentemente do algoritmo escolhido:
+
+```         
+Dados históricos com Y conhecido
+        |
+        | 1. Dividir: treino e teste
+        v
+Dados de treino
+        |
+        | 2. Pré-processar: transformar e limpar
+        v
+Dados prontos para modelagem
+        |
+        | 3. Especificar: escolher o algoritmo
+        | 4. Ajustar: treinar o modelo
+        v
+Modelo ajustado
+        |
+        | 5. Avaliar: medir o desempenho no teste
+        v
+Decisão: o modelo é bom o suficiente?
+```
+
+------------------------------------------------------------------------
+
+## Etapa 1: dividir os dados
+
+**Por que dividir?** Se você avalia o modelo nos mesmos dados usados para treiná-lo, os resultados são otimistas e enganosos. O modelo "decorou" os dados.
+
+**A divisão simula o uso real:** o modelo aprende no treino. A avaliação acontece no teste, com dados que o modelo nunca viu.
+
+**Proporção típica:** 75% treino, 25% teste.
+
+::: callout-important
+O conjunto de teste é sagrado. Você só olha para ele uma vez, no final, para avaliar o modelo final. Tomar decisões com base no teste contamina a avaliação.
+:::
+
+------------------------------------------------------------------------
+
+## Treino, validação e teste
+
+Em projetos maiores, os dados são divididos em três partes:
+
+**Treino:** onde o modelo aprende. Usado para ajustar os parâmetros.
+
+**Validação:** onde você toma decisões durante o desenvolvimento. Escolhe o algoritmo, calibra os hiperparâmetros, compara abordagens. Também chamado de conjunto de desenvolvimento.
+
+**Teste:** onde você avalia o modelo final. Usado uma única vez, no final.
+
+Na prática com tidymodels, a validação é feita com **validação cruzada** sobre o conjunto de treino, sem separar uma parte fixa para validação.
+
+------------------------------------------------------------------------
+
+## Validação cruzada: a ideia
+
+**Validação cruzada** divide o conjunto de treino em $k$ partes iguais chamadas de folds. O modelo é ajustado $k$ vezes, cada vez usando $k-1$ folds para treinar e 1 fold para validar.
+
+**Com 5 folds:**
+
+```         
+Fold 1: [VALID] [TRAIN] [TRAIN] [TRAIN] [TRAIN]
+Fold 2: [TRAIN] [VALID] [TRAIN] [TRAIN] [TRAIN]
+Fold 3: [TRAIN] [TRAIN] [VALID] [TRAIN] [TRAIN]
+Fold 4: [TRAIN] [TRAIN] [TRAIN] [VALID] [TRAIN]
+Fold 5: [TRAIN] [TRAIN] [TRAIN] [TRAIN] [VALID]
+```
+
+A métrica final é a **média das 5 avaliações**. Isso dá uma estimativa mais estável do desempenho do que uma única divisão.
+
+------------------------------------------------------------------------
+
+## Etapa 2: pré-processar
+
+**Pré-processamento** transforma os dados brutos no formato que o algoritmo precisa para aprender bem.
+
+**Problemas comuns que o pré-processamento resolve:**
+
+- Variáveis em escalas muito diferentes: dose em mg x. peso em kg
+- Valores ausentes que travam o algoritmo
+- Variáveis categóricas que o modelo não consegue usar como texto
+- Colunas com variância próxima de zero que não trazem informação
+- Preditores altamente correlacionados que confundem o modelo
+
+------------------------------------------------------------------------
+
+## O princípio fundamental do pré-processamento
+
+**O pré-processamento precisa ser aprendido no treino e aplicado no teste.**
+
+Se você normaliza uma variável, a média e o desvio padrão são calculados apenas com os dados de treino. O teste é normalizado com esses mesmos valores.
+
+**Por que isso importa:**
+
+Se você usasse os dados de teste para calcular a normalização, estaria deixando informação do teste "vazar" para o treino. A avaliação ficaria otimista e o modelo não se comportaria da mesma forma em produção.
+
+::: callout-tip
+O `recipes` do tidymodels garante isso automaticamente quando usado dentro de um `workflow`. Você não precisa se preocupar com isso manualmente.
+:::
+
+------------------------------------------------------------------------
+
+## Transformações mais comuns, parte 1
+
+| Transformação | O que faz | Quando usar |
+|------------------------|------------------------|------------------------|
+| Normalização (z-score) | Centraliza e escala cada variável | Algoritmos sensíveis à escala: KNN, SVM, redes neurais |
+| Imputação pela mediana | Substitui NA pelo valor central | Variáveis numéricas com NA |
+| Imputação pela moda | Substitui NA pelo valor mais frequente | Variáveis categóricas com NA |
+| Dummies | Converte categorias em 0/1 | Qualquer modelo que exige entrada numérica |
+
+------------------------------------------------------------------------
+
+## Transformações mais comuns, parte 2
+
+| Transformação | O que faz | Quando usar |
+|------------------------|------------------------|------------------------|
+| Remoção de variância zero | Remove colunas quase constantes | Sempre, como limpeza básica |
+| Transformação log | Reduz assimetria | Variáveis com distribuição muito assimétrica |
+| Remoção de correlação | Remove preditores redundantes | Regressão linear, KNN |
+| PCA | Reduz dimensionalidade | Muitas colunas correlacionadas |
+
+------------------------------------------------------------------------
+
+## Etapa 3: especificar o modelo
+
+**Especificar** significa definir qual algoritmo será usado e como ele será configurado.
+
+No tidymodels, isso é separado em duas decisões:
+
+**Tipo de modelo:** o que o algoritmo faz. Regressão linear, floresta aleatória, gradient boosting, regressão logística.
+
+**Engine:** qual pacote R executa o algoritmo. A floresta aleatória pode ser executada pelo `ranger` ou pelo `randomForest`. A especificação é a mesma; o engine muda.
+
+Essa separação permite trocar o algoritmo sem reescrever o código de pré-processamento e avaliação.
+
+------------------------------------------------------------------------
+
+## Algoritmos mais usados no dia a dia
+
+| Algoritmo | Tipo | Quando usar |
+|------------------------|------------------------|------------------------|
+| Regressão linear | Regressão | Baseline, relação linear, interpretabilidade |
+| Regressão logística | Classificação | Baseline binário, interpretabilidade |
+| Floresta aleatória | Ambos | Dados tabulares, robusto, boa performance |
+| Gradient boosting | Ambos | Alta performance em dados tabulares |
+| Árvore de decisão | Ambos | Interpretabilidade máxima, regras explícitas |
+
+::: callout-note
+Comece sempre com o modelo mais simples. Uma regressão linear bem ajustada frequentemente supera modelos complexos mal calibrados. A complexidade só vale a pena quando há ganho real de desempenho.
+:::
+
+------------------------------------------------------------------------
+
+## Etapa 4: ajustar o modelo
+
+**Ajustar** (ou treinar) significa expor o algoritmo aos dados de treino para que ele estime os parâmetros internos.
+
+**O que acontece durante o ajuste:**
+
+- Na regressão linear: os coeficientes $\hat{\beta}$ são estimados por mínimos quadrados
+- Na floresta aleatória: centenas de árvores são construídas sobre amostras dos dados
+- No gradient boosting: árvores são construídas sequencialmente, cada uma corrigindo os erros da anterior
+
+**O que o modelo aprende:** os padrões nos dados de treino. O objetivo é que esses padrões generalizem para dados novos.
+
+------------------------------------------------------------------------
+
+## Etapa 5: avaliar o modelo
+
+**Avaliar** significa medir o desempenho do modelo no conjunto de teste, com dados que ele nunca viu durante o treino.
+
+A avaliação responde à pergunta: **o modelo aprendeu padrões que generalizam, ou apenas memorizou os dados de treino?**
+
+Um modelo que memoriza os dados de treino tem desempenho excelente no treino e péssimo no teste. Isso se chama **overfitting**.
+
+Um modelo que não aprendeu o suficiente tem desempenho ruim tanto no treino quanto no teste. Isso se chama **underfitting**.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Overfitting e Underfitting
+:::
+
+------------------------------------------------------------------------
+
+## O problema do overfitting
+
+**Overfitting** acontece quando o modelo aprende os dados de treino com detalhes demais, incluindo o ruído, e perde a capacidade de generalizar.
+
+**Sinais de overfitting:** - Desempenho excelente no treino - Desempenho muito pior no teste - O modelo "decorou" em vez de "aprender"
+
+**Causas comuns:** - Modelo muito complexo para a quantidade de dados disponível - Treinar por tempo demais sem validação - Muitas variáveis preditoras com poucos dados
+
+------------------------------------------------------------------------
+
+## O problema do underfitting
+
+**Underfitting** acontece quando o modelo é simples demais para capturar os padrões reais nos dados.
+
+**Sinais de underfitting:** - Desempenho ruim no treino - Desempenho igualmente ruim no teste - O modelo não aprendeu nada útil
+
+**Causas comuns:** - Modelo muito simples para a complexidade do problema - Pré-processamento inadequado - Dados insuficientes ou de baixa qualidade - Variáveis preditoras irrelevantes
+
+------------------------------------------------------------------------
+
+## O equilíbrio ideal
+
+```         
+Complexidade do modelo
+        |
+Simples |---- Underfitting
+        |
+        |---- Zona ideal: generaliza bem
+        |
+Complexo|---- Overfitting
+```
+
+O objetivo é encontrar o ponto onde o modelo aprende o suficiente para capturar os padrões reais, mas não tanto que decore os dados de treino.
+
+**Como encontrar esse ponto:** validação cruzada. Você avalia modelos de diferentes complexidades e escolhe o que tem melhor desempenho médio nos folds de validação.
+
+------------------------------------------------------------------------
+
+## Hiperparâmetros: o que são e por que importam
+
+**Parâmetros** são aprendidos pelo modelo durante o treino (coeficientes da regressão linear, por exemplo).
+
+**Hiperparâmetros** são configurações definidas antes do treino, pelo analista. Eles controlam a complexidade do modelo.
+
+| Algoritmo          | Hiperparâmetro | O que controla              |
+|--------------------|----------------|-----------------------------|
+| Floresta aleatória | `mtry`         | Variáveis por árvore        |
+| Floresta aleatória | `min_n`        | Tamanho mínimo dos nós      |
+| Gradient boosting  | `learn_rate`   | Velocidade do aprendizado   |
+| Gradient boosting  | `tree_depth`   | Profundidade de cada árvore |
+
+Hiperparâmetros muito altos ou muito baixos levam ao overfitting ou underfitting. Encontrar os melhores valores se chama **tuning**.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Métricas de Regressão
+:::
+
+------------------------------------------------------------------------
+
+## O que uma métrica de regressão mede
+
+Em regressão, o modelo produz um valor numérico $\hat{y}$ para cada observação. A métrica mede a diferença entre o valor predito $\hat{y}$ e o valor real $y$.
+
+Quanto menor a diferença, melhor o modelo.
+
+**As três métricas mais usadas:**
+
+- **RMSE:** raiz do erro quadrático médio
+- **MAE:** erro absoluto médio
+- **RSQ:** coeficiente de determinação $R^2$
+
+Cada uma delas captura um aspecto diferente do erro. Usar apenas uma pode ser enganoso.
+
+------------------------------------------------------------------------
+
+## RMSE: raiz do erro quadrático médio
+
+$$RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(\hat{y}_i - y_i)^2}$$
+
+**O que significa:** o erro médio do modelo na mesma unidade da variável resposta, com penalidade maior para erros grandes.
+
+**Como interpretar:** um RMSE de 15.000 em um modelo de preço de imóveis significa que, em média, o modelo erra em torno de R\$15.000.
+
+**Característica importante:** o quadrado penaliza erros grandes mais do que erros pequenos. Um erro de 30 contribui 4x mais que um erro de 15.
+
+::: callout-tip
+RMSE é a métrica padrão para regressão. Use como ponto de partida sempre.
+:::
+
+------------------------------------------------------------------------
+
+## MAE: erro absoluto médio
+
+$$MAE = \frac{1}{n}\sum_{i=1}^{n}|\hat{y}_i - y_i|$$
+
+**O que significa:** o erro médio do modelo na mesma unidade da variável resposta, sem penalidade extra para erros grandes.
+
+**Como interpretar:** um MAE de 12.000 em preços de imóveis significa que, em média, o modelo erra R\$12.000 para cima ou para baixo.
+
+**Quando preferir MAE em vez de RMSE:** quando erros grandes não são particularmente mais problemáticos do que erros pequenos, ou quando há outliers nos dados que você não quer que dominem a métrica.
+
+------------------------------------------------------------------------
+
+## RMSE x MAE: qual usar
+
+| Situação | Métrica preferida |
+|----|----|
+| Erros grandes são muito mais custosos que erros pequenos | RMSE |
+| Todos os erros têm o mesmo custo independente da magnitude | MAE |
+| Há outliers nos dados que não representam casos reais | MAE |
+| Você quer comunicar o erro em linguagem direta | MAE |
+| Você quer comparar com a literatura técnica da área | RMSE |
+
+Na prática, reporte os dois. Se RMSE for muito maior que MAE, o modelo tem dificuldade com alguns casos extremos específicos.
+
+------------------------------------------------------------------------
+
+## RSQ: coeficiente de determinação
+
+$$R^2 = 1 - \frac{\sum(\hat{y}_i - y_i)^2}{\sum(\bar{y} - y_i)^2}$$
+
+**O que significa:** proporção da variância de $Y$ explicada pelo modelo. Varia de 0 a 1.
+
+**Como interpretar:**
+
+- $R^2 = 0{,}85$: o modelo explica 85% da variação nos dados
+- $R^2 = 0{,}30$: o modelo explica apenas 30% da variação
+- $R^2 = 0$: o modelo não explica nada; é tão bom quanto prever sempre a média
+
+::: callout-important
+Um $R^2$ alto no treino e baixo no teste é sinal claro de overfitting. Sempre compare os dois.
+:::
+
+------------------------------------------------------------------------
+
+## O que é um bom RMSE ou RSQ
+
+**Não existe um valor absoluto de "bom".** A métrica só faz sentido em contexto.
+
+**RSQ:** depende do problema. Em ciências sociais, $R^2 = 0{,}30$ pode ser excelente. Em física de engenharia, $R^2 < 0{,}99$ pode ser inaceitável.
+
+**RMSE:** compare com a variabilidade natural de $Y$. Um RMSE de R\$15.000 é bom se os preços variam de R\$100.000 a R\$2.000.000. É ruim se variam de R\$100.000 a R\$200.000.
+
+**Regra prática:** compare o RMSE com o desvio padrão de $Y$. Se RMSE for muito menor que o desvio padrão, o modelo está adicionando valor.
+
+------------------------------------------------------------------------
+
+## Interpretando os resultados juntos
+
+**Exemplo:** modelo de preço de imóveis.
+
+```         
+Desvio padrão de Y: R$ 185.000
+RMSE:               R$  48.000
+MAE:                R$  31.000
+RSQ:                0,87
+```
+
+**Leitura:**
+
+- O modelo explica 87% da variação nos preços
+- O erro médio típico é de R\$31.000 (MAE)
+- Mas alguns casos têm erros maiores que isso, puxando o RMSE para R\$48.000
+- Esses casos merecem investigação: são outliers? Imóveis com características muito raras?
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Métricas de Classificação
+:::
+
+------------------------------------------------------------------------
+
+## A matriz de confusão
+
+Antes de entender as métricas, é preciso entender a **matriz de confusão**, que organiza os 4 tipos de resultado possíveis em classificação binária:
+
+```         
+                    Predito: Positivo   Predito: Negativo
+Real: Positivo         VP (Verdadeiro       FN (Falso
+                         Positivo)           Negativo)
+
+Real: Negativo         FP (Falso            VN (Verdadeiro
+                         Positivo)           Negativo)
+```
+
+**VP:** acertou que era positivo. **VN:** acertou que era negativo. **FP:** disse que era positivo, mas era negativo. **FN:** disse que era negativo, mas era positivo.
+
+------------------------------------------------------------------------
+
+## Acurácia: a métrica mais intuitiva
+
+$$Acurácia = \frac{VP + VN}{VP + VN + FP + FN}$$
+
+**O que significa:** proporção de previsões corretas entre todas as previsões.
+
+**Como interpretar:** acurácia de 0,92 significa que o modelo acertou 92% das classificações.
+
+::: callout-important
+A acurácia engana quando as classes são desbalanceadas. Se 95% dos casos são negativos, um modelo que sempre prevê "negativo" tem acurácia de 95% sem aprender nada. Em problemas de churn, fraude ou diagnóstico, a acurácia isolada não diz nada útil.
+:::
+
+------------------------------------------------------------------------
+
+## Precisão e recall: o trade-off central
+
+**Precisão:** dentre os casos que o modelo classificou como positivos, qual proporção realmente é positiva?
+
+$$Precisão = \frac{VP}{VP + FP}$$
+
+**Recall (sensibilidade):** dentre os casos realmente positivos, qual proporção o modelo identificou corretamente?
+
+$$Recall = \frac{VP}{VP + FN}$$
+
+**O trade-off:** aumentar o limiar de classificação aumenta a precisão e diminui o recall. Diminuir o limiar faz o oposto. Você não pode maximizar os dois ao mesmo tempo sem pagar um custo no outro.
+
+------------------------------------------------------------------------
+
+## Quando priorizar precisão x recall
+
+| Contexto | Priorizar | Por quê |
+|------------------------|------------------------|------------------------|
+| Detecção de spam | Precisão | Um e-mail legítimo marcado como spam é muito custoso |
+| Diagnóstico de câncer | Recall | Perder um caso positivo é muito mais grave que um falso alarme |
+| Detecção de fraude | Recall | Deixar uma fraude passar é mais custoso que bloquear uma transação legítima |
+| Recomendação de produto | Precisão | Recomendar algo irrelevante prejudica a experiência |
+
+A decisão é de negócio, não de estatística.
+
+------------------------------------------------------------------------
+
+## F1: o equilíbrio entre precisão e recall
+
+$$F1 = 2 \times \frac{Precisão \times Recall}{Precisão + Recall}$$
+
+**O que significa:** média harmônica entre precisão e recall. Penaliza modelos que sacrificam muito um dos dois.
+
+**Como interpretar:** F1 próximo de 1 significa que o modelo tem tanto precisão quanto recall elevados. F1 próximo de 0 significa que pelo menos um dos dois é muito baixo.
+
+**Quando usar:** em problemas com classes desbalanceadas onde tanto falsos positivos quanto falsos negativos são custosos. É mais informativo que a acurácia nesses casos.
+
+------------------------------------------------------------------------
+
+## ROC-AUC: avaliando o classificador como um todo
+
+A **curva ROC** (Receiver Operating Characteristic) mostra o trade-off entre a taxa de verdadeiros positivos (recall) e a taxa de falsos positivos para todos os limiares de classificação possíveis.
+
+A **AUC** (Area Under the Curve) é a área sob essa curva.
+
+**Como interpretar:** - AUC = 1,0: classificador perfeito - AUC = 0,5: classificador aleatório, não aprende nada - AUC = 0,85: o modelo tem boa capacidade discriminativa
+
+::: callout-tip
+ROC-AUC é a métrica padrão para classificação quando você quer avaliar o poder discriminativo geral do modelo, independentemente do limiar escolhido.
+:::
+
+------------------------------------------------------------------------
+
+## O limiar de classificação
+
+Por padrão, modelos de classificação usam **limiar 0,5**: se a probabilidade prevista for maior que 0,5, classifica como positivo.
+
+Mas esse limiar pode e deve ser ajustado dependendo do contexto.
+
+**Exemplo:** detecção de fraude. - Com limiar 0,5: muitas fraudes passam despercebidas - Com limiar 0,2: mais fraudes são detectadas, mas mais transações legítimas são bloqueadas
+
+O ajuste do limiar é uma decisão de negócio baseada no custo relativo dos dois tipos de erro, não uma decisão puramente estatística.
+
+------------------------------------------------------------------------
+
+## Interpretando as métricas juntas: exemplo
+
+**Exemplo:** modelo de churn.
+
+```         
+Acurácia:   0,91
+ROC-AUC:    0,88
+Precisão:   0,62
+Recall:     0,74
+F1:         0,67
+```
+
+**Leitura:**
+
+- A acurácia alta (91%) é enganosa: a base tem 90% de clientes que não cancelam
+- O ROC-AUC de 0,88 indica boa capacidade discriminativa geral
+- O recall de 0,74 significa que o modelo detecta 74% dos churns reais
+- A precisão de 0,62 significa que 38% dos alertas são falsos alarmes
+- A decisão: o custo de perder 26% dos churns x. investigar 38% de falsos alarmes
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Como Tomar Decisões com os Resultados
+:::
+
+------------------------------------------------------------------------
+
+## Comparando modelos: o que olhar
+
+Quando você compara dois ou mais modelos, a decisão não é apenas sobre qual tem a melhor métrica. É sobre qual resolve melhor o problema.
+
+**Perguntas a fazer:**
+
+1.  A diferença entre os modelos é relevante ou apenas ruído estatístico?
+2.  O modelo mais complexo justifica o ganho de desempenho?
+3.  O modelo mais simples é suficientemente bom para o uso que será feito?
+4.  O desempenho é estável entre os folds de validação cruzada?
+
+------------------------------------------------------------------------
+
+## Desvio padrão entre folds
+
+A validação cruzada retorna não apenas a métrica média, mas também o **desvio padrão entre os folds**.
+
+**Exemplo:**
+
+```         
+Modelo A: RMSE médio = 48.000, desvio padrão = 1.200
+Modelo B: RMSE médio = 46.000, desvio padrão = 8.400
+```
+
+O modelo B tem RMSE menor, mas é muito instável entre os folds. Em produção, pode se comportar de forma imprevisível. O modelo A é mais confiável.
+
+::: callout-important
+Um modelo com métrica ligeiramente pior e baixo desvio padrão entre folds frequentemente é uma escolha melhor do que um modelo com métrica melhor e alta variabilidade.
+:::
+
+------------------------------------------------------------------------
+
+## Quando o modelo é "bom o suficiente"
+
+Não existe um critério universal. A resposta depende de:
+
+**1. Qual é a baseline de comparação?** Um modelo que prevê sempre a média de $Y$ é o ponto de partida mínimo. Se o seu modelo não supera isso significativamente, ele não está adicionando valor.
+
+**2. Qual é o custo do erro?** Um modelo com RMSE de R\$50.000 em imóveis pode ser ótimo para orientar um corretor. Pode ser inadequado para laudo de financiamento.
+
+**3. O modelo é mais útil que o processo atual?** Se hoje a empresa usa julgamento humano e erra em 40% dos casos, um modelo com 25% de erro já é uma melhoria relevante.
+
+------------------------------------------------------------------------
+
+## O erro de interpretar as métricas no treino
+
+Uma confusão muito comum: avaliar o modelo nos dados de treino e concluir que ele é bom.
+
+**Isso não significa nada.**
+
+Qualquer modelo suficientemente complexo consegue RMSE zero no treino simplesmente memorizando os dados. A única avaliação que importa é a do conjunto de teste.
+
+**Regra:** nunca reporte métricas de treino como resultado final. Sempre avalie no teste.
+
+------------------------------------------------------------------------
+
+## O que fazer quando o modelo não é bom
+
+Se as métricas do teste são insatisfatórias, o caminho é sistemático:
+
+::: incremental
+1.  **Verifique os dados primeiro.** Erros na variável resposta, dados mal coletados ou vazamento de informação corrompem qualquer modelo.
+2.  **Adicione variáveis preditoras relevantes.** Um modelo bem especificado com as variáveis certas supera qualquer algoritmo sofisticado com variáveis erradas.
+3.  **Revise o pré-processamento.** Normalização inadequada, imputação errada ou categorias mal codificadas prejudicam o aprendizado.
+4.  **Experimente modelos mais complexos.** Se a regressão linear não captura os padrões, tente floresta aleatória ou gradient boosting.
+5.  **Calibre os hiperparâmetros.** Modelos com padrões não otimizados podem estar longe do desempenho real.
+:::
+
+------------------------------------------------------------------------
+
+## A armadilha do data leakage
+
+**Data leakage** (vazamento de dados) acontece quando informação do futuro ou do teste contamina o treino, produzindo métricas artificialmente boas que não se reproduzem em produção.
+
+**Exemplos comuns:** - Normalizar os dados antes de dividir treino e teste (os parâmetros de normalização "veem" o teste) - Usar variáveis que só existem após o evento que você quer prever - Incluir o identificador do cliente como preditor quando há padrão histórico por cliente
+
+**Regra:** toda transformação que depende dos dados deve ser aprendida apenas no treino.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 7
+
+## O Código que Implementa Tudo Isso
+:::
+
+------------------------------------------------------------------------
+
+## O que o tidymodels faz por você
+
+Cada conceito desta aula tem uma função correspondente no tidymodels:
+
+| Conceito | Função no tidymodels |
+|------------------------------------|------------------------------------|
+| Dividir treino e teste | `initial_split()` com `strata =` |
+| Validação cruzada | `vfold_cv()` |
+| Pré-processamento | `recipe()` + `step_*()` |
+| Especificar modelo | `linear_reg()`, `rand_forest()` + `set_engine()` |
+| Unir pré-processamento e modelo | `workflow()` |
+| Ajustar o modelo | `fit()` |
+| Avaliar as métricas | `metric_set()` com `rmse()`, `roc_auc()` |
+| Tuning de hiperparâmetros | `tune_grid()` + `select_best()` |
+| Ajustar modelo final | `last_fit()` |
+
+------------------------------------------------------------------------
+
+## Como o código se lê
+
+```{r}
+#| label: pipeline-conceitual
+
+# 1. Dividir: 75% treino, 25% teste, estratificado por Y
+split  <- initial_split(dados, prop = 0.75, strata = Y)
+treino <- training(split)
+teste  <- testing(split)
+
+# 2. Pré-processar: normalizar, imputar, criar dummies
+rec <- recipe(Y ~ ., data = treino) |>
+  step_impute_median(all_numeric_predictors()) |>
+  step_normalize(all_numeric_predictors()) |>
+  step_dummy(all_nominal_predictors())
+
+# 3. Especificar: floresta aleatória com ranger
+modelo <- rand_forest(trees = 500) |>
+  set_engine("ranger") |>
+  set_mode("regression")
+
+# 4. Unir: recipe + modelo em um pipeline
+wf <- workflow() |>
+  add_recipe(rec) |>
+  add_model(modelo)
+
+# 5. Avaliar com validação cruzada
+cv     <- vfold_cv(treino, v = 5, strata = Y)
+result <- fit_resamples(wf, cv,
+                        metrics = metric_set(rmse, mae, rsq))
+
+# 6. Ver as métricas
+collect_metrics(result)
+```
+
+------------------------------------------------------------------------
+
+## O que cada linha está fazendo
+
+**`initial_split()`:** separa os dados uma vez. O `strata = Y` garante que a distribuição de $Y$ seja preservada proporcionalmente nos dois conjuntos.
+
+**`recipe()`:** define a fórmula $Y \sim X$ e registra os passos de pré-processamento. Nada é executado ainda.
+
+**`rand_forest()`:** declara o algoritmo. O `set_engine("ranger")` diz qual pacote executa. O `set_mode("regression")` define o tipo de problema.
+
+**`workflow()`:** une recipe e modelo em um objeto único que garante que o pré-processamento seja sempre aplicado antes do modelo.
+
+**`fit_resamples()`:** ajusta e avalia o workflow em cada fold da validação cruzada. O resultado é a média das métricas nos folds.
+
+------------------------------------------------------------------------
+
+## Resumo: os passos em ordem
+
+::: incremental
+1.  **Entenda o problema:** regressão ou classificação? Qual é o $Y$? Quais são os $X$ disponíveis?
+2.  **Explore os dados:** distribuição do $Y$, valores ausentes, correlações, outliers.
+3.  **Divida os dados:** treino e teste com estratificação. Não toque no teste até o final.
+4.  **Defina o pré-processamento:** com base nos dados de treino.
+5.  **Escolha um modelo simples primeiro:** baseline com regressão linear ou logística.
+6.  **Avalie com validação cruzada:** nunca com o teste.
+7.  **Melhore iterativamente:** pré-processamento, algoritmo, hiperparâmetros.
+8.  **Avalie o modelo final no teste:** uma única vez.
+9.  **Interprete as métricas no contexto do problema.**
+10. **Decida se o modelo é suficientemente bom para o uso pretendido.**
+:::
+
+------------------------------------------------------------------------
+
+## Referências
+
+- Tidy Modeling with R - Kuhn e Silge (gratuito): [tmwr.org](https://www.tmwr.org)
+- Documentação oficial do tidymodels: [tidymodels.org](https://www.tidymodels.org)
+- Feature Engineering and Selection - Kuhn e Johnson: [feat.engineering](http://www.feat.engineering)
+- Introduction to Statistical Learning - James et al. (gratuito): [statlearning.com](https://www.statlearning.com)
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

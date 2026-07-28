@@ -1,0 +1,741 @@
+---
+title: "Aula 37. As quatro distribuições que sustentam a inferência"
+subtitle: "Normal, t de Student, F de Snedecor e Qui-quadrado, e quando cada uma aparece"
+categories: [R, Estatística, Probabilidade, Inferência, Tidyverse]
+image: "imagens/37.png"
+description: "Entenda a definição formal, os parâmetros e a aplicação prática das quatro distribuições que fundamentam todo teste estatístico paramétrico."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3",
+  verde       = "#5A7A5A")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+populacao_germinacao <- bind_rows(
+  tibble(bandeja = 1:3000, cultivar = "Cultivar A",
+         taxa_germinacao = rnorm(3000, mean = 82, sd = 6)),
+  tibble(bandeja = 3001:6000, cultivar = "Cultivar B",
+         taxa_germinacao = rnorm(3000, mean = 78, sd = 6)),
+  tibble(bandeja = 6001:9000, cultivar = "Cultivar C",
+         taxa_germinacao = rnorm(3000, mean = 85, sd = 6)))
+
+amostra_germinacao <- populacao_germinacao |>
+  group_by(cultivar) |>
+  slice_sample(n = 20) |>
+  ungroup() |>
+  mutate(
+    sementes_totais    = 50,
+    sementes_germinadas = round(taxa_germinacao / 100 * sementes_totais))
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+SITE OFICIAL \> <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Definir formalmente a distribuição **Normal**, a distribuição **t de Student**, a distribuição **F de Snedecor** e a distribuição **Qui-quadrado**
+- Compreender os parâmetros que determinam a forma de cada distribuição
+- Reconhecer a relação matemática entre as quatro distribuições
+- Identificar em qual situação prática cada distribuição aparece
+- Aplicar as quatro distribuições a um único conjunto de dados, um ensaio de germinação de sementes
+- Evitar os erros mais comuns na escolha da distribuição correta
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco Inicial
+
+## Por que Quatro Distribuições?
+:::
+
+------------------------------------------------------------------------
+
+## Panorama, o papel de cada distribuição
+
+| Distribuição | Parâmetro | Papel na inferência |
+|------------------------|------------------------|------------------------|
+| Normal | $\mu$, $\sigma^2$ | Descreve a variável original e a distribuição da média amostral |
+| t de Student | $\nu$ (graus de liberdade) | Substitui a normal quando $\sigma$ é desconhecido |
+| F de Snedecor | $\nu_1$, $\nu_2$ | Compara duas variâncias, base da ANOVA |
+| Qui-quadrado | $\nu$ (graus de liberdade) | Compara frequências observadas e esperadas, base de testes de proporção |
+
+- As quatro distribuições estão matematicamente conectadas. A t nasce da razão entre uma normal e uma qui-quadrado. A F nasce da razão entre duas qui-quadrado. Entender a normal é a base para entender as outras três.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Distribuição Normal
+:::
+
+------------------------------------------------------------------------
+
+## Definição e função de densidade
+
+- Uma variável aleatória contínua $X$ segue distribuição normal com média $\mu$ e variância $\sigma^2$, notação $X \sim \mathcal{N}(\mu, \sigma^2)$, se sua função de densidade de probabilidade é:
+
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \quad -\infty < x < +\infty$$
+
+| Símbolo       | Significado                                  |
+|---------------|----------------------------------------------|
+| $f(x)$        | Densidade de probabilidade no ponto x        |
+| $\mu$         | Média populacional, parâmetro de localização |
+| $\sigma^2$    | Variância populacional, parâmetro de escala  |
+| $\exp(\cdot)$ | Função exponencial                           |
+
+------------------------------------------------------------------------
+
+## Propriedades fundamentais
+
+- **Simetria perfeita** em torno de $\mu$, a curva é um espelho de si mesma.
+
+- **Média, mediana e moda coincidem**, os três valores são iguais a $\mu$.
+
+- **Os parâmetros** $\mu$ e $\sigma^2$ determinam completamente a distribuição, não há outros parâmetros envolvidos.
+
+- **Teorema Central do Limite:** a média amostral $\bar{X}$ de n observações independentes converge para $\mathcal{N}(\mu, \sigma^2/n)$ quando n cresce, mesmo que a variável original não seja normal. Na prática, a aproximação já é boa para $n \geq 30$.
+
+------------------------------------------------------------------------
+
+## Padronização e regra empírica
+
+- Quando $\mu = 0$ e $\sigma^2 = 1$, a distribuição é chamada **normal padrão**, $Z \sim \mathcal{N}(0,1)$.
+
+- Qualquer normal pode ser convertida em normal padrão pela padronização:
+
+$$z = \frac{x - \mu}{\sigma}$$
+
+- **Regra empírica 68, 95, 99,7:** aproximadamente 68% dos valores estão a até 1 desvio padrão da média, 95% a até 2 desvios padrão, e 99,7% a até 3 desvios padrão.
+
+------------------------------------------------------------------------
+
+## Código: curvas normais com parâmetros diferentes
+
+```{r}
+#| label: normal-curvas-codigo
+#| eval: false
+
+x_seq <- seq(60, 100, length.out = 500)
+
+curvas_normais <- map_dfr(c(75, 82, 90), function(mu) {
+  tibble(x = x_seq, y = dnorm(x_seq, mean = mu, sd = 6),
+         rotulo = paste0("mu = ", mu, ", sigma = 6"))
+}) |>
+  mutate(rotulo = factor(rotulo, levels = unique(rotulo)))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: efeito de $\mu$ e $\sigma$ sobre a curva
+
+```{r}
+#| label: normal-curvas-grafico
+#| echo: false
+#| fig-height: 4.8
+
+x_seq <- seq(60, 100, length.out = 500)
+
+curvas_normais <- map_dfr(c(75, 82, 90), function(mu) {
+  tibble(x = x_seq, y = dnorm(x_seq, mean = mu, sd = 6),
+         rotulo = paste0("mu = ", mu, ", sigma = 6"))
+}) |>
+  mutate(rotulo = factor(rotulo, levels = unique(rotulo)))
+
+curvas_normais |>
+  ggplot(aes(x = x, y = y, color = rotulo)) +
+  geom_line(linewidth = 1.2) +
+  scale_color_manual(values = c(cores_cafe["azul_escuro"],
+                                 cores_cafe["marrom"],
+                                 cores_cafe["azul_claro"])) +
+  labs(
+    title    = "Efeito de mu sobre a curva normal, sigma fixo",
+    subtitle = "O parâmetro mu desloca a curva sem alterar sua forma",
+    x        = "Taxa de germinação (%)",
+    y        = "f(x)",
+    color    = NULL,
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Quando aparece na prática
+
+- **Contexto:** um ensaio de germinação avalia três cultivares de sementes, A, B e C. Cada bandeja contém 50 sementes, e a taxa de germinação é medida em porcentagem.
+
+- A taxa de germinação, por resultar da soma de muitos fatores independentes, tende a se aproximar de uma distribuição normal.
+
+- Antes de qualquer teste paramétrico, é necessário verificar se essa aproximação é razoável nos dados observados.
+
+------------------------------------------------------------------------
+
+## Código: verificação da normalidade
+
+```{r}
+#| label: normalidade-codigo
+#| eval: false
+
+amostra_germinacao |>
+  summarise(
+    media = mean(taxa_germinacao),
+    dp = sd(taxa_germinacao),
+    shapiro_estatistica = 
+      shapiro.test(taxa_germinacao)$statistic,
+    shapiro_p = shapiro.test(taxa_germinacao)$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Output: verificação da normalidade
+
+```{r}
+#| label: normalidade-output
+#| echo: false
+
+amostra_germinacao |>
+  summarise(
+    media = mean(taxa_germinacao),
+    dp = sd(taxa_germinacao),
+    shapiro_estatistica = shapiro.test(taxa_germinacao)$statistic,
+    shapiro_p = shapiro.test(taxa_germinacao)$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **O valor de p do teste de Shapiro-Wilk não indica evidência contra a normalidade, o que confirma que a suposição de distribuição normal é adequada para a taxa de germinação nesta amostra.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Distribuição t de Student
+:::
+
+------------------------------------------------------------------------
+
+## Definição e motivo de existir
+
+- Em 1908, **William Sealy Gosset**, publicando sob o pseudônimo Student, derivou a distribuição da estatística:
+
+$$t = \frac{\bar{X} - \mu}{S/\sqrt{n}}$$
+
+quando os dados provêm de uma normal com $\sigma$ desconhecido.
+
+| Símbolo      | Significado                                    |
+|--------------|------------------------------------------------|
+| $\bar{X}$    | Média amostral                                 |
+| $S$          | Desvio padrão amostral, estimativa de $\sigma$ |
+| $S/\sqrt{n}$ | Erro padrão estimado                           |
+
+- Substituir $\sigma$ por $S$ introduz incerteza adicional, o que torna as caudas dessa distribuição mais pesadas que as da normal.
+
+------------------------------------------------------------------------
+
+## Graus de liberdade e forma da curva
+
+$$f(t;\nu) = \frac{\Gamma\left(\frac{\nu+1}{2}\right)}{\sqrt{\nu\pi}\,\Gamma\left(\frac{\nu}{2}\right)} \left(1 + \frac{t^2}{\nu}\right)^{-\frac{\nu+1}{2}}$$
+
+- $\nu = n - 1$ são os **graus de liberdade**, o único parâmetro da distribuição t.
+
+- Quanto menor $\nu$, mais pesadas as caudas, refletindo maior incerteza sobre $\sigma$ com poucos dados.
+
+- Quanto maior $\nu$, mais a distribuição t se aproxima da normal padrão. Para $\nu > 30$, a diferença já é pequena. Para $\nu > 120$, é praticamente desprezível.
+
+------------------------------------------------------------------------
+
+## Código: t x normal para diferentes graus de liberdade
+
+```{r}
+#| label: t-curvas-codigo
+#| eval: false
+
+t_seq <- seq(-5, 5, length.out = 600)
+
+curvas_t <- map_dfr(c(1, 5, 15), function(nu) {
+  tibble(t = t_seq, y = dt(t_seq, df = nu),
+         rotulo = paste0("t (ν = ", nu, ")"))
+}) |>
+  bind_rows(tibble(t = t_seq, y = dnorm(t_seq), rotulo = "Normal padrão")) |>
+  mutate(rotulo = factor(rotulo, levels = c(
+    "t (ν = 1)", "t (ν = 5)", "t (ν = 15)", "Normal padrão")))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: t x normal
+
+```{r}
+#| label: t-curvas-grafico
+#| echo: false
+#| fig-height: 4.8
+
+t_seq <- seq(-5, 5, length.out = 600)
+
+curvas_t <- map_dfr(c(1, 5, 15), function(nu) {
+  tibble(t = t_seq, y = dt(t_seq, df = nu),
+         rotulo = paste0("t (ν = ", nu, ")"))
+}) |>
+  bind_rows(tibble(t = t_seq, y = dnorm(t_seq), rotulo = "Normal padrão")) |>
+  mutate(rotulo = factor(rotulo, levels = c(
+    "t (ν = 1)", "t (ν = 5)", "t (ν = 15)", "Normal padrão")))
+
+curvas_t |>
+  ggplot(aes(x = t, y = y, color = rotulo, linewidth = rotulo)) +
+  geom_line() +
+  scale_color_manual(values = c(
+    "t (ν = 1)"      = cores_cafe["azul_claro"],
+    "t (ν = 5)"       = cores_cafe["marrom"],
+    "t (ν = 15)"      = cores_cafe["verde"],
+    "Normal padrão"   = cores_cafe["azul_escuro"])) +
+  scale_linewidth_manual(values = c(
+    "t (ν = 1)" = 0.9, "t (ν = 5)" = 0.9,
+    "t (ν = 15)" = 0.9, "Normal padrão" = 1.5)) +
+  coord_cartesian(xlim = c(-4.5, 4.5)) +
+  labs(
+    title    = "Distribuição t x normal padrão",
+    subtitle = "Caudas mais pesadas para ν pequeno",
+    x        = "t (ou z)",
+    y        = "f(t; ν)",
+    color    = NULL, linewidth = NULL,
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Quando aparece na prática
+
+- **Contexto:** comparar a taxa média de germinação entre a Cultivar A e a Cultivar B, com amostra de 20 bandejas por cultivar e $\sigma$ populacional desconhecido.
+
+- Essa é exatamente a situação em que a distribuição t substitui a normal, o desvio padrão populacional não é conhecido e é estimado a partir da amostra.
+
+------------------------------------------------------------------------
+
+## Código: teste t entre duas cultivares
+
+```{r}
+#| label: teste-t-codigo
+#| eval: false
+
+dados_ab <- amostra_germinacao |>
+  filter(cultivar %in% c("Cultivar A", "Cultivar B"))
+
+resultado_t <- t.test(taxa_germinacao ~ cultivar, data = dados_ab)
+
+tibble(
+  estatistica_t = resultado_t$statistic,
+  graus_liberdade = resultado_t$parameter,
+  valor_p = resultado_t$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Output: teste t entre duas cultivares
+
+```{r}
+#| label: teste-t-output
+#| echo: false
+
+dados_ab <- amostra_germinacao |>
+  filter(cultivar %in% c("Cultivar A", "Cultivar B"))
+
+resultado_t <- t.test(taxa_germinacao ~ cultivar, data = dados_ab)
+
+tibble(
+  estatistica_t = resultado_t$statistic,
+  graus_liberdade = resultado_t$parameter,
+  valor_p = resultado_t$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **A estatística t obtida, com os graus de liberdade correspondentes, é comparada à distribuição t apresentada anteriormente para determinar o valor de p. Um valor de p pequeno indica que a diferença observada entre as duas cultivares dificilmente ocorreria apenas por variação amostral.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Distribuição F de Snedecor
+:::
+
+------------------------------------------------------------------------
+
+## Definição, razão de variâncias
+
+- Se $U \sim \chi^2_{\nu_1}$ e $V \sim \chi^2_{\nu_2}$ são independentes, então:
+
+$$F = \frac{U/\nu_1}{V/\nu_2}$$
+
+segue uma distribuição F com $\nu_1$ graus de liberdade no numerador e $\nu_2$ no denominador, $F(\nu_1, \nu_2)$.
+
+- Na ANOVA, a estatística F é a razão entre duas estimativas de variância:
+
+$$F = \frac{QM_{\text{tratamentos}}}{QM_{\text{resíduo}}}$$
+
+- Sob a hipótese de que todos os tratamentos têm a mesma média, $F \approx 1$. Quanto maior a diferença real entre os tratamentos, maior o valor de F.
+
+------------------------------------------------------------------------
+
+## Forma da curva
+
+- **Não negatividade:** $F \geq 0$ sempre, é a razão de duas grandezas não negativas.
+
+- **Assimetria à direita**, mais pronunciada quando $\nu_1$ e $\nu_2$ são pequenos, tornando-se mais simétrica com o aumento dos graus de liberdade.
+
+- **Relação com a distribuição t:** se $T \sim t_\nu$, então $T^2 \sim F(1, \nu)$. O quadrado de uma estatística t segue distribuição F com 1 grau de liberdade no numerador.
+
+------------------------------------------------------------------------
+
+## Código: curvas F para diferentes graus de liberdade
+
+```{r}
+#| label: f-curvas-codigo
+#| eval: false
+
+x_f <- seq(0.01, 6, length.out = 500)
+
+curvas_f <- map_dfr(list(c(2, 17), c(2, 57)), function(gls) {
+  tibble(x = x_f, y = df(x_f, df1 = gls[1], df2 = gls[2]),
+         rotulo = paste0("F(", gls[1], ", ", gls[2], ")"))
+}) |>
+  mutate(rotulo = factor(rotulo, levels = unique(rotulo)))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: curvas F
+
+```{r}
+#| label: f-curvas-grafico
+#| echo: false
+#| fig-height: 4.8
+
+x_f <- seq(0.01, 6, length.out = 500)
+
+curvas_f <- map_dfr(list(c(2, 17), c(2, 57)), function(gls) {
+  tibble(x = x_f, y = df(x_f, df1 = gls[1], df2 = gls[2]),
+         rotulo = paste0("F(", gls[1], ", ", gls[2], ")"))
+}) |>
+  mutate(rotulo = factor(rotulo, levels = unique(rotulo)))
+
+curvas_f |>
+  ggplot(aes(x = x, y = y, color = rotulo)) +
+  geom_line(linewidth = 1.2) +
+  scale_color_manual(values = c(cores_cafe["azul_escuro"], cores_cafe["marrom"])) +
+  labs(
+    title    = "Distribuição F para diferentes graus de liberdade",
+    subtitle = "Assimetria à direita, mais pronunciada para gl pequenos",
+    x        = "F",
+    y        = "f(x; ν1, ν2)",
+    color    = NULL,
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Quando aparece na prática
+
+- **Contexto:** comparar a taxa média de germinação entre as três cultivares, A, B e C, simultaneamente. Comparar par a par com múltiplos testes t infla o erro tipo I, a ANOVA resolve essa comparação em um único teste.
+
+- Os graus de liberdade do numerador correspondem ao número de cultivares menos 1, e os do denominador correspondem ao total de bandejas menos o número de cultivares.
+
+------------------------------------------------------------------------
+
+## Código: ANOVA entre as três cultivares
+
+```{r}
+#| label: anova-codigo
+#| eval: false
+
+modelo_anova <- aov(taxa_germinacao ~ cultivar, data = amostra_germinacao)
+
+summary(modelo_anova)[[1]] |>
+  as_tibble(rownames = "fonte") |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Output: ANOVA entre as três cultivares
+
+```{r}
+#| label: anova-output
+#| echo: false
+
+modelo_anova <- aov(taxa_germinacao ~ cultivar, data = amostra_germinacao)
+
+summary(modelo_anova)[[1]] |>
+  as_tibble(rownames = "fonte") |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **A estatística F obtida é comparada à distribuição F com os graus de liberdade do modelo. Um valor de p pequeno indica que ao menos uma cultivar difere das demais quanto à taxa média de germinação.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Distribuição Qui-quadrado
+:::
+
+------------------------------------------------------------------------
+
+## Definição, soma de normais padrão ao quadrado
+
+- Se $Z_1, Z_2, \ldots, Z_\nu$ são variáveis normais padrão independentes, então:
+
+$$\chi^2_\nu = \sum_{i=1}^{\nu} Z_i^2$$
+
+segue uma distribuição qui-quadrado com $\nu$ graus de liberdade.
+
+| Propriedade | Valor                           |
+|-------------|---------------------------------|
+| Média       | $E[\chi^2_\nu] = \nu$           |
+| Variância   | $\text{Var}(\chi^2_\nu) = 2\nu$ |
+| Domínio     | $\chi^2_\nu \geq 0$ sempre      |
+
+- Essa distribuição também descreve a variância amostral: $(n-1)S^2/\sigma^2 \sim \chi^2_{n-1}$.
+
+------------------------------------------------------------------------
+
+## Forma da curva
+
+- **Assimetria à direita**, forte para $\nu$ pequeno, decrescendo progressivamente com o aumento de $\nu$.
+
+- Para $\nu$ grande, a distribuição se aproxima da normal, por força do Teorema Central do Limite.
+
+- É a base do **teste de aderência**, que compara frequências observadas a frequências esperadas sob uma hipótese, e do **teste de independência**, que avalia associação entre variáveis categóricas.
+
+------------------------------------------------------------------------
+
+## Código: curvas qui-quadrado para diferentes graus de liberdade
+
+```{r}
+#| label: chi-curvas-codigo
+#| eval: false
+
+x_chi <- seq(0.01, 30, length.out = 600)
+
+curvas_chi <- map_dfr(c(2, 5, 15), function(nu) {
+  tibble(x = x_chi, y = dchisq(x_chi, df = nu),
+         rotulo = paste0("χ² (ν = ", nu, ")"))
+}) |>
+  mutate(rotulo = factor(rotulo, levels = unique(rotulo)))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: curvas qui-quadrado
+
+```{r}
+#| label: chi-curvas-grafico
+#| echo: false
+#| fig-height: 4.8
+
+x_chi <- seq(0.01, 30, length.out = 600)
+
+curvas_chi <- map_dfr(c(2, 5, 15), function(nu) {
+  tibble(x = x_chi, y = dchisq(x_chi, df = nu),
+         rotulo = paste0("χ² (ν = ", nu, ")"))
+}) |>
+  mutate(rotulo = factor(rotulo, levels = unique(rotulo)))
+
+curvas_chi |>
+  ggplot(aes(x = x, y = y, color = rotulo)) +
+  geom_line(linewidth = 1.2) +
+  scale_color_manual(values = c(cores_cafe["azul_escuro"],
+                                 cores_cafe["marrom"],
+                                 cores_cafe["azul_claro"])) +
+  labs(
+    title    = "Distribuição qui-quadrado para diferentes graus de liberdade",
+    subtitle = "Assimetria decrescente à medida que ν aumenta",
+    x        = "x",
+    y        = "f(x; ν)",
+    color    = NULL,
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Quando aparece na prática
+
+- **Contexto:** o fornecedor das sementes declara germinação esperada de 80%. O teste de aderência verifica se a proporção observada na amostra é compatível com esse valor declarado.
+
+- As categorias comparadas são sementes germinadas e sementes não germinadas, somadas em toda a amostra de 60 bandejas.
+
+------------------------------------------------------------------------
+
+## Código: teste qui-quadrado de aderência
+
+```{r}
+#| label: chi-teste-codigo
+#| eval: false
+
+totais <- amostra_germinacao |>
+  summarise(
+    germinadas     = sum(sementes_germinadas),
+    nao_germinadas = sum(sementes_totais) - sum(sementes_germinadas))
+
+resultado_chi <- chisq.test(
+  x = c(totais$germinadas, totais$nao_germinadas),
+  p = c(0.80, 0.20))
+
+tibble(
+  estatistica_chi = resultado_chi$statistic,
+  graus_liberdade = resultado_chi$parameter,
+  valor_p         = resultado_chi$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+------------------------------------------------------------------------
+
+## Output: teste qui-quadrado de aderência
+
+```{r}
+#| label: chi-teste-output
+#| echo: false
+
+totais <- amostra_germinacao |>
+  summarise(
+    germinadas     = sum(sementes_germinadas),
+    nao_germinadas = sum(sementes_totais) - sum(sementes_germinadas))
+
+resultado_chi <- chisq.test(
+  x = c(totais$germinadas, totais$nao_germinadas),
+  p = c(0.80, 0.20))
+
+tibble(
+  estatistica_chi = resultado_chi$statistic,
+  graus_liberdade = resultado_chi$parameter,
+  valor_p         = resultado_chi$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **A estatística qui-quadrado obtida é comparada à distribuição qui-quadrado com 1 grau de liberdade para determinar o valor de p. O resultado indica se a proporção de germinação observada nesta amostra é estatisticamente compatível com o valor de 80% declarado pelo fornecedor.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Síntese
+:::
+
+------------------------------------------------------------------------
+
+## Quando cada distribuição aparece
+
+| Situação prática | Distribuição usada |
+|------------------------------------|------------------------------------|
+| Descrever a variável original, verificar normalidade | Normal |
+| Comparar a média de um grupo a um valor de referência, $\sigma$ desconhecido | t |
+| Comparar as médias de dois grupos independentes | t |
+| Comparar as médias de três ou mais grupos | F |
+| Testar a homogeneidade de variâncias entre grupos | F ou Qui-quadrado |
+| Testar se uma proporção observada corresponde a um valor esperado | Qui-quadrado |
+| Testar associação entre duas variáveis categóricas | Qui-quadrado |
+
+------------------------------------------------------------------------
+
+## Erro comum 1, tratar t como normal em amostra pequena
+
+- Usar os valores críticos da normal padrão em vez dos valores críticos da distribuição t, quando $\sigma$ é desconhecido e a amostra é pequena, produz intervalos de confiança mais estreitos do que deveriam ser.
+
+- Essa prática gera uma falsa impressão de maior precisão na estimativa.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, achar que F só serve para ANOVA
+
+- A distribuição F aparece em qualquer situação que envolva razão de duas variâncias, incluindo testes de homogeneidade de variância, como o teste de Levene em algumas de suas formulações, e a comparação entre modelos de regressão aninhados.
+
+- Restringir a distribuição F apenas à ANOVA limita seu uso em outras etapas da análise.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, aplicar qui-quadrado com frequência esperada baixa
+
+- O teste qui-quadrado depende de uma aproximação que perde precisão quando as frequências esperadas em alguma categoria são baixas, geralmente abaixo de 5.
+
+- Nessas situações, o teste exato de Fisher é a alternativa mais apropriada, especialmente em tabelas pequenas.
+
+------------------------------------------------------------------------
+
+## Resumo: as quatro distribuições
+
+| Distribuição | Domínio | Parâmetro | Função no R | Uso central |
+|---------------|---------------|---------------|---------------|---------------|
+| Normal | Real | $\mu$, $\sigma^2$ | `dnorm()`, `pnorm()` | Descrição, TCL |
+| t de Student | Real | $\nu$ | `dt()`, `t.test()` | Comparação de médias |
+| F de Snedecor | Positivo | $\nu_1$, $\nu_2$ | `df()`, `aov()` | ANOVA, comparação de variâncias |
+| Qui-quadrado | Positivo | $\nu$ | `dchisq()`, `chisq.test()` | Aderência, independência |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

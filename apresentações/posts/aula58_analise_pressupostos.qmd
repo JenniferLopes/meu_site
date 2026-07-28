@@ -1,0 +1,455 @@
+---
+title: "Aula 58. Análise de Pressupostos"
+subtitle: "Os quatro pressupostos clássicos da ANOVA, como testar e o que fazer quando falham"
+categories: [R, Estatística, Delineamento Experimental, Tidyverse]
+image: "imagens/58.png"
+description: "Aprenda a verificar normalidade, homogeneidade de variância, independência e aditividade antes de confiar em qualquer resultado de ANOVA."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+#install.packages("DHARMa")
+library(tidyverse)
+library(DHARMa)
+library(car)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+adubacao <- factor(rep(paste0("Adubação ", 1:4), each = 10),
+                    levels = paste0("Adubação ", 1:4))
+
+medias_reais <- c(18, 20, 19, 23)
+desvios_reais <- c(1.5, 1.5, 4.5, 1.5)
+
+produtividade <- rnorm(40, mean = rep(medias_reais, each = 10),
+                        sd = rep(desvios_reais, each = 10))
+
+dados_videira <- tibble(planta = 1:40, ordem_coleta = 1:40, adubacao, produtividade)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Reconhecer os quatro pressupostos clássicos da ANOVA
+- Testar normalidade dos resíduos, com Shapiro-Wilk e diagnóstico visual do `DHARMa`
+- Testar homogeneidade de variância, com Bartlett e Levene
+- Verificar independência das observações e aditividade do modelo
+- Saber o que fazer, na prática, quando cada pressuposto falha
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Por que Pressupostos Importam
+:::
+
+------------------------------------------------------------------------
+
+## Os quatro pressupostos clássicos da ANOVA
+
+| **Pressuposto** | **O que exige** |
+|----------------------|--------------------------------------------------|
+| **Normalidade** | Os resíduos do modelo seguem distribuição aproximadamente normal |
+| **Homogeneidade de variância** | A variância dos resíduos é semelhante entre os grupos comparados |
+| **Independência** | As observações não têm relação de dependência entre si |
+| **Aditividade** | Os efeitos do modelo se combinam de forma aditiva, sem interação não modelada |
+
+- **Contexto:** um experimento compara 4 adubações foliares em videira, quanto à produtividade em quilos por planta, 10 plantas por adubação.
+
+------------------------------------------------------------------------
+
+## Consequência de ignorar um pressuposto violado
+
+- Um pressuposto violado não torna a ANOVA "um pouco menos confiável", ele compromete a validade do valor de p reportado, na direção que depende de qual pressuposto falhou e de quão grave é o desvio.
+
+- Heterogeneidade de variância entre grupos, por exemplo, pode inflar ou deflacionar o erro tipo I, dependendo de qual grupo tem mais observações e maior variância.
+
+- Verificar os quatro pressupostos deve ser uma etapa padrão, feita antes de interpretar qualquer resultado de ANOVA, não uma checagem opcional posterior.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Normalidade dos Resíduos
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, por que resíduos e não a variável bruta
+
+- A suposição de normalidade da ANOVA recai sobre os **resíduos** do modelo ajustado, a diferença entre valor observado e a média do grupo correspondente, não sobre a variável resposta bruta.
+
+- Uma variável resposta pode não ser normal globalmente, e ainda assim os resíduos, calculados dentro de cada grupo, podem ser normais.
+
+------------------------------------------------------------------------
+
+## Código: ajuste do modelo e Shapiro-Wilk
+
+```{r}
+#| label: shapiro-codigo
+#| eval: false
+
+modelo_videira <- aov(produtividade ~ adubacao, data = dados_videira)
+
+shapiro.test(residuals(modelo_videira))
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: shapiro-output
+#| echo: false
+
+modelo_videira <- aov(produtividade ~ adubacao, data = dados_videira)
+
+resultado_shapiro <- shapiro.test(residuals(modelo_videira))
+
+tibble(estatistica = resultado_shapiro$statistic, 
+       valor_p = resultado_shapiro$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **O teste de Shapiro-Wilk não indica evidência contra a normalidade dos resíduos deste modelo.**
+
+------------------------------------------------------------------------
+
+## Código: QQ-plot com DHARMa
+
+```{r}
+#| label: dharma-qq-codigo
+#| eval: false
+
+residuos_simulados <- simulateResiduals(fittedModel = modelo_videira, n = 1000)
+
+plot(residuos_simulados)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico e interpretação
+
+```{r}
+#| label: dharma-qq-grafico
+#| echo: false
+#| fig-height: 4.8
+
+residuos_simulados <- simulateResiduals(fittedModel = modelo_videira, n = 1000)
+
+plot(residuos_simulados)
+```
+
+- **O painel esquerdo do `DHARMa` mostra o QQ-plot dos resíduos simulados, com testes de uniformidade, dispersão e outliers já embutidos. O painel direito mostra resíduos contra valores previstos, útil também para a verificação de variância, tema do próximo bloco.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Homogeneidade de Variância
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, por que a ANOVA assume variâncias iguais
+
+- A ANOVA calcula um único quadrado médio do resíduo, combinando a variabilidade de todos os grupos. Essa combinação só é válida quando os grupos têm variância semelhante.
+
+- Quando um grupo tem variância muito maior que os demais, ele domina o quadrado médio do resíduo combinado, distorcendo a comparação de médias entre todos os grupos, inclusive os que têm variância pequena.
+
+------------------------------------------------------------------------
+
+## Bartlett x Levene, diferença
+
+| Teste | Característica |
+|----------------------|--------------------------------------------------|
+| Bartlett | Mais sensível à variância, mas também mais sensível a desvios de normalidade |
+| Levene | Baseado nos desvios absolutos em relação à mediana, mais robusto a desvios de normalidade |
+
+- Quando há dúvida sobre a normalidade dos dados, o teste de Levene é geralmente a escolha mais segura, por depender menos dessa suposição adicional.
+
+------------------------------------------------------------------------
+
+## Código: os dois testes
+
+```{r}
+#| label: variancia-codigo
+#| eval: false
+
+bartlett.test(produtividade ~ adubacao, data = dados_videira)
+
+leveneTest(produtividade ~ adubacao, data = dados_videira)
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: variancia-output
+#| echo: false
+
+resultado_bartlett <- bartlett.test(produtividade ~ adubacao, data = dados_videira)
+resultado_levene <- leveneTest(produtividade ~ adubacao, data = dados_videira)
+
+tibble(
+  teste       = c("Bartlett", "Levene"),
+  estatistica = c(resultado_bartlett$statistic, resultado_levene$`F value`[1]),
+  valor_p     = c(resultado_bartlett$p.value, resultado_levene$`Pr(>F)`[1])) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **Os dois testes indicam evidência de heterogeneidade de variância entre as adubações, consistente com a Adubação 3 apresentando dispersão bem maior que as demais na simulação.**
+
+------------------------------------------------------------------------
+
+## Gráfico de resíduos x valores ajustados
+
+```{r}
+#| label: residuos-ajustados-grafico
+#| echo: false
+#| fig-height: 4.5
+
+tibble(ajustado = fitted(modelo_videira), 
+       residuo = residuals(modelo_videira),
+       adubacao = dados_videira$adubacao) |>
+  ggplot(aes(x = ajustado, 
+             y = residuo, color = adubacao)) +
+  geom_point(size = 2.2, alpha = 0.8) +
+  geom_hline(yintercept = 0,
+             linetype = "dashed", 
+             color = "#3A3A3A") +
+  scale_color_manual(values = c(cores_cafe["azul_escuro"], cores_cafe["azul_claro"], cores_cafe["marrom"], cores_cafe["bege"])) +
+  labs(
+    title = "Resíduos x valores ajustados, por adubação",
+    subtitle = "A maior dispersão vertical na Adubação 3 evidencia a heterogeneidade",
+    x        = "Valor ajustado",
+    y        = "Resíduo",
+    color    = NULL,
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Independência das Observações
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, o que quebra independência
+
+- A independência exige que o valor de uma observação não influencie, nem seja influenciado por, o valor de outra observação no mesmo conjunto de dados.
+
+- **Pseudo-repetição** ocorre quando múltiplas medições da mesma unidade experimental são tratadas como se fossem repetições independentes, como medir a mesma planta três vezes e contar como três observações.
+
+- **Dependência espacial** ocorre quando parcelas fisicamente próximas compartilham condições ambientais não capturadas pelo modelo, comum quando a aleatorização não é feita corretamente.
+
+------------------------------------------------------------------------
+
+## Código: resíduos x ordem de coleta
+
+```{r}
+#| label: independencia-codigo
+#| eval: false
+
+tibble(ordem = dados_videira$ordem_coleta, residuo = residuals(modelo_videira)) |>
+  ggplot(aes(x = ordem, y = residuo)) +
+  geom_point(color = cores_cafe["azul_claro"]) +
+  geom_hline(yintercept = 0, linetype = "dashed")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico e leitura
+
+```{r}
+#| label: independencia-grafico
+#| echo: false
+#| fig-height: 4.8
+
+tibble(ordem = dados_videira$ordem_coleta, residuo = residuals(modelo_videira)) |>
+  ggplot(aes(x = ordem, y = residuo)) +
+  geom_point(color = cores_cafe["azul_claro"], 
+             size = 2.2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "#3A3A3A") +
+  labs(
+    title    = "Resíduos em função da ordem de coleta",
+    subtitle = "Um padrão sistemático aqui sugeriria dependência temporal não modelada",
+    x        = "Ordem de coleta",
+    y        = "Resíduo",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+- **Não há padrão sistemático dos resíduos ao longo da ordem de coleta, sem evidência visual de dependência temporal nestes dados.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Aditividade e Diagnóstico com DHARMa
+:::
+
+------------------------------------------------------------------------
+
+## Conceito de aditividade do modelo
+
+- A **aditividade** exige que os efeitos incluídos no modelo se combinem por soma, sem que a magnitude de um efeito dependa do nível de outro fator não incluído como interação.
+
+- Quando existe uma interação relevante não modelada, o modelo aditivo simples atribui a variação real da interação ao resíduo, inflando o quadrado médio do erro e reduzindo o poder do teste.
+
+------------------------------------------------------------------------
+
+## Código: simulateResiduals() e plot()
+
+```{r}
+#| label: dharma-completo-codigo
+#| eval: false
+
+residuos_simulados <- simulateResiduals(fittedModel = modelo_videira, n = 1000)
+
+testUniformity(residuos_simulados)
+testQuantiles(residuos_simulados)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico e leitura integrada
+
+```{r}
+#| label: dharma-completo-grafico
+#| echo: false
+#| fig-height: 4.5
+
+residuos_simulados <- simulateResiduals(fittedModel = modelo_videira, n = 1000)
+
+plotResiduals(residuos_simulados)
+```
+
+- **O `DHARMa` combina, em um único fluxo, a checagem de uniformidade dos resíduos e a checagem de padrões residuais em função dos valores previstos, cobrindo normalidade, variância e aditividade em uma abordagem unificada e simulada.**
+
+------------------------------------------------------------------------
+
+## Tabela de decisão, quando um pressuposto falha
+
+| Pressuposto violado | Ação recomendada |
+|------------------------------------------|------------------------------|
+| Normalidade | Transformação de dados, ou GLM com distribuição apropriada |
+| Homogeneidade de variância | Teste t de Welch, ANOVA com correção de variância heterogênea, ou GLM |
+| Independência | Redesenhar a estrutura do modelo, incluir efeito de bloco ou efeito aleatório |
+| Aditividade | Incluir termo de interação, ou reconsiderar a estrutura do modelo |
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, testar normalidade da variável bruta
+
+- Aplicar Shapiro-Wilk diretamente à variável resposta, antes de ajustar o modelo, testa uma suposição diferente da que a ANOVA realmente exige, a normalidade dos resíduos dentro de cada grupo.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, usar só Shapiro-Wilk sem olhar o gráfico
+
+- Um valor de p não significativo no Shapiro-Wilk não substitui a inspeção visual do QQ-plot, especialmente em amostras pequenas, onde o teste tem pouco poder para detectar desvios reais.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, ignorar heterocedasticidade detectada
+
+- Prosseguir com a ANOVA clássica após detectar heterogeneidade de variância relevante, sem ajustar a análise, mantém um resultado cuja validade já foi comprometida pelo próprio diagnóstico realizado.
+
+------------------------------------------------------------------------
+
+## Resumo: pressupostos da ANOVA
+
+| Pressuposto | Teste formal | Função no R |
+|------------------|---------------------------|---------------------------|
+| Normalidade | Shapiro-Wilk | `shapiro.test()` |
+| Homogeneidade de variância | Bartlett, Levene | `bartlett.test()`, `leveneTest()` |
+| Independência | Inspeção de resíduos x ordem/estrutura | Gráfico dirigido |
+| Diagnóstico integrado | Resíduos simulados | `DHARMa::simulateResiduals()` |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

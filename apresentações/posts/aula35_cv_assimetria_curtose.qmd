@@ -1,0 +1,502 @@
+---
+title: "Aula 35. CV%, assimetria e curtose"
+subtitle: "O que a forma da distribuição revela sobre os dados, com leitura visual de cada padrão"
+categories: [R, Estatística, Descritiva, Tidyverse]
+image: "imagens/35.png"
+description: "Aprofunde o coeficiente de variação e aprenda a interpretar assimetria e curtose com curvas comparativas, resolvendo a dúvida mais comum sobre forma de distribuição."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(e1071)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+populacao_defeitos <- tibble(
+  saca     = 1:8000,
+  defeitos = round(rgamma(8000, shape = 3, rate = 0.25)))
+
+amostra_defeitos <- populacao_defeitos |> slice_sample(n = 90)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+SITE OFICIAL \> <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Aprofundar a interpretação do **coeficiente de variação**, com valores de referência por área
+- Definir **assimetria** e reconhecer seu sinal e sua magnitude em uma distribuição
+- Definir **curtose** e distinguir os padrões leptocúrtico, mesocúrtico e platicúrtico
+- Comparar visualmente curvas com diferentes graus de assimetria e curtose
+- Aplicar essas medidas a um conjunto de dados real e interpretar o resultado
+- Reconhecer os erros mais comuns na leitura da forma de uma distribuição
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Coeficiente de Variação, Aprofundamento
+:::
+
+------------------------------------------------------------------------
+
+## CV%, revisão e aprofundamento
+
+$$CV = \frac{s}{\bar{x}} \times 100$$
+
+- O CV% expressa a dispersão dos dados em termos relativos à média, o que permite comparar variáveis com unidades ou magnitudes diferentes.
+
+- Um CV% de 15% em uma variável com média 10 representa uma dispersão absoluta bem menor do que um CV% de 15% em uma variável com média 1000.
+
+- **No contexto deste estudo:** o CV% do número de defeitos por saca indica o grau de heterogeneidade da qualidade entre as sacas amostradas.
+
+------------------------------------------------------------------------
+
+## CV%, valores de referência por área
+
+| Classificação | CV%          | Uso típico                                   |
+|----------------|----------------|-----------------------------------------|
+| Baixo         | Até 10%      | Experimentos de campo bem controlados        |
+| Médio         | 10% a 20%    | Maioria dos experimentos agronômicos         |
+| Alto          | 20% a 30%    | Variáveis com maior variabilidade natural    |
+| Muito alto    | Acima de 30% | Contagens, proporções, dados de campo aberto |
+
+::: callout-important
+**Atenção:** essa classificação é uma referência da literatura agronômica, não uma regra universal. Variáveis de contagem, como número de defeitos, tendem a apresentar CV% mais alto por característica intrínseca, sem que isso indique falha experimental.
+:::
+
+------------------------------------------------------------------------
+
+## Código: CV% dos defeitos por saca
+
+```{r}
+#| label: cv-codigo
+#| eval: false
+
+amostra_defeitos |>
+  summarise(
+    media = mean(defeitos),
+    dp    = sd(defeitos),
+    cv    = (dp / media) * 100) |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+------------------------------------------------------------------------
+
+## Output: CV% dos defeitos por saca
+
+```{r}
+#| label: cv-output
+#| echo: false
+
+amostra_defeitos |>
+  summarise(
+    media = mean(defeitos),
+    dp    = sd(defeitos),
+    cv    = (dp / media) * 100) |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+- **O CV% obtido está na faixa alta a muito alta, coerente com o esperado para uma variável de contagem, e não deve ser interpretado isoladamente como problema de qualidade dos dados.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Assimetria
+:::
+
+------------------------------------------------------------------------
+
+## Assimetria: definição e fórmula
+
+$$g_1 = \frac{\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^3}{\left(\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^2\right)^{3/2}}$$
+
+- A **assimetria**, ou skewness, mede o grau e a direção do desvio de uma distribuição em relação à simetria perfeita.
+
+- Uma distribuição simétrica apresenta assimetria próxima de zero, com média e mediana coincidentes.
+
+------------------------------------------------------------------------
+
+## Interpretação do sinal e da magnitude
+
+- **Assimetria negativa** (cauda à esquerda): a maior parte dos dados se concentra à direita, e valores baixos puxam a cauda.
+
+- **Assimetria positiva** (cauda à direita): a maior parte dos dados se concentra à esquerda, e valores altos puxam a cauda.
+
+- **Magnitude:** valores entre menos 0,5 e 0,5 indicam assimetria aproximadamente simétrica. Valores entre 0,5 e 1, em módulo, indicam assimetria moderada. Valores acima de 1, em módulo, indicam assimetria forte.
+
+------------------------------------------------------------------------
+
+## Código: três curvas de assimetria
+
+```{r}
+#| label: assimetria-curvas-codigo
+#| eval: false
+
+set.seed(2026)
+
+curvas_assimetria <- bind_rows(
+  tibble(valor = rbeta(5000, 5, 2), tipo = "Assimetria negativa"),
+  tibble(valor = rnorm(5000, 0, 1), tipo = "Simétrica"),
+  tibble(valor = rbeta(5000, 2, 5), tipo = "Assimetria positiva")) |>
+  mutate(tipo = factor(tipo, levels = c(
+    "Assimetria negativa", "Simétrica", "Assimetria positiva")))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: leitura visual da assimetria
+
+```{r}
+#| label: assimetria-curvas-grafico
+#| echo: false
+#| fig-height: 4.8
+
+set.seed(2026)
+
+curvas_assimetria <- bind_rows(
+  tibble(valor = rbeta(5000, 5, 2), tipo = "Assimetria negativa"),
+  tibble(valor = rnorm(5000, 0, 1), tipo = "Simétrica"),
+  tibble(valor = rbeta(5000, 2, 5), tipo = "Assimetria positiva")) |>
+  mutate(tipo = factor(tipo, levels = c(
+    "Assimetria negativa", "Simétrica", "Assimetria positiva")))
+
+curvas_assimetria |>
+  ggplot(aes(x = valor, fill = tipo)) +
+  geom_density(alpha = 0.8, color = "#3A3A3A") +
+  facet_wrap(~ tipo, scales = "free") +
+  scale_fill_manual(values = c(
+    "Assimetria negativa" = cores_cafe["azul_escuro"],
+    "Simétrica"           = cores_cafe["bege"],
+    "Assimetria positiva" = cores_cafe["marrom"])) +
+  labs(
+    title    = "Três padrões de assimetria",
+    subtitle = "A cauda mais longa indica a direção da assimetria",
+    x        = "Valor",
+    y        = "Densidade",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema +
+  theme(legend.position = "none",
+        strip.text = element_text(face = "bold", color = "#224573"))
+```
+
+------------------------------------------------------------------------
+
+## Código: assimetria dos defeitos por saca
+
+```{r}
+#| label: assimetria-dados-codigo
+#| eval: false
+
+amostra_defeitos |>
+  summarise(assimetria = skewness(defeitos, type = 2))
+```
+
+------------------------------------------------------------------------
+
+## Output: assimetria dos defeitos por saca
+
+```{r}
+#| label: assimetria-dados-output
+#| echo: false
+
+amostra_defeitos |>
+  summarise(assimetria = skewness(defeitos, type = 2)) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+- **O valor obtido indica assimetria positiva moderada a forte, coerente com o padrão visual da curva "Assimetria positiva" apresentada anteriormente. A cauda direita da distribuição, sacas com número elevado de defeitos, puxa a média para cima em relação à mediana.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Curtose
+:::
+
+------------------------------------------------------------------------
+
+## Curtose: definição e fórmula
+
+$$g_2 = \frac{\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^4}{\left(\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^2\right)^{2}} - 3$$
+
+- A **curtose**, na forma de excesso de curtose, mede o peso das caudas de uma distribuição em relação à distribuição normal, e não apenas a altura do pico central.
+
+- A distribuição normal tem excesso de curtose igual a zero, por definição.
+
+------------------------------------------------------------------------
+
+## Interpretação: leptocúrtica, mesocúrtica, platicúrtica
+
+- **Leptocúrtica** (excesso de curtose positivo): caudas mais pesadas que a normal, maior probabilidade de valores extremos.
+
+- **Mesocúrtica** (excesso de curtose próximo de zero): caudas equivalentes às da distribuição normal.
+
+- **Platicúrtica** (excesso de curtose negativo): caudas mais leves que a normal, menor probabilidade de valores extremos.
+
+::: callout-important
+**Atenção:** a curtose não deve ser lida apenas pela altura do pico central. Duas distribuições podem ter picos parecidos e curtoses muito diferentes, a diferença está no comportamento das caudas.
+:::
+
+------------------------------------------------------------------------
+
+## Código: três curvas de curtose
+
+```{r}
+#| label: curtose-curvas-codigo
+#| eval: false
+
+set.seed(2026)
+
+curvas_curtose <- bind_rows(
+  tibble(valor = rt(5000, df = 3), tipo = "Leptocúrtica"),
+  tibble(valor = rnorm(5000, 0, 1), tipo = "Mesocúrtica"),
+  tibble(valor = runif(5000, -sqrt(3), sqrt(3)), tipo = "Platicúrtica")) |>
+  mutate(tipo = factor(tipo, levels = c(
+    "Leptocúrtica", "Mesocúrtica", "Platicúrtica")))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: leitura visual da curtose
+
+```{r}
+#| label: curtose-curvas-grafico
+#| echo: false
+#| fig-height: 4.8
+
+set.seed(2026)
+
+curvas_curtose <- bind_rows(
+  tibble(valor = rt(5000, df = 3), tipo = "Leptocúrtica"),
+  tibble(valor = rnorm(5000, 0, 1), tipo = "Mesocúrtica"),
+  tibble(valor = runif(5000, -sqrt(3), sqrt(3)), tipo = "Platicúrtica")) |>
+  mutate(tipo = factor(tipo, levels = c(
+    "Leptocúrtica", "Mesocúrtica", "Platicúrtica")))
+
+curvas_curtose |>
+  filter(valor > -6, valor < 6) |>
+  ggplot(aes(x = valor, fill = tipo)) +
+  geom_density(alpha = 0.8, color = "#3A3A3A") +
+  facet_wrap(~ tipo, scales = "free_y") +
+  scale_fill_manual(values = c(
+    "Leptocúrtica" = cores_cafe["marrom"],
+    "Mesocúrtica"  = cores_cafe["bege"],
+    "Platicúrtica" = cores_cafe["azul_claro"])) +
+  labs(
+    title    = "Três padrões de curtose",
+    subtitle = "Observe o peso das caudas, não apenas a altura do pico",
+    x        = "Valor",
+    y        = "Densidade",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema +
+  theme(legend.position = "none",
+        strip.text = element_text(face = "bold", color = "#224573"))
+```
+
+------------------------------------------------------------------------
+
+## Código: curtose dos defeitos por saca
+
+```{r}
+#| label: curtose-dados-codigo
+#| eval: false
+
+amostra_defeitos |>
+  summarise(curtose = kurtosis(defeitos, type = 2))
+```
+
+------------------------------------------------------------------------
+
+## Output: curtose dos defeitos por saca
+
+```{r}
+#| label: curtose-dados-output
+#| echo: false
+
+amostra_defeitos |>
+  summarise(curtose = kurtosis(defeitos, type = 2)) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+- **O excesso de curtose obtido está próximo de zero a levemente positivo, indicando caudas semelhantes às da distribuição normal, apesar da assimetria positiva já identificada. Assimetria e curtose descrevem aspectos independentes da forma da distribuição.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Lendo a Forma da Distribuição na Prática
+:::
+
+------------------------------------------------------------------------
+
+## Código: histograma com forma anotada
+
+```{r}
+#| label: forma-grafico-codigo
+#| eval: false
+
+resumo_forma <- amostra_defeitos |>
+  summarise(
+    assimetria = skewness(defeitos, type = 2),
+    curtose    = kurtosis(defeitos, type = 2))
+
+amostra_defeitos |>
+  ggplot(aes(x = defeitos)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 15, fill = cores_cafe["azul_claro"],
+                 color = "white", alpha = 0.8) +
+  geom_density(color = cores_cafe["marrom"], linewidth = 1.2) +
+  labs(
+    title    = "Distribuição do número de defeitos por saca",
+    subtitle = paste0("Assimetria = ", round(resumo_forma$assimetria, 2),
+                       ", curtose (excesso) = ", round(resumo_forma$curtose, 2)),
+    x        = "Número de defeitos",
+    y        = "Densidade",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: histograma com forma anotada
+
+```{r}
+#| label: forma-grafico
+#| echo: false
+#| fig-height: 4.8
+
+resumo_forma <- amostra_defeitos |>
+  summarise(
+    assimetria = skewness(defeitos, type = 2),
+    curtose    = kurtosis(defeitos, type = 2))
+
+amostra_defeitos |>
+  ggplot(aes(x = defeitos)) +
+  geom_histogram(aes(y = after_stat(density)),
+                 bins = 15, fill = cores_cafe["azul_claro"],
+                 color = "white", alpha = 0.8) +
+  geom_density(color = cores_cafe["marrom"], linewidth = 1.2) +
+  labs(
+    title    = "Distribuição do número de defeitos por saca",
+    subtitle = paste0("Assimetria = ", round(resumo_forma$assimetria, 2),
+                       ", curtose (excesso) = ", round(resumo_forma$curtose, 2)),
+    x        = "Número de defeitos",
+    y        = "Densidade",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## O que fazer diante de assimetria forte
+
+- **Transformação:** logarítmica ou raiz quadrada, quando o objetivo é aproximar a normalidade para uso de testes paramétricos.
+
+- **Medida robusta:** reportar mediana e IQR no lugar de média e desvio padrão, quando o objetivo é apenas descrever os dados.
+
+- **Teste não paramétrico:** alternativa direta quando a transformação não normaliza os dados de forma satisfatória, ou quando a interpretação na escala original é prioridade.
+
+- A escolha depende do objetivo da análise, descrever, comparar grupos ou modelar, e não existe opção única correta para toda situação.
+
+------------------------------------------------------------------------
+
+## Erro comum 1, confundir curtose com altura do pico sem olhar as caudas
+
+- Duas distribuições podem ter picos de altura semelhante e curtoses distintas.
+
+- A curtose é definida pelo comportamento das caudas, não pela altura central. Avalie sempre o histograma completo, não apenas a região de maior densidade.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, tratar assimetria e curtose de amostra pequena como diagnóstico definitivo
+
+- Assimetria e curtose calculadas em amostras pequenas apresentam alta variabilidade de amostra para amostra.
+
+- Em amostras com menos de 30 observações, essas medidas devem ser interpretadas como indicativas, não como diagnóstico definitivo da forma da população.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, aplicar teste que assume normalidade sem checar a forma da distribuição
+
+- Testes como o teste t assumem, entre outras condições, que os dados seguem distribuição aproximadamente normal.
+
+- Ignorar assimetria e curtose elevadas e aplicar o teste diretamente pode invalidar a conclusão, especialmente em amostras pequenas, onde o teorema central do limite ainda não garante aproximação à normalidade.
+
+------------------------------------------------------------------------
+
+## Resumo: CV%, assimetria e curtose
+
+| Medida | O que revela | Valor de referência | Função no R |
+|------------------|------------------|------------------|------------------|
+| CV% | Dispersão relativa à média | Depende da área, ver tabela | `sd()/mean()*100` |
+| Assimetria | Direção e grau do desvio da simetria | Próximo de zero é simétrico | `skewness()` |
+| Curtose (excesso) | Peso das caudas em relação à normal | Próximo de zero é mesocúrtica | `kurtosis()` |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+
+SITE OFICIAL \> <https://jenniferlopes.github.io/meu_site/>

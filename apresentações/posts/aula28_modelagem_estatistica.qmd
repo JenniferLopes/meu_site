@@ -146,7 +146,7 @@ Dados → Modelo → Estimação → Diagnóstico → Inferência/Predição
 **Três objetivos possíveis, com implicações distintas:**
 
 | Objetivo | Pergunta central | Implicação para o modelo |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | **Explicação** | Quais variáveis afetam $Y$ e como? | Interpretabilidade dos coeficientes |
 | **Predição** | Qual o valor de $Y$ para novos dados? | Acurácia fora da amostra |
 | **Ambos** | Explicar e generalizar | Equilíbrio entre ajuste e complexidade |
@@ -383,7 +383,7 @@ modelo_ajustado |>
 **Pressupostos do modelo linear:**
 
 | Pressuposto | O que verifica | Como verificar |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | Linearidade | Relação linear entre $X$ e $Y$ | Resíduos vs. ajustados |
 | Normalidade dos resíduos | Erros com distribuição normal | QQ-plot dos resíduos |
 | Homocedasticidade | Variância constante dos erros | Scale-location plot |
@@ -502,7 +502,7 @@ collect_metrics(resultado_cv) |>
 **Critérios de comparação:**
 
 | Critério | O que mede | Interpretação |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | $R^2$ ajustado | Proporção da variância explicada | Maior é melhor - penaliza complexidade |
 | AIC | Qualidade do ajuste + complexidade | Menor é melhor |
 | BIC | AIC com penalidade maior | Menor é melhor - favorece parcimônia |
@@ -567,7 +567,7 @@ list(
 ## Famílias de modelos: tabela comparativa
 
 | Família | Resposta | Pressuposto central | Função no R |
-|------------------|------------------|------------------|------------------|
+|----|----|----|----|
 | LM | Contínua, normal | Linearidade, homocedasticidade | `lm()` |
 | GLM - Poisson | Contagem | Distribuição de Poisson | `glm(family = poisson)` |
 | GLM - Binomial | Binária (0/1) | Distribuição binomial | `glm(family = binomial)` |
@@ -821,6 +821,6 @@ m2 |>
 >
 > - Que cada script abra uma nova conversa.
 >
-> -  Que o Café com R se torne um ponto de encontro nosso.
+> - Que o Café com R se torne um ponto de encontro nosso.
 
 [![](imagens/qrcodenovo){fig-align="center" style="border: 3px solid #6B4F4F; border-radius: 12px; padding: 6px;" width="245"}](https://jenniferlopes.quarto.pub/portifolio/)

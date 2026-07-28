@@ -1,0 +1,1322 @@
+---
+title: "Aula 32. dbt com R"
+subtitle: "SQL versionado e testado no pipeline de dados com reticulate e PostgreSQL"
+categories: [R, dbt, reticulate, PostgreSQL, Engenharia de Dados, Pipeline]
+image: "imagens/capa_aula31.png"
+description: "Aprenda a integrar o dbt Core ao R usando reticulate, transformar dados no PostgreSQL com SQL versionado e testado, e consumir os resultados no R."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(reticulate)
+library(DBI)
+library(RPostgres)
+library(tidyverse)
+library(nycflights13)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+```
+
+------------------------------------------------------------------------
+
+## Democratização
+
+> Esta aula foi construída para que você entenda como integrar o dbt ao seu projeto R, transformar dados no PostgreSQL com SQL versionado e testado, e consumir os resultados diretamente no R para análise. O `reticulate` é a ponte que torna tudo isso possível sem sair do RStudio.
+
+![**Essa é a Meguy mascote do Café com R.**](imagens/meguy.jpg){fig-align="center" width="437"}
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+SITE OFICIAL\> <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Compreender o que é o **dbt** e qual problema ele resolve
+- Configurar o ambiente Python com **reticulate** dentro do projeto R
+- Instalar o **dbt Core** e o adaptador **dbt-postgres** via R
+- Criar e configurar um **projeto dbt** com conexão ao PostgreSQL
+- Escrever **models SQL** com materializações e dependências
+- Aplicar **testes automáticos** sobre os dados transformados
+- **Ler os resultados** no R e visualizar com ggplot2
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O que é o dbt e por que ele existe
+:::
+
+------------------------------------------------------------------------
+
+## O problema que o dbt resolve
+
+**Em times de dados, é comum encontrar a seguinte situação:**
+
+- Dezenas de **scripts SQL** espalhados em pastas locais, sem organização
+- **Nenhum controle de versão** sobre as transformações
+- Nenhum teste para verificar se os dados transformados estão corretos
+- Documentação inexistente ou desatualizada
+- Dependências entre queries gerenciadas manualmente, na memória de quem escreveu
+
+> **Quando um analista sai da equipe ou quando uma query muda, ninguém sabe o impacto. Resultados divergem. Dashboards quebram. Decisões são tomadas com dados inconsistentes.**
+
+------------------------------------------------------------------------
+
+## O que é o dbt
+
+**dbt** (data build tool) é uma ferramenta de código aberto que permite transformar dados diretamente no banco de dados usando SQL, aplicando as mesmas práticas de engenharia de software usadas no desenvolvimento de aplicações:
+
+- **Controle de versão:** cada transformação é um arquivo `.sql` versionado no Git
+- **Modularidade:** transformações se referenciam umas às outras com `ref()`
+- **Testes automáticos:** validações sobre unicidade, nulos e integridade referencial
+- **Documentação gerada automaticamente** a partir dos arquivos `.yml`
+- **Linhagem dos dados:** DAG visual mostrando as dependências entre transformações
+
+O dbt **não** extrai dados, **não** carrega dados e **não** substitui o R na análise. Ele cuida exclusivamente da camada de **transformação** dentro do banco.
+
+------------------------------------------------------------------------
+
+## O modelo ELT e onde o dbt se encaixa
+
+O dbt foi construído para o modelo **ELT** (Extract, Load, Transform):
+
+```         
+Fonte de dados
+    |
+    | Extract + Load (feito por ferramentas como Airbyte, Fivetran ou R)
+    v
+Banco de dados / Data Warehouse (PostgreSQL, BigQuery, Snowflake)
+    |
+    | Transform (feito pelo dbt: SQL versionado e testado)
+    v
+Tabelas analíticas prontas para consumo
+    |
+    | Analyze (feito pelo R, Python ou ferramentas de BI)
+    v
+Relatórios, modelos estatísticos, dashboards
+```
+
+No contexto desta aula: o **R** exporta os dados brutos para o PostgreSQL, o **dbt** transforma, e o **R** consome o resultado final para análise.
+
+------------------------------------------------------------------------
+
+## dbt Core e dbt Cloud
+
+| Característica | dbt Core | dbt Cloud |
+|------------------------|------------------------|------------------------|
+| Custo | Gratuito e open source | Plano pago (free tier limitado) |
+| Interface | Linha de comando (CLI) | Interface web completa |
+| Orquestração | Manual ou via Airflow/GitHub Actions | Nativa com agendamento |
+| Ambiente | Local ou servidor próprio | Gerenciado pela dbt Labs |
+| Documentação | `dbt docs serve` local | Hospedada na plataforma |
+
+Nesta aula usamos o **dbt Core**, instalado via `pip` e operado pela linha de comando, acessível diretamente do R via `reticulate` e `system()`.
+
+------------------------------------------------------------------------
+
+## dbt e targets: quando usar cada um
+
+| Dimensão | dbt | targets |
+|------------------------|------------------------|------------------------|
+| Linguagem de transformação | SQL com Jinja | R com funções R |
+| Onde executa | Dentro do banco de dados | Na memória do R |
+| Volume de dados | Escala para bilhões de linhas | Limitado pela RAM do R |
+| Colaboração | Times com analistas SQL | Times R |
+| Versionamento | Git com arquivos `.sql` | Git com arquivos `.R` |
+| Testes | Nativos no dbt | Pacote `testthat` |
+
+Não são concorrentes. Em pipelines maduros, o **dbt transforma no banco** e o **targets orquestra a análise em R**. Os dois podem coexistir no mesmo projeto.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Configurando o Ambiente com reticulate
+:::
+
+------------------------------------------------------------------------
+
+## O que é o reticulate
+
+**reticulate** é o pacote R que cria uma **interface bidirecional entre R e Python**. Ele permite:
+
+- Instalar e gerenciar ambientes virtuais Python a partir do R
+- Executar código Python dentro de um script R com `py_run_string()`
+- Importar módulos Python com `import()`
+- Transferir objetos entre R e Python durante a mesma sessão
+
+No contexto desta aula, o `reticulate` é usado para:
+
+1.  Criar um **ambiente virtual Python** isolado dentro do projeto R
+2.  Instalar o **dbt Core** e o adaptador **dbt-postgres** nesse ambiente
+3.  Verificar se a instalação está correta
+
+------------------------------------------------------------------------
+
+## Por que usar reticulate em vez do terminal
+
+Usar o `reticulate` para configurar o ambiente Python oferece três vantagens para usuários de R:
+
+**1. Reprodutibilidade:** o ambiente Python é criado e configurado dentro do próprio projeto R, com o mesmo código que você versiona no Git. Qualquer colaborador reproduz o ambiente com um único script.
+
+**2. Isolamento:** o `reticulate` cria um **ambiente virtual** específico para o projeto, evitando conflitos com outras instalações Python do sistema.
+
+**3. Integração:** após configurado, o dbt é invocado de dentro do R com `system()` ou `reticulate::py_run_string()`, sem sair do RStudio.
+
+------------------------------------------------------------------------
+
+## Instalação do reticulate
+
+```{r}
+#| eval: false
+
+install.packages("reticulate")
+library(reticulate)
+```
+
+------------------------------------------------------------------------
+
+## Verificando se Python está disponível
+
+```{r}
+#| label: py-available-codigo
+#| eval: false
+
+# Verificar se o Python está disponível no sistema
+py_available()
+
+# Ver qual Python está sendo usado
+py_config()
+```
+
+------------------------------------------------------------------------
+
+## Output: configuração do Python
+
+```{r}
+#| label: py-available-output
+#| echo: false
+
+py_available()
+```
+
+`py_available()` retorna `TRUE` se o Python estiver acessível. Se retornar `FALSE`, o `reticulate` pode instalar uma versão gerenciada do Python automaticamente com `install_python()`.
+
+------------------------------------------------------------------------
+
+## Instalando Python gerenciado pelo reticulate
+
+```{r}
+#| label: install-python-codigo
+#| eval: false
+
+# Instalar uma versão específica do Python gerenciada pelo reticulate
+# Isso é opcional se o Python já estiver instalado no sistema
+install_python(version = "3.11")
+
+# Verificar versões disponíveis
+py_versions_windows()  # Windows
+# No macOS e Linux, usar python3 --version no terminal integrado do RStudio
+```
+
+::: callout-tip
+O `reticulate` instala o Python em uma pasta gerenciada por ele (`~/.pyenv` no macOS/Linux), separada da instalação do sistema. Isso evita conflitos com o Python global.
+:::
+
+------------------------------------------------------------------------
+
+## Criando o ambiente virtual Python
+
+```{r}
+#| label: virtualenv-codigo
+#| eval: false
+
+# Criar um ambiente virtual Python específico para este projeto
+# O nome "dbt-env" é uma convenção — pode ser qualquer nome
+virtualenv_create(
+  envname = "dbt-env",
+  python  = "3.11")
+
+# Ativar o ambiente virtual na sessão R atual
+use_virtualenv("dbt-env", required = TRUE)
+
+# Verificar qual Python está ativo
+py_config()
+```
+
+------------------------------------------------------------------------
+
+## Output: ambiente virtual ativo
+
+```{r}
+#| label: virtualenv-output
+#| echo: false
+
+py_config()
+```
+
+O campo `python` indica qual executável Python está sendo usado. O campo `virtualenv` confirma que um ambiente virtual está ativo. Todos os pacotes instalados a partir daqui vão para esse ambiente isolado.
+
+------------------------------------------------------------------------
+
+## O que é um ambiente virtual Python
+
+Um **ambiente virtual** é um diretório isolado que contém uma instalação independente do Python e seus pacotes.
+
+**Por que isso importa:**
+
+Sem ambiente virtual, todos os projetos compartilham a mesma instalação Python global. Uma atualização do `dbt-core` em um projeto pode quebrar outro que depende de uma versão anterior.
+
+Com ambiente virtual, cada projeto tem suas próprias versões de cada pacote, completamente isoladas.
+
+::: callout-tip
+O ambiente virtual Python é equivalente ao que o `renv` faz para pacotes R: cada projeto tem sua biblioteca isolada.
+:::
+
+------------------------------------------------------------------------
+
+## Instalando o dbt Core e o adaptador PostgreSQL
+
+```{r}
+#| label: instalar-dbt-codigo
+#| eval: false
+
+# Instalar o dbt Core e o adaptador para PostgreSQL
+# dbt-core: o motor principal
+# dbt-postgres: o adaptador que conecta o dbt ao PostgreSQL
+py_install(
+  packages = c("dbt-core", "dbt-postgres"),
+  envname  = "dbt-env",
+  pip      = TRUE)
+```
+
+::: callout-important
+`dbt-core` e `dbt-postgres` são pacotes Python instalados via `pip`. O adaptador `dbt-postgres` instala automaticamente as dependências necessárias para comunicação com o PostgreSQL, incluindo o `psycopg2`.
+:::
+
+------------------------------------------------------------------------
+
+## Verificando a instalação do dbt
+
+```{r}
+#| label: verificar-dbt-codigo
+#| eval: false
+
+# Verificar a versão do dbt instalada
+system("dbt --version")
+
+# Alternativa via reticulate
+py_run_string("
+import subprocess
+result = subprocess.run(['dbt', '--version'],
+                       capture_output=True, text=True)
+print(result.stdout)
+")
+```
+
+------------------------------------------------------------------------
+
+## Output: versão do dbt instalada
+
+```         
+Core:
+  - installed: 1.8.x
+  - latest:    1.8.x - Up to date!
+
+Plugins:
+  - postgres: 1.8.x - Up to date!
+```
+
+A saída confirma a versão do `dbt-core` e do adaptador `dbt-postgres`. O campo `Plugins` lista os adaptadores instalados: apenas `postgres` aparece porque é o único que instalamos.
+
+------------------------------------------------------------------------
+
+## Configurando o PATH para o dbt
+
+Em alguns sistemas, o executável `dbt` não está automaticamente no PATH após a instalação em ambiente virtual. Para garantir que o `system("dbt ...")` funcione:
+
+```{r}
+#| label: path-codigo
+#| eval: false
+
+# Localizar o executável do dbt no ambiente virtual
+dbt_path <- virtualenv_python("dbt-env") |>
+  dirname() |>
+  file.path("dbt")
+
+# Função auxiliar para chamar o dbt com o caminho completo
+dbt <- function(...) {
+  system(paste(dbt_path, ...))
+}
+
+# Usar assim:
+dbt("--version")
+dbt("run")
+dbt("test")
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Configurando o Projeto dbt
+:::
+
+------------------------------------------------------------------------
+
+## Inicializando o projeto dbt
+
+```{r}
+#| label: init-codigo
+#| eval: false
+
+# Criar o projeto dbt dentro do projeto R
+system("dbt init voos_analytics")
+
+# Estrutura criada:
+# voos_analytics/
+# ├── dbt_project.yml     # configuração principal do projeto
+# ├── models/             # modelos SQL de transformação
+# │   └── example/        # modelos de exemplo (pode remover)
+# ├── seeds/              # CSVs pequenos para carregar no banco
+# ├── tests/              # testes customizados
+# ├── macros/             # funções Jinja reutilizáveis
+# ├── snapshots/          # capturas históricas de tabelas
+# └── analyses/           # queries ad hoc (não materializadas)
+```
+
+------------------------------------------------------------------------
+
+## O arquivo dbt_project.yml
+
+O `dbt_project.yml` é o arquivo de configuração principal do projeto. Ele define:
+
+``` yaml
+name: 'voos_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'voos_analytics'
+
+model-paths: ["models"]
+seed-paths:  ["seeds"]
+test-paths:  ["tests"]
+macro-paths: ["macros"]
+
+models:
+  voos_analytics:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
+```
+
+------------------------------------------------------------------------
+
+## O arquivo profiles.yml
+
+O `profiles.yml` armazena as configurações de conexão com o banco. Ele fica fora do projeto dbt, em `~/.dbt/profiles.yml`, para não ser versionado junto com o código.
+
+``` yaml
+voos_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('PG_HOST', 'localhost') }}"
+      port: "{{ env_var('PG_PORT', '5432') | int }}"
+      dbname: "{{ env_var('PG_DBNAME') }}"
+      user: "{{ env_var('PG_USER') }}"
+      password: "{{ env_var('PG_PASSWORD') }}"
+      schema: dbt_dev
+      threads: 4
+```
+
+A notação `env_var()` é uma macro Jinja do dbt que lê variáveis de ambiente. As credenciais nunca ficam no arquivo: ficam no `.Renviron`.
+
+------------------------------------------------------------------------
+
+## Credenciais seguras com .Renviron
+
+```{r}
+#| label: renviron-codigo
+#| eval: false
+
+# Abrir o .Renviron para edição
+usethis::edit_r_environ()
+
+# Adicionar as variáveis de ambiente no .Renviron:
+# PG_HOST=localhost
+# PG_PORT=5432
+# PG_DBNAME=voos_db
+# PG_USER=postgres
+# PG_PASSWORD=sua_senha_segura
+
+# Após salvar o .Renviron, reiniciar o R:
+# CTRL + SHIFT + F10 (Windows/Linux)
+# CMD + SHIFT + F10 (macOS)
+
+# Verificar que as variáveis foram carregadas
+Sys.getenv("PG_DBNAME")
+```
+
+::: callout-important
+O `.Renviron` deve estar listado no `.gitignore`. Nunca versione credenciais no Git. O dbt lê as variáveis de ambiente automaticamente via `env_var()` no `profiles.yml`.
+:::
+
+------------------------------------------------------------------------
+
+## Criando o arquivo profiles.yml a partir do R
+
+```{r}
+#| label: profiles-codigo
+#| eval: false
+
+profiles_dir <- path.expand("~/.dbt")
+dir.create(profiles_dir, showWarnings = FALSE)
+
+profiles_content <- glue::glue('
+voos_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{Sys.getenv("PG_HOST", "localhost")}"
+      port: {Sys.getenv("PG_PORT", "5432")}
+      dbname: "{Sys.getenv("PG_DBNAME")}"
+      user: "{Sys.getenv("PG_USER")}"
+      password: "{Sys.getenv("PG_PASSWORD")}"
+      schema: dbt_dev
+      threads: 4
+')
+
+writeLines(profiles_content,
+           file.path(profiles_dir, "profiles.yml"))
+```
+
+------------------------------------------------------------------------
+
+## Testando a conexão com dbt debug
+
+```{r}
+#| label: debug-codigo
+#| eval: false
+
+# dbt debug verifica:
+# 1. Se o profiles.yml está correto
+# 2. Se a conexão com o banco funciona
+# 3. Se os caminhos do projeto estão configurados
+
+setwd("voos_analytics")
+system("dbt debug")
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Seeds: Carregando Dados com dbt
+:::
+
+------------------------------------------------------------------------
+
+## O que são seeds no dbt
+
+**Seeds** são arquivos CSV pequenos que o dbt carrega diretamente no banco de dados com o comando `dbt seed`. Eles são versionados junto com o projeto e são ideais para tabelas de referência estáticas.
+
+**Quando usar seeds:**
+
+- Tabelas de referência que raramente mudam: países, categorias, mapeamentos
+- Dados de teste para desenvolvimento local
+- Dados pequenos que fazem sentido viver junto com o código
+
+**Quando não usar seeds:**
+
+- Tabelas grandes que mudam com frequência: use ferramentas de ingestão como Fivetran ou R
+- Dados sensíveis: seeds são versionados no Git
+
+------------------------------------------------------------------------
+
+## Exportando dados do R para seeds
+
+```{r}
+#| label: seeds-codigo
+#| eval: false
+
+# Criar a pasta de seeds
+dir.create("voos_analytics/seeds", showWarnings = FALSE, recursive = TRUE)
+
+# Exportar as tabelas do nycflights13 como seeds
+write_csv(nycflights13::flights,
+          "voos_analytics/seeds/raw_flights.csv")
+
+write_csv(nycflights13::airlines,
+          "voos_analytics/seeds/raw_airlines.csv")
+
+write_csv(nycflights13::airports,
+          "voos_analytics/seeds/raw_airports.csv")
+
+# Verificar os arquivos criados
+tibble(
+  arquivo   = list.files("voos_analytics/seeds", full.names = TRUE),
+  tamanho   = file.size(arquivo),
+  tamanho_mb = round(tamanho / 1e6, 2))
+```
+
+------------------------------------------------------------------------
+
+## Output: arquivos de seed criados
+
+```{r}
+#| label: seeds-output
+#| echo: false
+
+tibble(
+  arquivo    = c("seeds/raw_flights.csv",
+                 "seeds/raw_airlines.csv",
+                 "seeds/raw_airports.csv"),
+  linhas     = c(336776L, 16L, 1458L),
+  tamanho_mb = c(28.4, 0.0, 0.1))
+```
+
+------------------------------------------------------------------------
+
+## Carregando os seeds no PostgreSQL
+
+```{r}
+#| label: dbt-seed-codigo
+#| eval: false
+
+# Carregar todos os seeds no banco
+system("dbt seed")
+
+# Carregar um seed específico
+system("dbt seed --select raw_flights")
+```
+
+------------------------------------------------------------------------
+
+## Output: dbt seed com sucesso
+
+```         
+Running with dbt=1.8.x
+Found 0 models, 3 seeds, 0 tests
+
+1 of 3 START seed file dbt_dev.raw_airlines ............. [RUN]
+1 of 3 OK loaded seed file dbt_dev.raw_airlines ......... [INSERT 16 in 0.18s]
+2 of 3 START seed file dbt_dev.raw_airports ............. [RUN]
+2 of 3 OK loaded seed file dbt_dev.raw_airports ......... [INSERT 1458 in 0.31s]
+3 of 3 START seed file dbt_dev.raw_flights .............. [RUN]
+3 of 3 OK loaded seed file dbt_dev.raw_flights .......... [INSERT 336776 in 8.42s]
+
+Finished running 3 seeds in 8.91s.
+
+Done. PASS=3 WARN=0 ERROR=0 SKIP=0 TOTAL=3
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Models SQL: Transformando os Dados
+:::
+
+------------------------------------------------------------------------
+
+## O que são models no dbt
+
+**Models** são arquivos `.sql` que definem transformações sobre os dados brutos. Cada model produz uma tabela ou view no banco de dados.
+
+**Materializações disponíveis:**
+
+| Materialização | O que cria no banco | Quando usar |
+|------------------------|------------------------|------------------------|
+| `view` | View SQL | Staging: transformações leves |
+| `table` | Tabela física | Marts: resultados finais consultados com frequência |
+| `incremental` | Tabela com append | Grandes volumes com dados novos diários |
+| `ephemeral` | CTE inline, sem objeto no banco | Transformações intermediárias descartáveis |
+
+------------------------------------------------------------------------
+
+## Model de staging: stg_flights.sql
+
+```{r}
+#| label: stg-flights-codigo
+#| eval: false
+
+dir.create("voos_analytics/models/staging",
+           showWarnings = FALSE, recursive = TRUE)
+
+stg_flights_sql <- '
+-- models/staging/stg_flights.sql
+{{ config(materialized = "view") }}
+
+SELECT
+    CAST(year  AS INTEGER)        AS ano,
+    CAST(month AS INTEGER)        AS mes,
+    CAST(day   AS INTEGER)        AS dia,
+    carrier                       AS codigo_companhia,
+    flight                        AS numero_voo,
+    origin                        AS aeroporto_origem,
+    dest                          AS aeroporto_destino,
+    CAST(arr_delay  AS FLOAT)     AS atraso_chegada_min,
+    CAST(dep_delay  AS FLOAT)     AS atraso_partida_min,
+    CAST(air_time   AS FLOAT)     AS tempo_voo_min,
+    CAST(distance   AS INTEGER)   AS distancia_milhas,
+    CONCAT(year, "-",
+           LPAD(CAST(month AS TEXT), 2, "0"), "-",
+           LPAD(CAST(day   AS TEXT), 2, "0"))
+                                  AS data_voo,
+    CONCAT(carrier, CAST(flight AS TEXT))
+                                  AS flight_id
+
+FROM {{ ref("raw_flights") }}
+
+WHERE arr_delay IS NOT NULL
+'
+
+writeLines(stg_flights_sql,
+           "voos_analytics/models/staging/stg_flights.sql")
+```
+
+------------------------------------------------------------------------
+
+## Model de staging: stg_airlines.sql
+
+```{r}
+#| label: stg-airlines-codigo
+#| eval: false
+
+stg_airlines_sql <- '
+-- models/staging/stg_airlines.sql
+{{ config(materialized = "view") }}
+
+SELECT
+    carrier  AS codigo_companhia,
+    name     AS nome_companhia
+
+FROM {{ ref("raw_airlines") }}
+'
+
+writeLines(stg_airlines_sql,
+           "voos_analytics/models/staging/stg_airlines.sql")
+```
+
+------------------------------------------------------------------------
+
+## O operador ref(): rastreamento de dependências
+
+``` sql
+-- Ao escrever:
+FROM {{ ref("stg_flights") }}
+
+-- O dbt substitui por:
+FROM dbt_dev.stg_flights
+
+-- E registra automaticamente que este model
+-- DEPENDE de stg_flights
+```
+
+**Por que `ref()` é fundamental:**
+
+- O dbt constrói o **DAG** (Directed Acyclic Graph) de dependências a partir de todos os `ref()` do projeto
+- Ele garante que `stg_flights` seja criado antes de qualquer model que o referencie
+- Se você renomear uma tabela, basta alterar o `ref()` e o dbt propaga a mudança
+
+------------------------------------------------------------------------
+
+## Model analítico: fct_atrasos.sql
+
+```{r}
+#| label: fct-atrasos-codigo
+#| eval: false
+
+dir.create("voos_analytics/models/marts",
+           showWarnings = FALSE, recursive = TRUE)
+
+fct_atrasos_sql <- '
+-- models/marts/fct_atrasos.sql
+{{ config(materialized = "table") }}
+
+SELECT
+    a.nome_companhia,
+    f.mes,
+    f.aeroporto_origem,
+    COUNT(*)                                        AS total_voos,
+    ROUND(AVG(f.atraso_chegada_min)::numeric, 2)    AS atraso_medio_min,
+    ROUND(AVG(f.atraso_partida_min)::numeric, 2)    AS atraso_partida_medio_min,
+    SUM(CASE WHEN f.atraso_chegada_min > 15
+             THEN 1 ELSE 0 END)                     AS voos_atrasados_graves,
+    ROUND(
+        100.0 * SUM(CASE WHEN f.atraso_chegada_min > 15
+                         THEN 1 ELSE 0 END)
+             / COUNT(*), 2)                         AS pct_atrasados_graves
+
+FROM {{ ref("stg_flights") }}   AS f
+LEFT JOIN {{ ref("stg_airlines") }} AS a
+    ON f.codigo_companhia = a.codigo_companhia
+
+GROUP BY
+    a.nome_companhia,
+    f.mes,
+    f.aeroporto_origem
+'
+
+writeLines(fct_atrasos_sql,
+           "voos_analytics/models/marts/fct_atrasos.sql")
+```
+
+------------------------------------------------------------------------
+
+## Executando os models com dbt run
+
+```{r}
+#| label: dbt-run-codigo
+#| eval: false
+
+# Executar todos os models do projeto
+system("dbt run")
+
+# Executar apenas um model específico
+system("dbt run --select stg_flights")
+
+# Executar um model e todos que dependem dele
+system("dbt run --select stg_flights+")
+
+# Executar apenas os models da pasta marts
+system("dbt run --select marts")
+```
+
+------------------------------------------------------------------------
+
+## Output: dbt run com sucesso
+
+```         
+Running with dbt=1.8.x
+Found 3 models, 3 seeds, 0 tests
+
+Concurrency: 4 threads (target='dev')
+
+1 of 3 START sql view model dbt_dev.stg_airlines ......... [RUN]
+1 of 3 OK created sql view model dbt_dev.stg_airlines ..... [CREATE VIEW in 0.31s]
+2 of 3 START sql view model dbt_dev.stg_flights .......... [RUN]
+2 of 3 OK created sql view model dbt_dev.stg_flights ....... [CREATE VIEW in 0.28s]
+3 of 3 START sql table model dbt_dev.fct_atrasos ......... [RUN]
+3 of 3 OK created sql table model dbt_dev.fct_atrasos ...... [SELECT 612 in 4.12s]
+
+Finished running 3 models in 4.71s.
+
+Done. PASS=3 WARN=0 ERROR=0 SKIP=0 TOTAL=3
+```
+
+------------------------------------------------------------------------
+
+## Output: dbt run com erro
+
+```         
+2 of 3 START sql view model dbt_dev.stg_flights .......... [RUN]
+2 of 3 ERROR creating sql view model dbt_dev.stg_flights ... [ERROR in 0.18s]
+
+Completed with 1 error and 0 warnings:
+
+Database Error in model stg_flights (models/staging/stg_flights.sql)
+  column "arr_time" does not exist
+  LINE 33: WHERE arr_time IS NOT NULL
+  HINT:  Perhaps you meant to reference the column "dep_time".
+  compiled Code at target/run/voos_analytics/models/staging/stg_flights.sql
+```
+
+O dbt indica o arquivo, a linha e a mensagem de erro do banco. O caminho `target/run/` contém o SQL compilado, útil para depurar o que o dbt enviou ao banco.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Testes e Documentação
+:::
+
+------------------------------------------------------------------------
+
+## O que são testes no dbt
+
+**Testes** são validações automáticas que verificam se os dados transformados atendem às expectativas definidas. O dbt executa os testes com `dbt test` e reporta quais passaram e quais falharam.
+
+**Dois tipos de testes:**
+
+**Testes genéricos:** definidos no arquivo `schema.yml` com configurações YAML. São os mais comuns e cobrem a maioria dos casos.
+
+**Testes singulares:** arquivos `.sql` na pasta `tests/` que retornam linhas que violam uma condição. Se retornar zero linhas, o teste passa.
+
+------------------------------------------------------------------------
+
+## Os quatro testes genéricos do dbt
+
+**not_null:** verifica que nenhum valor da coluna é nulo. Falha se existir qualquer `NULL`.
+
+**unique:** verifica que todos os valores da coluna são únicos. Falha se existir duplicata.
+
+**accepted_values:** verifica que todos os valores da coluna estão dentro de uma lista permitida. Falha se existir valor fora da lista.
+
+**relationships:** verifica integridade referencial, que todos os valores de uma coluna existem em outra tabela. Equivalente a uma `FOREIGN KEY`.
+
+------------------------------------------------------------------------
+
+## Criando o schema.yml de staging
+
+```{r}
+#| label: schema-staging-codigo
+#| eval: false
+
+schema_staging <- '
+version: 2
+
+models:
+  - name: stg_flights
+    description: "Voos do aeroporto de Nova York em 2013, limpos e padronizados."
+    columns:
+      - name: flight_id
+        description: "Número do voo."
+        tests:
+          - not_null
+
+      - name: aeroporto_origem
+        description: "Código IATA do aeroporto de origem."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["EWR", "JFK", "LGA"]
+
+      - name: codigo_companhia
+        description: "Código IATA da companhia aérea."
+        tests:
+          - not_null
+          - relationships:
+              to: ref("stg_airlines")
+              field: codigo_companhia
+
+  - name: stg_airlines
+    description: "Companhias aéreas com nomes padronizados."
+    columns:
+      - name: codigo_companhia
+        description: "Código IATA da companhia."
+        tests:
+          - not_null
+          - unique
+'
+
+writeLines(schema_staging,
+           "voos_analytics/models/staging/schema.yml")
+```
+
+------------------------------------------------------------------------
+
+## Executando os testes
+
+```{r}
+#| label: dbt-test-codigo
+#| eval: false
+
+# Executar todos os testes do projeto
+system("dbt test")
+
+# Executar testes de um model específico
+system("dbt test --select stg_flights")
+
+# Executar apenas os testes de um tipo específico
+system("dbt test --select test_type:not_null")
+```
+
+------------------------------------------------------------------------
+
+## Output: dbt test com sucesso
+
+```         
+Running with dbt=1.8.x
+Found 3 models, 3 seeds, 5 tests
+
+Concurrency: 4 threads (target='dev')
+
+1 of 5 PASS not_null_stg_flights_flight_id ............... [PASS in 0.42s]
+2 of 5 PASS not_null_stg_flights_aeroporto_origem ......... [PASS in 0.38s]
+3 of 5 PASS accepted_values_aeroporto_origem .............. [PASS in 0.51s]
+4 of 5 PASS relationships_stg_flights_codigo .............. [PASS in 0.67s]
+5 of 5 PASS unique_stg_airlines_codigo_companhia .......... [PASS in 0.29s]
+
+Done. PASS=5 WARN=0 ERROR=0 SKIP=0 TOTAL=5
+```
+
+------------------------------------------------------------------------
+
+## Output: dbt test com falha
+
+```         
+3 of 5 FAIL 12 accepted_values_aeroporto_origem .......... [FAIL 12 in 0.51s]
+
+Failure in test accepted_values_aeroporto_origem
+  Got 12 results, configured to fail if != 0
+
+  compiled Code at target/compiled/voos_analytics/models/
+  staging/schema.yml/accepted_values_stg_flights_...sql
+```
+
+O número `12` indica quantas linhas violaram a condição. O arquivo compilado em `target/compiled/` contém o SQL do teste. Execute-o diretamente no banco para inspecionar os registros problemáticos.
+
+------------------------------------------------------------------------
+
+## Documentação automática
+
+```{r}
+#| label: docs-codigo
+#| eval: false
+
+# Gerar a documentação do projeto
+system("dbt docs generate")
+
+# Servir a documentação em um servidor local (porta 8080)
+system("dbt docs serve --port 8080")
+```
+
+A documentação gerada inclui:
+
+- Descrição de cada model e coluna (do `schema.yml`)
+- **DAG interativo** mostrando todas as dependências entre models, seeds e sources
+- SQL compilado de cada model
+- Resultados dos testes
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 7
+
+## Lendo os Resultados no R
+:::
+
+------------------------------------------------------------------------
+
+## Conectar ao PostgreSQL e ler a tabela do dbt
+
+```{r}
+#| label: ler-dbt-codigo
+#| eval: false
+
+library(DBI)
+library(RPostgres)
+library(tidyverse)
+
+con <- dbConnect(
+  drv      = RPostgres::Postgres(),
+  host     = Sys.getenv("PG_HOST"),
+  port     = as.integer(Sys.getenv("PG_PORT")),
+  dbname   = Sys.getenv("PG_DBNAME"),
+  user     = Sys.getenv("PG_USER"),
+  password = Sys.getenv("PG_PASSWORD"))
+
+# Ler a tabela fct_atrasos gerada pelo dbt
+fct_atrasos <- tbl(con, dbplyr::in_schema("dbt_dev", "fct_atrasos")) |>
+  collect()
+
+glimpse(fct_atrasos)
+```
+
+------------------------------------------------------------------------
+
+## Output: tabela fct_atrasos
+
+```{r}
+#| label: ler-dbt-output
+#| echo: false
+
+tibble(
+  nome_companhia           = c("American", "Delta", "United",
+                               "JetBlue", "Southwest"),
+  mes                      = c(1L, 1L, 1L, 1L, 1L),
+  aeroporto_origem         = c("JFK", "JFK", "EWR", "JFK", "EWR"),
+  total_voos               = c(1812L, 2242L, 2893L, 1244L, 1598L),
+  atraso_medio_min         = c(8.72, 5.14, 11.34, 14.23, 3.21),
+  atraso_partida_medio_min = c(9.12, 4.87, 12.01, 15.44, 3.89),
+  voos_atrasados_graves    = c(312L, 187L, 445L, 298L, 89L),
+  pct_atrasados_graves     = c(17.22, 8.34, 15.38, 23.95, 5.57))
+```
+
+------------------------------------------------------------------------
+
+## Código: visualização a partir do dbt
+
+```{r}
+#| label: grafico-codigo
+#| eval: false
+
+fct_atrasos |>
+  group_by(nome_companhia) |>
+  summarise(
+    atraso_medio = mean(atraso_medio_min, na.rm = TRUE),
+    total_voos   = sum(total_voos),
+    .groups = "drop") |>
+  filter(total_voos > 1000) |>
+  ggplot(aes(
+    x    = reorder(nome_companhia, atraso_medio),
+    y    = atraso_medio,
+    fill = atraso_medio > 0)) +
+  geom_col(width = 0.7, alpha = 0.9) +
+  coord_flip() +
+  scale_fill_manual(values = c(
+    "TRUE"  = cores_cafe["marrom"],
+    "FALSE" = cores_cafe["azul_claro"])) +
+  labs(
+    title    = "Atraso médio de chegada por companhia aérea",
+    subtitle = "Tabela transformada pelo dbt, consumida no R",
+    x        = NULL,
+    y        = "Atraso médio de chegada (minutos)",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema +
+  theme(legend.position = "none")
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: atraso médio por companhia
+
+```{r}
+#| label: grafico-output
+#| echo: false
+#| fig-height: 4.5
+
+tibble(
+  nome_companhia           = c("American", "Delta", "United",
+                               "JetBlue", "Southwest", "Alaska",
+                               "Frontier", "Hawaiian"),
+  atraso_medio_min         = c(8.72, 5.14, 11.34, 14.23, 3.21,
+                               2.10, 18.45, -1.20),
+  total_voos               = c(18120L, 22420L, 28930L, 12440L,
+                               15980L, 7200L, 9800L, 5400L)) |>
+  filter(total_voos > 1000) |>
+  ggplot(aes(
+    x    = reorder(nome_companhia, atraso_medio_min),
+    y    = atraso_medio_min,
+    fill = atraso_medio_min > 0)) +
+  geom_col(width = 0.7, alpha = 0.9) +
+  coord_flip() +
+  scale_fill_manual(values = c(
+    "TRUE"  = cores_cafe["marrom"],
+    "FALSE" = cores_cafe["azul_claro"])) +
+  labs(
+    title    = "Atraso médio de chegada por companhia aérea",
+    subtitle = "Tabela transformada pelo dbt, consumida no R",
+    x        = NULL,
+    y        = "Atraso médio de chegada (minutos)",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema +
+  theme(legend.position = "none")
+```
+
+------------------------------------------------------------------------
+
+## O fluxo completo em um único script R
+
+```{r}
+#| label: fluxo-completo-codigo
+#| eval: false
+
+library(reticulate)
+library(DBI)
+library(RPostgres)
+library(tidyverse)
+library(nycflights13)
+
+# 1. Configurar o ambiente Python
+use_virtualenv("dbt-env", required = TRUE)
+
+# 2. Exportar dados brutos para seeds
+write_csv(flights,  "voos_analytics/seeds/raw_flights.csv")
+write_csv(airlines, "voos_analytics/seeds/raw_airlines.csv")
+write_csv(airports, "voos_analytics/seeds/raw_airports.csv")
+
+# 3. Executar o pipeline dbt completo
+setwd("voos_analytics")
+system("dbt seed")
+system("dbt run")
+system("dbt test")
+
+# 4. Conectar ao PostgreSQL e ler os resultados
+con <- dbConnect(
+  drv      = RPostgres::Postgres(),
+  host     = Sys.getenv("PG_HOST"),
+  port     = as.integer(Sys.getenv("PG_PORT")),
+  dbname   = Sys.getenv("PG_DBNAME"),
+  user     = Sys.getenv("PG_USER"),
+  password = Sys.getenv("PG_PASSWORD"))
+
+fct_atrasos <- tbl(con,
+  dbplyr::in_schema("dbt_dev", "fct_atrasos")) |>
+  collect()
+
+# 5. Análise no R
+fct_atrasos |>
+  group_by(nome_companhia) |>
+  summarise(atraso_medio = mean(atraso_medio_min)) |>
+  arrange(desc(atraso_medio))
+
+dbDisconnect(con)
+```
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 8
+
+## Boas Práticas e Mercado
+:::
+
+------------------------------------------------------------------------
+
+## Convenção de nomenclatura dos models
+
+Adotar uma convenção consistente é fundamental para projetos com múltiplos colaboradores:
+
+| Prefixo | Camada | O que contém |
+|------------------------|------------------------|------------------------|
+| `stg_` | Staging | Limpeza e padronização das fontes brutas. Um model por tabela de origem. |
+| `int_` | Intermediate | Transformações intermediárias complexas que não são consumidas diretamente. |
+| `fct_` | Fact | Tabelas de fatos: eventos mensuráveis (vendas, voos, transações). |
+| `dim_` | Dimension | Tabelas de dimensão: entidades (clientes, produtos, aeroportos). |
+| `rpt_` | Report | Tabelas finais específicas para relatórios ou dashboards. |
+
+------------------------------------------------------------------------
+
+## Versionamento do projeto dbt com Git
+
+O projeto dbt inteiro, models, tests, seeds, macros e `dbt_project.yml`, deve ser versionado no Git junto com o projeto R.
+
+**O que versionar:**
+
+```         
+.gitignore recomendado para projetos dbt + R:
+
+# dbt
+voos_analytics/target/
+voos_analytics/dbt_packages/
+voos_analytics/logs/
+
+# Credenciais
+.Renviron
+~/.dbt/profiles.yml
+```
+
+------------------------------------------------------------------------
+
+## O que o dbt não faz
+
+::: callout-important
+É comum superestimar o escopo do dbt. Ele faz uma coisa bem: transformar dados já carregados no banco com SQL versionado e testado.
+
+**O dbt não faz:**
+
+- Extração de dados de fontes externas (APIs, arquivos, bancos de origem)
+- Carregamento de dados no warehouse (isso é responsabilidade de ferramentas como Airbyte, Fivetran ou do próprio R)
+- Orquestração de pipelines (para isso: Airflow, Dagster ou GitHub Actions)
+- Análise estatística, modelagem preditiva ou visualização
+- Substituição do R na análise: são ferramentas complementares
+:::
+
+------------------------------------------------------------------------
+
+## O papel do analytics engineer
+
+O dbt popularizou o papel do **analytics engineer** nos times de dados:
+
+- Profissional que une habilidades de engenharia de dados e análise
+- Responsável pela camada de transformação: modelos SQL limpos, testados e documentados
+- Trabalha entre o engenheiro de dados (que entrega os dados brutos) e o analista (que consome os dados transformados)
+- O `dbt` é a ferramenta central desse papel
+
+Para quem vem do R, dominar o dbt representa uma expansão significativa de empregabilidade em times de dados modernos.
+
+------------------------------------------------------------------------
+
+## Quando usar dbt e quando usar targets
+
+| Situação                          | Use dbt          | Use targets |
+|-----------------------------------|------------------|-------------|
+| Transformações em SQL no banco    | Sim              | Não         |
+| Transformações em R na memória    | Não              | Sim         |
+| Dados maiores que a RAM           | Sim              | Não         |
+| Pipeline de análise estatística   | Não              | Sim         |
+| Time com analistas SQL            | Sim              | Opcional    |
+| Time exclusivamente R             | Opcional         | Sim         |
+| Modelos preditivos com tidymodels | Não              | Sim         |
+| Documentação de linhagem visual   | Sim (DAG nativo) | Limitado    |
+
+------------------------------------------------------------------------
+
+## Referências
+
+- Documentação oficial do dbt: [docs.getdbt.com](https://docs.getdbt.com)
+- dbt Core no PyPI: [pypi.org/project/dbt-core](https://pypi.org/project/dbt-core/)
+- Adaptador dbt-postgres: [docs.getdbt.com/docs/core/connect-data-platform/postgres-setup](https://docs.getdbt.com/docs/core/connect-data-platform/postgres-setup)
+- Documentação reticulate: [rstudio.github.io/reticulate](https://rstudio.github.io/reticulate)
+- Boas práticas dbt: [docs.getdbt.com/guides/best-practices](https://docs.getdbt.com/guides/best-practices)
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+
+SITE OFICIAL \> <https://jenniferlopes.github.io/meu_site/>

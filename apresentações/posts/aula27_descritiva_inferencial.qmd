@@ -209,7 +209,7 @@ amostra |>
 **As medidas de dispersão descrevem a variabilidade dos dados em torno do centro.**
 
 | Medida | Definição | Interpretação |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | Amplitude | $x_{max} - x_{min}$ | Alcance total dos dados |
 | Variância | $s^2 = \frac{\sum(x_i - \bar{x})^2}{n-1}$ | Dispersão média ao quadrado |
 | Desvio padrão | $s = \sqrt{s^2}$ | Dispersão na mesma unidade dos dados |
@@ -1007,7 +1007,7 @@ amostra |>
 ## Resumo: descritiva e inferencial
 
 | Conceito | Abordagem | Função no R | O que produz |
-|------------------|------------------|------------------|------------------|
+|----|----|----|----|
 | Tendência central | Descritiva | `summarise(mean(), median())` | Valor único |
 | Dispersão | Descritiva | `summarise(sd(), IQR())` | Valor único |
 | Distribuição | Descritiva | `geom_histogram()`, `geom_density()` | Gráfico |

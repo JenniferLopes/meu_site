@@ -1,0 +1,444 @@
+---
+title: "Aula 39. Teste de hipóteses"
+subtitle: "Estrutura formal da decisão estatística e o p-valor"
+categories: [R, Estatística, Inferência, Tidyverse]
+image: "imagens/39.png"
+description: "Construa a estrutura formal de um teste de hipóteses e entenda, com precisão, o que o p-valor mede e o que ele não mede."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+populacao_percevejo <- bind_rows(
+  tibble(parcela = 1:4000, grupo = "Controle",
+         percevejos = rnorm(4000, mean = 8.0, sd = 2.5)),
+  tibble(parcela = 4001:8000, grupo = "Tratado",
+         percevejos = rnorm(4000, mean = 5.5, sd = 2.2)))
+
+amostra_percevejo <- populacao_percevejo |>
+  group_by(grupo) |>
+  slice_sample(n = 25) |>
+  ungroup()
+
+controle <- amostra_percevejo |> filter(grupo == "Controle") |> pull(percevejos)
+tratado  <- amostra_percevejo |> filter(grupo == "Tratado") |> pull(percevejos)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+SITE OFICIAL \> <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Conteúdos relacionados para estudar mais:
+
+- Acesse a [Newsletter](https://jenniferlopes.github.io/meu_site/cafecomr/);
+
+- Acesse as [aulas](https://jenniferlopes.github.io/meu_site/apresenta%C3%A7%C3%B5es/);
+
+- Acesse a apostila de [Estatística com R](https://jenniferlopes.github.io/meu_site/apostila.html).
+
+## Objetivos da aula
+
+::: incremental
+- Construir a estrutura formal de um teste de hipóteses, $H_0$ e $H_1$
+- Distinguir hipótese **unicaudal** de hipótese **bicaudal**
+- Reconhecer os quatro resultados possíveis de um teste, e o trade-off entre erro tipo I e erro tipo II
+- Definir formalmente o **p-valor**, e reconhecer o que ele não é
+- Diferenciar significância estatística de relevância prática
+- Reportar corretamente um resultado, com p-valor, tamanho de efeito e intervalo de confiança
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Teste de Hipóteses, Estrutura Formal
+:::
+
+------------------------------------------------------------------------
+
+## O problema da inferência como decisão
+
+- **Contexto:** um inseticida é aplicado em parcelas de soja para controlar percevejo. Parcelas controle não recebem o produto. A pergunta é se o inseticida reduz, de fato, a contagem de percevejos por metro linear, ou se a diferença observada entre os grupos é apenas variação amostral.
+
+- Um teste de hipóteses formaliza essa pergunta em uma estrutura de decisão, com regras explícitas sobre quando considerar a evidência suficiente para afirmar que existe um efeito real.
+
+------------------------------------------------------------------------
+
+## $H_0$ e $H_1$, definição formal
+
+- A **hipótese nula**, $H_0$, representa a ausência de efeito, a situação padrão que se assume verdadeira até que haja evidência suficiente em contrário.
+
+$$H_0: \mu_{\text{controle}} = \mu_{\text{tratado}}$$
+
+- A **hipótese alternativa**, $H_1$, representa o efeito que se deseja evidenciar.
+
+$$H_1: \mu_{\text{controle}} > \mu_{\text{tratado}}$$
+
+- O teste nunca prova $H_0$ verdadeira. Ele apenas determina se há evidência suficiente para rejeitá-la.
+
+------------------------------------------------------------------------
+
+## Hipótese unicaudal x bicaudal
+
+| Tipo | Formulação | Quando usar |
+|------------------------|------------------------|------------------------|
+| Bicaudal | $H_1: \mu_1 \neq \mu_2$ | Direção do efeito desconhecida a priori |
+| Unicaudal | $H_1: \mu_1 > \mu_2$ ou $H_1: \mu_1 < \mu_2$ | Direção do efeito definida antes da coleta dos dados |
+
+- **No contexto deste estudo:** a expectativa de que o inseticida reduza a contagem de percevejos é definida antes da coleta, o que justifica um teste unicaudal.
+
+::: callout-important
+**Atenção:** a escolha entre unicaudal e bicaudal deve ser feita antes de observar os dados. Escolher a direção do teste depois de ver o resultado invalida a interpretação do p-valor.
+:::
+
+------------------------------------------------------------------------
+
+## Os quatro resultados possíveis de um teste
+
+| Decisão | $H_0$ verdadeira | $H_0$ falsa |
+|------------------------|------------------------|------------------------|
+| Não rejeitar $H_0$ | Decisão correta | Erro tipo II ($\beta$) |
+| Rejeitar $H_0$ | Erro tipo I ($\alpha$) | Decisão correta (poder, $1-\beta$) |
+
+- **Erro tipo I:** concluir que o inseticida funciona quando, na realidade, não há efeito.
+
+- **Erro tipo II:** concluir que o inseticida não funciona quando, na realidade, ele reduz a contagem de percevejos.
+
+------------------------------------------------------------------------
+
+## O trade-off entre os dois erros
+
+- Reduzir $\alpha$, o nível de significância, torna o critério de rejeição mais rígido, o que reduz o erro tipo I, mas aumenta o erro tipo II, para um tamanho de amostra fixo.
+
+- A única forma de reduzir os dois erros simultaneamente é aumentar o tamanho da amostra.
+
+- Essa é a razão pela qual a análise de poder estatístico, antes da coleta de dados, é parte essencial do planejamento experimental.
+
+------------------------------------------------------------------------
+
+## Código: formulação do teste
+
+```{r}
+#| label: formulacao-codigo
+#| eval: false
+
+amostra_percevejo |>
+  group_by(grupo) |>
+  summarise(
+    n     = n(),
+    media = mean(percevejos),
+    dp    = sd(percevejos))
+
+resultado_t <- t.test(controle, tratado, alternative = "greater")
+```
+
+------------------------------------------------------------------------
+
+## Output: teste aplicado
+
+```{r}
+#| label: formulacao-output
+#| echo: false
+
+amostra_percevejo |>
+  group_by(grupo) |>
+  summarise(
+    n     = n(),
+    media = mean(percevejos),
+    dp    = sd(percevejos)) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+
+resultado_t <- t.test(controle, tratado, alternative = "greater")
+
+tibble(
+  estatistica_t   = resultado_t$statistic,
+  graus_liberdade = resultado_t$parameter,
+  valor_p         = resultado_t$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **A média do grupo controle é maior que a média do grupo tratado, na direção esperada por** $H_1$. O valor de p obtido determina se essa diferença é suficiente para rejeitar $H_0$ ao nível de significância adotado.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## O p-valor
+:::
+
+------------------------------------------------------------------------
+
+## Definição formal do p-valor
+
+- O **p-valor** é a probabilidade de observar uma estatística de teste tão extrema quanto, ou mais extrema que, a estatística observada, **assumindo que** $H_0$ é verdadeira.
+
+$$p = P(T \geq t_{\text{observado}} \mid H_0 \text{ verdadeira})$$
+
+- O p-valor é calculado sob a suposição de que não há efeito. Ele descreve a compatibilidade dos dados com $H_0$, não a probabilidade de $H_0$ estar certa.
+
+------------------------------------------------------------------------
+
+## O que o p-valor NÃO é
+
+- **Não é a probabilidade de** $H_0$ ser verdadeira.
+
+- **Não é a probabilidade de** $H_1$ ser verdadeira.
+
+- **Não é a probabilidade de o resultado ter ocorrido por acaso.**
+
+- **Não mede o tamanho do efeito**, nem a importância prática do resultado.
+
+::: callout-important
+**Atenção:** essas quatro interpretações são as mais frequentes em artigos e relatórios técnicos, e todas estão incorretas segundo a definição formal do p-valor.
+:::
+
+------------------------------------------------------------------------
+
+## O que o p-valor É, com precisão
+
+- O p-valor mede o quão incompatíveis os dados observados são com $H_0$, sob o modelo estatístico assumido.
+
+- Um p-valor pequeno indica que os dados seriam raros se $H_0$ fosse verdadeira, o que fornece evidência contra $H_0$, não uma prova contra ela.
+
+- Um p-valor grande não é evidência de que $H_0$ é verdadeira, apenas indica ausência de evidência suficiente para rejeitá-la.
+
+------------------------------------------------------------------------
+
+## Código: visualização geométrica do p-valor
+
+```{r}
+#| label: p-valor-grafico-codigo
+#| eval: false
+
+gl     <- resultado_t$parameter
+t_obs  <- resultado_t$statistic
+
+curva_t <- tibble(t = seq(-4, 4, length.out = 600), y = dt(t, df = gl))
+area_p  <- curva_t |> filter(t >= t_obs)
+
+ggplot(curva_t, aes(x = t, y = y)) +
+  geom_line(color = cores_cafe["azul_escuro"], linewidth = 1.1) +
+  geom_area(data = area_p, aes(x = t, y = y),
+            fill = cores_cafe["marrom"], alpha = 0.6) +
+  geom_vline(xintercept = t_obs, linetype = "dashed",
+             color = cores_cafe["marrom"], linewidth = 1)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: área do p-valor sobre a curva t
+
+```{r}
+#| label: p-valor-grafico
+#| echo: false
+#| fig-height: 4.8
+
+gl     <- resultado_t$parameter
+t_obs  <- resultado_t$statistic
+
+curva_t <- tibble(t = seq(-4, 4, length.out = 600), y = dt(t, df = gl))
+area_p  <- curva_t |> filter(t >= t_obs)
+
+ggplot(curva_t, aes(x = t, y = y)) +
+  geom_line(color = cores_cafe["azul_escuro"], linewidth = 1.1) +
+  geom_area(data = area_p, aes(x = t, y = y),
+            fill = cores_cafe["marrom"], alpha = 0.6) +
+  geom_vline(xintercept = t_obs, linetype = "dashed",
+             color = cores_cafe["marrom"], linewidth = 1) +
+  labs(
+    title    = "O p-valor como área sob a curva t",
+    subtitle = "Área sombreada, probabilidade de t maior ou igual ao valor observado, sob H0",
+    x        = "Estatística t",
+    y        = "Densidade",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Significância estatística x relevância prática
+
+- Um resultado pode ser estatisticamente significativo, p pequeno, e ainda assim ter efeito irrelevante na prática, quando o tamanho da amostra é grande o suficiente para detectar diferenças mínimas.
+
+- Um resultado pode não ser estatisticamente significativo, p grande, e ainda ter um efeito relevante, quando o tamanho da amostra é pequeno demais para detectá-lo com confiança.
+
+- **No contexto deste estudo:** uma redução de meio percevejo por metro linear pode ser estatisticamente detectável, mas não justificar, sozinha, o custo da aplicação do inseticida.
+
+------------------------------------------------------------------------
+
+## As recomendações da ASA
+
+- A American Statistical Association publicou, em 2016, uma declaração formal sobre o uso do p-valor. Os pontos centrais incluem:
+
+- O p-valor não mede a probabilidade de a hipótese estudada ser verdadeira, nem a probabilidade de os dados terem sido produzidos apenas pelo acaso.
+
+- Conclusões científicas não devem se basear apenas na ultrapassagem de um limiar numérico, como p menor que 0,05.
+
+- Uma decisão científica adequada exige relatar o tamanho de efeito, o intervalo de confiança e o contexto do estudo, e não apenas o valor de p isolado.
+
+------------------------------------------------------------------------
+
+## Código: reportando corretamente um resultado
+
+```{r}
+#| label: relatorio-codigo
+#| eval: false
+
+resultado_ic <- t.test(controle, tratado)
+
+diff_medias <- mean(controle) - mean(tratado)
+sd_pooled   <- sqrt(((length(controle) - 1) * sd(controle)^2 +
+                      (length(tratado) - 1) * sd(tratado)^2) /
+                     (length(controle) + length(tratado) - 2))
+cohens_d    <- diff_medias / sd_pooled
+
+tibble(
+  diferenca_medias = diff_medias,
+  ic_inf            = resultado_ic$conf.int[1],
+  ic_sup            = resultado_ic$conf.int[2],
+  cohens_d          = cohens_d,
+  valor_p           = resultado_t$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+------------------------------------------------------------------------
+
+## Output: relatório correto
+
+```{r}
+#| label: relatorio-output
+#| echo: false
+
+resultado_ic <- t.test(controle, tratado)
+
+diff_medias <- mean(controle) - mean(tratado)
+sd_pooled   <- sqrt(((length(controle) - 1) * sd(controle)^2 +
+                      (length(tratado) - 1) * sd(tratado)^2) /
+                     (length(controle) + length(tratado) - 2))
+cohens_d    <- diff_medias / sd_pooled
+
+tibble(
+  diferenca_medias = diff_medias,
+  ic_inf            = resultado_ic$conf.int[1],
+  ic_sup            = resultado_ic$conf.int[2],
+  cohens_d          = cohens_d,
+  valor_p           = resultado_t$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+- **O relatório completo inclui a magnitude da diferença, sua incerteza representada pelo intervalo de confiança, o tamanho de efeito padronizado pelo d de Cohen, e o p-valor. Nenhum desses quatro elementos, isoladamente, conta a história completa do resultado.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, interpretar o p-valor como a probabilidade de $H_0$ ser verdadeira
+
+- O p-valor é calculado assumindo que $H_0$ é verdadeira, ele não pode, ao mesmo tempo, medir a probabilidade dessa suposição.
+
+- Essa é a confusão mais frequente na literatura, e inverte a lógica condicional da definição formal do p-valor.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, achar que p igual a 0,049 é muito diferente de p igual a 0,051
+
+- O limiar de 0,05 é uma convenção, não uma fronteira natural entre evidência e ausência de evidência.
+
+- Dois resultados com p tão próximos representam praticamente a mesma força de evidência contra $H_0$, apesar de um estar de um lado do limiar e o outro do outro lado.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, confundir significância estatística com relevância prática
+
+- Reportar apenas "diferença significativa, p menor que 0,05" sem informar a magnitude da diferença omite a informação mais relevante para a tomada de decisão.
+
+- A pergunta que importa na prática não é apenas se existe diferença, mas se essa diferença é grande o suficiente para justificar uma ação, como a adoção de um novo produto ou prática de manejo.
+
+------------------------------------------------------------------------
+
+## Resumo: teste de hipóteses e p-valor
+
+| Conceito | Definição resumida | Função no R |
+|------------------------|------------------------|------------------------|
+| $H_0$ | Hipótese de ausência de efeito | Não se aplica |
+| $H_1$ | Hipótese do efeito esperado | Argumento `alternative` |
+| Erro tipo I | Rejeitar $H_0$ sendo ela verdadeira | Controlado por $\alpha$ |
+| Erro tipo II | Não rejeitar $H_0$ sendo ela falsa | Controlado pelo poder do teste |
+| p-valor | Probabilidade dos dados sob $H_0$, não probabilidade de $H_0$ | `t.test()$p.value` |
+| Tamanho de efeito | Magnitude da diferença, independente de n | `cohens_d` |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+
+SITE OFICIAL \> <https://jenniferlopes.github.io/meu_site/>

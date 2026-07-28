@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Jennifer Luz Lopes – Aula 36. R com Databricks</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-2c1b5f745a11cfad616ebade4a4a7d24.css">
+  <link rel="stylesheet" href="estilo_jeni.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Aula 36. R com Databricks</h1>
+  <p class="subtitle">Do conceito ao consumo de dados em escala com brickster, DBI e sparklyr</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section class="slide level2">
+
+</section>
+<section id="pré-requisito-obrigatório-antes-desta-aula" class="slide level2" style="text-align: center; padding-top: 100px;">
+<h2>Pré-requisito obrigatório antes desta aula</h2>
+<h4 id="crie-sua-conta-gratuita-no-databricks">Crie sua conta gratuita no Databricks</h4>
+<p><a href="https://www.databricks.com/try-databricks"><strong>databricks.com/try-databricks</strong></a></p>
+<p>Clique em <strong>“Looking for Databricks Free Edition? Click here”</strong></p>
+<p><em>A conta é gratuita, sem cartão de crédito. O workspace leva menos de 5 minutos para ficar pronto.</em></p>
+</section>
+<section id="democratização" class="slide level2">
+<h2>Democratização</h2>
+<blockquote>
+<p>Esta aula foi construída para que você entenda o que é o Databricks, onde ele se encaixa no ecossistema de engenharia de dados e como integrá-lo ao R usando <code>brickster</code>, <code>DBI</code> e <code>sparklyr</code>. Todo o código funciona com a conta gratuita Databricks Free Edition.</p>
+</blockquote>
+
+<img data-src="imagens/meguy.jpg" class="quarto-figure quarto-figure-center r-stretch" width="420"></section>
+<section id="acompanhe-o-café-com-r" class="slide level2">
+<h2>Acompanhe o Café com R</h2>
+<p>SITE OFICIAL &gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+</section>
+<section id="objetivos-da-aula" class="slide level2">
+<h2>Objetivos da aula</h2>
+<ul>
+<li class="fragment">Compreender o que é <strong>engenharia de dados</strong> e onde o Databricks se encaixa</li>
+<li class="fragment">Entender o que é <strong>Apache Spark</strong> e processamento distribuído</li>
+<li class="fragment">Conhecer o <strong>Databricks</strong> e seus componentes principais</li>
+<li class="fragment">Configurar o ambiente com <strong>brickster</strong> e autenticação OAuth</li>
+<li class="fragment">Consultar dados com <strong>DBI + dbplyr</strong> via SQL warehouse</li>
+<li class="fragment">Transferir arquivos entre R e Databricks via <strong>volumes</strong></li>
+<li class="fragment">Usar <strong>sparklyr</strong> com compute serverless</li>
+</ul>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-1" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+
+</section>
+<section id="o-que-é-engenharia-de-dados" class="slide level2">
+<h2>O que é Engenharia de Dados</h2>
+</section></section>
+<section id="o-que-é-engenharia-de-dados-1" class="slide level2">
+<h2>O que é engenharia de dados</h2>
+<p><strong>Engenharia de dados</strong> é a disciplina que constrói e mantém os sistemas pelos quais os dados trafegam, desde a coleta nas fontes originais até a entrega em formato confiável para análise, modelagem e tomada de decisão.</p>
+<ul>
+<li><p>O engenheiro de dados não analisa os dados.</p></li>
+<li><p>Ele garante que os dados estejam disponíveis, confiáveis, no formato correto e no momento certo para quem vai analisá-los.</p></li>
+</ul>
+</section>
+<section id="a-cadeia-completa-de-dados" class="slide level2">
+<h2>A cadeia completa de dados</h2>
+<pre><code>Fontes (APIs, bancos, arquivos, sensores, eventos)
+    |
+    | Ingestão - extrair e carregar
+    v
+Data Lake / Data Warehouse (armazenamento bruto)
+    |
+    | Transformação - limpar, modelar, agregar
+    v
+Camada analítica (tabelas prontas para consumo)
+    |
+    | Entrega - BI, relatórios, modelos, APIs
+    v
+Análise e decisão (R, Python, ferramentas de BI)</code></pre>
+<ul>
+<li>O R atua principalmente na <strong>última etapa</strong>, mas profissionais que entendem toda a cadeia são muito mais valorizados.</li>
+</ul>
+</section>
+<section id="o-papel-de-cada-profissional" class="slide level2">
+<h2>O papel de cada profissional</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 70%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Perfil</th>
+<th>Responsabilidade principal</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Engenheiro de dados</td>
+<td>Construir pipelines de ingestão e armazenamento</td>
+</tr>
+<tr class="even">
+<td>Analytics engineer</td>
+<td>Transformação, modelagem e qualidade dos dados</td>
+</tr>
+<tr class="odd">
+<td>Cientista de dados</td>
+<td>Modelagem estatística e machine learning</td>
+</tr>
+<tr class="even">
+<td>Analista de dados</td>
+<td>Análise exploratória, visualização e relatórios</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>O <strong>analytics engineer</strong> é o perfil que mais se aproxima de quem vem do R: domina SQL, entende pipelines e produz dados confiáveis para análise.</li>
+</ul>
+</section>
+<section id="o-problema-do-volume" class="slide level2">
+<h2>O problema do volume</h2>
+<p><strong>O R foi projetado para análise de dados em uma única máquina. Seus limites práticos:</strong></p>
+<ul>
+<li>Dados maiores que a RAM disponível travam ou falham</li>
+<li>Operações em dezenas de milhões de linhas ficam lentas</li>
+<li>Um único processador executa as operações em sequência</li>
+<li>Em empresas com dados reais, registros de transações, logs, dados de sensores e histórico de clientes, esses limites aparecem rapidamente.</li>
+<li>A solução é <strong>distribuir o processamento</strong> entre múltiplas máquinas que trabalham em paralelo.</li>
+</ul>
+</section>
+<section id="o-que-é-apache-spark" class="slide level2">
+<h2>O que é Apache Spark</h2>
+<p><strong>Apache Spark</strong> é o motor de processamento distribuído mais usado no mundo para dados em larga escala. Foi criado em 2009 na UC Berkeley e doado à Apache Software Foundation em 2013.</p>
+<p><strong>Como funciona:</strong></p>
+<ul>
+<li>Um <strong>driver</strong> coordena a execução e divide o problema</li>
+<li>Múltiplos <strong>workers</strong> executam partes do problema em paralelo</li>
+<li>Os dados são divididos em <strong>partições</strong> distribuídas entre os workers</li>
+<li>O resultado é consolidado e retornado ao driver</li>
+</ul>
+<blockquote>
+<p><strong>Por que é rápido:</strong> o Spark mantém os dados em memória entre operações, evitando escritas em disco que tornavam o MapReduce (predecessor) lento.</p>
+</blockquote>
+</section>
+<section id="componentes-do-apache-spark" class="slide level2">
+<h2>Componentes do Apache Spark</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 70%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Componente</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Spark Core</strong></td>
+<td>Motor base: agendamento, memória, armazenamento</td>
+</tr>
+<tr class="even">
+<td><strong>Spark SQL</strong></td>
+<td>Consultas SQL e DataFrames estruturados</td>
+</tr>
+<tr class="odd">
+<td><strong>Spark Streaming</strong></td>
+<td>Processamento de streams em micro-batches</td>
+</tr>
+<tr class="even">
+<td><strong>MLlib</strong></td>
+<td>Machine learning distribuído</td>
+</tr>
+<tr class="odd">
+<td><strong>GraphX</strong></td>
+<td>Processamento de grafos</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Para o usuário de R, o <strong>Spark SQL</strong> é o componente mais relevante: é ele que o <strong><code>sparklyr</code></strong> usa para executar operações dplyr em tabelas distribuídas.</p>
+</blockquote>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-2" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+
+</section>
+<section id="o-que-é-o-databricks" class="slide level2">
+<h2>O que é o Databricks</h2>
+</section></section>
+<section id="o-que-é-o-databricks-1" class="slide level2">
+<h2>O que é o Databricks</h2>
+<p><strong>Databricks</strong> é uma plataforma unificada de dados e IA construída sobre Apache Spark e Delta Lake. Foi fundada em 2013 pelos criadores do Spark na UC Berkeley.</p>
+</section>
+<section id="o-que-é-o-databricks-2" class="slide level2">
+<h2>O que é o Databricks</h2>
+<p><strong>O que o Databricks oferece além do Spark :</strong></p>
+<ul>
+<li><strong>Clusters gerenciados:</strong> provisionar, escalar e desligar automaticamente</li>
+<li><strong>Notebooks colaborativos:</strong> R, Python, SQL e Scala no mesmo ambiente</li>
+<li><strong>Delta Lake nativo:</strong> todas as tabelas com ACID, time travel e MERGE</li>
+<li><strong>MLflow integrado:</strong> rastreamento e versionamento de experimentos</li>
+<li><strong>Unity Catalog:</strong> governança centralizada de dados e permissões</li>
+<li><strong>SQL Warehouse:</strong> endpoint SQL otimizado para consultas analíticas</li>
+</ul>
+</section>
+<section id="o-que-é-o-unity-catalog" class="slide level2">
+<h2>O que é o Unity Catalog</h2>
+<p><strong>Unity Catalog</strong> é o sistema de governança centralizada do Databricks. Ele gerencia:</p>
+<ul>
+<li><strong>Permissões</strong> por catálogo, schema, tabela e coluna</li>
+<li><strong>Linhagem automática</strong> de dados: de onde vieram, quem acessou</li>
+<li><strong>Metadados</strong> e documentação das tabelas</li>
+<li><strong>Volumes:</strong> armazenamento de arquivos não estruturados</li>
+</ul>
+<p>A estrutura hierárquica é:</p>
+<pre><code>Catálogo (catalog)
+  └── Schema (equivalente ao schema do PostgreSQL)
+        └── Tabela / View / Volume / Função</code></pre>
+<p><strong>No workspace gratuito, o catálogo <code>samples</code> contém datasets de exemplo disponíveis para todos os usuários.</strong></p>
+</section>
+<section id="o-que-é-o-data-lakehouse" class="slide level2">
+<h2>O que é o data lakehouse</h2>
+<p>O <strong>data lakehouse</strong> é a arquitetura que o Databricks popularizou. Combina:</p>
+<ul>
+<li><p><strong>Data lake:</strong> armazena qualquer tipo de dado (estruturado, semi-estruturado, não estruturado), em qualquer escala, a baixo custo, em formato aberto (Parquet, Delta).</p></li>
+<li><p><strong>Data warehouse:</strong> oferece estrutura, governança, transações ACID, controle de acesso e desempenho otimizado para consultas SQL.</p></li>
+</ul>
+<p>O Delta Lake é a camada técnica que permite essa combinação: ele adiciona transações ACID e governança sobre arquivos Parquet em um data lake.</p>
+</section>
+<section id="databricks-snowflake-e-bigquery" class="slide level2">
+<h2>Databricks, Snowflake e BigQuery</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 28%">
+<col style="width: 23%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Característica</th>
+<th>Databricks</th>
+<th>Snowflake</th>
+<th>BigQuery</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Motor base</td>
+<td>Apache Spark</td>
+<td>Proprietário</td>
+<td>Capacitor (Google)</td>
+</tr>
+<tr class="even">
+<td>Formato nativo</td>
+<td>Delta Lake (aberto)</td>
+<td>Proprietário</td>
+<td>Proprietário</td>
+</tr>
+<tr class="odd">
+<td>Machine learning</td>
+<td>Nativo (MLflow)</td>
+<td>Limitado</td>
+<td>Via Vertex AI</td>
+</tr>
+<tr class="even">
+<td>Notebooks</td>
+<td>Sim</td>
+<td>Limitado</td>
+<td>Sim</td>
+</tr>
+<tr class="odd">
+<td>Integração R</td>
+<td><code>brickster</code>, <code>sparklyr</code></td>
+<td><code>DBI</code> + ODBC</td>
+<td><code>bigrquery</code></td>
+</tr>
+<tr class="even">
+<td>Plano gratuito</td>
+<td>Free Edition</td>
+<td>Trial 30 dias</td>
+<td>Free tier</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="onde-o-r-se-encaixa-no-ecossistema-databricks" class="slide level2">
+<h2>Onde o R se encaixa no ecossistema Databricks</h2>
+<pre><code>Fontes externas
+    |
+    | Ingestão (Databricks, Airflow, dbt)
+    v
+Delta Lake no Databricks
+    |
+    | Transformação SQL (dbt, notebooks Databricks)
+    v
+Tabelas analíticas prontas
+    |
+    | R via brickster + DBI + dbplyr
+    v
+Análise, modelagem, visualização
+    |
+    | Resultados via volumes
+    v
+Databricks armazena e compartilha</code></pre>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-3" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+
+</section>
+<section id="databricks-free-edition" class="slide level2">
+<h2>Databricks Free Edition</h2>
+</section></section>
+<section id="o-que-é-a-free-edition" class="slide level2">
+<h2>O que é a Free Edition</h2>
+<p>A <strong>Databricks Free Edition</strong> é a versão gratuita atual do Databricks, lançada em 2025 como substituta da Community Edition (aposentada).</p>
+<p><strong>O que está disponível:</strong></p>
+<ul>
+<li>Workspace completo com Unity Catalog</li>
+<li>Compute serverless para notebooks e SQL</li>
+<li>Datasets de amostra no catálogo <code>samples</code></li>
+<li>Suporte a R, Python, SQL e Scala nos notebooks</li>
+<li>Volumes para armazenamento de arquivos</li>
+<li>SQL Warehouse serverless para consultas</li>
+</ul>
+<p><strong>Limitações importantes:</strong></p>
+<ul>
+<li>Apenas compute serverless: sem clusters dedicados</li>
+<li>Sem <code>spark_apply()</code>: o ambiente serverless não tem R instalado</li>
+<li>Acesso à internet restrito a domínios confiáveis</li>
+<li>Conta pode ser deletada após inatividade prolongada</li>
+</ul>
+</section>
+<section id="criando-a-conta-passo-a-passo" class="slide level2">
+<h2>Criando a conta: passo a passo</h2>
+<pre><code>Passo 1 - Acessar a página de cadastro:
+https://www.databricks.com/try-databricks
+
+Passo 2 - Procurar o link:
+"Looking for Databricks Free Edition? Click here"
+(não clique no trial de 14 dias)
+
+Passo 3 - Escolher o método de cadastro:
+Google, Microsoft ou e-mail
+
+Passo 4 - Confirmar o e-mail se necessário
+
+Passo 5 - O workspace é criado automaticamente
+Aguardar alguns minutos até ficar pronto
+
+Passo 6 - Acessar o workspace:
+https://[seu-prefixo].cloud.databricks.com</code></pre>
+</section>
+<section id="estrutura-do-workspace" class="slide level2 scrollable">
+<h2>Estrutura do workspace</h2>
+<p><strong>Após entrar no workspace, você verá no menu lateral:</strong></p>
+<ul>
+<li><strong>Catalog:</strong> navegue pelo Unity Catalog: catálogos, schemas e tabelas</li>
+<li><strong>SQL Editor:</strong> execute SQL diretamente no browser</li>
+<li><strong>Notebooks:</strong> escreva R, Python, SQL e Scala</li>
+<li><strong>Compute:</strong> gerencie o compute serverless (Free Edition não tem clusters)</li>
+<li><strong>Workflows:</strong> agendamento de jobs</li>
+</ul>
+<p><strong>Para esta aula, o mais importante é localizar:</strong></p>
+<ol type="1">
+<li>O <strong>SQL Warehouse</strong>, necessário para conectar com <code>brickster</code> via DBI</li>
+<li>O catálogo <strong><code>samples</code></strong>, com datasets de amostra disponíveis para todos</li>
+</ol>
+</section>
+<section id="localizando-o-warehouse_id" class="slide level2">
+<h2>Localizando o warehouse_id</h2>
+<p>O <code>warehouse_id</code> é necessário para conectar via DBI. Para encontrá-lo:</p>
+<pre><code>No workspace Databricks:
+1. Clicar em "SQL Warehouses" no menu lateral
+2. Clicar no warehouse "Serverless Starter Warehouse"
+3. Ir na aba "Connection details"
+4. Copiar o valor de "HTTP Path"
+   Exemplo: /sql/1.0/warehouses/abc123def456
+
+O warehouse_id é a parte final:
+abc123def456</code></pre>
+</section>
+<section id="os-datasets-de-amostra" class="slide level2">
+<h2>Os datasets de amostra</h2>
+<p>O catálogo <code>samples</code> contém datasets gratuitos disponíveis em qualquer workspace Databricks:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tabela</th>
+<th>Descrição</th>
+<th>Linhas aprox.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>samples.nyctaxi.trips</code></td>
+<td>Viagens de táxi em Nova York</td>
+<td>21.000</td>
+</tr>
+<tr class="even">
+<td><code>samples.tpch.orders</code></td>
+<td>Pedidos de benchmark TPC-H</td>
+<td>1,5 milhão</td>
+</tr>
+<tr class="odd">
+<td><code>samples.tpch.lineitem</code></td>
+<td>Itens de pedido TPC-H</td>
+<td>6 milhões</td>
+</tr>
+<tr class="even">
+<td><code>samples.tpch.customer</code></td>
+<td>Clientes TPC-H</td>
+<td>150.000</td>
+</tr>
+<tr class="odd">
+<td><code>samples.lending_club.loan_stats</code></td>
+<td>Empréstimos Lending Club</td>
+<td>2,2 milhões</td>
+</tr>
+</tbody>
+</table>
+<p>Para esta aula usamos <code>samples.nyctaxi.trips</code> e <code>samples.tpch.orders</code>.</p>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-4" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 4</h1>
+
+</section>
+<section id="o-pacote-brickster" class="slide level2">
+<h2>O pacote brickster</h2>
+</section></section>
+<section id="o-que-é-o-brickster" class="slide level2">
+<h2>O que é o brickster</h2>
+<p><strong>brickster</strong> é o toolkit R oficial para Databricks, publicado no CRAN em 2025. Foi desenvolvido pela equipe de engenharia do Databricks especificamente para usuários R.</p>
+<p>O que ele oferece:</p>
+<ul>
+<li><strong>DBI backend nativo:</strong> sem instalação de ODBC ou JDBC</li>
+<li><strong>Wrappers para a API REST do Databricks:</strong> clusters, warehouses, volumes, jobs</li>
+<li><strong>Integração com o RStudio:</strong> painel de conexões com navegação do workspace</li>
+<li><strong>OAuth U2M:</strong> autenticação segura sem precisar gerar tokens manualmente</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">install.packages</span>(<span class="st">"brickster"</span>)</span>
+<span id="cb6-2"><a></a><span class="fu">library</span>(brickster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="configurando-as-credenciais-com-.renviron" class="slide level2">
+<h2>Configurando as credenciais com .Renviron</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>()</span>
+<span id="cb7-2"><a></a></span>
+<span id="cb7-3"><a></a><span class="co"># Adicionar as seguintes variáveis:</span></span>
+<span id="cb7-4"><a></a><span class="co"># DATABRICKS_HOST=seu-prefixo.cloud.databricks.com</span></span>
+<span id="cb7-5"><a></a><span class="co"># DATABRICKS_TOKEN=dapi...  (Personal Access Token)</span></span>
+<span id="cb7-6"><a></a><span class="co"># DATABRICKS_WSID=123456789012345  (Workspace ID)</span></span>
+<span id="cb7-7"><a></a></span>
+<span id="cb7-8"><a></a><span class="co"># Após salvar, reiniciar o R:</span></span>
+<span id="cb7-9"><a></a><span class="co"># CTRL + SHIFT + F10 (Windows/Linux)</span></span>
+<span id="cb7-10"><a></a><span class="co"># CMD + SHIFT + F10 (macOS)</span></span>
+<span id="cb7-11"><a></a></span>
+<span id="cb7-12"><a></a><span class="fu">Sys.getenv</span>(<span class="st">"DATABRICKS_HOST"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="como-gerar-o-personal-access-token" class="slide level2">
+<h2>Como gerar o Personal Access Token</h2>
+<pre><code>No workspace Databricks:
+
+1. Clicar no seu nome no canto superior direito
+2. Selecionar "Settings"
+3. Ir em "Developer" → "Access tokens"
+4. Clicar em "Generate new token"
+5. Dar um nome (ex: "R_brickster") e definir a validade
+6. Copiar o token gerado (começa com "dapi...")
+7. Colar no .Renviron como DATABRICKS_TOKEN
+
+O token só aparece uma vez.
+Salve imediatamente no .Renviron.</code></pre>
+</section>
+<section id="como-encontrar-o-workspace-id" class="slide level2">
+<h2>Como encontrar o Workspace ID</h2>
+<pre><code>No workspace Databricks:
+
+1. Acessar a URL do workspace no navegador
+   Exemplo: https://adb-1234567890123456.7.azuredatabricks.net
+
+2. O Workspace ID são os números após "adb-"
+   Neste exemplo: 1234567890123456
+
+Alternativa:
+1. Settings → "General"
+2. Procurar "Workspace ID" na página
+
+Colar no .Renviron como DATABRICKS_WSID</code></pre>
+</section>
+<section id="verificando-a-conexão-com-open_workspace" class="slide level2">
+<h2>Verificando a conexão com open_workspace()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">library</span>(brickster)</span>
+<span id="cb10-2"><a></a></span>
+<span id="cb10-3"><a></a><span class="fu">open_workspace</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-painel-de-conexões-do-rstudio" class="slide level2">
+<h2>Output: painel de conexões do RStudio</h2>
+<p>Após <code>open_workspace()</code>, o painel <strong>Connections</strong> do RStudio mostra:</p>
+<pre><code>Databricks Workspace
+└── Catalogs
+    ├── hive_metastore
+    │   └── default
+    ├── samples
+    │   ├── lending_club
+    │   │   └── loan_stats
+    │   ├── nyctaxi
+    │   │   └── trips
+    │   └── tpch
+    │       ├── customer
+    │       ├── lineitem
+    │       ├── nation
+    │       ├── orders
+    │       └── region
+    └── [seu workspace]</code></pre>
+<p>Clique em qualquer tabela para visualizar as colunas e tipos diretamente no RStudio.</p>
+</section>
+<section id="listando-sql-warehouses-disponíveis" class="slide level2">
+<h2>Listando SQL Warehouses disponíveis</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>warehouses <span class="ot">&lt;-</span> <span class="fu">db_sql_warehouse_list</span>()</span>
+<span id="cb12-2"><a></a></span>
+<span id="cb12-3"><a></a>warehouses <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a></a>  <span class="fu">select</span>(id, name, state, cluster_size, warehouse_type)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-sql-warehouses-disponíveis" class="slide level2">
+<h2>Output: SQL Warehouses disponíveis</h2>
+<pre><code># A tibble: 1 × 5
+  id               name                         state   cluster_size warehouse_type
+  &lt;chr&gt;            &lt;chr&gt;                        &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;
+1 abc123def456789  Serverless Starter Warehouse RUNNING Small        PRO</code></pre>
+<p>O campo <code>id</code> é o <code>warehouse_id</code> necessário para <code>dbConnect()</code>. O estado <code>RUNNING</code> indica que o warehouse está ativo e pronto para receber consultas.</p>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-5" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 5</h1>
+
+</section>
+<section id="dbi-e-dbplyr-com-databricks" class="slide level2">
+<h2>DBI e dbplyr com Databricks</h2>
+</section></section>
+<section id="conectando-com-databrickssql" class="slide level2">
+<h2>Conectando com DatabricksSQL()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">library</span>(brickster)</span>
+<span id="cb14-2"><a></a><span class="fu">library</span>(DBI)</span>
+<span id="cb14-3"><a></a><span class="fu">library</span>(dbplyr)</span>
+<span id="cb14-4"><a></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb14-5"><a></a></span>
+<span id="cb14-6"><a></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(</span>
+<span id="cb14-7"><a></a>  <span class="at">drv          =</span> <span class="fu">DatabricksSQL</span>(),</span>
+<span id="cb14-8"><a></a>  <span class="at">warehouse_id =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DATABRICKS_WAREHOUSE_ID"</span>),</span>
+<span id="cb14-9"><a></a>  <span class="at">catalog      =</span> <span class="st">"samples"</span>)</span>
+<span id="cb14-10"><a></a></span>
+<span id="cb14-11"><a></a>con</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-objeto-de-conexão-databrickssql" class="slide level2">
+<h2>Output: objeto de conexão DatabricksSQL</h2>
+<pre><code>&lt;DatabricksSQL&gt;
+  warehouse_id: abc123def456789
+  catalog:      samples
+  schema:       default
+  host:         seu-prefixo.cloud.databricks.com</code></pre>
+</section>
+<section id="inspecionando-as-tabelas-disponíveis" class="slide level2">
+<h2>Inspecionando as tabelas disponíveis</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">dbListTables</span>(con)</span>
+<span id="cb16-2"><a></a></span>
+<span id="cb16-3"><a></a><span class="fu">dbExistsTable</span>(con, <span class="fu">I</span>(<span class="st">"samples.nyctaxi.trips"</span>))</span>
+<span id="cb16-4"><a></a></span>
+<span id="cb16-5"><a></a><span class="fu">dbListFields</span>(con, <span class="fu">I</span>(<span class="st">"samples.nyctaxi.trips"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-colunas-da-tabela-nyctaxi.trips" class="slide level2">
+<h2>Output: colunas da tabela nyctaxi.trips</h2>
+<pre><code> [1] "tpep_pickup_datetime"   "tpep_dropoff_datetime"
+ [3] "trip_distance"          "fare_amount"
+ [5] "pickup_zip"             "dropoff_zip"</code></pre>
+</section>
+<section id="sql-direto-com-dbgetquery" class="slide level2">
+<h2>SQL direto com dbGetQuery()</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb18-2"><a></a><span class="st">  SELECT   pickup_zip,</span></span>
+<span id="cb18-3"><a></a><span class="st">           COUNT(*)                      AS total_viagens,</span></span>
+<span id="cb18-4"><a></a><span class="st">           ROUND(AVG(trip_distance), 2)  AS distancia_media,</span></span>
+<span id="cb18-5"><a></a><span class="st">           ROUND(AVG(fare_amount), 2)    AS tarifa_media,</span></span>
+<span id="cb18-6"><a></a><span class="st">           ROUND(MEDIAN(fare_amount), 2) AS tarifa_mediana</span></span>
+<span id="cb18-7"><a></a><span class="st">  FROM     samples.nyctaxi.trips</span></span>
+<span id="cb18-8"><a></a><span class="st">  WHERE    fare_amount &gt; 0</span></span>
+<span id="cb18-9"><a></a><span class="st">  AND      trip_distance &gt; 0</span></span>
+<span id="cb18-10"><a></a><span class="st">  GROUP BY pickup_zip</span></span>
+<span id="cb18-11"><a></a><span class="st">  ORDER BY total_viagens DESC</span></span>
+<span id="cb18-12"><a></a><span class="st">  LIMIT    10"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-consulta-sql-sobre-nyctaxi.trips" class="slide level2">
+<h2>Output: consulta SQL sobre nyctaxi.trips</h2>
+<pre><code>   pickup_zip total_viagens distancia_media tarifa_media tarifa_mediana
+1       10001          1823            1.82         9.84           8.50
+2       10036          1644            1.21         8.72           7.50
+3       10019          1589            1.45         9.15           8.00
+4       10017          1421            1.63         9.88           8.50
+5       10022          1387            1.38         8.94           8.00
+6       10011          1298            1.71         9.42           8.50
+7       10014          1187            1.55         8.67           7.50
+8       10013          1156            1.82         9.21           8.00
+9       10016          1102            1.47         9.03           8.00
+10      10018          1089            1.29         8.45           7.50</code></pre>
+</section>
+<section id="tbl-pipeline-dplyr-sobre-tabela-remota" class="slide level2">
+<h2>tbl(): pipeline dplyr sobre tabela remota</h2>
+<div id="tbl-codigo" class="cell quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-codigo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1
+</figcaption>
+<div aria-describedby="tbl-codigo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>trips_db <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="fu">I</span>(<span class="st">"samples.nyctaxi.trips"</span>))</span>
+<span id="cb20-2"><a></a></span>
+<span id="cb20-3"><a></a>resultado <span class="ot">&lt;-</span> trips_db <span class="sc">|&gt;</span></span>
+<span id="cb20-4"><a></a>  <span class="fu">filter</span>(fare_amount <span class="sc">&gt;</span> <span class="dv">0</span>, trip_distance <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-5"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb20-6"><a></a>    <span class="at">velocidade_mph =</span> trip_distance <span class="sc">/</span></span>
+<span id="cb20-7"><a></a>      (<span class="fu">as.numeric</span>(</span>
+<span id="cb20-8"><a></a>        tpep_dropoff_datetime <span class="sc">-</span> tpep_pickup_datetime) <span class="sc">/</span> <span class="dv">3600</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb20-9"><a></a>  <span class="fu">group_by</span>(pickup_zip) <span class="sc">|&gt;</span></span>
+<span id="cb20-10"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb20-11"><a></a>    <span class="at">total_viagens =</span> <span class="fu">n</span>(),</span>
+<span id="cb20-12"><a></a>    <span class="at">distancia_media =</span> <span class="fu">round</span>(<span class="fu">mean</span>(trip_distance, </span>
+<span id="cb20-13"><a></a>                                 <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
+<span id="cb20-14"><a></a>    <span class="at">tarifa_media =</span> <span class="fu">round</span>(<span class="fu">mean</span>(fare_amount,   </span>
+<span id="cb20-15"><a></a>                              <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
+<span id="cb20-16"><a></a>                              <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-17"><a></a>  <span class="fu">filter</span>(total_viagens <span class="sc">&gt;=</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-18"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tarifa_media)) <span class="sc">|&gt;</span></span>
+<span id="cb20-19"><a></a>  <span class="fu">collect</span>()</span>
+<span id="cb20-20"><a></a></span>
+<span id="cb20-21"><a></a><span class="fu">glimpse</span>(resultado)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="output-resultado-do-pipeline-dplyr" class="slide level2">
+<h2>Output: resultado do pipeline dplyr</h2>
+<pre><code>Rows: 42
+Columns: 4
+$ pickup_zip      &lt;int&gt; 10162, 10069, 10044, 10282, 10004, ...
+$ total_viagens   &lt;int&gt; 112, 287, 198, 156, 445, ...
+$ distancia_media &lt;dbl&gt; 3.42, 2.87, 2.14, 2.98, 1.87, ...
+$ tarifa_media    &lt;dbl&gt; 18.94, 15.42, 13.87, 13.21, 12.98, ...</code></pre>
+</section>
+<section id="show_query-sql-gerado-pelo-dbplyr" class="slide level2">
+<h2>show_query(): SQL gerado pelo dbplyr</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>trips_db <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a></a>  <span class="fu">filter</span>(fare_amount <span class="sc">&gt;</span> <span class="dv">0</span>, trip_distance <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-3"><a></a>  <span class="fu">group_by</span>(pickup_zip) <span class="sc">|&gt;</span></span>
+<span id="cb22-4"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb22-5"><a></a>    <span class="at">total_viagens =</span> <span class="fu">n</span>(),</span>
+<span id="cb22-6"><a></a>    <span class="at">tarifa_media  =</span> <span class="fu">mean</span>(fare_amount, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb22-7"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-8"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tarifa_media)) <span class="sc">|&gt;</span></span>
+<span id="cb22-9"><a></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-sql-gerado-para-databricks-sql" class="slide level2">
+<h2>Output: SQL gerado para Databricks SQL</h2>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a></a><span class="kw">SELECT</span></span>
+<span id="cb23-2"><a></a>  `pickup_zip`,</span>
+<span id="cb23-3"><a></a>  <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> `total_viagens`,</span>
+<span id="cb23-4"><a></a>  <span class="fu">AVG</span>(`fare_amount`) <span class="kw">AS</span> `tarifa_media`</span>
+<span id="cb23-5"><a></a><span class="kw">FROM</span> `samples`.`nyctaxi`.`trips`</span>
+<span id="cb23-6"><a></a><span class="kw">WHERE</span> (`fare_amount` <span class="op">&gt;</span> <span class="fl">0.0</span>) <span class="kw">AND</span> (`trip_distance` <span class="op">&gt;</span> <span class="fl">0.0</span>)</span>
+<span id="cb23-7"><a></a><span class="kw">GROUP</span> <span class="kw">BY</span> `pickup_zip`</span>
+<span id="cb23-8"><a></a><span class="kw">ORDER</span> <span class="kw">BY</span> `tarifa_media` <span class="kw">DESC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="código-visualização-com-ggplot2" class="slide level2">
+<h2>Código: visualização com ggplot2</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>resultado <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a></a>  <span class="fu">filter</span>(total_viagens <span class="sc">&gt;=</span> <span class="dv">200</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(</span>
+<span id="cb24-4"><a></a>    <span class="at">x     =</span> distancia_media,</span>
+<span id="cb24-5"><a></a>    <span class="at">y     =</span> tarifa_media,</span>
+<span id="cb24-6"><a></a>    <span class="at">size  =</span> total_viagens,</span>
+<span id="cb24-7"><a></a>    <span class="at">color =</span> tarifa_media)) <span class="sc">+</span></span>
+<span id="cb24-8"><a></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb24-9"><a></a>  <span class="fu">scale_color_gradient</span>(</span>
+<span id="cb24-10"><a></a>    <span class="at">low  =</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
+<span id="cb24-11"><a></a>    <span class="at">high =</span> cores_cafe[<span class="st">"marrom"</span>]) <span class="sc">+</span></span>
+<span id="cb24-12"><a></a>  <span class="fu">scale_size_continuous</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">12</span>)) <span class="sc">+</span></span>
+<span id="cb24-13"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb24-14"><a></a>    <span class="at">title    =</span> <span class="st">"Distância média x tarifa média por CEP de origem"</span>,</span>
+<span id="cb24-15"><a></a>    <span class="at">subtitle =</span> <span class="st">"Dados: samples.nyctaxi.trips - Databricks Free Edition"</span>,</span>
+<span id="cb24-16"><a></a>    <span class="at">x        =</span> <span class="st">"Distância média (milhas)"</span>,</span>
+<span id="cb24-17"><a></a>    <span class="at">y        =</span> <span class="st">"Tarifa média (US$)"</span>,</span>
+<span id="cb24-18"><a></a>    <span class="at">size     =</span> <span class="st">"Total de viagens"</span>,</span>
+<span id="cb24-19"><a></a>    <span class="at">color    =</span> <span class="st">"Tarifa média"</span>,</span>
+<span id="cb24-20"><a></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb24-21"><a></a>  tema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gráfico-distância-x-tarifa-por-cep" class="slide level2">
+<h2>Gráfico: distância x tarifa por CEP</h2>
+
+<img data-src="aula36_databricks_v2_files/figure-revealjs/ggplot-output-1.png" width="960" class="r-stretch"></section>
+<section id="análise-sobre-tpch.orders-dataset-maior" class="slide level2">
+<h2>Análise sobre tpch.orders (dataset maior)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb25-2"><a></a>orders_db <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="fu">I</span>(<span class="st">"samples.tpch.orders"</span>))</span>
+<span id="cb25-3"><a></a></span>
+<span id="cb25-4"><a></a>pedidos_resumo <span class="ot">&lt;-</span> orders_db <span class="sc">|&gt;</span></span>
+<span id="cb25-5"><a></a>  <span class="fu">filter</span>(o_orderstatus <span class="sc">!=</span> <span class="st">"F"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-6"><a></a>  <span class="fu">group_by</span>(o_orderstatus, o_orderpriority) <span class="sc">|&gt;</span></span>
+<span id="cb25-7"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb25-8"><a></a>    <span class="at">total_pedidos =</span> <span class="fu">n</span>(),</span>
+<span id="cb25-9"><a></a>    <span class="at">valor_total   =</span> <span class="fu">round</span>(<span class="fu">sum</span>(o_totalprice,  <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
+<span id="cb25-10"><a></a>    <span class="at">valor_medio   =</span> <span class="fu">round</span>(<span class="fu">mean</span>(o_totalprice, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
+<span id="cb25-11"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-12"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(valor_total)) <span class="sc">|&gt;</span></span>
+<span id="cb25-13"><a></a>  <span class="fu">collect</span>()</span>
+<span id="cb25-14"><a></a></span>
+<span id="cb25-15"><a></a>pedidos_resumo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-resumo-de-pedidos-tpc-h" class="slide level2">
+<h2>Output: resumo de pedidos TPC-H</h2>
+<pre><code># A tibble: 10 × 5
+   o_orderstatus o_orderpriority  total_pedidos valor_total  valor_medio
+   &lt;chr&gt;         &lt;chr&gt;                    &lt;int&gt;       &lt;dbl&gt;        &lt;dbl&gt;
+ 1 O             1-URGENT               137842  20847293847       151250
+ 2 O             2-HIGH                 137921  20831847392       151098
+ 3 O             3-MEDIUM               138214  20893741829       151164
+ 4 O             4-NOT SPECIFIED        137492  20784938471       151167
+ 5 O             5-LOW                  137981  20853928471       151136</code></pre>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-6" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 6</h1>
+
+</section>
+<section id="volumes-transferindo-arquivos" class="slide level2">
+<h2>Volumes: Transferindo Arquivos</h2>
+</section></section>
+<section id="o-que-são-volumes-no-unity-catalog" class="slide level2">
+<h2>O que são volumes no Unity Catalog</h2>
+<p><strong>Volumes</strong> são o sistema de armazenamento de arquivos não estruturados dentro do Unity Catalog. Eles permitem armazenar CSVs, Parquet, modelos, imagens e qualquer tipo de arquivo dentro do Databricks com controle de acesso.</p>
+<p>Caminho de um volume:</p>
+<pre><code>/Volumes/[catalog]/[schema]/[volume_name]/arquivo.csv</code></pre>
+<p>Para a Free Edition, o caminho padrão é:</p>
+<pre><code>/Volumes/[seu_workspace]/default/[volume_name]/</code></pre>
+</section>
+<section id="criando-um-volume-no-workspace" class="slide level2">
+<h2>Criando um volume no workspace</h2>
+<pre><code>No workspace Databricks:
+
+1. Ir em "Catalog" no menu lateral
+2. Expandir seu workspace → "default"
+3. Clicar em "Create" → "Volume"
+4. Nome: "dados_r"
+5. Tipo: Managed Volume
+6. Confirmar
+
+O volume estará disponível em:
+/Volumes/[workspace]/default/dados_r/</code></pre>
+</section>
+<section id="db_volume_write-enviar-arquivo-para-o-databricks" class="slide level2">
+<h2>db_volume_write(): enviar arquivo para o Databricks</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">library</span>(brickster)</span>
+<span id="cb30-2"><a></a></span>
+<span id="cb30-3"><a></a>resumo_local <span class="ot">&lt;-</span> resultado <span class="sc">|&gt;</span></span>
+<span id="cb30-4"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tarifa_media)) <span class="sc">|&gt;</span></span>
+<span id="cb30-5"><a></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">20</span>)</span>
+<span id="cb30-6"><a></a></span>
+<span id="cb30-7"><a></a>arquivo_temp <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".csv"</span>)</span>
+<span id="cb30-8"><a></a><span class="fu">write_csv</span>(resumo_local, arquivo_temp)</span>
+<span id="cb30-9"><a></a></span>
+<span id="cb30-10"><a></a><span class="fu">db_volume_write</span>(</span>
+<span id="cb30-11"><a></a>  <span class="at">path =</span> <span class="st">"/Volumes/[workspace]/default/dados_r/resumo_nyctaxi.csv"</span>,</span>
+<span id="cb30-12"><a></a>  <span class="at">file =</span> arquivo_temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-arquivo-enviado-ao-databricks" class="slide level2">
+<h2>Output: arquivo enviado ao Databricks</h2>
+<pre><code>Verificando no Databricks:
+/Volumes/[workspace]/default/dados_r/
+  └── resumo_nyctaxi.csv (42 linhas, 4 colunas)</code></pre>
+<p>O arquivo agora está disponível no Databricks. Outros usuários com permissão de leitura no volume podem acessá-lo diretamente, sem e-mail, sem compartilhamento de arquivo, sem servidor FTP.</p>
+</section>
+<section id="db_volume_read-baixar-arquivo-do-databricks" class="slide level2">
+<h2>db_volume_read(): baixar arquivo do Databricks</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>arquivo_local <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".csv"</span>)</span>
+<span id="cb32-2"><a></a></span>
+<span id="cb32-3"><a></a><span class="fu">db_volume_read</span>(</span>
+<span id="cb32-4"><a></a>  <span class="at">path =</span> <span class="st">"/Volumes/[workspace]/default/dados_r/resumo_nyctaxi.csv"</span>,</span>
+<span id="cb32-5"><a></a>  <span class="at">file =</span> arquivo_local)</span>
+<span id="cb32-6"><a></a></span>
+<span id="cb32-7"><a></a>dados_do_databricks <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(arquivo_local,</span>
+<span id="cb32-8"><a></a>                                <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb32-9"><a></a></span>
+<span id="cb32-10"><a></a><span class="fu">glimpse</span>(dados_do_databricks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-dados-lidos-do-databricks" class="slide level2">
+<h2>Output: dados lidos do Databricks</h2>
+<pre><code>Rows: 20
+Columns: 4
+$ pickup_zip      &lt;dbl&gt; 10162, 10069, 10044, 10282, 10004 ...
+$ total_viagens   &lt;dbl&gt; 112, 287, 198, 156, 445 ...
+$ distancia_media &lt;dbl&gt; 3.42, 2.87, 2.14, 2.98, 1.87 ...
+$ tarifa_media    &lt;dbl&gt; 18.94, 15.42, 13.87, 13.21, 12.98 ...</code></pre>
+</section>
+<section id="fluxo-completo-com-volumes" class="slide level2">
+<h2>Fluxo completo com volumes</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="co"># R busca dados do Databricks via DBI</span></span>
+<span id="cb34-2"><a></a>dados_raw <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="fu">I</span>(<span class="st">"samples.nyctaxi.trips"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-3"><a></a>  <span class="fu">collect</span>()</span>
+<span id="cb34-4"><a></a></span>
+<span id="cb34-5"><a></a><span class="co"># R processa localmente</span></span>
+<span id="cb34-6"><a></a>dados_processados <span class="ot">&lt;-</span> dados_raw <span class="sc">|&gt;</span></span>
+<span id="cb34-7"><a></a>  <span class="fu">filter</span>(fare_amount <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-8"><a></a>  <span class="fu">mutate</span>(<span class="at">categoria_tarifa =</span> <span class="fu">case_when</span>(</span>
+<span id="cb34-9"><a></a>    fare_amount <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">"Baixa"</span>,</span>
+<span id="cb34-10"><a></a>    fare_amount <span class="sc">&lt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="st">"Média"</span>,</span>
+<span id="cb34-11"><a></a>    <span class="cn">TRUE</span>             <span class="sc">~</span> <span class="st">"Alta"</span>))</span>
+<span id="cb34-12"><a></a></span>
+<span id="cb34-13"><a></a><span class="co"># R envia resultado de volta ao Databricks</span></span>
+<span id="cb34-14"><a></a>arquivo_temp <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".csv"</span>)</span>
+<span id="cb34-15"><a></a><span class="fu">write_csv</span>(dados_processados, arquivo_temp)</span>
+<span id="cb34-16"><a></a></span>
+<span id="cb34-17"><a></a><span class="fu">db_volume_write</span>(</span>
+<span id="cb34-18"><a></a>  <span class="at">path =</span> <span class="st">"/Volumes/[workspace]/default/dados_r/tarifas_categorias.csv"</span>,</span>
+<span id="cb34-19"><a></a>  <span class="at">file =</span> arquivo_temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-7" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 7</h1>
+
+</section>
+<section id="sparklyr-com-databricks-serverless" class="slide level2">
+<h2>sparklyr com Databricks Serverless</h2>
+</section></section>
+<section id="o-que-é-o-sparklyr" class="slide level2">
+<h2>O que é o sparklyr</h2>
+<p><strong>sparklyr</strong> é o pacote R que permite usar Apache Spark com sintaxe dplyr. É mantido pela Posit e é o padrão recomendado para R + Spark (o SparkR foi depreciado no Spark 4.x).</p>
+<p>O <strong>pysparklyr</strong> é o backend do <code>sparklyr</code> para Databricks Connect v2: usa Python por baixo via <code>reticulate</code> para estabelecer a conexão com o Spark.</p>
+</section>
+<section id="instalação-sparklyr-com-pysparklyr" class="slide level2">
+<h2>Instalação: sparklyr com pysparklyr</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">install.packages</span>(<span class="st">"sparklyr"</span>)</span>
+<span id="cb35-2"><a></a><span class="fu">install.packages</span>(<span class="st">"pysparklyr"</span>)</span>
+<span id="cb35-3"><a></a></span>
+<span id="cb35-4"><a></a><span class="fu">library</span>(reticulate)</span>
+<span id="cb35-5"><a></a><span class="fu">use_virtualenv</span>(<span class="st">"databricks-env"</span>, <span class="at">required =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb35-6"><a></a><span class="fu">virtualenv_create</span>(<span class="st">"databricks-env"</span>)</span>
+<span id="cb35-7"><a></a><span class="fu">py_install</span>(<span class="st">"databricks-connect==14.3.*"</span>,</span>
+<span id="cb35-8"><a></a>           <span class="at">envname =</span> <span class="st">"databricks-env"</span>,</span>
+<span id="cb35-9"><a></a>           <span class="at">pip     =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="conectando-ao-databricks-serverless-com-sparklyr" class="slide level2">
+<h2>Conectando ao Databricks serverless com sparklyr</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">library</span>(sparklyr)</span>
+<span id="cb36-2"><a></a><span class="fu">library</span>(pysparklyr)</span>
+<span id="cb36-3"><a></a></span>
+<span id="cb36-4"><a></a>sc <span class="ot">&lt;-</span> <span class="fu">spark_connect</span>(</span>
+<span id="cb36-5"><a></a>  <span class="at">method     =</span> <span class="st">"databricks_connect"</span>,</span>
+<span id="cb36-6"><a></a>  <span class="at">serverless =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb36-7"><a></a>  <span class="at">version    =</span> <span class="st">"14.3"</span>)</span>
+<span id="cb36-8"><a></a></span>
+<span id="cb36-9"><a></a>sc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-conexão-sparklyr-estabelecida" class="slide level2">
+<h2>Output: conexão sparklyr estabelecida</h2>
+<pre><code>spark_connection
+  Method: databricks_connect
+  App name: sparklyr
+  State: open
+  Version: 3.5.0 (Spark 3.5.0)
+  Serverless: TRUE</code></pre>
+</section>
+<section id="lendo-tabela-do-databricks-com-sparklyr" class="slide level2">
+<h2>Lendo tabela do Databricks com sparklyr</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>trips_spark <span class="ot">&lt;-</span> <span class="fu">spark_read_table</span>(</span>
+<span id="cb38-2"><a></a>  sc,</span>
+<span id="cb38-3"><a></a>  <span class="at">name =</span> <span class="st">"samples.nyctaxi.trips"</span>)</span>
+<span id="cb38-4"><a></a></span>
+<span id="cb38-5"><a></a><span class="fu">class</span>(trips_spark)</span>
+<span id="cb38-6"><a></a><span class="fu">sdf_nrow</span>(trips_spark)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-objeto-spark-dataframe" class="slide level2">
+<h2>Output: objeto Spark DataFrame</h2>
+<pre><code>[1] "tbl_spark" "tbl_sql" "tbl_lazy" "tbl"
+
+[1] 21932</code></pre>
+</section>
+<section id="pipeline-dplyr-sobre-spark-dataframe" class="slide level2">
+<h2>Pipeline dplyr sobre Spark DataFrame</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>resultado_spark <span class="ot">&lt;-</span> trips_spark <span class="sc">|&gt;</span></span>
+<span id="cb40-2"><a></a>  <span class="fu">filter</span>(fare_amount <span class="sc">&gt;</span> <span class="dv">0</span>, trip_distance <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-3"><a></a>  <span class="fu">group_by</span>(pickup_zip) <span class="sc">|&gt;</span></span>
+<span id="cb40-4"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb40-5"><a></a>    <span class="at">total         =</span> <span class="fu">n</span>(),</span>
+<span id="cb40-6"><a></a>    <span class="at">distancia_med =</span> <span class="fu">mean</span>(trip_distance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb40-7"><a></a>    <span class="at">tarifa_med    =</span> <span class="fu">mean</span>(fare_amount,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb40-8"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-9"><a></a>  <span class="fu">filter</span>(total <span class="sc">&gt;=</span> <span class="dv">50</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-10"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tarifa_med)) <span class="sc">|&gt;</span></span>
+<span id="cb40-11"><a></a>  <span class="fu">collect</span>()</span>
+<span id="cb40-12"><a></a></span>
+<span id="cb40-13"><a></a>resultado_spark <span class="sc">|&gt;</span> <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="output-resultado-do-pipeline-spark" class="slide level2">
+<h2>Output: resultado do pipeline Spark</h2>
+<pre><code># A tibble: 8 × 4
+  pickup_zip total distancia_med tarifa_med
+       &lt;int&gt; &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+1      10162   112          3.42      18.94
+2      10069   287          2.87      15.42
+3      10044   198          2.14      13.87
+4      10282   156          2.98      13.21
+5      10004   445          1.87      12.98
+6      10282   203          2.54      12.74
+7      10005   318          2.31      12.43
+8      10280   178          2.19      11.98</code></pre>
+</section>
+<section id="limitações-do-sparklyr-serverless" class="slide level2">
+<h2>Limitações do sparklyr serverless</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="co"># FUNCIONA com serverless:</span></span>
+<span id="cb42-2"><a></a>trips_spark <span class="sc">|&gt;</span></span>
+<span id="cb42-3"><a></a>  <span class="fu">filter</span>(fare_amount <span class="sc">&gt;</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb42-4"><a></a>  <span class="fu">group_by</span>(pickup_zip) <span class="sc">|&gt;</span></span>
+<span id="cb42-5"><a></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb42-6"><a></a>  <span class="fu">collect</span>()</span>
+<span id="cb42-7"><a></a></span>
+<span id="cb42-8"><a></a><span class="co"># NÃO FUNCIONA com serverless:</span></span>
+<span id="cb42-9"><a></a><span class="co"># spark_apply() - o ambiente serverless não tem R instalado</span></span>
+<span id="cb42-10"><a></a>trips_spark <span class="sc">|&gt;</span></span>
+<span id="cb42-11"><a></a>  <span class="fu">spark_apply</span>(<span class="cf">function</span>(df) {</span>
+<span id="cb42-12"><a></a>    df <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">flag =</span> fare_amount <span class="sc">&gt;</span> <span class="dv">10</span>)</span>
+<span id="cb42-13"><a></a>  })</span>
+<span id="cb42-14"><a></a><span class="co"># Error: spark_apply() is not supported in serverless environment</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p><code>spark_apply()</code> não funciona na Free Edition porque o compute serverless não tem R instalado. Para funções R arbitrárias sobre dados Spark, é necessário um cluster dedicado com R instalado, disponível nos planos pagos.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="encerrando-as-conexões" class="slide level2">
+<h2>Encerrando as conexões</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="fu">spark_disconnect</span>(sc)</span>
+<span id="cb43-2"><a></a></span>
+<span id="cb43-3"><a></a><span class="fu">dbDisconnect</span>(con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-8" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 8</h1>
+
+</section>
+<section id="o-fluxo-completo-r-databricks" class="slide level2">
+<h2>O Fluxo Completo R + Databricks</h2>
+</section></section>
+<section id="script-completo" class="slide level2">
+<h2>Script completo</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">library</span>(brickster)</span>
+<span id="cb44-2"><a></a><span class="fu">library</span>(DBI)</span>
+<span id="cb44-3"><a></a><span class="fu">library</span>(dbplyr)</span>
+<span id="cb44-4"><a></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb44-5"><a></a></span>
+<span id="cb44-6"><a></a><span class="co"># 1. Conectar ao Databricks</span></span>
+<span id="cb44-7"><a></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(</span>
+<span id="cb44-8"><a></a>  <span class="at">drv          =</span> <span class="fu">DatabricksSQL</span>(),</span>
+<span id="cb44-9"><a></a>  <span class="at">warehouse_id =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DATABRICKS_WAREHOUSE_ID"</span>),</span>
+<span id="cb44-10"><a></a>  <span class="at">catalog      =</span> <span class="st">"samples"</span>)</span>
+<span id="cb44-11"><a></a></span>
+<span id="cb44-12"><a></a><span class="co"># 2. Consultar dados do Databricks</span></span>
+<span id="cb44-13"><a></a>dados <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="fu">I</span>(<span class="st">"samples.tpch.orders"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb44-14"><a></a>  <span class="fu">filter</span>(o_orderstatus <span class="sc">==</span> <span class="st">"O"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb44-15"><a></a>  <span class="fu">group_by</span>(o_orderpriority) <span class="sc">|&gt;</span></span>
+<span id="cb44-16"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb44-17"><a></a>    <span class="at">total_pedidos =</span> <span class="fu">n</span>(),</span>
+<span id="cb44-18"><a></a>    <span class="at">valor_medio   =</span> <span class="fu">round</span>(<span class="fu">mean</span>(o_totalprice, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
+<span id="cb44-19"><a></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb44-20"><a></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(valor_medio)) <span class="sc">|&gt;</span></span>
+<span id="cb44-21"><a></a>  <span class="fu">collect</span>()</span>
+<span id="cb44-22"><a></a></span>
+<span id="cb44-23"><a></a><span class="co"># 3. Visualizar com ggplot2</span></span>
+<span id="cb44-24"><a></a>dados <span class="sc">|&gt;</span></span>
+<span id="cb44-25"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(</span>
+<span id="cb44-26"><a></a>    <span class="at">x    =</span> <span class="fu">reorder</span>(o_orderpriority, valor_medio),</span>
+<span id="cb44-27"><a></a>    <span class="at">y    =</span> valor_medio,</span>
+<span id="cb44-28"><a></a>    <span class="at">fill =</span> o_orderpriority)) <span class="sc">+</span></span>
+<span id="cb44-29"><a></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.65</span>, <span class="at">alpha =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb44-30"><a></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb44-31"><a></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb44-32"><a></a>    <span class="at">values =</span> <span class="fu">colorRampPalette</span>(</span>
+<span id="cb44-33"><a></a>      <span class="fu">c</span>(<span class="st">"#E5D3B3"</span>, <span class="st">"#224573"</span>))(<span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb44-34"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb44-35"><a></a>    <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">dollar_format</span>(<span class="at">prefix =</span> <span class="st">"US$ "</span>)) <span class="sc">+</span></span>
+<span id="cb44-36"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb44-37"><a></a>    <span class="at">title    =</span> <span class="st">"Valor médio de pedidos abertos por prioridade"</span>,</span>
+<span id="cb44-38"><a></a>    <span class="at">subtitle =</span> <span class="st">"Dados: samples.tpch.orders - Databricks Free Edition"</span>,</span>
+<span id="cb44-39"><a></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb44-40"><a></a>    <span class="at">y        =</span> <span class="st">"Valor médio do pedido"</span>,</span>
+<span id="cb44-41"><a></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb44-42"><a></a>  tema <span class="sc">+</span></span>
+<span id="cb44-43"><a></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb44-44"><a></a></span>
+<span id="cb44-45"><a></a><span class="co"># 4. Encerrar conexão</span></span>
+<span id="cb44-46"><a></a><span class="fu">dbDisconnect</span>(con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gráfico-valor-médio-por-prioridade-de-pedido" class="slide level2">
+<h2>Gráfico: valor médio por prioridade de pedido</h2>
+
+<img data-src="aula36_databricks_v2_files/figure-revealjs/script-completo-output-1.png" width="960" class="r-stretch"></section>
+<section id="quando-o-r-é-consumidor-e-produtor" class="slide level2">
+<h2>Quando o R é consumidor e produtor</h2>
+<p><strong>R como consumidor (mais comum):</strong></p>
+<pre><code>Databricks transforma dados em escala
+    |
+    | DBI + dbplyr
+    v
+R coleta apenas o resultado final
+    |
+    | ggplot2, tidymodels, gtsummary
+    v
+Análise, modelo, relatório</code></pre>
+<p><strong>R como produtor:</strong></p>
+<pre><code>R processa dados localmente (amostra, experimento)
+    |
+    | db_volume_write()
+    v
+Databricks armazena e compartilha
+    |
+    | Notebooks, dashboards, outros usuários
+    v
+Consumo pelo time</code></pre>
+</section>
+<section class="slide level2">
+
+</section>
+<section>
+<section id="bloco-9" class="title-slide slide level1 center" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 9</h1>
+
+</section>
+<section id="boas-práticas-e-mercado" class="slide level2">
+<h2>Boas Práticas e Mercado</h2>
+</section></section>
+<section id="o-que-o-databricks-não-substitui-no-r" class="slide level2">
+<h2>O que o Databricks não substitui no R</h2>
+<p>O Databricks é uma plataforma de escala. Ele não substitui o que o R faz bem:</p>
+<ul>
+<li><strong>Análise exploratória</strong> com <code>dplyr</code>, <code>ggplot2</code> e <code>skimr</code></li>
+<li><strong>Modelagem estatística</strong> com <code>tidymodels</code> e <code>lme4</code></li>
+<li><strong>Relatórios reproduzíveis</strong> com Quarto</li>
+<li><strong>Visualização interativa</strong> com <code>plotly</code> e <code>leaflet</code></li>
+<li><strong>Tabelas profissionais</strong> com <code>gtsummary</code> e <code>gt</code></li>
+</ul>
+<p>O R e o Databricks são complementares, não concorrentes.</p>
+</section>
+<section id="o-que-o-r-não-substitui-no-databricks" class="slide level2">
+<h2>O que o R não substitui no Databricks</h2>
+<p>O R não escala para o que o Databricks faz:</p>
+<ul>
+<li>Processar <strong>bilhões de linhas</strong> em paralelo</li>
+<li>Ingestão de <strong>streams em tempo real</strong></li>
+<li>Gerenciar <strong>múltiplos usuários</strong> com controle de acesso</li>
+<li>Manter <strong>histórico de versões</strong> de tabelas com Delta Lake</li>
+<li>Orquestrar <strong>pipelines complexos</strong> com Databricks Workflows</li>
+</ul>
+</section>
+<section id="o-perfil-valorizado-no-mercado" class="slide level2">
+<h2>O perfil valorizado no mercado</h2>
+<p><strong>Analytics Engineer que domina R + Databricks:</strong></p>
+<ul>
+<li>Lê e escreve SQL com qualidade (dbt, Databricks SQL)</li>
+<li>Consome dados do Databricks com <code>brickster</code> e <code>dbplyr</code></li>
+<li>Entende o modelo de governança do Unity Catalog</li>
+<li>Produz análises reproduzíveis com Quarto</li>
+<li>Conhece Delta Lake e o modelo de lakehouse</li>
+</ul>
+<p>Esse perfil é raro e bem remunerado no mercado brasileiro de dados.</p>
+</section>
+<section id="erros-comuns" class="slide level2">
+<h2>Erros comuns</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Causa</th>
+<th>Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Error: Cannot find warehouse</code></td>
+<td><code>warehouse_id</code> incorreto</td>
+<td>Verificar com <code>db_sql_warehouse_list()</code></td>
+</tr>
+<tr class="even">
+<td>Autenticação falha</td>
+<td>Token expirado ou incorreto</td>
+<td>Gerar novo token no workspace</td>
+</tr>
+<tr class="odd">
+<td><code>spark_apply()</code> falha</td>
+<td>Serverless não tem R</td>
+<td>Aceitar limitação ou usar plano pago</td>
+</tr>
+<tr class="even">
+<td>Timeout na conexão</td>
+<td>Warehouse inativo</td>
+<td>Aguardar o warehouse inicializar (~30s)</td>
+</tr>
+<tr class="odd">
+<td>Volume não encontrado</td>
+<td>Caminho incorreto</td>
+<td>Verificar a estrutura no Unity Catalog</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="referências" class="slide level2">
+<h2>Referências</h2>
+<ul>
+<li>Documentação <code>brickster</code>: <a href="https://databrickslabs.github.io/brickster">databrickslabs.github.io/brickster</a></li>
+<li>Guia R no Databricks: <a href="https://www.databricks.com/blog/r-you-ready-unlocking-databricks-r-users-2025">databricks.com/blog/r-you-ready-unlocking-databricks-r-users-2025</a></li>
+<li>Free Edition: <a href="https://docs.databricks.com/aws/en/getting-started/free-edition">docs.databricks.com/aws/en/getting-started/free-edition</a></li>
+<li>Limitações Free Edition: <a href="https://docs.databricks.com/aws/en/getting-started/free-edition-limitations">docs.databricks.com/aws/en/getting-started/free-edition-limitations</a></li>
+<li>sparklyr + Databricks: <a href="https://spark.posit.co/deployment/databricks-connect.html">spark.posit.co/deployment/databricks-connect</a></li>
+<li>Cadastro Free Edition: <a href="https://www.databricks.com/try-databricks">databricks.com/try-databricks</a></li>
+</ul>
+</section>
+<section id="obrigada" class="slide level2">
+<h2>Obrigada!</h2>
+
+<img data-src="imagens/comunidade.png" class="quarto-figure quarto-figure-center r-stretch" width="420"><p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+</section>
+<section id="siga-o-café-com-r" class="slide level2">
+<h2>Siga o Café com R</h2>
+<blockquote>
+
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+
+</blockquote>
+<p>SITE OFICIAL &gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="imagens/logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Jennifer Lopes | Café com R</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': true,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

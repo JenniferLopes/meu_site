@@ -1,0 +1,161 @@
+---
+title: "Resenha do Livro: Uma Senhora Toma Chá - Capítulo 3"
+subtitle: "Edição especial: Uma senhora toma chá - resenha do capítulo 3"
+author: "Jennifer Luz Lopes"
+date: "2026-07-23"
+categories: [Newsletter, Resenha, Estatística, Leitura]
+image: ../imagens_cha/cap3.png
+image-alt: ""
+description: "Resenha do capítulo 3 de Uma senhora toma chá, de David Salsburg. A história de William Gosset, o estatístico que trabalhava numa cervejaria e precisava tomar decisões com amostras pequenas, e como isso gerou o teste t de Student."
+css: estilo_jeni.css
+---
+
+::: {style="background:#EFEBE9; border-left: 4px solid #A1887F; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px;"}
+- *Que cada **gole** desperte uma nova ideia.*
+- *Que cada **script** abra uma nova conversa.*
+- *Que o **Café com R** se torne um ponto de encontro nosso.*
+:::
+
+<br>
+
+## O gole da semana
+
+<br>
+
+**Pessoal, esse capítulo me surpreendeu de um jeito que não esperava.**
+
+Eu sabia que o teste t de Student era um dos procedimentos estatísticos mais usados no mundo. Uso ele nas aulas, explico nos treinamentos, aparece em quase toda análise que envolve comparação de médias.
+
+O que eu não sabia era que ele nasceu numa cervejaria.
+
+> **William Sealy Gosset era funcionário da Guinness em Dublin quando percebeu que a estatística disponível na época não resolvia o problema que ele tinha nas mãos. E em vez de aceitar isso, ele criou uma solução.**
+
+Esse capítulo é sobre essa solução. E sobre o custo pessoal de desenvolvê-la num ambiente que não queria que ela existisse.
+
+<br>
+
+
+## A resenha
+
+<br>
+
+### O capítulo
+
+O capítulo 3 se chama *Querido senhor Gosset*, e o título já diz algo sobre o tom. Salsburg escreve sobre Gosset com uma ternura que não aparece nos capítulos anteriores. Galton era rico e excêntrico. Pearson era brilhante e difícil. Gosset era outra coisa: um homem prático, gentil, que precisava resolver um problema e usou a matemática para isso.
+
+::: callout-note
+**Gosset publicou sob o pseudônimo "Student" porque a Guinness não permitia que seus funcionários publicassem artigos científicos.** O que ele publicou, em 1908, foi o teste t de Student, um dos procedimentos estatísticos mais usados até hoje. Durante anos, quase ninguém sabia quem era "Student".
+:::
+
+<br>
+
+### A cervejaria e o problema das amostras pequenas
+
+Em 1899, o jovem herdeiro da Guinness decidiu modernizar a empresa contratando os melhores graduados em química das universidades de Oxford e Cambridge. Gosset tinha 23 anos, formação em química e matemática, e nenhuma experiência com cerveja.
+
+O que ele encontrou na Guinness foi um problema que nenhum livro de estatística da época sabia resolver.
+
+> **Quando o malte era preparado para fermentação, uma quantidade cuidadosamente medida de levedura era usada. Os técnicos mediam a concentração de levedura pegando uma amostra e contando as células ao microscópio. Mas quão confiável era essa contagem?**
+
+Pouca levedura produziria fermentação incompleta. Muita deixaria a cerveja amarga. A margem de erro importava. E as amostras eram pequenas.
+
+**Esse era o ponto central.** Toda a estatística desenvolvida por Pearson e seus contemporâneos funcionava bem com grandes amostras. Com amostras grandes, a distribuição amostral se comporta de forma previsível. Com amostras pequenas, não.
+
+Gosset examinou os dados e percebeu que a contagem de células de levedura seguia a **distribuição de Poisson**, uma distribuição com apenas um parâmetro, diferente das distribuições assimétricas de Pearson. Isso permitiu que ele criasse regras para controlar a quantidade de levedura com um grau de confiança que antes não existia.
+
+Mas o problema maior ainda estava por vir.
+
+<br>
+
+### O problema que ninguém tinha resolvido
+
+Gosset começou a estudar as questões matemáticas que surgiam no trabalho da Guinness. Em 1906 e 1907, passou um tempo em Londres trabalhando no laboratório de Karl Pearson, onde aprendeu os métodos estatísticos mais avançados da época.
+
+Voltou a Dublin com uma pergunta que Pearson não havia respondido: **o que fazer quando você tem poucos dados?**
+
+Os métodos de Pearson pressupunham amostras grandes. Em laboratório, com experimentos bem controlados, isso era razoável. Numa cervejaria, onde cada lote de cevada ou de lúpulo era diferente e as decisões precisavam ser tomadas com o que havia disponível, não era.
+
+::: callout-important
+**Gosset percebeu que, com amostras pequenas, a distribuição dos resultados não seguia a curva normal que Pearson usava como referência.** Ela era mais achatada, com caudas mais largas. E o grau de achatamento dependia do tamanho da amostra. Para cada tamanho de amostra havia uma distribuição diferente.
+
+Essa família de distribuições é o que hoje chamamos de **distribuição t**, e o procedimento que usa essa distribuição para testar hipóteses sobre médias é o **teste t de Student**.
+:::
+
+Gosset derivou essa distribuição matematicamente e a verificou empiricamente, usando dados de experimentos agrícolas que a Guinness acumulava. Quando tinha certeza do resultado, escreveu o artigo.
+
+<br>
+
+### O pseudônimo e a publicação
+
+A Guinness tinha uma política: funcionários não publicavam artigos científicos. A empresa temia que concorrentes descobrissem que ela usava estatística no processo de produção, o que era uma vantagem competitiva real.
+
+Gosset negociou com a direção. Conseguiu permissão para publicar, desde que não revelasse que trabalhava para a Guinness e não usasse dados da empresa.
+
+> **Publicou em 1908 na Biometrika, a revista de Pearson, sob o pseudônimo "Student". O artigo se chamava "The probable error of a mean", e apresentava o que hoje conhecemos como o teste t de Student.**
+
+Durante anos, quase ninguém sabia quem era Student. Gosset manteve o anonimato tão bem que Ronald Fisher, que usava e desenvolvia os resultados de Student extensamente, demorou para descobrir que se tratava de um funcionário de cervejaria em Dublin.
+
+Quando finalmente se encontraram, tornaram-se amigos próximos. Gosset era um dos poucos que conseguia conversar com Fisher de forma produtiva, sem provocar os atritos que Fisher tinha com quase todo mundo.
+
+<br>
+
+### O mediador que não conseguiu mediar
+
+Pessoal, essa é a parte do capítulo que mais me tocou.
+
+Gosset era amigo de Fisher. Também tinha uma relação de respeito com Pearson, que havia sido seu professor em Londres. E os dois, Fisher e Pearson, se odiavam com uma intensidade que Salsburg descreve como extraordinária, mesmo para os padrões de disputas acadêmicas do século XX.
+
+Fisher achava que Pearson havia publicado resultados errados durante décadas e nunca admitia isso. Pearson achava Fisher arrogante e recusava publicar seus artigos na Biometrika. A disputa entre eles atrasou o desenvolvimento da estatística por anos.
+
+> **Gosset tentou fazer a mediação. Escreveu cartas para os dois, tentou criar pontes, sugeriu que as diferenças eram menores do que pareciam. Não funcionou.**
+
+::: callout-warning
+**Pearson e Fisher nunca se reconciliaram.** Gosset ficou numa posição impossível, amigo dos dois lados de uma guerra que nenhum dos dois estava disposto a encerrar. Salsburg registra isso com tristeza, como se o desperdício de energia intelectual nessa disputa fosse tão lamentável quanto os noventa anos de dados confundidos que Fisher havia encontrado em Rothamsted.
+:::
+
+Gosset morreu em 1937, pouco depois de ter sido promovido a chefe do laboratório da Guinness em Londres. Tinha 62 anos. Nunca revelou publicamente que era Student.
+
+<br>
+
+### O que fica do capítulo 3
+
+Pessoal, quando uso o teste t numa aula ou numa análise, eu agora penso numa cervejaria em Dublin, num homem contando células de levedura ao microscópio e se perguntando se a margem de erro era aceitável.
+
+**O teste t não foi criado para a academia. Foi criado porque alguém precisava tomar uma decisão com poucos dados e queria saber o quanto podia confiar nessa decisão.**
+
+Essa origem prática importa. Ela lembra que estatística não é um conjunto de procedimentos que aplicamos porque estão no protocolo. É um conjunto de ferramentas que foram desenvolvidas para responder perguntas reais, em contextos reais, com as limitações que esses contextos impõem.
+
+> **Gosset tinha amostras pequenas. A estatística disponível não resolvia. Então ele criou o que precisava.**
+
+Isso é o que eu chamo de pensar com dados.
+
+<br>
+
+
+## O que estou acompanhando
+
+<br>
+
+**Uma senhora toma chá, David Salsburg:** A série continua. Se você ainda não leu os capítulos anteriores, começa pelo 1 e vem acompanhando. A história fica mais densa a cada capítulo: [jenniferlopes.github.io/meu_site/cafecomr](https://jenniferlopes.github.io/meu_site/cafecomr/)
+
+**Documentação do teste t no R:** Para quem quer ir da história para a prática, a função `t.test()` implementa exatamente o que Gosset desenvolveu. A documentação oficial tem exemplos claros: [stat.ethz.ch/R-manual](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/t.test.html)
+
+<br>
+
+---
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:32px; text-align:center;"}
+**Próxima edição**
+
+Capítulo 4 - "Revolver um monte de estrume", e é sobre Ronald Aylmer Fisher.
+:::
+
+<br>
+
+::: {style="background:#EFEBE9; border:1px solid #A1887F; padding:20px 24px; border-radius:4px; margin-top:16px; text-align:center;"}
+**Gostou desta edição?**
+
+Assine o Café com R e receba conteúdo de R, Estatística e Ciência de Dados toda semana.
+
+[Clique aqui](https://cafecomr-conteudos.lovable.app/)
+:::

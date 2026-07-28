@@ -1,0 +1,355 @@
+---
+title: "Aula 57. Bootstrap"
+subtitle: "Reamostrando quando a teoria não ajuda"
+categories: [R, Estatística, Inferência, Tidyverse]
+image: "imagens/57.png"
+description: "Aprenda a construir um intervalo de confiança por bootstrap quando não existe uma fórmula teórica fechada para a estatística de interesse."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(boot)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+dias_germinacao <- rgamma(45, shape = 4, rate = 0.5)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Entender o conceito de bootstrap e quando a teoria clássica não fornece uma solução
+- Construir manualmente um intervalo de confiança por bootstrap não paramétrico
+- Usar o pacote `boot` para automatizar o processo e obter métodos de intervalo mais refinados
+- Entender a diferença entre bootstrap paramétrico e não paramétrico
+- Evitar os erros mais comuns na aplicação do bootstrap
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Conceito
+:::
+
+------------------------------------------------------------------------
+
+## O que é bootstrap, reamostragem com reposição
+
+- **Bootstrap** é um método de reamostragem que constrói a distribuição amostral de uma estatística a partir dos próprios dados observados, reamostrando com reposição repetidamente a partir da amostra original.
+
+- Cada reamostra tem o mesmo tamanho da amostra original, mas, por ser extraída com reposição, algumas observações aparecem mais de uma vez, e outras não aparecem.
+
+- A estatística de interesse é recalculada em cada reamostra, e a variabilidade dessas estatísticas recalculadas aproxima a variabilidade que a estatística teria se novas amostras fossem, de fato, coletadas da população.
+
+------------------------------------------------------------------------
+
+## Quando a teoria não ajuda
+
+- **Contexto:** o tempo até a germinação de 45 lotes de sementes tem distribuição assimétrica. O interesse recai sobre a **mediana** do tempo de germinação, e não existe uma fórmula fechada simples para o erro padrão da mediana, como existe para a média.
+
+- Estatísticas como a mediana, certos percentis, razões entre parâmetros, ou coeficientes de modelos não lineares complexos, frequentemente não têm uma distribuição amostral teórica conhecida em forma fechada. O bootstrap contorna essa limitação.
+
+------------------------------------------------------------------------
+
+## Os passos do algoritmo bootstrap
+
+::: incremental
+1.  Reamostrar, com reposição, um novo conjunto de dados do mesmo tamanho da amostra original
+2.  Calcular a estatística de interesse nessa reamostra
+3.  Repetir os passos 1 e 2 muitas vezes, tipicamente 1.000 a 10.000 repetições
+4.  Usar a distribuição das estatísticas recalculadas para construir o intervalo de confiança
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Bootstrap Não Paramétrico na Prática
+:::
+
+------------------------------------------------------------------------
+
+## Código: reamostragem manual, mil reamostras
+
+```{r}
+#| label: bootstrap-manual-codigo
+#| eval: false
+
+set.seed(2026)
+
+n_reamostras <- 1000
+
+medianas_bootstrap <- replicate(
+  n_reamostras,
+  median(sample(dias_germinacao, replace = TRUE)))
+```
+
+------------------------------------------------------------------------
+
+## Output: distribuição bootstrap da mediana
+
+```{r}
+#| label: bootstrap-manual-output
+#| echo: false
+
+set.seed(2026)
+
+n_reamostras <- 1000
+
+medianas_bootstrap <- replicate(
+  n_reamostras,
+  median(sample(dias_germinacao, replace = TRUE)))
+
+tibble(
+  mediana_observada     = median(dias_germinacao),
+  media_das_medianas    = mean(medianas_bootstrap),
+  erro_padrao_bootstrap = sd(medianas_bootstrap)) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+- **O desvio padrão das mil medianas reamostradas fornece uma estimativa do erro padrão da mediana, um valor que a teoria clássica não oferece em forma fechada para essa estatística.**
+
+------------------------------------------------------------------------
+
+## Gráfico: histograma das medianas bootstrap
+
+```{r}
+#| label: bootstrap-histograma
+#| echo: false
+#| fig-height: 4.8
+
+tibble(mediana = medianas_bootstrap) |>
+  ggplot(aes(x = mediana)) +
+  geom_histogram(bins = 30, fill = cores_cafe["azul_claro"],
+                  color = "white", alpha = 0.85) +
+  geom_vline(xintercept = median(dias_germinacao), linetype = "dashed",
+             color = cores_cafe["marrom"], linewidth = 1) +
+  labs(
+    title    = "Distribuição bootstrap da mediana do tempo de germinação",
+    subtitle = "Linha tracejada, mediana observada na amostra original",
+    x        = "Mediana reamostrada (dias)",
+    y        = "Frequência",
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## IC bootstrap por percentil, conceito e código
+
+- O **intervalo de confiança por percentil** usa diretamente os percentis 2,5% e 97,5% da distribuição das estatísticas reamostradas como limites do intervalo de 95% de confiança.
+
+```{r}
+#| label: ic-percentil-codigo
+#| eval: false
+
+quantile(medianas_bootstrap, probs = c(0.025, 0.975))
+```
+
+------------------------------------------------------------------------
+
+## Output: IC bootstrap
+
+```{r}
+#| label: ic-percentil-output
+#| echo: false
+
+quantile(medianas_bootstrap, probs = c(0.025, 0.975)) |>
+  round(3)
+```
+
+- **O intervalo obtido é assimétrico em torno da mediana observada, refletindo a própria assimetria da distribuição do tempo de germinação, uma característica que um intervalo baseado na aproximação normal não capturaria adequadamente para esta estatística.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Usando o Pacote boot
+:::
+
+------------------------------------------------------------------------
+
+## Código: boot() e boot.ci()
+
+```{r}
+#| label: boot-pacote-codigo
+#| eval: false
+
+calcular_mediana <- function(dados, indices) {
+  median(dados[indices])
+}
+
+resultado_boot <- boot(data = dias_germinacao, statistic = calcular_mediana, R = 1000)
+
+boot.ci(resultado_boot, type = c("perc", "bca"))
+```
+
+------------------------------------------------------------------------
+
+## Output: resultado e interpretação
+
+```{r}
+#| label: boot-pacote-output
+#| echo: false
+
+calcular_mediana <- function(dados, indices) {
+  median(dados[indices])
+}
+
+resultado_boot <- boot(data = dias_germinacao, statistic = calcular_mediana, R = 1000)
+
+boot.ci(resultado_boot, type = c("perc", "bca"))
+```
+
+- **O pacote `boot` automatiza a reamostragem e oferece diretamente múltiplos métodos de intervalo, sem exigir a escrita manual do laço de reamostragem.**
+
+------------------------------------------------------------------------
+
+## Diferentes métodos de IC bootstrap
+
+| Método | Característica |
+|----------------------|--------------------------------------------------|
+| Percentil | Usa diretamente os percentis da distribuição bootstrap, simples e intuitivo |
+| BCa, bias-corrected and accelerated | Corrige viés e assimetria da distribuição bootstrap, geralmente mais preciso |
+
+- O método BCa é, em geral, preferível ao percentil simples quando a distribuição bootstrap apresenta assimetria relevante, como costuma ocorrer com a mediana de dados assimétricos.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Bootstrap Paramétrico
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, diferença para o não paramétrico
+
+- No **bootstrap não paramétrico**, as reamostras são extraídas diretamente dos dados observados, com reposição, sem assumir nenhuma distribuição teórica subjacente.
+
+- No **bootstrap paramétrico**, primeiro se ajusta uma distribuição teórica aos dados, como a Gamma ajustada no `fitdistrplus`, e então se geram novas amostras simuladas a partir dessa distribuição ajustada, em vez de reamostrar os dados originais.
+
+------------------------------------------------------------------------
+
+## Quando usar cada um
+
+- O bootstrap **não paramétrico** é preferível quando não há confiança suficiente em nenhum modelo de distribuição específico para os dados, deixando os próprios dados observados "falarem por si".
+
+- O bootstrap **paramétrico** é preferível quando um modelo de distribuição já foi validado para os dados, e se deseja suavizar a estimativa, especialmente útil com tamanhos de amostra muito pequenos, em que o não paramétrico tem poucas observações distintas para reamostrar.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, número insuficiente de reamostragens
+
+- Usar um número pequeno de reamostragens, como 100, produz uma distribuição bootstrap instável, com estimativas de intervalo que variam consideravelmente a cada nova execução do código.
+
+- O padrão recomendado é de, no mínimo, 1.000 reamostragens para estimativas de erro padrão, e ainda mais para métodos de intervalo mais refinados, como o BCa.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, ignorar a estrutura de dependência dos dados
+
+- Aplicar bootstrap simples, reamostrando observações individuais, quando os dados têm estrutura de dependência, como parcelas dentro de blocos ou medidas repetidas na mesma unidade, quebra essa estrutura e produz intervalos de confiança incorretos.
+
+- Nesses casos, o bootstrap deve reamostrar as unidades corretas, blocos inteiros ou indivíduos inteiros, preservando a estrutura de dependência original.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, usar bootstrap para consertar uma amostra viesada
+
+- O bootstrap descreve a variabilidade da estatística **dentro da amostra que se tem**, ele não corrige um viés de seleção presente na coleta original dos dados.
+
+- Se a amostra não representa adequadamente a população de interesse, o bootstrap reproduzirá esse mesmo viés em todas as reamostras, sem exceção.
+
+------------------------------------------------------------------------
+
+## Resumo: bootstrap
+
+| Elemento | Não paramétrico | Paramétrico |
+|------------------|---------------------------|---------------------------|
+| Fonte da reamostra | Dados observados, com reposição | Distribuição ajustada aos dados |
+| Quando preferir | Sem modelo de distribuição validado | Modelo de distribuição já validado |
+| Função no R | `sample()`, `boot()` | Simulação a partir de `fitdist()` |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

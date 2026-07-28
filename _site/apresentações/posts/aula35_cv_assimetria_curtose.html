@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Aprofunde o coeficiente de variação e aprenda a interpretar assimetria e curtose com curvas comparativas, resolvendo a dúvida mais comum sobre forma de distribuição.">
+
+<title>Aula 35. CV%, assimetria e curtose – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#acompanhe-o-café-com-r" id="toc-acompanhe-o-café-com-r" class="nav-link active" data-scroll-target="#acompanhe-o-café-com-r">Acompanhe o Café com R</a></li>
+  <li><a href="#objetivos-da-aula" id="toc-objetivos-da-aula" class="nav-link" data-scroll-target="#objetivos-da-aula">Objetivos da aula</a></li>
+  <li><a href="#bloco-1" id="toc-bloco-1" class="nav-link" data-scroll-target="#bloco-1">Bloco 1</a>
+  <ul class="collapse">
+  <li><a href="#coeficiente-de-variação-aprofundamento" id="toc-coeficiente-de-variação-aprofundamento" class="nav-link" data-scroll-target="#coeficiente-de-variação-aprofundamento">Coeficiente de Variação, Aprofundamento</a></li>
+  </ul></li>
+  <li><a href="#cv-revisão-e-aprofundamento" id="toc-cv-revisão-e-aprofundamento" class="nav-link" data-scroll-target="#cv-revisão-e-aprofundamento">CV%, revisão e aprofundamento</a></li>
+  <li><a href="#cv-valores-de-referência-por-área" id="toc-cv-valores-de-referência-por-área" class="nav-link" data-scroll-target="#cv-valores-de-referência-por-área">CV%, valores de referência por área</a></li>
+  <li><a href="#código-cv-dos-defeitos-por-saca" id="toc-código-cv-dos-defeitos-por-saca" class="nav-link" data-scroll-target="#código-cv-dos-defeitos-por-saca">Código: CV% dos defeitos por saca</a></li>
+  <li><a href="#output-cv-dos-defeitos-por-saca" id="toc-output-cv-dos-defeitos-por-saca" class="nav-link" data-scroll-target="#output-cv-dos-defeitos-por-saca">Output: CV% dos defeitos por saca</a></li>
+  <li><a href="#bloco-2" id="toc-bloco-2" class="nav-link" data-scroll-target="#bloco-2">Bloco 2</a>
+  <ul class="collapse">
+  <li><a href="#assimetria" id="toc-assimetria" class="nav-link" data-scroll-target="#assimetria">Assimetria</a></li>
+  </ul></li>
+  <li><a href="#assimetria-definição-e-fórmula" id="toc-assimetria-definição-e-fórmula" class="nav-link" data-scroll-target="#assimetria-definição-e-fórmula">Assimetria: definição e fórmula</a></li>
+  <li><a href="#interpretação-do-sinal-e-da-magnitude" id="toc-interpretação-do-sinal-e-da-magnitude" class="nav-link" data-scroll-target="#interpretação-do-sinal-e-da-magnitude">Interpretação do sinal e da magnitude</a></li>
+  <li><a href="#código-três-curvas-de-assimetria" id="toc-código-três-curvas-de-assimetria" class="nav-link" data-scroll-target="#código-três-curvas-de-assimetria">Código: três curvas de assimetria</a></li>
+  <li><a href="#gráfico-leitura-visual-da-assimetria" id="toc-gráfico-leitura-visual-da-assimetria" class="nav-link" data-scroll-target="#gráfico-leitura-visual-da-assimetria">Gráfico: leitura visual da assimetria</a></li>
+  <li><a href="#código-assimetria-dos-defeitos-por-saca" id="toc-código-assimetria-dos-defeitos-por-saca" class="nav-link" data-scroll-target="#código-assimetria-dos-defeitos-por-saca">Código: assimetria dos defeitos por saca</a></li>
+  <li><a href="#output-assimetria-dos-defeitos-por-saca" id="toc-output-assimetria-dos-defeitos-por-saca" class="nav-link" data-scroll-target="#output-assimetria-dos-defeitos-por-saca">Output: assimetria dos defeitos por saca</a></li>
+  <li><a href="#bloco-3" id="toc-bloco-3" class="nav-link" data-scroll-target="#bloco-3">Bloco 3</a>
+  <ul class="collapse">
+  <li><a href="#curtose" id="toc-curtose" class="nav-link" data-scroll-target="#curtose">Curtose</a></li>
+  </ul></li>
+  <li><a href="#curtose-definição-e-fórmula" id="toc-curtose-definição-e-fórmula" class="nav-link" data-scroll-target="#curtose-definição-e-fórmula">Curtose: definição e fórmula</a></li>
+  <li><a href="#interpretação-leptocúrtica-mesocúrtica-platicúrtica" id="toc-interpretação-leptocúrtica-mesocúrtica-platicúrtica" class="nav-link" data-scroll-target="#interpretação-leptocúrtica-mesocúrtica-platicúrtica">Interpretação: leptocúrtica, mesocúrtica, platicúrtica</a></li>
+  <li><a href="#código-três-curvas-de-curtose" id="toc-código-três-curvas-de-curtose" class="nav-link" data-scroll-target="#código-três-curvas-de-curtose">Código: três curvas de curtose</a></li>
+  <li><a href="#gráfico-leitura-visual-da-curtose" id="toc-gráfico-leitura-visual-da-curtose" class="nav-link" data-scroll-target="#gráfico-leitura-visual-da-curtose">Gráfico: leitura visual da curtose</a></li>
+  <li><a href="#código-curtose-dos-defeitos-por-saca" id="toc-código-curtose-dos-defeitos-por-saca" class="nav-link" data-scroll-target="#código-curtose-dos-defeitos-por-saca">Código: curtose dos defeitos por saca</a></li>
+  <li><a href="#output-curtose-dos-defeitos-por-saca" id="toc-output-curtose-dos-defeitos-por-saca" class="nav-link" data-scroll-target="#output-curtose-dos-defeitos-por-saca">Output: curtose dos defeitos por saca</a></li>
+  <li><a href="#bloco-4" id="toc-bloco-4" class="nav-link" data-scroll-target="#bloco-4">Bloco 4</a>
+  <ul class="collapse">
+  <li><a href="#lendo-a-forma-da-distribuição-na-prática" id="toc-lendo-a-forma-da-distribuição-na-prática" class="nav-link" data-scroll-target="#lendo-a-forma-da-distribuição-na-prática">Lendo a Forma da Distribuição na Prática</a></li>
+  </ul></li>
+  <li><a href="#código-histograma-com-forma-anotada" id="toc-código-histograma-com-forma-anotada" class="nav-link" data-scroll-target="#código-histograma-com-forma-anotada">Código: histograma com forma anotada</a></li>
+  <li><a href="#gráfico-histograma-com-forma-anotada" id="toc-gráfico-histograma-com-forma-anotada" class="nav-link" data-scroll-target="#gráfico-histograma-com-forma-anotada">Gráfico: histograma com forma anotada</a></li>
+  <li><a href="#o-que-fazer-diante-de-assimetria-forte" id="toc-o-que-fazer-diante-de-assimetria-forte" class="nav-link" data-scroll-target="#o-que-fazer-diante-de-assimetria-forte">O que fazer diante de assimetria forte</a></li>
+  <li><a href="#erro-comum-1-confundir-curtose-com-altura-do-pico-sem-olhar-as-caudas" id="toc-erro-comum-1-confundir-curtose-com-altura-do-pico-sem-olhar-as-caudas" class="nav-link" data-scroll-target="#erro-comum-1-confundir-curtose-com-altura-do-pico-sem-olhar-as-caudas">Erro comum 1, confundir curtose com altura do pico sem olhar as caudas</a></li>
+  <li><a href="#erro-comum-2-tratar-assimetria-e-curtose-de-amostra-pequena-como-diagnóstico-definitivo" id="toc-erro-comum-2-tratar-assimetria-e-curtose-de-amostra-pequena-como-diagnóstico-definitivo" class="nav-link" data-scroll-target="#erro-comum-2-tratar-assimetria-e-curtose-de-amostra-pequena-como-diagnóstico-definitivo">Erro comum 2, tratar assimetria e curtose de amostra pequena como diagnóstico definitivo</a></li>
+  <li><a href="#erro-comum-3-aplicar-teste-que-assume-normalidade-sem-checar-a-forma-da-distribuição" id="toc-erro-comum-3-aplicar-teste-que-assume-normalidade-sem-checar-a-forma-da-distribuição" class="nav-link" data-scroll-target="#erro-comum-3-aplicar-teste-que-assume-normalidade-sem-checar-a-forma-da-distribuição">Erro comum 3, aplicar teste que assume normalidade sem checar a forma da distribuição</a></li>
+  <li><a href="#resumo-cv-assimetria-e-curtose" id="toc-resumo-cv-assimetria-e-curtose" class="nav-link" data-scroll-target="#resumo-cv-assimetria-e-curtose">Resumo: CV%, assimetria e curtose</a></li>
+  <li><a href="#obrigada" id="toc-obrigada" class="nav-link" data-scroll-target="#obrigada">Obrigada!</a></li>
+  <li><a href="#siga-o-café-com-r" id="toc-siga-o-café-com-r" class="nav-link" data-scroll-target="#siga-o-café-com-r">Siga o Café com R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="aula35_cv_assimetria_curtose.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Aula 35. CV%, assimetria e curtose</h1>
+<p class="subtitle lead">O que a forma da distribuição revela sobre os dados, com leitura visual de cada padrão</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Estatística</div>
+    <div class="quarto-category">Descritiva</div>
+    <div class="quarto-category">Tidyverse</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Aprofunde o coeficiente de variação e aprenda a interpretar assimetria e curtose com curvas comparativas, resolvendo a dúvida mais comum sobre forma de distribuição.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="acompanhe-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="acompanhe-o-café-com-r">Acompanhe o Café com R</h2>
+<p>SITE OFICIAL &gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+<hr>
+</section>
+<section id="objetivos-da-aula" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-da-aula">Objetivos da aula</h2>
+<div class="incremental">
+<ul class="incremental">
+<li>Aprofundar a interpretação do <strong>coeficiente de variação</strong>, com valores de referência por área</li>
+<li>Definir <strong>assimetria</strong> e reconhecer seu sinal e sua magnitude em uma distribuição</li>
+<li>Definir <strong>curtose</strong> e distinguir os padrões leptocúrtico, mesocúrtico e platicúrtico</li>
+<li>Comparar visualmente curvas com diferentes graus de assimetria e curtose</li>
+<li>Aplicar essas medidas a um conjunto de dados real e interpretar o resultado</li>
+<li>Reconhecer os erros mais comuns na leitura da forma de uma distribuição</li>
+</ul>
+</div>
+<hr>
+</section>
+<section id="bloco-1" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+<section id="coeficiente-de-variação-aprofundamento" class="level2">
+<h2 class="anchored" data-anchor-id="coeficiente-de-variação-aprofundamento">Coeficiente de Variação, Aprofundamento</h2>
+</section>
+</section>
+<hr>
+<section id="cv-revisão-e-aprofundamento" class="level2">
+<h2 class="anchored" data-anchor-id="cv-revisão-e-aprofundamento">CV%, revisão e aprofundamento</h2>
+<p><span class="math display">\[CV = \frac{s}{\bar{x}} \times 100\]</span></p>
+<ul>
+<li><p>O CV% expressa a dispersão dos dados em termos relativos à média, o que permite comparar variáveis com unidades ou magnitudes diferentes.</p></li>
+<li><p>Um CV% de 15% em uma variável com média 10 representa uma dispersão absoluta bem menor do que um CV% de 15% em uma variável com média 1000.</p></li>
+<li><p><strong>No contexto deste estudo:</strong> o CV% do número de defeitos por saca indica o grau de heterogeneidade da qualidade entre as sacas amostradas.</p></li>
+</ul>
+<hr>
+</section>
+<section id="cv-valores-de-referência-por-área" class="level2">
+<h2 class="anchored" data-anchor-id="cv-valores-de-referência-por-área">CV%, valores de referência por área</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 18%">
+<col style="width: 61%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Classificação</th>
+<th>CV%</th>
+<th>Uso típico</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Baixo</td>
+<td>Até 10%</td>
+<td>Experimentos de campo bem controlados</td>
+</tr>
+<tr class="even">
+<td>Médio</td>
+<td>10% a 20%</td>
+<td>Maioria dos experimentos agronômicos</td>
+</tr>
+<tr class="odd">
+<td>Alto</td>
+<td>20% a 30%</td>
+<td>Variáveis com maior variabilidade natural</td>
+</tr>
+<tr class="even">
+<td>Muito alto</td>
+<td>Acima de 30%</td>
+<td>Contagens, proporções, dados de campo aberto</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Atenção:</strong> essa classificação é uma referência da literatura agronômica, não uma regra universal. Variáveis de contagem, como número de defeitos, tendem a apresentar CV% mais alto por característica intrínseca, sem que isso indique falha experimental.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-cv-dos-defeitos-por-saca" class="level2">
+<h2 class="anchored" data-anchor-id="código-cv-dos-defeitos-por-saca">Código: CV% dos defeitos por saca</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>amostra_defeitos <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">media =</span> <span class="fu">mean</span>(defeitos),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">dp    =</span> <span class="fu">sd</span>(defeitos),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cv    =</span> (dp <span class="sc">/</span> media) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-cv-dos-defeitos-por-saca" class="level2">
+<h2 class="anchored" data-anchor-id="output-cv-dos-defeitos-por-saca">Output: CV% dos defeitos por saca</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  media    dp    cv
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1  11.2  5.98  53.5</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>O CV% obtido está na faixa alta a muito alta, coerente com o esperado para uma variável de contagem, e não deve ser interpretado isoladamente como problema de qualidade dos dados.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-2" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+<section id="assimetria" class="level2">
+<h2 class="anchored" data-anchor-id="assimetria">Assimetria</h2>
+</section>
+</section>
+<hr>
+<section id="assimetria-definição-e-fórmula" class="level2">
+<h2 class="anchored" data-anchor-id="assimetria-definição-e-fórmula">Assimetria: definição e fórmula</h2>
+<p><span class="math display">\[g_1 = \frac{\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^3}{\left(\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^2\right)^{3/2}}\]</span></p>
+<ul>
+<li><p>A <strong>assimetria</strong>, ou skewness, mede o grau e a direção do desvio de uma distribuição em relação à simetria perfeita.</p></li>
+<li><p>Uma distribuição simétrica apresenta assimetria próxima de zero, com média e mediana coincidentes.</p></li>
+</ul>
+<hr>
+</section>
+<section id="interpretação-do-sinal-e-da-magnitude" class="level2">
+<h2 class="anchored" data-anchor-id="interpretação-do-sinal-e-da-magnitude">Interpretação do sinal e da magnitude</h2>
+<ul>
+<li><p><strong>Assimetria negativa</strong> (cauda à esquerda): a maior parte dos dados se concentra à direita, e valores baixos puxam a cauda.</p></li>
+<li><p><strong>Assimetria positiva</strong> (cauda à direita): a maior parte dos dados se concentra à esquerda, e valores altos puxam a cauda.</p></li>
+<li><p><strong>Magnitude:</strong> valores entre menos 0,5 e 0,5 indicam assimetria aproximadamente simétrica. Valores entre 0,5 e 1, em módulo, indicam assimetria moderada. Valores acima de 1, em módulo, indicam assimetria forte.</p></li>
+</ul>
+<hr>
+</section>
+<section id="código-três-curvas-de-assimetria" class="level2">
+<h2 class="anchored" data-anchor-id="código-três-curvas-de-assimetria">Código: três curvas de assimetria</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>curvas_assimetria <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">valor =</span> <span class="fu">rbeta</span>(<span class="dv">5000</span>, <span class="dv">5</span>, <span class="dv">2</span>), <span class="at">tipo =</span> <span class="st">"Assimetria negativa"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">valor =</span> <span class="fu">rnorm</span>(<span class="dv">5000</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">tipo =</span> <span class="st">"Simétrica"</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">valor =</span> <span class="fu">rbeta</span>(<span class="dv">5000</span>, <span class="dv">2</span>, <span class="dv">5</span>), <span class="at">tipo =</span> <span class="st">"Assimetria positiva"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="fu">factor</span>(tipo, <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Assimetria negativa"</span>, <span class="st">"Simétrica"</span>, <span class="st">"Assimetria positiva"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="gráfico-leitura-visual-da-assimetria" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-leitura-visual-da-assimetria">Gráfico: leitura visual da assimetria</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula35_cv_assimetria_curtose_files/figure-html/assimetria-curvas-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-assimetria-dos-defeitos-por-saca" class="level2">
+<h2 class="anchored" data-anchor-id="código-assimetria-dos-defeitos-por-saca">Código: assimetria dos defeitos por saca</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>amostra_defeitos <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">assimetria =</span> <span class="fu">skewness</span>(defeitos, <span class="at">type =</span> <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-assimetria-dos-defeitos-por-saca" class="level2">
+<h2 class="anchored" data-anchor-id="output-assimetria-dos-defeitos-por-saca">Output: assimetria dos defeitos por saca</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  assimetria
+       &lt;dbl&gt;
+1       1.01</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>O valor obtido indica assimetria positiva moderada a forte, coerente com o padrão visual da curva “Assimetria positiva” apresentada anteriormente. A cauda direita da distribuição, sacas com número elevado de defeitos, puxa a média para cima em relação à mediana.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-3" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+<section id="curtose" class="level2">
+<h2 class="anchored" data-anchor-id="curtose">Curtose</h2>
+</section>
+</section>
+<hr>
+<section id="curtose-definição-e-fórmula" class="level2">
+<h2 class="anchored" data-anchor-id="curtose-definição-e-fórmula">Curtose: definição e fórmula</h2>
+<p><span class="math display">\[g_2 = \frac{\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^4}{\left(\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^2\right)^{2}} - 3\]</span></p>
+<ul>
+<li><p>A <strong>curtose</strong>, na forma de excesso de curtose, mede o peso das caudas de uma distribuição em relação à distribuição normal, e não apenas a altura do pico central.</p></li>
+<li><p>A distribuição normal tem excesso de curtose igual a zero, por definição.</p></li>
+</ul>
+<hr>
+</section>
+<section id="interpretação-leptocúrtica-mesocúrtica-platicúrtica" class="level2">
+<h2 class="anchored" data-anchor-id="interpretação-leptocúrtica-mesocúrtica-platicúrtica">Interpretação: leptocúrtica, mesocúrtica, platicúrtica</h2>
+<ul>
+<li><p><strong>Leptocúrtica</strong> (excesso de curtose positivo): caudas mais pesadas que a normal, maior probabilidade de valores extremos.</p></li>
+<li><p><strong>Mesocúrtica</strong> (excesso de curtose próximo de zero): caudas equivalentes às da distribuição normal.</p></li>
+<li><p><strong>Platicúrtica</strong> (excesso de curtose negativo): caudas mais leves que a normal, menor probabilidade de valores extremos.</p></li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Atenção:</strong> a curtose não deve ser lida apenas pela altura do pico central. Duas distribuições podem ter picos parecidos e curtoses muito diferentes, a diferença está no comportamento das caudas.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-três-curvas-de-curtose" class="level2">
+<h2 class="anchored" data-anchor-id="código-três-curvas-de-curtose">Código: três curvas de curtose</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>curvas_curtose <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">valor =</span> <span class="fu">rt</span>(<span class="dv">5000</span>, <span class="at">df =</span> <span class="dv">3</span>), <span class="at">tipo =</span> <span class="st">"Leptocúrtica"</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">valor =</span> <span class="fu">rnorm</span>(<span class="dv">5000</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">tipo =</span> <span class="st">"Mesocúrtica"</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">valor =</span> <span class="fu">runif</span>(<span class="dv">5000</span>, <span class="sc">-</span><span class="fu">sqrt</span>(<span class="dv">3</span>), <span class="fu">sqrt</span>(<span class="dv">3</span>)), <span class="at">tipo =</span> <span class="st">"Platicúrtica"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="fu">factor</span>(tipo, <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Leptocúrtica"</span>, <span class="st">"Mesocúrtica"</span>, <span class="st">"Platicúrtica"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="gráfico-leitura-visual-da-curtose" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-leitura-visual-da-curtose">Gráfico: leitura visual da curtose</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula35_cv_assimetria_curtose_files/figure-html/curtose-curvas-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="código-curtose-dos-defeitos-por-saca" class="level2">
+<h2 class="anchored" data-anchor-id="código-curtose-dos-defeitos-por-saca">Código: curtose dos defeitos por saca</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>amostra_defeitos <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">curtose =</span> <span class="fu">kurtosis</span>(defeitos, <span class="at">type =</span> <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-curtose-dos-defeitos-por-saca" class="level2">
+<h2 class="anchored" data-anchor-id="output-curtose-dos-defeitos-por-saca">Output: curtose dos defeitos por saca</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  curtose
+    &lt;dbl&gt;
+1    1.19</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>O excesso de curtose obtido está próximo de zero a levemente positivo, indicando caudas semelhantes às da distribuição normal, apesar da assimetria positiva já identificada. Assimetria e curtose descrevem aspectos independentes da forma da distribuição.</strong></li>
+</ul>
+<hr>
+</section>
+<section id="bloco-4" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 4</h1>
+<section id="lendo-a-forma-da-distribuição-na-prática" class="level2">
+<h2 class="anchored" data-anchor-id="lendo-a-forma-da-distribuição-na-prática">Lendo a Forma da Distribuição na Prática</h2>
+</section>
+</section>
+<hr>
+<section id="código-histograma-com-forma-anotada" class="level2">
+<h2 class="anchored" data-anchor-id="código-histograma-com-forma-anotada">Código: histograma com forma anotada</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>resumo_forma <span class="ot">&lt;-</span> amostra_defeitos <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">assimetria =</span> <span class="fu">skewness</span>(defeitos, <span class="at">type =</span> <span class="dv">2</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">curtose    =</span> <span class="fu">kurtosis</span>(defeitos, <span class="at">type =</span> <span class="dv">2</span>))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>amostra_defeitos <span class="sc">|&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> defeitos)) <span class="sc">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">bins =</span> <span class="dv">15</span>, <span class="at">fill =</span> cores_cafe[<span class="st">"azul_claro"</span>],</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">color =</span> cores_cafe[<span class="st">"marrom"</span>], <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Distribuição do número de defeitos por saca"</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Assimetria = "</span>, <span class="fu">round</span>(resumo_forma<span class="sc">$</span>assimetria, <span class="dv">2</span>),</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>                       <span class="st">", curtose (excesso) = "</span>, <span class="fu">round</span>(resumo_forma<span class="sc">$</span>curtose, <span class="dv">2</span>)),</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="st">"Número de defeitos"</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Densidade"</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Jennifer Lopes | Café com R"</span>) <span class="sc">+</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  tema</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="gráfico-histograma-com-forma-anotada" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-histograma-com-forma-anotada">Gráfico: histograma com forma anotada</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aula35_cv_assimetria_curtose_files/figure-html/forma-grafico-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="o-que-fazer-diante-de-assimetria-forte" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-fazer-diante-de-assimetria-forte">O que fazer diante de assimetria forte</h2>
+<ul>
+<li><p><strong>Transformação:</strong> logarítmica ou raiz quadrada, quando o objetivo é aproximar a normalidade para uso de testes paramétricos.</p></li>
+<li><p><strong>Medida robusta:</strong> reportar mediana e IQR no lugar de média e desvio padrão, quando o objetivo é apenas descrever os dados.</p></li>
+<li><p><strong>Teste não paramétrico:</strong> alternativa direta quando a transformação não normaliza os dados de forma satisfatória, ou quando a interpretação na escala original é prioridade.</p></li>
+<li><p>A escolha depende do objetivo da análise, descrever, comparar grupos ou modelar, e não existe opção única correta para toda situação.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-comum-1-confundir-curtose-com-altura-do-pico-sem-olhar-as-caudas" class="level2">
+<h2 class="anchored" data-anchor-id="erro-comum-1-confundir-curtose-com-altura-do-pico-sem-olhar-as-caudas">Erro comum 1, confundir curtose com altura do pico sem olhar as caudas</h2>
+<ul>
+<li><p>Duas distribuições podem ter picos de altura semelhante e curtoses distintas.</p></li>
+<li><p>A curtose é definida pelo comportamento das caudas, não pela altura central. Avalie sempre o histograma completo, não apenas a região de maior densidade.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-comum-2-tratar-assimetria-e-curtose-de-amostra-pequena-como-diagnóstico-definitivo" class="level2">
+<h2 class="anchored" data-anchor-id="erro-comum-2-tratar-assimetria-e-curtose-de-amostra-pequena-como-diagnóstico-definitivo">Erro comum 2, tratar assimetria e curtose de amostra pequena como diagnóstico definitivo</h2>
+<ul>
+<li><p>Assimetria e curtose calculadas em amostras pequenas apresentam alta variabilidade de amostra para amostra.</p></li>
+<li><p>Em amostras com menos de 30 observações, essas medidas devem ser interpretadas como indicativas, não como diagnóstico definitivo da forma da população.</p></li>
+</ul>
+<hr>
+</section>
+<section id="erro-comum-3-aplicar-teste-que-assume-normalidade-sem-checar-a-forma-da-distribuição" class="level2">
+<h2 class="anchored" data-anchor-id="erro-comum-3-aplicar-teste-que-assume-normalidade-sem-checar-a-forma-da-distribuição">Erro comum 3, aplicar teste que assume normalidade sem checar a forma da distribuição</h2>
+<ul>
+<li><p>Testes como o teste t assumem, entre outras condições, que os dados seguem distribuição aproximadamente normal.</p></li>
+<li><p>Ignorar assimetria e curtose elevadas e aplicar o teste diretamente pode invalidar a conclusão, especialmente em amostras pequenas, onde o teorema central do limite ainda não garante aproximação à normalidade.</p></li>
+</ul>
+<hr>
+</section>
+<section id="resumo-cv-assimetria-e-curtose" class="level2">
+<h2 class="anchored" data-anchor-id="resumo-cv-assimetria-e-curtose">Resumo: CV%, assimetria e curtose</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Medida</th>
+<th>O que revela</th>
+<th>Valor de referência</th>
+<th>Função no R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CV%</td>
+<td>Dispersão relativa à média</td>
+<td>Depende da área, ver tabela</td>
+<td><code>sd()/mean()*100</code></td>
+</tr>
+<tr class="even">
+<td>Assimetria</td>
+<td>Direção e grau do desvio da simetria</td>
+<td>Próximo de zero é simétrico</td>
+<td><code>skewness()</code></td>
+</tr>
+<tr class="odd">
+<td>Curtose (excesso)</td>
+<td>Peso das caudas em relação à normal</td>
+<td>Próximo de zero é mesocúrtica</td>
+<td><code>kurtosis()</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="obrigada" class="level2">
+<h2 class="anchored" data-anchor-id="obrigada">Obrigada!</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/comunidade.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+<hr>
+</section>
+<section id="siga-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="siga-o-café-com-r">Siga o Café com R</h2>
+<blockquote class="blockquote">
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+</blockquote>
+<p>SITE OFICIAL &gt; <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

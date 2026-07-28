@@ -1,0 +1,424 @@
+---
+title: "Aula 62. Modelos Mistos"
+subtitle: "Efeitos fixos x aleatórios, do aov ao lmer, em um único experimento"
+categories: [R, Estatística, Delineamento Experimental, Modelos Mistos, Tidyverse]
+image: "imagens/62.png"
+description: "Entenda quando um fator deve ser tratado como efeito aleatório, ajuste um modelo misto com lme4, e compare com a abordagem clássica de efeitos fixos."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(lme4)
+library(lmerTest)
+library(DHARMa)
+library(emmeans)
+library(multcomp)
+library(multcompView)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+genotipos <- paste0("G", 1:8)
+blocos    <- factor(1:4)
+
+efeito_genotipo <- rnorm(8, mean = 0, sd = 15)
+efeito_bloco    <- rnorm(4, mean = 0, sd = 10)
+
+dados_mistos <- expand_grid(bloco = blocos, genotipo = genotipos) |>
+  mutate(
+    g_idx         = match(genotipo, genotipos),
+    b_idx         = as.integer(bloco),
+    produtividade = 200 + efeito_genotipo[g_idx] + efeito_bloco[b_idx] + rnorm(n(), 0, 8)) |>
+  dplyr::select(bloco, genotipo, produtividade)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Distinguir efeitos fixos de efeitos aleatórios
+- Ajustar um modelo misto com `lme4`, tratando o bloco como efeito aleatório
+- Extrair e interpretar os componentes de variância do modelo
+- Diagnosticar resíduos de um modelo misto com `DHARMa`
+- Obter significância com `lmerTest` e comparar médias com `emmeans`
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Fixos x Aleatórios
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, efeitos fixos x efeitos aleatórios
+
+- Um **efeito fixo** representa níveis específicos, de interesse direto para comparação, geralmente escolhidos deliberadamente, como os genótipos que se deseja avaliar.
+
+- Um **efeito aleatório** representa níveis amostrados de uma população maior de níveis possíveis, de interesse não em si mesmos, mas como fonte de variação a ser contabilizada.
+
+- **Contexto:** 8 genótipos de milho são avaliados em um Delineamento em Blocos Casualizados, com 4 blocos, em um único local.
+
+------------------------------------------------------------------------
+
+## Quando um fator deve ser aleatório
+
+- O bloco de um experimento é, tipicamente, uma amostra de condições ambientais possíveis, não um conjunto de níveis cuja identidade específica interessa por si só, o bloco 2 não é mais interessante de estudar que o bloco 3, apenas representa uma condição ambiental particular.
+
+- Essa é a justificativa conceitual para tratar bloco como efeito aleatório, uma prática cada vez mais comum mesmo quando o número de blocos é moderado.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Do aov ao lmer
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, bloco fixo x bloco aleatório no DBC
+
+- Quando o bloco é tratado como efeito fixo, cada nível de bloco recebe uma estimativa própria e independente, como em qualquer outro fator do modelo clássico.
+
+- Quando o bloco é tratado como efeito aleatório, suas estimativas sofrem um encolhimento em direção à média geral, chamado **shrinkage**, proporcional à quantidade de informação disponível, o que tende a produzir estimativas mais estáveis para os efeitos fixos de interesse, os genótipos.
+
+------------------------------------------------------------------------
+
+## Código: ajuste tradicional com aov()
+
+```{r}
+#| label: aov-misto-codigo
+#| eval: false
+
+modelo_fixo <- aov(produtividade ~ bloco + genotipo, data = dados_mistos)
+
+summary(modelo_fixo)
+```
+
+------------------------------------------------------------------------
+
+## Código: ajuste com lme4::lmer(), bloco aleatório
+
+```{r}
+#| label: lmer-codigo
+#| eval: false
+
+modelo_misto <- lmer(produtividade ~ genotipo + (1 | bloco), data = dados_mistos)
+
+summary(modelo_misto)
+```
+
+------------------------------------------------------------------------
+
+## Output: comparação dos dois ajustes
+
+```{r}
+#| label: comparacao-ajustes-output
+#| echo: false
+
+modelo_fixo <- aov(produtividade ~ bloco + genotipo, data = dados_mistos)
+
+modelo_misto <- lmer(produtividade ~ genotipo + (1 | bloco), data = dados_mistos)
+
+summary(modelo_fixo)[[1]] |>
+  as_tibble(rownames = "fonte_variacao") |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+
+fixef(modelo_misto) |>
+  enframe(name = "termo", value = "estimativa") |>
+  mutate(estimativa = round(estimativa, 3))
+```
+
+- **Os efeitos fixos de genótipo no modelo misto são estimados de forma condicional ao efeito de bloco, tratado agora como componente de variância, não como conjunto de parâmetros individuais estimados diretamente como no `aov()`.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Componentes de Variância
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, variância entre blocos x variância residual
+
+- Um modelo misto decompõe a variabilidade total em componentes atribuíveis a cada efeito aleatório, e ao resíduo, cada um expresso como uma variância estimada, não como uma soma de quadrados de um efeito fixo.
+
+------------------------------------------------------------------------
+
+## Código: VarCorr()
+
+```{r}
+#| label: varcorr-codigo
+#| eval: false
+
+VarCorr(modelo_misto)
+```
+
+------------------------------------------------------------------------
+
+## Output e interpretação
+
+```{r}
+#| label: varcorr-output
+#| echo: false
+
+VarCorr(modelo_misto) |>
+  as_tibble() |>
+  dplyr::select(grp, vcov, sdcor) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+- **A variância entre blocos é relevante em relação à variância residual, confirmando que o bloco contribui de fato para explicar parte da variação total, justificando sua inclusão explícita no modelo.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Diagnóstico do Modelo Misto
+:::
+
+------------------------------------------------------------------------
+
+## Código: simulateResiduals() para lmer
+
+```{r}
+#| label: dharma-misto-codigo
+#| eval: false
+
+residuos_misto <- simulateResiduals(fittedModel = modelo_misto, n = 1000)
+
+plot(residuos_misto)
+```
+
+------------------------------------------------------------------------
+
+## Gráfico e leitura
+
+```{r}
+#| label: dharma-misto-grafico
+#| echo: false
+#| fig-height: 4.8
+
+residuos_misto <- simulateResiduals(fittedModel = modelo_misto, n = 1000)
+
+plot(residuos_misto)
+```
+
+- **O `DHARMa` funciona da mesma forma para modelos mistos ajustados com `lmer`, oferecendo o mesmo painel de diagnóstico visto na aula de pressupostos, agora aplicado a um modelo com estrutura de efeitos aleatórios.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Significância em Modelos Mistos
+:::
+
+------------------------------------------------------------------------
+
+## Por que não há F exato simples
+
+- Em um modelo misto, os graus de liberdade do denominador do teste F não têm uma fórmula fechada simples como no `aov()`, pois dependem da estrutura de efeitos aleatórios do modelo.
+
+- Métodos de aproximação, como Satterthwaite ou Kenward-Roger, estimam esses graus de liberdade de forma a produzir testes com propriedades estatísticas adequadas mesmo nessa estrutura mais complexa.
+
+------------------------------------------------------------------------
+
+## Código: lmerTest
+
+```{r}
+#| label: lmertest-codigo
+#| eval: false
+
+modelo_misto_teste <- lmerTest::lmer(produtividade ~ genotipo + (1 | bloco),
+                                      data = dados_mistos)
+
+anova(modelo_misto_teste)
+```
+
+------------------------------------------------------------------------
+
+## Output
+
+```{r}
+#| label: lmertest-output
+#| echo: false
+
+modelo_misto_teste <- lmerTest::lmer(produtividade ~ genotipo + (1 | bloco),
+                                      data = dados_mistos)
+
+anova(modelo_misto_teste) |>
+  as_tibble(rownames = "termo") |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **O pacote `lmerTest` adiciona ao `lme4` a aproximação de Satterthwaite por padrão, fornecendo diretamente o valor de p para o teste F de genótipo, algo que o `lme4` sozinho não calcula.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 6
+
+## Comparação de Médias
+:::
+
+------------------------------------------------------------------------
+
+## Código: emmeans com modelo misto
+
+```{r}
+#| label: emmeans-misto-codigo
+#| eval: false
+
+medias_mistas <- emmeans(modelo_misto_teste, ~ genotipo)
+
+cld(medias_mistas, Letters = letters, adjust = "tukey")
+```
+
+------------------------------------------------------------------------
+
+## Output
+
+```{r}
+#| label: emmeans-misto-output
+#| echo: false
+
+medias_mistas <- emmeans(modelo_misto_teste, ~ genotipo)
+
+cld(medias_mistas, Letters = letters, adjust = "tukey") |>
+  as_tibble() |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+- **O `emmeans` funciona de forma direta sobre modelos ajustados com `lmerTest::lmer()`, aplicando a mesma aproximação de graus de liberdade usada no teste F para as comparações par a par.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 7
+
+## Quando Usar Cada Abordagem
+:::
+
+------------------------------------------------------------------------
+
+## Tabela de decisão
+
+| Situação | Abordagem indicada |
+|------------------------------------|------------------------------------|
+| Poucos níveis de bloco, interesse específico em cada nível | Modelo fixo tradicional, `aov()` |
+| Bloco como amostra de condições ambientais, sem interesse individual nos níveis | Modelo misto, bloco aleatório |
+| Estrutura de blocos incompletos, com recuperação de informação entre blocos | Modelo misto, quase sempre preferível |
+| Múltiplos fatores aleatórios cruzados ou aninhados | Modelo misto, `lme4` ou `glmmTMB` |
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 8
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, tratar bloco como fixo quando deveria ser aleatório
+
+- Manter o bloco como efeito fixo por hábito, mesmo quando ele representa claramente uma amostra de condições ambientais, deixa de aproveitar o ganho de precisão que o tratamento como efeito aleatório costuma proporcionar às comparações de interesse.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, usar lmer sem variância suficiente entre níveis do fator aleatório
+
+- Com poucos níveis de um fator aleatório, tipicamente menos de 5, a estimativa da variância desse efeito pode ser instável, produzindo ajustes com aviso de singularidade, chamado "singular fit", situação em que a variância estimada tende a zero.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, interpretar efeito aleatório como estimativa de efeito fixo individual
+
+- Os valores previstos para os níveis de um efeito aleatório, os BLUPs, sofrem o encolhimento discutido no Bloco 2, e não devem ser interpretados, relatados ou comparados par a par da mesma forma que se interpreta um efeito fixo estimado diretamente.
+
+------------------------------------------------------------------------
+
+## Resumo: modelos mistos
+
+| Elemento                                   | Função no R                   |
+|------------------------------------------|------------------------------|
+| Ajuste do modelo misto                     | `lme4::lmer()`                |
+| Componentes de variância                   | `VarCorr()`                   |
+| Diagnóstico de resíduos                    | `DHARMa::simulateResiduals()` |
+| Teste F com graus de liberdade aproximados | `lmerTest::lmer()`, `anova()` |
+| Comparação de médias                       | `emmeans::cld()`              |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

@@ -1,0 +1,2326 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Aprenda a usar o DuckDB no R para consultas analíticas rápidas sobre dados grandes, com integração nativa ao dplyr, arrow e arquivos Parquet.">
+
+<title>DuckDB no R – Jennifer Luz Lopes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-187739b6af49c430bb7447b992c36b2e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-f9e6e4d29af3f5f6ee06eaf03ed5edd8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../css/estilo_geral.scss">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Jennifer Luz Lopes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../cafecomr/index.html"> 
+<span class="menu-text">Newsletter - Café com R</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apresentações/index.html"> 
+<span class="menu-text">Conteúdos|Ensino</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../apostila.html"> 
+<span class="menu-text">Apostila de Estatística</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../youtube.html"> 
+<span class="menu-text">Projetos YouTube</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../recursos_para_iniciar_no_r.html"> 
+<span class="menu-text">Iniciando no R - Links</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../servicos.html"> 
+<span class="menu-text">Serviços | Projetos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">Sobre mim</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#democratização" id="toc-democratização" class="nav-link active" data-scroll-target="#democratização">Democratização</a></li>
+  <li><a href="#acompanhe-o-café-com-r" id="toc-acompanhe-o-café-com-r" class="nav-link" data-scroll-target="#acompanhe-o-café-com-r">Acompanhe o Café com R</a></li>
+  <li><a href="#objetivos-da-aula" id="toc-objetivos-da-aula" class="nav-link" data-scroll-target="#objetivos-da-aula">Objetivos da aula</a></li>
+  <li><a href="#instalação" id="toc-instalação" class="nav-link" data-scroll-target="#instalação">Instalação</a></li>
+  <li><a href="#bloco-1" id="toc-bloco-1" class="nav-link" data-scroll-target="#bloco-1">Bloco 1</a>
+  <ul class="collapse">
+  <li><a href="#o-que-é-o-duckdb" id="toc-o-que-é-o-duckdb" class="nav-link" data-scroll-target="#o-que-é-o-duckdb">O que é o DuckDB</a></li>
+  </ul></li>
+  <li><a href="#o-problema-com-dados-grandes-no-r" id="toc-o-problema-com-dados-grandes-no-r" class="nav-link" data-scroll-target="#o-problema-com-dados-grandes-no-r">O problema com dados grandes no R</a></li>
+  <li><a href="#o-que-é-o-duckdb-1" id="toc-o-que-é-o-duckdb-1" class="nav-link" data-scroll-target="#o-que-é-o-duckdb-1">O que é o DuckDB</a></li>
+  <li><a href="#duckdb-x-sqlite" id="toc-duckdb-x-sqlite" class="nav-link" data-scroll-target="#duckdb-x-sqlite">DuckDB x SQLite</a></li>
+  <li><a href="#duckdb-x-dplyr" id="toc-duckdb-x-dplyr" class="nav-link" data-scroll-target="#duckdb-x-dplyr">DuckDB x dplyr:</a></li>
+  <li><a href="#output-dplyr-x-duckdb" id="toc-output-dplyr-x-duckdb" class="nav-link" data-scroll-target="#output-dplyr-x-duckdb">Output: dplyr x DuckDB</a></li>
+  <li><a href="#duckdb-x-arrow-quando-usar-cada-um" id="toc-duckdb-x-arrow-quando-usar-cada-um" class="nav-link" data-scroll-target="#duckdb-x-arrow-quando-usar-cada-um">DuckDB x arrow: quando usar cada um</a></li>
+  <li><a href="#bloco-2" id="toc-bloco-2" class="nav-link" data-scroll-target="#bloco-2">Bloco 2</a>
+  <ul class="collapse">
+  <li><a href="#instalação-e-conexão" id="toc-instalação-e-conexão" class="nav-link" data-scroll-target="#instalação-e-conexão">Instalação e Conexão</a></li>
+  </ul></li>
+  <li><a href="#conexão-em-memória" id="toc-conexão-em-memória" class="nav-link" data-scroll-target="#conexão-em-memória">Conexão em memória</a></li>
+  <li><a href="#output-objeto-de-conexão-duckdb" id="toc-output-objeto-de-conexão-duckdb" class="nav-link" data-scroll-target="#output-objeto-de-conexão-duckdb">Output: objeto de conexão DuckDB</a></li>
+  <li><a href="#conexão-persistente-em-arquivo" id="toc-conexão-persistente-em-arquivo" class="nav-link" data-scroll-target="#conexão-persistente-em-arquivo">Conexão persistente em arquivo</a></li>
+  <li><a href="#output-conexão-persistente" id="toc-output-conexão-persistente" class="nav-link" data-scroll-target="#output-conexão-persistente">Output: conexão persistente</a></li>
+  <li><a href="#em-memória-x-arquivo-persistente" id="toc-em-memória-x-arquivo-persistente" class="nav-link" data-scroll-target="#em-memória-x-arquivo-persistente">Em memória x arquivo persistente</a></li>
+  <li><a href="#gerenciamento-da-conexão" id="toc-gerenciamento-da-conexão" class="nav-link" data-scroll-target="#gerenciamento-da-conexão">Gerenciamento da conexão</a></li>
+  <li><a href="#bloco-3" id="toc-bloco-3" class="nav-link" data-scroll-target="#bloco-3">Bloco 3</a>
+  <ul class="collapse">
+  <li><a href="#sql-direto-no-duckdb" id="toc-sql-direto-no-duckdb" class="nav-link" data-scroll-target="#sql-direto-no-duckdb">SQL Direto no DuckDB</a></li>
+  </ul></li>
+  <li><a href="#registrando-um-data-frame-como-tabela-virtual" id="toc-registrando-um-data-frame-como-tabela-virtual" class="nav-link" data-scroll-target="#registrando-um-data-frame-como-tabela-virtual">Registrando um data frame como tabela virtual</a></li>
+  <li><a href="#output-tabelas-registradas" id="toc-output-tabelas-registradas" class="nav-link" data-scroll-target="#output-tabelas-registradas">Output: tabelas registradas</a></li>
+  <li><a href="#dbgetquery-sql-que-retorna-dados" id="toc-dbgetquery-sql-que-retorna-dados" class="nav-link" data-scroll-target="#dbgetquery-sql-que-retorna-dados">dbGetQuery(): SQL que retorna dados</a></li>
+  <li><a href="#output-consulta-sql-com-median" id="toc-output-consulta-sql-com-median" class="nav-link" data-scroll-target="#output-consulta-sql-com-median">Output: consulta SQL com MEDIAN</a></li>
+  <li><a href="#funções-analíticas-nativas-do-duckdb" id="toc-funções-analíticas-nativas-do-duckdb" class="nav-link" data-scroll-target="#funções-analíticas-nativas-do-duckdb">Funções analíticas nativas do DuckDB</a></li>
+  <li><a href="#output-funções-estatísticas-avançadas" id="toc-output-funções-estatísticas-avançadas" class="nav-link" data-scroll-target="#output-funções-estatísticas-avançadas">Output: funções estatísticas avançadas</a></li>
+  <li><a href="#funções-de-janela-no-duckdb" id="toc-funções-de-janela-no-duckdb" class="nav-link" data-scroll-target="#funções-de-janela-no-duckdb">Funções de janela no DuckDB</a></li>
+  <li><a href="#output-média-móvel-com-função-de-janela" id="toc-output-média-móvel-com-função-de-janela" class="nav-link" data-scroll-target="#output-média-móvel-com-função-de-janela">Output: média móvel com função de janela</a></li>
+  <li><a href="#bloco-4" id="toc-bloco-4" class="nav-link" data-scroll-target="#bloco-4">Bloco 4</a>
+  <ul class="collapse">
+  <li><a href="#dplyr-sobre-duckdb" id="toc-dplyr-sobre-duckdb" class="nav-link" data-scroll-target="#dplyr-sobre-duckdb">dplyr sobre DuckDB</a></li>
+  </ul></li>
+  <li><a href="#tbl-a-mesma-interface-que-você-já-conhece" id="toc-tbl-a-mesma-interface-que-você-já-conhece" class="nav-link" data-scroll-target="#tbl-a-mesma-interface-que-você-já-conhece">tbl(): a mesma interface que você já conhece</a></li>
+  <li><a href="#output-referência-lazy-ao-duckdb" id="toc-output-referência-lazy-ao-duckdb" class="nav-link" data-scroll-target="#output-referência-lazy-ao-duckdb">Output: referência lazy ao DuckDB</a></li>
+  <li><a href="#pipeline-dplyr-completo-sobre-duckdb" id="toc-pipeline-dplyr-completo-sobre-duckdb" class="nav-link" data-scroll-target="#pipeline-dplyr-completo-sobre-duckdb">Pipeline dplyr completo sobre DuckDB</a></li>
+  <li><a href="#output-resultado-do-pipeline-dplyr" id="toc-output-resultado-do-pipeline-dplyr" class="nav-link" data-scroll-target="#output-resultado-do-pipeline-dplyr">Output: resultado do pipeline dplyr</a></li>
+  <li><a href="#show_query-sql-gerado-pelo-dbplyr" id="toc-show_query-sql-gerado-pelo-dbplyr" class="nav-link" data-scroll-target="#show_query-sql-gerado-pelo-dbplyr">show_query(): SQL gerado pelo dbplyr</a></li>
+  <li><a href="#output-sql-gerado-pelo-dbplyr" id="toc-output-sql-gerado-pelo-dbplyr" class="nav-link" data-scroll-target="#output-sql-gerado-pelo-dbplyr">Output: SQL gerado pelo dbplyr</a></li>
+  <li><a href="#o-que-o-duckdb-suporta-que-o-arrow-não-suporta" id="toc-o-que-o-duckdb-suporta-que-o-arrow-não-suporta" class="nav-link" data-scroll-target="#o-que-o-duckdb-suporta-que-o-arrow-não-suporta">O que o DuckDB suporta que o arrow não suporta</a></li>
+  <li><a href="#output-median-via-to_duckdb" id="toc-output-median-via-to_duckdb" class="nav-link" data-scroll-target="#output-median-via-to_duckdb">Output: median() via to_duckdb()</a></li>
+  <li><a href="#bloco-5" id="toc-bloco-5" class="nav-link" data-scroll-target="#bloco-5">Bloco 5</a>
+  <ul class="collapse">
+  <li><a href="#lendo-arquivos-diretamente" id="toc-lendo-arquivos-diretamente" class="nav-link" data-scroll-target="#lendo-arquivos-diretamente">Lendo Arquivos Diretamente</a></li>
+  </ul></li>
+  <li><a href="#lendo-csv-sem-read_csv" id="toc-lendo-csv-sem-read_csv" class="nav-link" data-scroll-target="#lendo-csv-sem-read_csv">Lendo CSV sem read_csv()</a></li>
+  <li><a href="#output-leitura-de-csv-pelo-duckdb" id="toc-output-leitura-de-csv-pelo-duckdb" class="nav-link" data-scroll-target="#output-leitura-de-csv-pelo-duckdb">Output: leitura de CSV pelo DuckDB</a></li>
+  <li><a href="#lendo-parquet-sem-arrow" id="toc-lendo-parquet-sem-arrow" class="nav-link" data-scroll-target="#lendo-parquet-sem-arrow">Lendo Parquet sem arrow</a></li>
+  <li><a href="#output-leitura-de-parquet-pelo-duckdb" id="toc-output-leitura-de-parquet-pelo-duckdb" class="nav-link" data-scroll-target="#output-leitura-de-parquet-pelo-duckdb">Output: leitura de Parquet pelo DuckDB</a></li>
+  <li><a href="#lendo-múltiplos-arquivos-com-glob" id="toc-lendo-múltiplos-arquivos-com-glob" class="nav-link" data-scroll-target="#lendo-múltiplos-arquivos-com-glob">Lendo múltiplos arquivos com glob</a></li>
+  <li><a href="#output-múltiplos-arquivos-com-glob" id="toc-output-múltiplos-arquivos-com-glob" class="nav-link" data-scroll-target="#output-múltiplos-arquivos-com-glob">Output: múltiplos arquivos com glob</a></li>
+  <li><a href="#leitura-e-filtro-por-formato" id="toc-leitura-e-filtro-por-formato" class="nav-link" data-scroll-target="#leitura-e-filtro-por-formato">: leitura e filtro por formato</a></li>
+  <li><a href="#output-por-formato" id="toc-output-por-formato" class="nav-link" data-scroll-target="#output-por-formato">Output: por formato</a></li>
+  <li><a href="#escrevendo-resultados-em-parquet-com-copy-to" id="toc-escrevendo-resultados-em-parquet-com-copy-to" class="nav-link" data-scroll-target="#escrevendo-resultados-em-parquet-com-copy-to">Escrevendo resultados em Parquet com COPY TO</a></li>
+  <li><a href="#output-arquivo-parquet-criado-pelo-duckdb" id="toc-output-arquivo-parquet-criado-pelo-duckdb" class="nav-link" data-scroll-target="#output-arquivo-parquet-criado-pelo-duckdb">Output: arquivo Parquet criado pelo DuckDB</a></li>
+  <li><a href="#bloco-6" id="toc-bloco-6" class="nav-link" data-scroll-target="#bloco-6">Bloco 6</a>
+  <ul class="collapse">
+  <li><a href="#integração-com-arrow" id="toc-integração-com-arrow" class="nav-link" data-scroll-target="#integração-com-arrow">Integração com Arrow</a></li>
+  </ul></li>
+  <li><a href="#transferência-zero-copy-entre-arrow-e-duckdb" id="toc-transferência-zero-copy-entre-arrow-e-duckdb" class="nav-link" data-scroll-target="#transferência-zero-copy-entre-arrow-e-duckdb">Transferência zero-copy entre arrow e DuckDB</a></li>
+  <li><a href="#to_duckdb-arrow-para-duckdb" id="toc-to_duckdb-arrow-para-duckdb" class="nav-link" data-scroll-target="#to_duckdb-arrow-para-duckdb">to_duckdb(): arrow para DuckDB</a></li>
+  <li><a href="#output-pipeline-arrow-duckdb" id="toc-output-pipeline-arrow-duckdb" class="nav-link" data-scroll-target="#output-pipeline-arrow-duckdb">Output: pipeline arrow + DuckDB</a></li>
+  <li><a href="#to_arrow-duckdb-de-volta-para-arrow" id="toc-to_arrow-duckdb-de-volta-para-arrow" class="nav-link" data-scroll-target="#to_arrow-duckdb-de-volta-para-arrow">to_arrow(): DuckDB de volta para arrow</a></li>
+  <li><a href="#output-arrow-table-resultado-do-pipeline" id="toc-output-arrow-table-resultado-do-pipeline" class="nav-link" data-scroll-target="#output-arrow-table-resultado-do-pipeline">Output: Arrow Table resultado do pipeline</a></li>
+  <li><a href="#quando-usar-to_duckdb-no-meio-de-um-pipeline" id="toc-quando-usar-to_duckdb-no-meio-de-um-pipeline" class="nav-link" data-scroll-target="#quando-usar-to_duckdb-no-meio-de-um-pipeline">Quando usar to_duckdb() no meio de um pipeline</a></li>
+  <li><a href="#bloco-7" id="toc-bloco-7" class="nav-link" data-scroll-target="#bloco-7">Bloco 7</a>
+  <ul class="collapse">
+  <li><a href="#duckplyr" id="toc-duckplyr" class="nav-link" data-scroll-target="#duckplyr">duckplyr</a></li>
+  </ul></li>
+  <li><a href="#o-que-é-o-duckplyr" id="toc-o-que-é-o-duckplyr" class="nav-link" data-scroll-target="#o-que-é-o-duckplyr">O que é o duckplyr</a></li>
+  <li><a href="#instalação-e-uso-básico-do-duckplyr" id="toc-instalação-e-uso-básico-do-duckplyr" class="nav-link" data-scroll-target="#instalação-e-uso-básico-do-duckplyr">Instalação e uso básico do duckplyr</a></li>
+  <li><a href="#output-duckplyr-com-mesma-sintaxe-dplyr" id="toc-output-duckplyr-com-mesma-sintaxe-dplyr" class="nav-link" data-scroll-target="#output-duckplyr-com-mesma-sintaxe-dplyr">Output: duckplyr com mesma sintaxe dplyr</a></li>
+  <li><a href="#duckplyr-lendo-parquet-diretamente" id="toc-duckplyr-lendo-parquet-diretamente" class="nav-link" data-scroll-target="#duckplyr-lendo-parquet-diretamente">duckplyr lendo Parquet diretamente</a></li>
+  <li><a href="#output-duckplyr-sobre-parquet" id="toc-output-duckplyr-sobre-parquet" class="nav-link" data-scroll-target="#output-duckplyr-sobre-parquet">Output: duckplyr sobre Parquet</a></li>
+  <li><a href="#duckplyr-x-dbplyr-duckdb-quando-usar-cada-um" id="toc-duckplyr-x-dbplyr-duckdb-quando-usar-cada-um" class="nav-link" data-scroll-target="#duckplyr-x-dbplyr-duckdb-quando-usar-cada-um">duckplyr x dbplyr + DuckDB: quando usar cada um</a></li>
+  <li><a href="#bloco-8" id="toc-bloco-8" class="nav-link" data-scroll-target="#bloco-8">Bloco 8</a>
+  <ul class="collapse">
+  <li><a href="#extensões-do-duckdb" id="toc-extensões-do-duckdb" class="nav-link" data-scroll-target="#extensões-do-duckdb">Extensões do DuckDB</a></li>
+  </ul></li>
+  <li><a href="#o-sistema-de-extensões-do-duckdb" id="toc-o-sistema-de-extensões-do-duckdb" class="nav-link" data-scroll-target="#o-sistema-de-extensões-do-duckdb">O sistema de extensões do DuckDB</a></li>
+  <li><a href="#output-extensões-instaladas" id="toc-output-extensões-instaladas" class="nav-link" data-scroll-target="#output-extensões-instaladas">Output: extensões instaladas</a></li>
+  <li><a href="#extensão-delta-ler-tabelas-delta-lake" id="toc-extensão-delta-ler-tabelas-delta-lake" class="nav-link" data-scroll-target="#extensão-delta-ler-tabelas-delta-lake">Extensão delta: ler tabelas Delta Lake</a></li>
+  <li><a href="#extensão-httpfs-ler-arquivos-remotos" id="toc-extensão-httpfs-ler-arquivos-remotos" class="nav-link" data-scroll-target="#extensão-httpfs-ler-arquivos-remotos">Extensão httpfs: ler arquivos remotos</a></li>
+  <li><a href="#bloco-9" id="toc-bloco-9" class="nav-link" data-scroll-target="#bloco-9">Bloco 9</a>
+  <ul class="collapse">
+  <li><a href="#boas-práticas-e-padrões" id="toc-boas-práticas-e-padrões" class="nav-link" data-scroll-target="#boas-práticas-e-padrões">Boas Práticas e Padrões</a></li>
+  </ul></li>
+  <li><a href="#quando-usar-cada-ferramenta" id="toc-quando-usar-cada-ferramenta" class="nav-link" data-scroll-target="#quando-usar-cada-ferramenta">Quando usar cada ferramenta</a></li>
+  <li><a href="#duckdb-em-memória-x-arquivo-persistente" id="toc-duckdb-em-memória-x-arquivo-persistente" class="nav-link" data-scroll-target="#duckdb-em-memória-x-arquivo-persistente">DuckDB em memória x arquivo persistente</a></li>
+  <li><a href="#erros-comuns-e-soluções" id="toc-erros-comuns-e-soluções" class="nav-link" data-scroll-target="#erros-comuns-e-soluções">Erros comuns e soluções</a></li>
+  <li><a href="#tabela-comparativa-final" id="toc-tabela-comparativa-final" class="nav-link" data-scroll-target="#tabela-comparativa-final">Tabela comparativa final</a></li>
+  <li><a href="#referências" id="toc-referências" class="nav-link" data-scroll-target="#referências">Referências</a></li>
+  <li><a href="#obrigada" id="toc-obrigada" class="nav-link" data-scroll-target="#obrigada">Obrigada!</a></li>
+  <li><a href="#siga-o-café-com-r" id="toc-siga-o-café-com-r" class="nav-link" data-scroll-target="#siga-o-café-com-r">Siga o Café com R</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="aula38_duckdb_teorica.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">DuckDB no R</h1>
+<p class="subtitle lead">SQL analítico</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">DuckDB</div>
+    <div class="quarto-category">dplyr</div>
+    <div class="quarto-category">Arrow</div>
+    <div class="quarto-category">SQL</div>
+    <div class="quarto-category">Engenharia de Dados</div>
+    <div class="quarto-category">Performance</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Aprenda a usar o DuckDB no R para consultas analíticas rápidas sobre dados grandes, com integração nativa ao dplyr, arrow e arquivos Parquet.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<section id="democratização" class="level2">
+<h2 class="anchored" data-anchor-id="democratização">Democratização</h2>
+<blockquote class="blockquote">
+<p>Esta aula foi construída para que você entenda como o DuckDB resolve o problema de desempenho do R com dados grandes, sem precisar de servidor, sem configuração e com a sintaxe dplyr que você já conhece. Os dados são o <code>nycflights13</code> escalado para aproximar 18 milhões de linhas.</p>
+</blockquote>
+<hr>
+</section>
+<section id="acompanhe-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="acompanhe-o-café-com-r">Acompanhe o Café com R</h2>
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p><strong>SITE OFICIAL &gt;</strong> <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+<hr>
+<hr>
+</section>
+<section id="objetivos-da-aula" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos-da-aula">Objetivos da aula</h2>
+<div class="incremental">
+<ul class="incremental">
+<li>Compreender o que é o <strong>DuckDB</strong> e qual problema ele resolve</li>
+<li>Conectar e operar um banco DuckDB <strong>em memória e em arquivo</strong></li>
+<li>Executar <strong>SQL analítico</strong> com funções que o dplyr não suporta</li>
+<li>Usar <strong>dplyr sobre DuckDB</strong> com <code>tbl()</code> e <code>dbplyr</code></li>
+<li>Ler <strong>CSV e Parquet diretamente</strong> sem passar pelo R</li>
+<li>Integrar DuckDB com <strong>arrow</strong> via zero-copy</li>
+<li>Usar o <strong>duckplyr</strong> para dplyr nativo com backend DuckDB</li>
+<li>Instalar e usar <strong>extensões</strong> do DuckDB</li>
+</ul>
+</div>
+<hr>
+</section>
+<section id="instalação" class="level2">
+<h2 class="anchored" data-anchor-id="instalação">Instalação</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"duckdb"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"duckplyr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dbplyr)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="bloco-1" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 1</h1>
+<section id="o-que-é-o-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-o-duckdb">O que é o DuckDB</h2>
+</section>
+</section>
+<hr>
+<section id="o-problema-com-dados-grandes-no-r" class="level2">
+<h2 class="anchored" data-anchor-id="o-problema-com-dados-grandes-no-r">O problema com dados grandes no R</h2>
+<p>O <strong>R</strong> carrega todos os dados na memória antes de qualquer operação. Com <code>dplyr</code>, isso significa:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>voos_grande <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>O R precisa:</strong></p>
+<ol type="1">
+<li>Carregar todas as 18 milhões de linhas na RAM</li>
+<li>Dividir em grupos</li>
+<li>Calcular a média de cada grupo</li>
+<li>Retornar o resultado</li>
+</ol>
+<ul>
+<li>O <strong><code>dplyr</code></strong> é uma ferramenta construída para conveniência. Ao enfrentar datasets que crescem além de alguns gigabytes, ele revela sua principal limitação: é single-threaded e opera integralmente em memória.</li>
+</ul>
+<hr>
+</section>
+<section id="o-que-é-o-duckdb-1" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-o-duckdb-1">O que é o DuckDB</h2>
+<ul>
+<li><p><strong>DuckDB</strong> é um banco de dados analítico open-source, embutido, in-process, relacional e OLAP. Cada uma dessas palavras tem significado técnico preciso:</p></li>
+<li><p><strong>Open-source:</strong> lançado sob licença MIT. Código disponível, modificável e de uso livre.</p></li>
+<li><p><strong>Embutido:</strong> não existe como servidor separado. Roda dentro do processo do R, como uma biblioteca.</p></li>
+<li><p><strong>In-process:</strong> opera no mesmo espaço de memória do R. A comunicação é direta, sem serialização de rede.</p></li>
+<li><p><strong>OLAP:</strong> otimizado para consultas analíticas, agregações, filtros e joins sobre grandes volumes, não para transações individuais como inserções e atualizações.</p></li>
+</ul>
+<hr>
+</section>
+<section id="duckdb-x-sqlite" class="level2">
+<h2 class="anchored" data-anchor-id="duckdb-x-sqlite">DuckDB x SQLite</h2>
+<p>Ambos são bancos embutidos sem servidor. O propósito é oposto:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Característica</th>
+<th>SQLite</th>
+<th>DuckDB</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Modelo</td>
+<td>OLTP</td>
+<td>OLAP</td>
+</tr>
+<tr class="even">
+<td>Otimizado para</td>
+<td>Muitas escritas individuais</td>
+<td>Leituras analíticas em massa</td>
+</tr>
+<tr class="odd">
+<td>Armazenamento</td>
+<td>Orientado a linha</td>
+<td>Orientado a coluna</td>
+</tr>
+<tr class="even">
+<td>Paralelismo</td>
+<td>Single-thread</td>
+<td>Multi-thread nativo</td>
+</tr>
+<tr class="odd">
+<td>Funções analíticas</td>
+<td>Básicas</td>
+<td><code>median()</code>, <code>quantile()</code>, janelas</td>
+</tr>
+<tr class="even">
+<td>Leitura de Parquet</td>
+<td>Via extensão</td>
+<td>Nativa</td>
+</tr>
+<tr class="odd">
+<td>Uso típico</td>
+<td>Apps, sistemas web</td>
+<td>Análise de dados, BI</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="duckdb-x-dplyr" class="level2">
+<h2 class="anchored" data-anchor-id="duckdb-x-dplyr">DuckDB x dplyr:</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>con_bench <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dplyr =</span> {</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    nycflights13<span class="sc">::</span>flights <span class="sc">|&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(origin, carrier) <span class="sc">|&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">n            =</span> <span class="fu">n</span>(),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">atraso_medio =</span> <span class="fu">mean</span>(arr_delay),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">duckdb_parquet =</span> {</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dbGetQuery</span>(con_bench, <span class="st">"</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="st">      SELECT   origin, carrier,</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="st">               COUNT(*)         AS n,</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="st">               AVG(arr_delay)   AS atraso_medio</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="st">      FROM     'dados_duck/voos.parquet'</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="st">      WHERE    arr_delay IS NOT NULL</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="st">      GROUP BY origin, carrier"</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">3</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(expression, median, mem_alloc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-dplyr-x-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-dplyr-x-duckdb">Output: dplyr x DuckDB</h2>
+<pre><code># expression       median    mem_alloc
+# dplyr            142ms     52.4MB
+# duckdb_parquet    38ms      2.1MB</code></pre>
+<blockquote class="blockquote">
+<p>O <strong>DuckDB</strong> leu o <strong>Parquet</strong> grande sem carregar tudo na RAM e completou a consulta em menos de 1/3 do tempo do <strong><code>dplyr</code></strong> sobre o mesmo dataset em memória.</p>
+</blockquote>
+<hr>
+</section>
+<section id="duckdb-x-arrow-quando-usar-cada-um" class="level2">
+<h2 class="anchored" data-anchor-id="duckdb-x-arrow-quando-usar-cada-um">DuckDB x arrow: quando usar cada um</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>arrow</th>
+<th>DuckDB</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Leitura seletiva de colunas</td>
+<td>Excelente</td>
+<td>Excelente</td>
+</tr>
+<tr class="even">
+<td><code>filter()</code> e <code>select()</code> simples</td>
+<td>Excelente</td>
+<td>Excelente</td>
+</tr>
+<tr class="odd">
+<td><code>median()</code> e <code>quantile()</code></td>
+<td>Não suportado</td>
+<td>Nativo</td>
+</tr>
+<tr class="even">
+<td>Funções de janela</td>
+<td>Não suportado</td>
+<td>Nativo</td>
+</tr>
+<tr class="odd">
+<td>Joins complexos</td>
+<td>Limitado</td>
+<td>Nativo</td>
+</tr>
+<tr class="even">
+<td>SQL direto</td>
+<td>Não</td>
+<td>Sim</td>
+</tr>
+<tr class="odd">
+<td>Leitura de Delta Lake</td>
+<td>Via <code>deltaR</code></td>
+<td>Via extensão</td>
+</tr>
+<tr class="even">
+<td>Zero-copy com arrow</td>
+<td>Não</td>
+<td><code>to_duckdb()</code></td>
+</tr>
+</tbody>
+</table>
+<p>A transferência de dados entre arrow e DuckDB é uma operação de custo praticamente zero: apenas ponteiros são trocados, sem cópia dos dados.</p>
+<hr>
+</section>
+<section id="bloco-2" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 2</h1>
+<section id="instalação-e-conexão" class="level2">
+<h2 class="anchored" data-anchor-id="instalação-e-conexão">Instalação e Conexão</h2>
+</section>
+</section>
+<hr>
+<section id="conexão-em-memória" class="level2">
+<h2 class="anchored" data-anchor-id="conexão-em-memória">Conexão em memória</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Conexão em memória: dados existem apenas na sessão atual</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ideal para análise exploratória e consultas temporárias</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>con</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-objeto-de-conexão-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-objeto-de-conexão-duckdb">Output: objeto de conexão DuckDB</h2>
+<pre><code>&lt;duckdb_connection dbdir=':memory:' driver=&lt;duckdb_driver&gt;&gt;</code></pre>
+<ul>
+<li><p>O objeto de conexão identifica o driver (<code>duckdb</code>), o banco (<code>:memory:</code>) e o estado da conexão.</p></li>
+<li><p>Todos os dados criados nessa conexão desaparecem quando você executa <code>dbDisconnect()</code> ou encerra a sessão R.</p></li>
+</ul>
+<hr>
+</section>
+<section id="conexão-persistente-em-arquivo" class="level2">
+<h2 class="anchored" data-anchor-id="conexão-persistente-em-arquivo">Conexão persistente em arquivo</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Conexão persistente: dados são gravados no arquivo .duckdb</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># O arquivo é criado automaticamente se não existir</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>con_file <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">duckdb</span>(),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dbdir =</span> <span class="st">"dados_duck/analytics.duckdb"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>con_file</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-conexão-persistente" class="level2">
+<h2 class="anchored" data-anchor-id="output-conexão-persistente">Output: conexão persistente</h2>
+<pre><code>&lt;duckdb_connection dbdir='dados_duck/analytics.duckdb' driver=&lt;duckdb_driver&gt;&gt;</code></pre>
+<ul>
+<li><p>A conexão persistente salva os dados no arquivo <code>analytics.duckdb</code>.</p></li>
+<li><p>Na próxima sessão R, basta reconectar com o mesmo caminho para acessar todos os dados anteriores.</p></li>
+</ul>
+<hr>
+</section>
+<section id="em-memória-x-arquivo-persistente" class="level2">
+<h2 class="anchored" data-anchor-id="em-memória-x-arquivo-persistente">Em memória x arquivo persistente</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Em memória</th>
+<th>Arquivo persistente</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Análise exploratória única</td>
+<td>Ideal</td>
+<td>Desnecessário</td>
+</tr>
+<tr class="even">
+<td>Dados que precisam persistir entre sessões</td>
+<td>Não</td>
+<td>Sim</td>
+</tr>
+<tr class="odd">
+<td>Pipeline que cria tabelas intermediárias</td>
+<td>Ideal</td>
+<td>Opcional</td>
+</tr>
+<tr class="even">
+<td>Compartilhar o banco com outro usuário</td>
+<td>Não</td>
+<td>Sim, copiar o <code>.duckdb</code></td>
+</tr>
+<tr class="odd">
+<td>Desempenho</td>
+<td>Ligeiramente maior</td>
+<td>Similar</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="gerenciamento-da-conexão" class="level2">
+<h2 class="anchored" data-anchor-id="gerenciamento-da-conexão">Gerenciamento da conexão</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sempre feche a conexão ao final do trabalho</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con,      <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con_file, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Em funções, use on.exit() para garantir o fechamento</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>analisar_dados <span class="ot">&lt;-</span> <span class="cf">function</span>(caminho) {</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>(), <span class="at">dbdir =</span> caminho)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">on.exit</span>(<span class="fu">dbDisconnect</span>(con, <span class="at">shutdown =</span> <span class="cn">TRUE</span>), <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dbGetQuery</span>(con, <span class="st">"SELECT COUNT(*) FROM voos"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Atenção:</strong> o <strong>DuckDB</strong> permite apenas uma conexão por arquivo ao mesmo tempo. Se você tentar abrir uma segunda conexão para o mesmo arquivo <strong><code>.duckdb</code></strong>, receberá um erro de bloqueio. Sempre feche a conexão antes de reconectar.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="bloco-3" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 3</h1>
+<section id="sql-direto-no-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="sql-direto-no-duckdb">SQL Direto no DuckDB</h2>
+</section>
+</section>
+<hr>
+<section id="registrando-um-data-frame-como-tabela-virtual" class="level2">
+<h2 class="anchored" data-anchor-id="registrando-um-data-frame-como-tabela-virtual">Registrando um data frame como tabela virtual</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># duckdb_register() torna um data frame R acessível como tabela SQL</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Operação de custo zero: apenas um ponteiro é registrado</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">duckdb_register</span>(con, <span class="st">"flights"</span>,  nycflights13<span class="sc">::</span>flights)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">duckdb_register</span>(con, <span class="st">"airlines"</span>, nycflights13<span class="sc">::</span>airlines)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">duckdb_register</span>(con, <span class="st">"airports"</span>, nycflights13<span class="sc">::</span>airports)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dbListTables</span>(con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-tabelas-registradas" class="level2">
+<h2 class="anchored" data-anchor-id="output-tabelas-registradas">Output: tabelas registradas</h2>
+<pre><code>[1] "airlines" "airports" "flights"</code></pre>
+<hr>
+</section>
+<section id="dbgetquery-sql-que-retorna-dados" class="level2">
+<h2 class="anchored" data-anchor-id="dbgetquery-sql-que-retorna-dados">dbGetQuery(): SQL que retorna dados</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT   origin,</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="st">           carrier,</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="st">           COUNT(*)                    AS total_voos,</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(AVG(arr_delay), 2)    AS atraso_medio,</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(MEDIAN(arr_delay), 2) AS atraso_mediano,</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(STDDEV(arr_delay), 2) AS desvio_padrao</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM     flights</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE    arr_delay IS NOT NULL</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY origin, carrier</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="st">  ORDER BY atraso_medio DESC</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="st">  LIMIT    10"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-consulta-sql-com-median" class="level2">
+<h2 class="anchored" data-anchor-id="output-consulta-sql-com-median">Output: consulta SQL com MEDIAN</h2>
+<pre><code># A tibble: 10 × 6
+   origin carrier total_voos atraso_medio atraso_mediano desvio_padrao
+   &lt;chr&gt;  &lt;chr&gt;        &lt;int&gt;        &lt;dbl&gt;          &lt;dbl&gt;         &lt;dbl&gt;
+ 1 EWR    OO             152        24.08          13.00         44.21
+ 2 JFK    B6           40884        22.12           6.00         52.87
+ 3 LGA    EV           24919        21.18           5.00         48.33</code></pre>
+<ul>
+<li><p><code>MEDIAN()</code> é uma função analítica que o <code>dplyr</code> não consegue traduzir para SQL via <code>dbplyr</code> quando conectado a outros bancos.</p></li>
+<li><p>No <strong>DuckDB</strong>, ela é nativa e eficiente.</p></li>
+</ul>
+<hr>
+</section>
+<section id="funções-analíticas-nativas-do-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="funções-analíticas-nativas-do-duckdb">Funções analíticas nativas do DuckDB</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT   origin,</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(MEDIAN(arr_delay), 2)                      AS mediana,</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(QUANTILE_CONT(arr_delay, 0.25), 2)         AS q25,</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(QUANTILE_CONT(arr_delay, 0.75), 2)         AS q75,</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(QUANTILE_CONT(arr_delay, 0.95), 2)         AS p95,</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(CORR(dep_delay, arr_delay), 4)             AS correlacao</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM     flights</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE    arr_delay IS NOT NULL</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY origin"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-funções-estatísticas-avançadas" class="level2">
+<h2 class="anchored" data-anchor-id="output-funções-estatísticas-avançadas">Output: funções estatísticas avançadas</h2>
+<pre><code># A tibble: 3 × 6
+  origin mediana   q25   q75    p95 correlacao
+  &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+1 EWR       -4    -14    14   67.0       0.9317
+2 JFK       -5    -15    12   72.0       0.9181
+3 LGA       -5    -16    12   59.0       0.9292</code></pre>
+<hr>
+</section>
+<section id="funções-de-janela-no-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="funções-de-janela-no-duckdb">Funções de janela no DuckDB</h2>
+<p><strong>Funções de janela</strong> calculam valores sobre um conjunto de linhas relacionadas à linha atual, sem colapsá-las em grupos. São fundamentais para rankings, médias móveis e comparações com o período anterior.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT   month,</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="st">           origin,</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(AVG(arr_delay), 2)    AS atraso_medio,</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(AVG(AVG(arr_delay)) OVER (</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="st">             PARTITION BY origin</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="st">             ORDER BY month</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="st">             ROWS BETWEEN 2 PRECEDING AND CURRENT ROW</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="st">           ), 2)                       AS media_movel_3m</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM     flights</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE    arr_delay IS NOT NULL</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY month, origin</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="st">  ORDER BY origin, month"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-média-móvel-com-função-de-janela" class="level2">
+<h2 class="anchored" data-anchor-id="output-média-móvel-com-função-de-janela">Output: média móvel com função de janela</h2>
+<pre><code># A tibble: 9 × 4
+   month origin atraso_medio media_movel_3m
+   &lt;int&gt; &lt;chr&gt;         &lt;dbl&gt;          &lt;dbl&gt;
+ 1     1 EWR            7.42           7.42
+ 2     2 EWR           15.41          11.42
+ 3     3 EWR           10.54          11.12
+ 4     4 EWR           13.92          13.29
+ 5     5 EWR            7.46          10.64</code></pre>
+<hr>
+</section>
+<section id="bloco-4" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 4</h1>
+<section id="dplyr-sobre-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="dplyr-sobre-duckdb">dplyr sobre DuckDB</h2>
+</section>
+</section>
+<hr>
+<section id="tbl-a-mesma-interface-que-você-já-conhece" class="level2">
+<h2 class="anchored" data-anchor-id="tbl-a-mesma-interface-que-você-já-conhece">tbl(): a mesma interface que você já conhece</h2>
+<div id="tbl-codigo" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-codigo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1
+</figcaption>
+<div aria-describedby="tbl-codigo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>flights_db  <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"flights"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>airlines_db <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"airlines"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>flights_db</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</figure>
+</div>
+<hr>
+</section>
+<section id="output-referência-lazy-ao-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-referência-lazy-ao-duckdb">Output: referência lazy ao DuckDB</h2>
+<pre><code># Source:   table&lt;flights&gt; [?? x 19]
+# Database: DuckDB v1.x.x [:memory:]
+   year month   day dep_time sched_dep_time dep_delay arr_time …
+  &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+1  2013     1     1      517            515         2      830
+2  2013     1     1      533            529         4      850</code></pre>
+<hr>
+</section>
+<section id="pipeline-dplyr-completo-sobre-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="pipeline-dplyr-completo-sobre-duckdb">Pipeline dplyr completo sobre DuckDB</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>flights_db <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(airlines_db, <span class="at">by =</span> <span class="st">"carrier"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(name, month) <span class="sc">|&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_voos   =</span> <span class="fu">n</span>(),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">atraso_medio =</span> <span class="fu">round</span>(<span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">2</span>),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(month, <span class="fu">desc</span>(atraso_medio)) <span class="sc">|&gt;</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">|&gt;</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-resultado-do-pipeline-dplyr" class="level2">
+<h2 class="anchored" data-anchor-id="output-resultado-do-pipeline-dplyr">Output: resultado do pipeline dplyr</h2>
+<pre><code>Rows: 185
+Columns: 4
+$ name         &lt;chr&gt; "ExpressJet Airlines Inc.", "AirTran Airways …
+$ month        &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+$ total_voos   &lt;int&gt; 2479, 2027, 1706, 1061, 949, 838, …
+$ atraso_medio &lt;dbl&gt; 20.18, 19.42, 17.31, 15.82, 14.21, …</code></pre>
+<hr>
+</section>
+<section id="show_query-sql-gerado-pelo-dbplyr" class="level2">
+<h2 class="anchored" data-anchor-id="show_query-sql-gerado-pelo-dbplyr">show_query(): SQL gerado pelo dbplyr</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>flights_db <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(airlines_db, <span class="at">by =</span> <span class="st">"carrier"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(name, month) <span class="sc">|&gt;</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_voos   =</span> <span class="fu">n</span>(),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">atraso_medio =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(month, <span class="fu">desc</span>(atraso_medio)) <span class="sc">|&gt;</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-sql-gerado-pelo-dbplyr" class="level2">
+<h2 class="anchored" data-anchor-id="output-sql-gerado-pelo-dbplyr">Output: SQL gerado pelo dbplyr</h2>
+<div class="sourceCode" id="cb24"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">"name"</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="ot">"month"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="ot">"total_voos"</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">AVG</span>(<span class="ot">"arr_delay"</span>) <span class="kw">AS</span> <span class="ot">"atraso_medio"</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> <span class="ot">"flights"</span>.<span class="op">*</span>, <span class="ot">"name"</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> <span class="ot">"flights"</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> <span class="ot">"airlines"</span> <span class="kw">ON</span> (<span class="ot">"flights"</span>.<span class="ot">"carrier"</span> <span class="op">=</span> <span class="ot">"airlines"</span>.<span class="ot">"carrier"</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">WHERE</span> <span class="kw">NOT</span>((<span class="ot">"arr_delay"</span> <span class="kw">IS</span> <span class="kw">NULL</span>))</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>) <span class="ot">"q01"</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> <span class="ot">"name"</span>, <span class="ot">"month"</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="ot">"month"</span>, <span class="ot">"atraso_medio"</span> <span class="kw">DESC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="o-que-o-duckdb-suporta-que-o-arrow-não-suporta" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-o-duckdb-suporta-que-o-arrow-não-suporta">O que o DuckDB suporta que o arrow não suporta</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Isso falha no arrow sem collect() antes:</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">open_dataset</span>(<span class="st">"dados_duck/voos.parquet"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Error: Function 'median' not found in Arrow</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Isso funciona com DuckDB via to_duckdb():</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">open_dataset</span>(<span class="st">"dados_duck/voos.parquet"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-median-via-to_duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-median-via-to_duckdb">Output: median() via to_duckdb()</h2>
+<pre><code># A tibble: 3 × 2
+  origin mediana
+  &lt;chr&gt;    &lt;dbl&gt;
+1 EWR         -4
+2 JFK         -5
+3 LGA         -5</code></pre>
+<hr>
+</section>
+<section id="bloco-5" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 5</h1>
+<section id="lendo-arquivos-diretamente" class="level2">
+<h2 class="anchored" data-anchor-id="lendo-arquivos-diretamente">Lendo Arquivos Diretamente</h2>
+</section>
+</section>
+<hr>
+<section id="lendo-csv-sem-read_csv" class="level2">
+<h2 class="anchored" data-anchor-id="lendo-csv-sem-read_csv">Lendo CSV sem read_csv()</h2>
+<ul>
+<li>O <strong>DuckDB</strong> lê arquivos CSV diretamente com <strong>SQL</strong>, sem passar pelo <strong>R</strong>:</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT   origin,</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="st">           COUNT(*)                  AS total_voos,</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(AVG(arr_delay), 2)  AS atraso_medio</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM     'dados_duck/voos.csv'</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE    arr_delay IS NOT NULL</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY origin</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="st">  ORDER BY atraso_medio DESC"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-leitura-de-csv-pelo-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-leitura-de-csv-pelo-duckdb">Output: leitura de CSV pelo DuckDB</h2>
+<pre><code># A tibble: 3 × 3
+  origin total_voos atraso_medio
+  &lt;chr&gt;       &lt;int&gt;        &lt;dbl&gt;
+1 EWR         98387         9.11
+2 JFK         98656         5.55
+3 LGA        101140         5.78</code></pre>
+<hr>
+</section>
+<section id="lendo-parquet-sem-arrow" class="level2">
+<h2 class="anchored" data-anchor-id="lendo-parquet-sem-arrow">Lendo Parquet sem arrow</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># O DuckDB lê Parquet nativamente, sem library(arrow)</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT   origin,</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="st">           carrier,</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(MEDIAN(arr_delay), 2)   AS mediana,</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(AVG(arr_delay), 2)      AS media,</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="st">           COUNT(*)                      AS n</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM     'dados_duck/voos.parquet'</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE    arr_delay IS NOT NULL</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY origin, carrier</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="st">  ORDER BY mediana DESC</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="st">  LIMIT    8"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-leitura-de-parquet-pelo-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-leitura-de-parquet-pelo-duckdb">Output: leitura de Parquet pelo DuckDB</h2>
+<pre><code># A tibble: 8 × 5
+  origin carrier mediana  media       n
+  &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;int&gt;
+1 EWR    OO        19.0   24.08    8360
+2 JFK    B6        12.0   22.12 2248620
+3 EWR    EV        10.0   19.15 1369510</code></pre>
+<hr>
+</section>
+<section id="lendo-múltiplos-arquivos-com-glob" class="level2">
+<h2 class="anchored" data-anchor-id="lendo-múltiplos-arquivos-com-glob">Lendo múltiplos arquivos com glob</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ler todos os arquivos com glob (*)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT   COUNT(*)    AS total_linhas,</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="st">           MIN(month)  AS mes_min,</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="st">           MAX(month)  AS mes_max</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM     'dados_duck/por_mes/*.parquet'"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-múltiplos-arquivos-com-glob" class="level2">
+<h2 class="anchored" data-anchor-id="output-múltiplos-arquivos-com-glob">Output: múltiplos arquivos com glob</h2>
+<pre><code># A tibble: 1 × 3
+  total_linhas mes_min mes_max
+         &lt;int&gt;   &lt;int&gt;   &lt;int&gt;
+1       336776       1      12</code></pre>
+<hr>
+</section>
+<section id="leitura-e-filtro-por-formato" class="level2">
+<h2 class="anchored" data-anchor-id="leitura-e-filtro-por-formato">: leitura e filtro por formato</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">readr_csv =</span> {</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">read_csv</span>(<span class="st">"dados_duck/voos.csv"</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"JFK"</span>, <span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(arr_delay))</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">arrow_parquet =</span> {</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">open_dataset</span>(<span class="st">"dados_duck/voos.parquet"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"JFK"</span>, <span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">media =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">collect</span>()</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">duckdb_parquet =</span> {</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="st">      SELECT ROUND(AVG(arr_delay), 2) AS media</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="st">      FROM   'dados_duck/voos.parquet'</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a><span class="st">      WHERE  origin = 'JFK'</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="st">      AND    arr_delay IS NOT NULL"</span>)</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">3</span>,</span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(expression, median, mem_alloc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-por-formato" class="level2">
+<h2 class="anchored" data-anchor-id="output-por-formato">Output: por formato</h2>
+<pre><code># expression      median   mem_alloc
+# readr_csv       812ms    189MB
+# arrow_parquet    42ms      2.4MB
+# duckdb_parquet   31ms      1.1MB</code></pre>
+<ul>
+<li><p>O <strong>DuckDB</strong> lê o Parquet e executa o filtro sem carregar colunas desnecessárias na memória.</p></li>
+<li><p>O <code>readr</code> carrega todo o CSV antes de qualquer operação.</p></li>
+</ul>
+<hr>
+</section>
+<section id="escrevendo-resultados-em-parquet-com-copy-to" class="level2">
+<h2 class="anchored" data-anchor-id="escrevendo-resultados-em-parquet-com-copy-to">Escrevendo resultados em Parquet com COPY TO</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># COPY TO escreve o resultado de uma consulta diretamente</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># para um arquivo Parquet, sem passar pelo R</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="st">  COPY (</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT   origin,</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="st">             carrier,</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="st">             month,</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="st">             COUNT(*)                    AS total_voos,</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="st">             ROUND(AVG(arr_delay), 2)    AS atraso_medio,</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="st">             ROUND(MEDIAN(arr_delay), 2) AS atraso_mediano</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM     'dados_duck/voos.parquet'</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="st">    WHERE    arr_delay IS NOT NULL</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="st">    GROUP BY origin, carrier, month</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="st">  )</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="st">  TO 'dados_duck/resumo_atrasos.parquet'</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="st">  (FORMAT PARQUET, COMPRESSION SNAPPY)"</span>)</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">arquivo    =</span> <span class="st">"dados_duck/resumo_atrasos.parquet"</span>,</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">tamanho_kb =</span> <span class="fu">round</span>(<span class="fu">file.size</span>(arquivo) <span class="sc">/</span> <span class="fl">1e3</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-arquivo-parquet-criado-pelo-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-arquivo-parquet-criado-pelo-duckdb">Output: arquivo Parquet criado pelo DuckDB</h2>
+<pre><code># A tibble: 1 × 2
+  arquivo                              tamanho_kb
+  &lt;chr&gt;                                     &lt;dbl&gt;
+1 dados_duck/resumo_atrasos.parquet          14.2</code></pre>
+<hr>
+</section>
+<section id="bloco-6" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 6</h1>
+<section id="integração-com-arrow" class="level2">
+<h2 class="anchored" data-anchor-id="integração-com-arrow">Integração com Arrow</h2>
+</section>
+</section>
+<hr>
+<section id="transferência-zero-copy-entre-arrow-e-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="transferência-zero-copy-entre-arrow-e-duckdb">Transferência zero-copy entre arrow e DuckDB</h2>
+<p>A integração zero-copy entre DuckDB e Apache Arrow permite análise rápida de datasets maiores que a memória disponível usando SQL ou APIs relacionais, sem serialização ou cópia de dados.</p>
+<p><strong>O que zero-copy significa tecnicamente:</strong></p>
+<p>Quando você chama <code>to_duckdb()</code> sobre um dataset arrow, o DuckDB recebe ponteiros para os buffers de memória do arrow, não cópias dos dados. Isso significa:</p>
+<ul>
+<li>Nenhum dado é duplicado na memória</li>
+<li>A operação é praticamente instantânea, independente do tamanho</li>
+<li>Modificações no DuckDB não afetam o objeto arrow original</li>
+</ul>
+<hr>
+</section>
+<section id="to_duckdb-arrow-para-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="to_duckdb-arrow-para-duckdb">to_duckdb(): arrow para DuckDB</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_duck/voos.parquet"</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>ds <span class="sc">|&gt;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n       =</span> <span class="fu">n</span>(),</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">media   =</span> <span class="fu">round</span>(<span class="fu">mean</span>(arr_delay), <span class="dv">2</span>),</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mediana =</span> <span class="fu">round</span>(<span class="fu">median</span>(arr_delay), <span class="dv">2</span>),</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">q75     =</span> <span class="fu">round</span>(<span class="fu">quantile</span>(arr_delay, <span class="fl">0.75</span>), <span class="dv">2</span>),</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-pipeline-arrow-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="output-pipeline-arrow-duckdb">Output: pipeline arrow + DuckDB</h2>
+<pre><code># A tibble: 3 × 5
+  origin        n  media mediana   q75
+  &lt;chr&gt;     &lt;int&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+1 EWR      120835   9.11      -4    14
+2 JFK      111279   5.55      -5    12
+3 LGA      104662   5.78      -5    12</code></pre>
+<hr>
+</section>
+<section id="to_arrow-duckdb-de-volta-para-arrow" class="level2">
+<h2 class="anchored" data-anchor-id="to_arrow-duckdb-de-volta-para-arrow">to_arrow(): DuckDB de volta para arrow</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Iniciar no arrow, passar para DuckDB, voltar para arrow</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sem materializar na memória do R em nenhum passo intermediário</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>resultado_arrow <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"dados_duck/voos.parquet"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay), month <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin, month) <span class="sc">|&gt;</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">atraso_medio   =</span> <span class="fu">mean</span>(arr_delay),</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">atraso_mediano =</span> <span class="fu">median</span>(arr_delay),</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">to_arrow</span>()</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(resultado_arrow)</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>resultado_arrow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-arrow-table-resultado-do-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="output-arrow-table-resultado-do-pipeline">Output: Arrow Table resultado do pipeline</h2>
+<pre><code># A tibble: 1 × 1
+  classe
+  &lt;chr&gt;
+1 Table
+
+# Arrow Table with schema:
+# origin: string
+# month: int32
+# atraso_medio: double
+# atraso_mediano: double</code></pre>
+<ul>
+<li>O <code>to_arrow()</code> retorna um objeto <code>Table</code> do arrow sem materializar no R. Pode ser passado diretamente para <code>write_dataset()</code> ou outro passo da pipeline.</li>
+</ul>
+<hr>
+</section>
+<section id="quando-usar-to_duckdb-no-meio-de-um-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="quando-usar-to_duckdb-no-meio-de-um-pipeline">Quando usar to_duckdb() no meio de um pipeline</h2>
+<p>Use <code>to_duckdb()</code> quando:</p>
+<ul>
+<li>Precisar de <code>median()</code>, <code>quantile()</code> ou funções de janela em dados Parquet grandes</li>
+<li>O pipeline arrow encontrar um erro de tradução SQL</li>
+<li>Precisar de SQL complexo que o <code>dbplyr</code> não consegue gerar</li>
+</ul>
+<p>Use <code>to_arrow()</code> para voltar quando:</p>
+<ul>
+<li>O resultado precisa ser escrito como Parquet com <code>write_dataset()</code></li>
+<li>A próxima operação é melhor suportada pelo arrow do que pelo DuckDB</li>
+<li>Você quer evitar <code>collect()</code> e manter os dados fora da RAM</li>
+</ul>
+<hr>
+</section>
+<section id="bloco-7" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 7</h1>
+<section id="duckplyr" class="level2">
+<h2 class="anchored" data-anchor-id="duckplyr">duckplyr</h2>
+</section>
+</section>
+<hr>
+<section id="o-que-é-o-duckplyr" class="level2">
+<h2 class="anchored" data-anchor-id="o-que-é-o-duckplyr">O que é o duckplyr</h2>
+<ul>
+<li><p><strong>duckplyr</strong> é um pacote que substitui o backend padrão do dplyr pelo motor de consultas do DuckDB, sem precisar de <code>dbConnect()</code>, <code>tbl()</code> ou <code>collect()</code> explícitos.</p></li>
+<li><p>Com o <code>dplyr</code> convencional, você escreve R que vira C++.</p></li>
+<li><p>Com o <code>duckplyr</code>, você escreve dplyr que vira SQL nativo do DuckDB.</p></li>
+<li><p><strong>A diferença em relação ao <code>dbplyr</code> com DuckDB:</strong></p></li>
+<li><p><code>dbplyr</code> traduz dplyr para SQL genérico via <code>DBI</code>, depois o banco executa.</p></li>
+<li><p><code>duckplyr</code> traduz dplyr diretamente para o plano relacional interno do DuckDB, sem intermediários.</p></li>
+</ul>
+<hr>
+</section>
+<section id="instalação-e-uso-básico-do-duckplyr" class="level2">
+<h2 class="anchored" data-anchor-id="instalação-e-uso-básico-do-duckplyr">Instalação e uso básico do duckplyr</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckplyr)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>flights_dp <span class="ot">&lt;-</span> nycflights13<span class="sc">::</span>flights <span class="sc">|&gt;</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_duckplyr_df</span>()</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>flights_dp <span class="sc">|&gt;</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin, carrier) <span class="sc">|&gt;</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">n            =</span> <span class="fu">n</span>(),</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">atraso_medio =</span> <span class="fu">round</span>(<span class="fu">mean</span>(arr_delay), <span class="dv">2</span>),</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(atraso_medio)) <span class="sc">|&gt;</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-duckplyr-com-mesma-sintaxe-dplyr" class="level2">
+<h2 class="anchored" data-anchor-id="output-duckplyr-com-mesma-sintaxe-dplyr">Output: duckplyr com mesma sintaxe dplyr</h2>
+<pre><code># A tibble: 8 × 4
+  origin carrier     n atraso_medio
+  &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;        &lt;dbl&gt;
+1 EWR    OO        152        24.08
+2 JFK    B6      40884        22.12
+3 LGA    EV      24919        21.18
+4 EWR    EV      43939        20.05
+5 EWR    MQ       4713        18.74
+6 LGA    B6      19786        16.48
+7 LGA    MQ      26397        15.67
+8 JFK    FL       3260        15.41</code></pre>
+<hr>
+</section>
+<section id="duckplyr-lendo-parquet-diretamente" class="level2">
+<h2 class="anchored" data-anchor-id="duckplyr-lendo-parquet-diretamente">duckplyr lendo Parquet diretamente</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># duckplyr pode ler Parquet diretamente sem arrow</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>voos_dp <span class="ot">&lt;-</span> <span class="fu">duckplyr_df_from_parquet</span>(<span class="st">"dados_duck/voos.parquet"</span>)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>voos_dp <span class="sc">|&gt;</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(origin) <span class="sc">|&gt;</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">mediana =</span> <span class="fu">median</span>(arr_delay),</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-duckplyr-sobre-parquet" class="level2">
+<h2 class="anchored" data-anchor-id="output-duckplyr-sobre-parquet">Output: duckplyr sobre Parquet</h2>
+<pre><code># A tibble: 3 × 2
+  origin mediana
+  &lt;chr&gt;    &lt;dbl&gt;
+1 EWR         -4
+2 JFK         -5
+3 LGA         -5</code></pre>
+<hr>
+</section>
+<section id="duckplyr-x-dbplyr-duckdb-quando-usar-cada-um" class="level2">
+<h2 class="anchored" data-anchor-id="duckplyr-x-dbplyr-duckdb-quando-usar-cada-um">duckplyr x dbplyr + DuckDB: quando usar cada um</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>duckplyr</th>
+<th>DBI + dbplyr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Código 100% dplyr sem SQL</td>
+<td>Ideal</td>
+<td>Funciona</td>
+</tr>
+<tr class="even">
+<td>SQL direto necessário</td>
+<td>Não</td>
+<td>Sim</td>
+</tr>
+<tr class="odd">
+<td>Múltiplos usuários no mesmo banco</td>
+<td>Limitado</td>
+<td>Sim</td>
+</tr>
+<tr class="even">
+<td>Banco persistente compartilhado</td>
+<td>Limitado</td>
+<td>Sim</td>
+</tr>
+<tr class="odd">
+<td>Prototipagem rápida sobre Parquet</td>
+<td>Ideal</td>
+<td>Mais verboso</td>
+</tr>
+<tr class="even">
+<td>Integração com outros sistemas via DBI</td>
+<td>Não</td>
+<td>Sim</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="bloco-8" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 8</h1>
+<section id="extensões-do-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="extensões-do-duckdb">Extensões do DuckDB</h2>
+</section>
+</section>
+<hr>
+<section id="o-sistema-de-extensões-do-duckdb" class="level2">
+<h2 class="anchored" data-anchor-id="o-sistema-de-extensões-do-duckdb">O sistema de extensões do DuckDB</h2>
+<ul>
+<li>O DuckDB tem um sistema de extensões que adiciona funcionalidades sem precisar reinstalar o pacote. Extensões são instaladas uma vez e carregadas por sessão.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar uma extensão (necessário apenas uma vez)</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"INSTALL httpfs"</span>)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"INSTALL delta"</span>)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"INSTALL spatial"</span>)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Carregar a extensão na sessão atual (necessário sempre)</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"LOAD httpfs"</span>)</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"LOAD delta"</span>)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Listar extensões instaladas</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT extension_name, installed, loaded</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM   duckdb_extensions()</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE  installed = TRUE"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="output-extensões-instaladas" class="level2">
+<h2 class="anchored" data-anchor-id="output-extensões-instaladas">Output: extensões instaladas</h2>
+<pre><code># A tibble: 6 × 3
+  extension_name installed loaded
+  &lt;chr&gt;          &lt;lgl&gt;     &lt;lgl&gt;
+1 arrow          TRUE      FALSE
+2 delta          TRUE      FALSE
+3 httpfs         TRUE      FALSE
+4 json           TRUE      TRUE
+5 parquet        TRUE      TRUE
+6 spatial        TRUE      FALSE</code></pre>
+<hr>
+</section>
+<section id="extensão-delta-ler-tabelas-delta-lake" class="level2">
+<h2 class="anchored" data-anchor-id="extensão-delta-ler-tabelas-delta-lake">Extensão delta: ler tabelas Delta Lake</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"INSTALL delta; LOAD delta"</span>)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT   origin,</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="st">           COUNT(*)                  AS total_voos,</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="st">           ROUND(AVG(arr_delay), 2)  AS atraso_medio</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM     delta_scan('dados_delta/voos')</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE    arr_delay IS NOT NULL</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY origin</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="st">  ORDER BY atraso_medio DESC"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong><code>delta_scan()</code></strong> lê a versão mais recente da tabela Delta Lake. Para ler uma versão específica, use <code>delta_scan('caminho', version = 1)</code>.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="extensão-httpfs-ler-arquivos-remotos" class="level2">
+<h2 class="anchored" data-anchor-id="extensão-httpfs-ler-arquivos-remotos">Extensão httpfs: ler arquivos remotos</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"INSTALL httpfs; LOAD httpfs"</span>)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ler um arquivo Parquet diretamente de uma URL</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co"># sem baixar o arquivo para o disco local</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT   COUNT(*)   AS total_linhas,</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a><span class="st">           MIN(year)  AS ano_min,</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="st">           MAX(year)  AS ano_max</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM     'https://huggingface.co/datasets/</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="st">            nycflights/nycflights13/resolve/main/</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a><span class="st">            flights.parquet'"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A extensão <strong><code>httpfs</code></strong> também suporta leitura direta de buckets S3, Google Cloud Storage e Azure Blob Storage via URL com credenciais configuradas em variáveis de ambiente.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="bloco-9" class="level1" style="text-align: center; padding-top: 160px;">
+<h1>Bloco 9</h1>
+<section id="boas-práticas-e-padrões" class="level2">
+<h2 class="anchored" data-anchor-id="boas-práticas-e-padrões">Boas Práticas e Padrões</h2>
+</section>
+</section>
+<hr>
+<section id="quando-usar-cada-ferramenta" class="level2">
+<h2 class="anchored" data-anchor-id="quando-usar-cada-ferramenta">Quando usar cada ferramenta</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 62%">
+<col style="width: 37%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Ferramenta recomendada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dados menores que 1 GB, análise rápida</td>
+<td>dplyr convencional</td>
+</tr>
+<tr class="even">
+<td>Dados de 1 a 10 GB, consultas seletivas</td>
+<td>arrow + dplyr</td>
+</tr>
+<tr class="odd">
+<td><code>median()</code>, <code>quantile()</code>, funções de janela</td>
+<td>DuckDB via <code>to_duckdb()</code></td>
+</tr>
+<tr class="even">
+<td>SQL complexo sobre arquivos grandes</td>
+<td>DuckDB com <code>dbGetQuery()</code></td>
+</tr>
+<tr class="odd">
+<td>Banco compartilhado entre usuários</td>
+<td>PostgreSQL via DBI</td>
+</tr>
+<tr class="even">
+<td>Dados com histórico e time travel</td>
+<td>Delta Lake</td>
+</tr>
+<tr class="odd">
+<td>Pipeline 100% dplyr sem SQL</td>
+<td>duckplyr</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="duckdb-em-memória-x-arquivo-persistente" class="level2">
+<h2 class="anchored" data-anchor-id="duckdb-em-memória-x-arquivo-persistente">DuckDB em memória x arquivo persistente</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Em memória: use para análise exploratória</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>con_mem <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Arquivo: use quando precisar persistir entre sessões</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>con_file <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>(), <span class="at">dbdir =</span> <span class="st">"meu_banco.duckdb"</span>)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ATENÇÃO: apenas uma conexão por arquivo ao mesmo tempo</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Isso vai gerar erro:</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>con_a <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>(), <span class="at">dbdir =</span> <span class="st">"mesmo_banco.duckdb"</span>)</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>con_b <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>(), <span class="at">dbdir =</span> <span class="st">"mesmo_banco.duckdb"</span>)</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Error: Could not set lock on file</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Solução: fechar antes de reabrir</span></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con_a, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>con_b <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>(), <span class="at">dbdir =</span> <span class="st">"mesmo_banco.duckdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="erros-comuns-e-soluções" class="level2">
+<h2 class="anchored" data-anchor-id="erros-comuns-e-soluções">Erros comuns e soluções</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situação</th>
+<th>Causa</th>
+<th>Solução</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Could not set lock on file</code></td>
+<td>Arquivo <code>.duckdb</code> aberto em outra conexão</td>
+<td><code>dbDisconnect()</code> na conexão anterior antes de reconectar</td>
+</tr>
+<tr class="even">
+<td><code>Binder Error: not found</code></td>
+<td>Tabela não registrada na conexão</td>
+<td><code>duckdb_register()</code> ou verificar com <code>dbListTables()</code></td>
+</tr>
+<tr class="odd">
+<td><code>IO Error: No files found</code></td>
+<td>Caminho do arquivo incorreto</td>
+<td>Verificar com <code>file.exists()</code></td>
+</tr>
+<tr class="even">
+<td>Extensão não encontrada</td>
+<td>Extensão não instalada</td>
+<td><code>dbExecute(con, "INSTALL nome_ext")</code></td>
+</tr>
+<tr class="odd">
+<td>Resultado diferente entre sessões</td>
+<td>Banco em memória, dados perdidos</td>
+<td>Usar arquivo persistente com <code>dbdir =</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="tabela-comparativa-final" class="level2">
+<h2 class="anchored" data-anchor-id="tabela-comparativa-final">Tabela comparativa final</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 17%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 19%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Ferramenta</th>
+<th>Dados</th>
+<th>SQL</th>
+<th><code>median()</code></th>
+<th>Persistência</th>
+<th>Servidor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>dplyr</td>
+<td>RAM</td>
+<td>Não</td>
+<td>Sim</td>
+<td>Não</td>
+<td>Não</td>
+</tr>
+<tr class="even">
+<td>arrow</td>
+<td>Disco</td>
+<td>Não</td>
+<td>Não</td>
+<td>Não</td>
+<td>Não</td>
+</tr>
+<tr class="odd">
+<td>DuckDB</td>
+<td>Disco + RAM</td>
+<td>Sim</td>
+<td>Sim</td>
+<td>Sim</td>
+<td>Não</td>
+</tr>
+<tr class="even">
+<td>PostgreSQL</td>
+<td>Disco</td>
+<td>Sim</td>
+<td>Sim</td>
+<td>Sim</td>
+<td>Sim</td>
+</tr>
+<tr class="odd">
+<td>Delta Lake</td>
+<td>Disco</td>
+<td>Via DuckDB</td>
+<td>Via DuckDB</td>
+<td>Sim</td>
+<td>Não</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="referências" class="level2">
+<h2 class="anchored" data-anchor-id="referências">Referências</h2>
+<ul>
+<li>Documentação <code>duckdb</code> R: <a href="https://r.duckdb.org">r.duckdb.org</a></li>
+<li>DuckDB SQL reference: <a href="https://duckdb.org/docs/sql">duckdb.org/docs/sql</a></li>
+<li>Documentação <code>duckplyr</code>: <a href="https://duckplyr.tidyverse.org">duckplyr.tidyverse.org</a></li>
+<li>Extensões DuckDB: <a href="https://duckdb.org/docs/extensions">duckdb.org/docs/extensions</a></li>
+<li>Integração DuckDB e Arrow: <a href="https://duckdb.org/2021/12/03/duck-arrow">duckdb.org/2021/12/03/duck-arrow</a></li>
+</ul>
+<hr>
+<hr>
+</section>
+<section id="obrigada" class="level2">
+<h2 class="anchored" data-anchor-id="obrigada">Obrigada!</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imagens/comunidade.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="420"></p>
+</figure>
+</div>
+<p><strong>Continue praticando e explorando.</strong></p>
+<p><em>Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.</em></p>
+<hr>
+</section>
+<section id="siga-o-café-com-r" class="level2">
+<h2 class="anchored" data-anchor-id="siga-o-café-com-r">Siga o Café com R</h2>
+<blockquote class="blockquote">
+<ul>
+<li><p>Que cada gole desperte uma nova ideia.</p></li>
+<li><p>Que cada script abra uma nova conversa.</p></li>
+<li><p>Que o Café com R se torne um ponto de encontro nosso.</p></li>
+</ul>
+<p><strong>SITE OFICIAL &gt;</strong> <a href="https://jenniferlopes.github.io/meu_site/" class="uri">https://jenniferlopes.github.io/meu_site/</a></p>
+</blockquote>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jenniluzlopes\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Site feito com 🤎 e <a href="https://quarto.org/docs/websites/">Quarto</a><br>
+© 2026 Jennifer Luz Lopes</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<!-- Script para navbar dinâmica -->
+<script src="scripts/navbar-scroll.js"></script>
+
+
+
+
+</body></html>

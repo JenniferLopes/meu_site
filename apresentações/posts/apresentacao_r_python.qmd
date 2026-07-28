@@ -1,5 +1,5 @@
 ---
-title: "Aula 9. Integração R x Python com pacote Reticulate"
+title: "9. Integração R x Python com pacote Reticulate"
 subtitle: "Combinando o melhor de dois mundos"
 categories: [Python, R, Quarto, Reticulate]
 image: imagens/pyr.png
@@ -33,11 +33,11 @@ editor: visual
 ## **Objetivos da apresentação**
 
 ::: incremental
--   **Compreender a integração entre `R` e `Python`**
--   **Configurar o ambiente de trabalho**
--   **Executar código Python no RStudio**
--   **Transferir dados entre as linguagens**
--   **Aplicar em casos práticos**
+- **Compreender a integração entre `R` e `Python`**
+- **Configurar o ambiente de trabalho**
+- **Executar código Python no RStudio**
+- **Transferir dados entre as linguagens**
+- **Aplicar em casos práticos**
 :::
 
 ## **Por que integrar R e Python?**
@@ -46,19 +46,19 @@ editor: visual
 ::: {.column width="50%"}
 **Vantagens do R**
 
--   **Análise estatística**
--   **Visualização com ggplot2**
--   **Tidyverse para manipulação de dados**
--   **Quarto e RMarkdown**
+- **Análise estatística**
+- **Visualização com ggplot2**
+- **Tidyverse para manipulação de dados**
+- **Quarto e RMarkdown**
 :::
 
 ::: {.column width="50%"}
 **Vantagens do Python**
 
--   **Machine learning (scikit-learn)**
--   **Deep learning (TensorFlow, PyTorch)**
--   **Web scraping**
--   **Processamento de linguagem natural**
+- **Machine learning (scikit-learn)**
+- **Deep learning (TensorFlow, PyTorch)**
+- **Web scraping**
+- **Processamento de linguagem natural**
 :::
 :::::
 
@@ -67,11 +67,11 @@ editor: visual
 **Reticulate permite executar código Python dentro do ambiente R.**
 
 ::: incremental
--   **Desenvolvido pela Posit (RStudio)**
--   **Tradução bidirecional de objetos**
--   **Compartilhamento de dados entre linguagens**
--   **Suporte a ambientes virtuais Python**
--   **Acesse a [`documentação`](https://rstudio.github.io/reticulate/)**
+- **Desenvolvido pela Posit (RStudio)**
+- **Tradução bidirecional de objetos**
+- **Compartilhamento de dados entre linguagens**
+- **Suporte a ambientes virtuais Python**
+- **Acesse a [`documentação`](https://rstudio.github.io/reticulate/)**
 :::
 
 ## **Estrutura da integração**
@@ -103,9 +103,9 @@ flowchart LR
 **Opções de instalação:**
 
 ::: incremental
--   **Site oficial: [python.org/downloads](https://www.python.org/downloads/)**
--   **Anaconda: Distribuição completa com pacotes científicos**
--   **Miniconda: Versão minimalista do Anaconda**
+- **Site oficial: [python.org/downloads](https://www.python.org/downloads/)**
+- **Anaconda: Distribuição completa com pacotes científicos**
+- **Miniconda: Versão minimalista do Anaconda**
 :::
 
 ::: callout-tip
@@ -116,9 +116,9 @@ flowchart LR
 
 ## **Instalação do Quarto**
 
--   **Acesse: [quarto.org/docs/get-started](https://quarto.org/docs/get-started/)**
--   **Baixe o instalador para seu sistema operacional**
--   **Execute a instalação padrão**
+- **Acesse: [quarto.org/docs/get-started](https://quarto.org/docs/get-started/)**
+- **Baixe o instalador para seu sistema operacional**
+- **Execute a instalação padrão**
 
 ::: callout-note
 **O Quarto é independente do R e pode ser usado com Python, Julia e Observable.**
@@ -351,9 +351,9 @@ resultado_R %>%
 **Análise de avaliações de café de diferentes países:**
 
 ::: incremental
--   **Fonte: TidyTuesday (dados públicos)**
--   **Objetivo: Identificar países com melhor pontuação**
--   **Processo: Importação (Python) + Visualização (R)**
+- **Fonte: TidyTuesday (dados públicos)**
+- **Objetivo: Identificar países com melhor pontuação**
+- **Processo: Importação (Python) + Visualização (R)**
 :::
 
 ## **Importar dados com pandas**
@@ -575,10 +575,10 @@ pacman::p_load(reticulate, tidyverse, ggplot2)
 ## **Controle de versão**
 
 ::: incremental
--   **Use ambientes virtuais para Python**
--   **Documente versões dos pacotes**
--   **Teste em ambiente limpo antes de compartilhar**
--   **Use `renv` para R e `venv` para Python**
+- **Use ambientes virtuais para Python**
+- **Documente versões dos pacotes**
+- **Teste em ambiente limpo antes de compartilhar**
+- **Use `renv` para R e `venv` para Python**
 :::
 
 ## **Tratamento de erros**
@@ -599,10 +599,10 @@ if (py_module_available("pandas")) {
 ## **Performance**
 
 ::: incremental
--   **Evite conversões desnecessárias entre R e Python**
--   **Processe dados grandes na linguagem mais eficiente**
--   **Use `data.table` (R) ou `polars` (Python) para grandes volumes**
--   **Considere processamento paralelo quando apropriado**
+- **Evite conversões desnecessárias entre R e Python**
+- **Processe dados grandes na linguagem mais eficiente**
+- **Use `data.table` (R) ou `polars` (Python) para grandes volumes**
+- **Considere processamento paralelo quando apropriado**
 :::
 
 # **Casos de uso - alguns exemplos**
@@ -719,39 +719,39 @@ dados = pd.read_csv("arquivo.csv", encoding="utf-8")
 ## **Conflitos de versão**
 
 ::: incremental
--   **Use ambientes virtuais isolados**
--   **Documente versões exatas dos pacotes**
--   **Teste compatibilidade antes de atualizar**
--   **Considere usar Docker para reprodutibilidade total**
+- **Use ambientes virtuais isolados**
+- **Documente versões exatas dos pacotes**
+- **Teste compatibilidade antes de atualizar**
+- **Considere usar Docker para reprodutibilidade total**
 :::
 
 # **Recursos adicionais**
 
 ## **Documentação oficial**
 
--   **Reticulate: [rstudio.github.io/reticulate](https://rstudio.github.io/reticulate/)**
--   **Pandas: [pandas.pydata.org/docs](https://pandas.pydata.org/docs/)**
--   **NumPy: [numpy.org/doc](https://numpy.org/doc/)**
--   **Quarto: [quarto.org](https://quarto.org/)**
+- **Reticulate: [rstudio.github.io/reticulate](https://rstudio.github.io/reticulate/)**
+- **Pandas: [pandas.pydata.org/docs](https://pandas.pydata.org/docs/)**
+- **NumPy: [numpy.org/doc](https://numpy.org/doc/)**
+- **Quarto: [quarto.org](https://quarto.org/)**
 
 # **Conclusão**
 
 ## **Principais aprendizados**
 
 ::: incremental
--   **Reticulate permite integração transparente R-Python**
--   **Possível aproveitar bibliotecas específicas de cada linguagem**
--   **Transferência bidirecional de dados é simples**
--   **Configuração inicial requer atenção aos detalhes**
+- **Reticulate permite integração transparente R-Python**
+- **Possível aproveitar bibliotecas específicas de cada linguagem**
+- **Transferência bidirecional de dados é simples**
+- **Configuração inicial requer atenção aos detalhes**
 :::
 
 ## **Quando usar integração**
 
 ::: incremental
--   **Machine learning com scikit-learn/TensorFlow**
--   **Web scraping complexo**
--   **Processamento de linguagem natural**
--   **Aproveitar pacotes específicos de cada ecossistema**
+- **Machine learning com scikit-learn/TensorFlow**
+- **Web scraping complexo**
+- **Processamento de linguagem natural**
+- **Aproveitar pacotes específicos de cada ecossistema**
 :::
 
 ## **Próximos passos**

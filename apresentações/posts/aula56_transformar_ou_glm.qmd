@@ -1,0 +1,382 @@
+---
+title: "Aula 56. Transformar dados ou usar GLM?"
+subtitle: "Uma decisão que gera muita dúvida, resolvida com os três caminhos lado a lado"
+categories: [R, Estatística, GLM, Tidyverse]
+image: "imagens/56.png"
+description: "Compare, com o mesmo conjunto de dados, a ANOVA direta em contagens, a ANOVA após transformação e o GLM Poisson, e entenda quando cada caminho é apropriado."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+dose <- factor(rep(c("Dose 1", "Dose 2", "Dose 3"), each = 30),
+                levels = c("Dose 1", "Dose 2", "Dose 3"))
+
+lambda_doses <- c("Dose 1" = 9, "Dose 2" = 5, "Dose 3" = 2.5)
+pragas       <- rpois(90, lambda = lambda_doses[as.character(dose)])
+
+dados_pragas_dose <- tibble(parcela = 1:90, dose, pragas)
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Entender por que dados de contagem violam os pressupostos da **ANOVA clássica**
+- Aplicar e avaliar a transformação de dados como primeiro caminho possível
+- Aplicar e avaliar o **Modelo Linear Generalizado**, **GLM**, como segundo caminho possível
+- Comparar os três caminhos, ANOVA, ANOVA transformada e GLM, e decidir quando usar cada um
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## O Problema
+:::
+
+------------------------------------------------------------------------
+
+## Por que dados de contagem violam os pressupostos da ANOVA
+
+- **Contexto:** um experimento compara três doses de inseticida quanto ao número de pragas remanescentes por parcela, 30 parcelas por dose.
+
+- A ANOVA clássica assume resíduos normais e variância homogênea entre grupos. Dados de contagem, como o número de pragas, seguem naturalmente uma distribuição em que a variância cresce junto com a média, violando a suposição de homogeneidade por construção.
+
+- Além disso, contagens são limitadas a valores inteiros não negativos, um domínio que o modelo linear clássico não respeita nas suas previsões.
+
+------------------------------------------------------------------------
+
+## Código: ANOVA direta e diagnóstico
+
+```{r}
+#| label: anova-bruta-codigo
+#| eval: false
+
+modelo_bruto <- aov(pragas ~ dose, 
+                    data = dados_pragas_dose)
+
+dados_pragas_dose |>
+  group_by(dose) |>
+  summarise(media = mean(pragas), variancia = var(pragas))
+
+shapiro.test(residuals(modelo_bruto))
+```
+
+------------------------------------------------------------------------
+
+## Output: diagnóstico e problema evidenciado
+
+```{r}
+#| label: anova-bruta-output
+#| echo: false
+
+modelo_bruto <- aov(pragas ~ dose, 
+                    data = dados_pragas_dose)
+
+dados_pragas_dose |>
+  group_by(dose) |>
+  summarise(media = mean(pragas), 
+            variancia = var(pragas)) |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+
+resultado_shapiro_bruto <- shapiro.test(residuals(modelo_bruto))
+
+tibble(shapiro_estatistica = resultado_shapiro_bruto$statistic,
+       shapiro_p = resultado_shapiro_bruto$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **A variância cresce junto com a média entre as três doses, exatamente o padrão esperado em dados de contagem, e o teste de Shapiro-Wilk já sinaliza desvio de normalidade nos resíduos do modelo bruto.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Caminho 1, Transformação
+:::
+
+------------------------------------------------------------------------
+
+## Transformação log e raiz quadrada, conceito e quando aplicar
+
+- A transformação $\log(x+1)$ é indicada para dados de contagem com assimetria à direita, o acréscimo de 1 evita o logaritmo de zero.
+
+- A transformação $\sqrt{x+0{,}5}$ é uma alternativa clássica para dados de contagem, historicamente recomendada para estabilizar a variância de variáveis com distribuição próxima da Poisson.
+
+- Ambas buscam aproximar os dados transformados de uma distribuição normal com variância mais estável entre grupos, permitindo o uso da ANOVA clássica sobre a escala transformada.
+
+------------------------------------------------------------------------
+
+## Código: ANOVA após transformação
+
+```{r}
+#| label: anova-transformada-codigo
+#| eval: false
+
+dados_pragas_dose <- dados_pragas_dose |>
+  mutate(pragas_log = log(pragas + 1))
+
+modelo_transformado <- aov(pragas_log ~ dose, data = dados_pragas_dose)
+
+shapiro.test(residuals(modelo_transformado))
+```
+
+------------------------------------------------------------------------
+
+## Output: diagnóstico pós-transformação
+
+```{r}
+#| label: anova-transformada-output
+#| echo: false
+
+dados_pragas_dose <- dados_pragas_dose |>
+  mutate(pragas_log = log(pragas + 1))
+
+modelo_transformado <- aov(pragas_log ~ dose, data = dados_pragas_dose)
+
+resultado_shapiro_transf <- shapiro.test(residuals(modelo_transformado))
+
+tibble(shapiro_estatistica = resultado_shapiro_transf$statistic,
+       shapiro_p = resultado_shapiro_transf$p.value) |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+```
+
+- **A transformação logarítmica melhora o comportamento dos resíduos em relação ao modelo bruto. Ainda assim, o resultado da ANOVA passa a se referir à média do logaritmo da contagem, não à contagem média original.**
+
+------------------------------------------------------------------------
+
+## Limite da transformação
+
+- O efeito estimado pela ANOVA transformada é expresso na escala transformada, e reverter esse efeito para a escala original, especialmente diferenças entre médias, não é direto nem sempre bem definido.
+
+- **No contexto deste estudo:** afirmar que "a Dose 3 reduz o logaritmo do número de pragas mais 1 em tal magnitude" comunica pouco ao produtor rural, que pensa em número de insetos, não em unidades logarítmicas.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Caminho 2, GLM
+:::
+
+------------------------------------------------------------------------
+
+## Conceito de GLM, função de ligação e família exponencial
+
+- Um **Modelo Linear Generalizado**, GLM, estende o modelo linear clássico permitindo que a variável resposta siga uma distribuição da família exponencial, não apenas a normal, e conectando o preditor linear à média da resposta por uma **função de ligação**.
+
+$$g(\mu) = \beta_0 + \beta_1 x_1 + \ldots + \beta_p x_p$$
+
+- $g(\cdot)$ é a função de ligação, escolhida conforme a distribuição assumida para a resposta, $\mu$ é a média da variável resposta na escala original.
+
+------------------------------------------------------------------------
+
+## Por que Poisson é a família natural para contagem
+
+- A distribuição de Poisson, com função de ligação logarítmica, $g(\mu) = \ln(\mu)$, respeita naturalmente o domínio de contagens, sempre inteiras e não negativas, e incorpora a relação entre média e variância característica desse tipo de dado.
+
+- O GLM Poisson modela diretamente a contagem esperada, sem a necessidade de transformar a variável resposta antes do ajuste.
+
+------------------------------------------------------------------------
+
+## Código: ajuste do GLM Poisson
+
+```{r}
+#| label: glm-codigo
+#| eval: false
+
+modelo_glm <- glm(pragas ~ dose, data = dados_pragas_dose, family = poisson)
+
+summary(modelo_glm)$coefficients
+```
+
+------------------------------------------------------------------------
+
+## Output: resultado e interpretação na escala original
+
+```{r}
+#| label: glm-output
+#| echo: false
+
+modelo_glm <- glm(pragas ~ dose, data = dados_pragas_dose, family = poisson)
+
+summary(modelo_glm)$coefficients |>
+  as_tibble(rownames = "termo") |>
+  mutate(across(where(is.numeric), ~ round(.x, 4)))
+
+exp(coef(modelo_glm)) |>
+  as_tibble(rownames = "termo") |>
+  rename(razao_de_taxas = value) |>
+  mutate(razao_de_taxas = round(razao_de_taxas, 3))
+```
+
+- **Os coeficientes do GLM estão na escala logarítmica, sua exponenciação fornece a razão de taxas entre cada dose e a dose de referência. Uma razão de taxas de 0,55, por exemplo, indica que a dose correspondente reduz a contagem esperada de pragas em 45% em relação à referência, uma interpretação direta na escala original.**
+
+------------------------------------------------------------------------
+
+## Verificação de superdispersão, conceito e código
+
+- Antes de confiar nos erros padrão do GLM Poisson, é necessário verificar se a variância dos dados excede o esperado sob o modelo, fenômeno chamado superdispersão.
+
+$$\phi = \frac{\text{Deviance residual}}{\text{Graus de liberdade residuais}}$$
+
+- Um valor de $\phi$ próximo de 1 é consistente com a suposição de Poisson. Valores substancialmente maiores que 1 indicam superdispersão.
+
+```{r}
+#| label: superdispersao-codigo
+#| eval: false
+
+deviance(modelo_glm) / df.residual(modelo_glm)
+```
+
+------------------------------------------------------------------------
+
+## Output: superdispersão e decisão
+
+```{r}
+#| label: superdispersao-output
+#| echo: false
+
+tibble(phi = deviance(modelo_glm) / df.residual(modelo_glm)) |>
+  mutate(phi = round(phi, 3))
+```
+
+- **O valor de** $\phi$ está próximo de 1, sem evidência relevante de superdispersão, o que sustenta o uso do GLM Poisson padrão. Caso $\phi$ fosse substancialmente maior que 1, as alternativas seriam o GLM quase-Poisson, que ajusta os erros padrão sem alterar as estimativas, ou o GLM binomial negativo, que modela explicitamente a superdispersão.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Comparando os Três Caminhos
+:::
+
+------------------------------------------------------------------------
+
+## Tabela comparativa
+
+| Caminho | Respeita o domínio da contagem | Interpretação | Pressupostos |
+|------------------|------------------|------------------|------------------|
+| ANOVA nos dados brutos | Não | Direta, mas inválida | Violados |
+| ANOVA transformada | Parcialmente | Indireta, na escala transformada | Aproximadamente atendidos |
+| GLM Poisson | Sim | Direta, via razão de taxas | Especificados pelo próprio modelo |
+
+------------------------------------------------------------------------
+
+## Quando preferir cada caminho
+
+- O **GLM** é, em geral, a escolha mais apropriada para dados de contagem, por respeitar o domínio da variável e fornecer interpretação direta na escala original, desde que a superdispersão seja verificada.
+
+- A **transformação** ainda tem lugar quando o objetivo é compatibilidade com métodos que exigem explicitamente normalidade, ou quando a comunidade de referência de uma área específica espera esse tratamento por tradição metodológica.
+
+- A **ANOVA nos dados brutos**, sem tratamento, não deve ser usada quando o diagnóstico indica violação relevante dos pressupostos, como demonstrado no Bloco 1.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, transformar sempre sem considerar GLM
+
+- Recorrer automaticamente à transformação como primeira e única solução, sem considerar o GLM, ignora uma alternativa que frequentemente respeita melhor a natureza dos dados e facilita a interpretação na escala original.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, não reverter a transformação ao interpretar o coeficiente
+
+- Reportar coeficientes ou diferenças de médias na escala transformada, como se estivessem na escala original, sem aplicar a transformação inversa, comunica um resultado que não corresponde à grandeza real de interesse.
+
+------------------------------------------------------------------------
+
+## Erro comum 3, ignorar superdispersão e manter Poisson mesmo quando inadequado
+
+- Ajustar um GLM Poisson e não verificar $\phi$ pode levar a erros padrão subestimados, e, consequentemente, a conclusões de significância estatística que não se sustentariam sob o modelo de dispersão correto.
+
+------------------------------------------------------------------------
+
+## Resumo: transformar ou usar GLM
+
+| Elemento | ANOVA transformada | GLM Poisson |
+|------------------|---------------------------|---------------------------|
+| Escala do resultado | Transformada | Original, via razão de taxas |
+| Verificação necessária | Normalidade dos resíduos pós-transformação | Superdispersão, $\phi$ |
+| Função no R | `aov()` sobre variável transformada | `glm(family = poisson)` |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

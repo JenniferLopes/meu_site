@@ -1,0 +1,583 @@
+---
+title: "Aula 54. Distribuições Contínuas"
+subtitle: "Normal, Log-normal, Gamma e Beta, e como escolher o modelo certo"
+categories: [R, Estatística, Probabilidade, Tidyverse]
+image: "imagens/54.png"
+description: "Entenda quando usar Normal, Log-normal, Gamma ou Beta, com definição formal, propriedades e aplicação prática de cada distribuição."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+dados_altura <- tibble(planta = 1:80, altura_cm = rnorm(80, mean = 165, sd = 12))
+
+dados_esporos <- tibble(amostra = 1:80,
+                         esporos_por_grama = rlnorm(80, meanlog = log(500), sdlog = 0.8))
+
+dados_germinacao <- tibble(semente = 1:80,
+                            dias_germinacao = rgamma(80, shape = 4, rate = 0.5))
+
+dados_severidade <- tibble(folha = 1:80,
+                            proporcao_afetada = rbeta(80, shape1 = 2, shape2 = 5))
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Recapitular a distribuição **Normal** e seu papel de referência
+- Definir a distribuição **Log-normal** e reconhecer processos multiplicativos
+- Definir a distribuição **Gamma** e reconhecer variáveis de tempo de espera
+- Definir a distribuição **Beta** e reconhecer variáveis limitadas entre 0 e 1
+- Escolher corretamente entre as quatro distribuições contínuas diante de um conjunto de dados novo
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco Incial
+
+## Variáveis Aleatórias Contínuas
+:::
+
+------------------------------------------------------------------------
+
+## O que é uma variável aleatória contínua
+
+- Uma variável aleatória é **contínua** quando pode assumir qualquer valor dentro de um intervalo, resultado de medição, não de contagem.
+
+- Altura de planta, tempo até a germinação e proporção de área foliar afetada são todos exemplos de variáveis contínuas, mas com domínios e formas de distribuição muito diferentes entre si.
+
+- A distribuição de uma variável contínua é descrita por uma **função de densidade de probabilidade**, em que a área sob a curva, e não a altura em um ponto, representa probabilidade.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Distribuição Normal, Recapitulando
+:::
+
+------------------------------------------------------------------------
+
+## Recapitulando o essencial
+
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$
+
+- Simétrica em torno de $\mu$, domínio em toda a reta real, média igual a mediana igual a moda.
+
+- É o modelo de referência para variáveis contínuas resultantes da soma de muitos fatores independentes de pequena magnitude, e a base do Teorema Central do Limite.
+
+- Não é adequada para variáveis estritamente positivas com assimetria forte, nem para variáveis limitadas a um intervalo fechado, como veremos nos próximos blocos.
+
+------------------------------------------------------------------------
+
+## Quando aparece na prática
+
+- **Contexto:** a altura de plantas em um estande homogêneo tende a se distribuir de forma aproximadamente simétrica, resultado de muitos fatores genéticos e ambientais atuando em conjunto.
+
+------------------------------------------------------------------------
+
+## Código: aplicação à altura de planta
+
+```{r}
+#| label: normal-aplicacao-codigo
+#| eval: false
+
+dados_altura |>
+  summarise(
+    media      = mean(altura_cm),
+    mediana    = median(altura_cm),
+    assimetria = e1071::skewness(altura_cm, type = 2))
+```
+
+------------------------------------------------------------------------
+
+## Output: aplicação e interpretação
+
+```{r}
+#| label: normal-aplicacao-output
+#| echo: false
+
+dados_altura |>
+  summarise(
+    media      = mean(altura_cm),
+    mediana    = median(altura_cm),
+    assimetria = e1071::skewness(altura_cm, type = 2)) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+- **Média e mediana praticamente coincidem, e a assimetria está próxima de zero, consistente com a suposição de normalidade para a altura de planta neste estande.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Distribuição Log-normal
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, processos multiplicativos
+
+- Uma variável $X$ segue distribuição **Log-normal** quando $\ln(X)$ segue distribuição Normal.
+
+- Surge naturalmente de processos **multiplicativos**, em que o valor final resulta do produto de muitos fatores aleatórios independentes, e não de sua soma.
+
+- **Contexto:** a concentração de esporos de um fungo por grama de solo resulta de sucessivos ciclos de multiplicação do patógeno, um processo multiplicativo típico, produzindo forte assimetria à direita.
+
+------------------------------------------------------------------------
+
+## Função de densidade e propriedades na escala original
+
+$$f(x) = \frac{1}{x\,\sigma\sqrt{2\pi}}\exp\left(-\frac{(\ln x - \mu)^2}{2\sigma^2}\right), \quad x > 0$$
+
+| Propriedade, escala original | Fórmula |
+|------------------------------------|------------------------------------|
+| Média | $E[X] = \exp(\mu + \sigma^2/2)$ |
+| Variância | $\text{Var}(X) = \left[\exp(\sigma^2)-1\right]\exp(2\mu+\sigma^2)$ |
+
+::: callout-important
+**Atenção:** $\mu$ e $\sigma$ são a média e o desvio padrão de $\ln(X)$, não da variável original. Reportar $\mu$ como se fosse a média de $X$ é um erro comum de interpretação.
+:::
+
+------------------------------------------------------------------------
+
+## Código: curvas log-normais para parâmetros diferentes
+
+```{r}
+#| label: lognormal-curvas-codigo
+#| eval: false
+
+x_seq <- seq(0.1, 2000, length.out = 500)
+
+curvas_lognormal <- bind_rows(
+  tibble(x = x_seq, y = dlnorm(x_seq, meanlog = log(500), sdlog = 0.4),
+         rotulo = "sdlog = 0,4"),
+  tibble(x = x_seq, y = dlnorm(x_seq, meanlog = log(500), sdlog = 0.8),
+         rotulo = "sdlog = 0,8"))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: curvas log-normais
+
+```{r}
+#| label: lognormal-curvas-grafico
+#| echo: false
+#| fig-height: 4.8
+
+x_seq <- seq(0.1, 2000, length.out = 500)
+
+curvas_lognormal <- bind_rows(
+  tibble(x = x_seq, y = dlnorm(x_seq, meanlog = log(500), sdlog = 0.4),
+         rotulo = "sdlog = 0,4"),
+  tibble(x = x_seq, y = dlnorm(x_seq, meanlog = log(500), sdlog = 0.8),
+         rotulo = "sdlog = 0,8"))
+
+curvas_lognormal |>
+  ggplot(aes(x = x, y = y, color = rotulo)) +
+  geom_line(linewidth = 1.1) +
+  scale_color_manual(values = c(cores_cafe["azul_claro"], cores_cafe["marrom"])) +
+  labs(
+    title    = "Distribuição Log-normal para diferentes valores de sdlog",
+    subtitle = "Quanto maior sdlog, mais forte a assimetria à direita",
+    x        = "Esporos por grama de solo",
+    y        = "Densidade",
+    color    = NULL,
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Quando aparece na prática
+
+- Concentrações microbianas, população de pragas em explosão populacional, e outras variáveis resultantes de crescimento multiplicativo, tendem a seguir distribuição Log-normal, com forte assimetria à direita na escala original.
+
+------------------------------------------------------------------------
+
+## Código: aplicação aos dados de esporos
+
+```{r}
+#| label: lognormal-aplicacao-codigo
+#| eval: false
+
+dados_esporos |>
+  summarise(
+    media_original = mean(esporos_por_grama),
+    mediana_original = median(esporos_por_grama),
+    media_log = mean(log(esporos_por_grama)),
+    dp_log     = sd(log(esporos_por_grama)))
+```
+
+------------------------------------------------------------------------
+
+## Output: aplicação e interpretação
+
+```{r}
+#| label: lognormal-aplicacao-output
+#| echo: false
+
+dados_esporos |>
+  summarise(
+    media_original = mean(esporos_por_grama),
+    mediana_original = median(esporos_por_grama),
+    media_log = mean(log(esporos_por_grama)),
+    dp_log     = sd(log(esporos_por_grama))) |>
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+- **A média na escala original é substancialmente maior que a mediana, assinatura característica da assimetria log-normal. Na escala logarítmica, a distribuição se aproxima da normalidade, confirmando o processo multiplicativo subjacente.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Distribuição Gamma
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, tempo de espera até um evento
+
+- A distribuição **Gamma** modela o tempo, ou outra grandeza contínua estritamente positiva, necessário para que ocorra um determinado número de eventos em um processo de taxa constante.
+
+- **Contexto:** o número de dias até a germinação de uma semente é uma variável estritamente positiva, tipicamente assimétrica à direita, adequada ao modelo Gamma.
+
+------------------------------------------------------------------------
+
+## Função de densidade e parâmetros
+
+$$f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)}x^{\alpha-1}e^{-\beta x}, \quad x > 0$$
+
+| Símbolo                          | Significado                |
+|----------------------------------|----------------------------|
+| $\alpha$                         | Parâmetro de forma (shape) |
+| $\beta$                          | Parâmetro de taxa (rate)   |
+| $E[X] = \alpha/\beta$            | Média                      |
+| $\text{Var}(X) = \alpha/\beta^2$ | Variância                  |
+
+- Quando $\alpha = 1$, a Gamma se reduz à distribuição Exponencial, o caso mais simples de tempo de espera, com taxa de ocorrência constante ao longo do tempo.
+
+------------------------------------------------------------------------
+
+## Código: curvas gamma para diferentes shape
+
+```{r}
+#| label: gamma-curvas-codigo
+#| eval: false
+
+x_seq <- seq(0.01, 30, length.out = 500)
+
+curvas_gamma <- bind_rows(
+  tibble(x = x_seq, y = dgamma(x_seq, shape = 1, rate = 0.5), rotulo = "shape = 1"),
+  tibble(x = x_seq, y = dgamma(x_seq, shape = 4, rate = 0.5), rotulo = "shape = 4"),
+  tibble(x = x_seq, y = dgamma(x_seq, shape = 10, rate = 0.5), rotulo = "shape = 10"))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: curvas gamma
+
+```{r}
+#| label: gamma-curvas-grafico
+#| echo: false
+#| fig-height: 4.8
+
+x_seq <- seq(0.01, 30, length.out = 500)
+
+curvas_gamma <- bind_rows(
+  tibble(x = x_seq, y = dgamma(x_seq, shape = 1, rate = 0.5), rotulo = "shape = 1"),
+  tibble(x = x_seq, y = dgamma(x_seq, shape = 4, rate = 0.5), rotulo = "shape = 4"),
+  tibble(x = x_seq, y = dgamma(x_seq, shape = 10, rate = 0.5), rotulo = "shape = 10"))
+
+curvas_gamma |>
+  ggplot(aes(x = x, y = y, color = rotulo)) +
+  geom_line(linewidth = 1.1) +
+  scale_color_manual(values = c(cores_cafe["azul_claro"], cores_cafe["marrom"],
+                                cores_cafe["azul_escuro"])) +
+  labs(
+    title    = "Distribuição Gamma para diferentes valores de shape",
+    subtitle = "A curva se aproxima da simetria à medida que shape aumenta",
+    x        = "Dias até a germinação",
+    y        = "Densidade",
+    color    = NULL,
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Quando aparece na prática
+
+- Tempo até germinação, tempo até a eclosão de ovos de uma praga, ou tempo até a manifestação de sintomas de uma doença, são exemplos típicos de variáveis de tempo de espera, adequadas à distribuição Gamma.
+
+------------------------------------------------------------------------
+
+## Código: aplicação aos dados de germinação
+
+```{r}
+#| label: gamma-aplicacao-codigo
+#| eval: false
+
+dados_germinacao |>
+  summarise(
+    media       = mean(dias_germinacao),
+    variancia   = var(dias_germinacao),
+    shape_estimado = media^2 / variancia,
+    rate_estimado  = media / variancia)
+```
+
+------------------------------------------------------------------------
+
+## Output: aplicação e interpretação
+
+```{r}
+#| label: gamma-aplicacao-output
+#| echo: false
+
+dados_germinacao |>
+  summarise(
+    media       = mean(dias_germinacao),
+    variancia   = var(dias_germinacao),
+    shape_estimado = media^2 / variancia,
+    rate_estimado  = media / variancia) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+- **Os parâmetros de forma e taxa estimados pelo método dos momentos são próximos dos valores usados na simulação, confirmando que a distribuição Gamma descreve adequadamente o tempo até a germinação nesta amostra.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Distribuição Beta
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, variável limitada entre 0 e 1
+
+- A distribuição **Beta** modela variáveis contínuas restritas ao intervalo entre 0 e 1, como proporções, taxas e probabilidades.
+
+- **Contexto:** a proporção de área foliar afetada por uma doença, em cada folha avaliada, está necessariamente entre 0 e 1, um domínio que a distribuição Normal não respeita.
+
+------------------------------------------------------------------------
+
+## Função de densidade, parâmetros e formas possíveis
+
+$$f(x) = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1}(1-x)^{\beta-1}, \quad 0 < x < 1$$
+
+| Combinação           | Forma resultante                                     |
+|----------------------|--------------------------------------------------|
+| $\alpha = \beta = 1$ | Uniforme entre 0 e 1                                 |
+| $\alpha < \beta$     | Assimetria à direita, concentração em valores baixos |
+| $\alpha > \beta$     | Assimetria à esquerda, concentração em valores altos |
+| $\alpha = \beta > 1$ | Simétrica, concentrada no centro                     |
+
+------------------------------------------------------------------------
+
+## Código: curvas beta para diferentes parâmetros
+
+```{r}
+#| label: beta-curvas-codigo
+#| eval: false
+
+x_seq <- seq(0.001, 0.999, length.out = 500)
+
+curvas_beta <- bind_rows(
+  tibble(x = x_seq, y = dbeta(x_seq, shape1 = 2, shape2 = 5), rotulo = "shape1 = 2, shape2 = 5"),
+  tibble(x = x_seq, y = dbeta(x_seq, shape1 = 5, shape2 = 2), rotulo = "shape1 = 5, shape2 = 2"),
+  tibble(x = x_seq, y = dbeta(x_seq, shape1 = 5, shape2 = 5), rotulo = "shape1 = 5, shape2 = 5"))
+```
+
+------------------------------------------------------------------------
+
+## Gráfico: curvas beta
+
+```{r}
+#| label: beta-curvas-grafico
+#| echo: false
+#| fig-height: 4.8
+
+x_seq <- seq(0.001, 0.999, length.out = 500)
+
+curvas_beta <- bind_rows(
+  tibble(x = x_seq, y = dbeta(x_seq, shape1 = 2, shape2 = 5), rotulo = "shape1 = 2, shape2 = 5"),
+  tibble(x = x_seq, y = dbeta(x_seq, shape1 = 5, shape2 = 2), rotulo = "shape1 = 5, shape2 = 2"),
+  tibble(x = x_seq, y = dbeta(x_seq, shape1 = 5, shape2 = 5), rotulo = "shape1 = 5, shape2 = 5"))
+
+curvas_beta |>
+  ggplot(aes(x = x, y = y, color = rotulo)) +
+  geom_line(linewidth = 1.1) +
+  scale_color_manual(values = c(cores_cafe["azul_claro"], cores_cafe["marrom"],
+                                cores_cafe["azul_escuro"])) +
+  labs(
+    title    = "Distribuição Beta para diferentes combinações de parâmetros",
+    subtitle = "A forma da curva depende do equilíbrio entre shape1 e shape2",
+    x        = "Proporção de área foliar afetada",
+    y        = "Densidade",
+    color    = NULL,
+    caption  = "Jennifer Lopes | Café com R") +
+  tema
+```
+
+------------------------------------------------------------------------
+
+## Quando aparece na prática
+
+- Severidade de doença como proporção de área afetada, taxa de germinação de um lote, proporção de cobertura de solo por plantas daninhas, todas essas variáveis estão limitadas entre 0 e 1 e são candidatas naturais à distribuição Beta.
+
+------------------------------------------------------------------------
+
+## Código: aplicação aos dados de severidade
+
+```{r}
+#| label: beta-aplicacao-codigo
+#| eval: false
+
+dados_severidade |>
+  summarise(
+    media     = mean(proporcao_afetada),
+    variancia = var(proporcao_afetada)) |>
+  mutate(
+    shape1_estimado = media * (media * (1 - media) / variancia - 1),
+    shape2_estimado = (1 - media) * (media * (1 - media) / variancia - 1))
+```
+
+------------------------------------------------------------------------
+
+## Output: aplicação e interpretação
+
+```{r}
+#| label: beta-aplicacao-output
+#| echo: false
+
+dados_severidade |>
+  summarise(
+    media     = mean(proporcao_afetada),
+    variancia = var(proporcao_afetada)) |>
+  mutate(
+    shape1_estimado = media * (media * (1 - media) / variancia - 1),
+    shape2_estimado = (1 - media) * (media * (1 - media) / variancia - 1)) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3)))
+```
+
+- **Os parâmetros estimados pelo método dos momentos indicam shape1 menor que shape2, coerente com a concentração da severidade em valores baixos observada nesta amostra, a maioria das folhas apresenta pouca área afetada.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 5
+
+## Escolhendo o Modelo Certo
+:::
+
+------------------------------------------------------------------------
+
+## Árvore de decisão
+
+| Pergunta | Resposta | Distribuição indicada |
+|------------------------|------------------------|------------------------|
+| A variável é simétrica e pode assumir qualquer valor real? | Sim | Normal |
+| A variável é estritamente positiva, resulta de processo multiplicativo, com forte assimetria à direita? | Sim | Log-normal |
+| A variável representa tempo de espera até um evento, estritamente positiva? | Sim | Gamma |
+| A variável está limitada entre 0 e 1, como uma proporção? | Sim | Beta |
+
+------------------------------------------------------------------------
+
+## Erro comum 1, usar Normal para variável estritamente positiva e assimétrica
+
+- Ajustar um modelo Normal a uma variável como concentração de esporos ou tempo até germinação ignora tanto a restrição de positividade quanto a assimetria observada, produzindo previsões que podem incluir valores negativos, fisicamente impossíveis.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, usar Normal para proporção limitada entre 0 e 1
+
+- Modelar uma proporção, como severidade de doença, com distribuição Normal permite que o modelo produza valores fora do intervalo entre 0 e 1, uma inconsistência que a distribuição Beta, por construção, não permite.
+
+------------------------------------------------------------------------
+
+## Resumo: distribuições contínuas
+
+| Distribuição | Domínio     | Parâmetros                       | Função no R |
+|--------------|-------------|----------------------------------|-------------|
+| Normal       | Reta real   | $\mu$, $\sigma^2$                | `dnorm()`   |
+| Log-normal   | Positivo    | $\mu$, $\sigma$ da escala log    | `dlnorm()`  |
+| Gamma        | Positivo    | $\alpha$ (shape), $\beta$ (rate) | `dgamma()`  |
+| Beta         | Entre 0 e 1 | $\alpha$, $\beta$                | `dbeta()`   |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>

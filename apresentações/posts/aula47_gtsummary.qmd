@@ -1,0 +1,311 @@
+---
+title: "Aula 47. Tabela publicável em 5 minutos com gtsummary"
+subtitle: "Do resumo descritivo à tabela comparativa entre grupos, pronta para o artigo"
+categories: [R, Estatística, Tabelas, Tidyverse]
+image: "imagens/47.png"
+description: "Construa, em poucos comandos, a tabela descritiva e a tabela comparativa entre grupos que todo artigo científico exige, com gtsummary."
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    css: estilo_jeni.css
+    footer: "Jennifer Lopes | Café com R"
+    transition: slide
+    background-transition: fade
+    logo: "imagens/logo.png"
+    smaller: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(gtsummary)
+
+cores_cafe <- c(
+  azul_escuro = "#224573",
+  marrom      = "#6B4F4F",
+  azul_claro  = "#4A6FA5",
+  bege        = "#E5D3B3")
+
+tema <- theme_classic(base_size = 13) +
+  theme(
+    plot.title    = element_text(face = "bold", color = "#224573", size = 13),
+    plot.subtitle = element_text(color = "#5A5A5A", size = 11),
+    plot.caption  = element_text(color = "#888888", size = 9),
+    legend.position = "bottom")
+
+set.seed(2026)
+
+amostras_solo <- bind_rows(
+  tibble(regiao = "Região Norte", ph = rnorm(40, 5.6, 0.4),
+         materia_organica = rnorm(40, 2.8, 0.6),
+         argila = rnorm(40, 32, 6)),
+  tibble(regiao = "Região Central", ph = rnorm(40, 6.1, 0.35),
+         materia_organica = rnorm(40, 3.4, 0.5),
+         argila = rnorm(40, 45, 7)),
+  tibble(regiao = "Região Sul", ph = rnorm(40, 5.3, 0.5),
+         materia_organica = rnorm(40, 2.5, 0.55),
+         argila = rnorm(40, 28, 5))) |>
+  mutate(regiao = factor(regiao, levels = c(
+    "Região Norte", "Região Central", "Região Sul")))
+```
+
+------------------------------------------------------------------------
+
+## Acompanhe o Café com R
+
+- Que cada gole desperte uma nova ideia.
+
+- Que cada script abra uma nova conversa.
+
+- Que o Café com R se torne um ponto de encontro nosso.
+
+**SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
+
+------------------------------------------------------------------------
+
+## Objetivos da aula
+
+::: incremental
+- Construir uma tabela descritiva básica com `tbl_summary()`
+- Comparar grupos em uma única tabela, com teste estatístico embutido
+- Personalizar rótulos, cabeçalhos e totais gerais
+- Exportar a tabela final para Word e HTML
+:::
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 1
+
+## Fundamentos
+:::
+
+------------------------------------------------------------------------
+
+## Conceito, o que o gtsummary resolve
+
+- **Contexto:** amostras de solo de três regiões produtoras, pH, matéria orgânica e teor de argila, precisam compor a tabela descritiva de um artigo científico.
+
+- Construir essa tabela manualmente, calculando média, desvio padrão e formatando célula por célula, consome tempo e introduz risco de erro de transcrição.
+
+- O pacote **gtsummary** gera a tabela descritiva completa a partir do próprio data frame, com uma linha de código.
+
+------------------------------------------------------------------------
+
+## Código: tbl_summary() básico
+
+```{r}
+#| label: tbl-summary-basico-codigo
+#| eval: false
+
+amostras_solo |>
+  select(ph, materia_organica, argila) |>
+  tbl_summary()
+```
+
+------------------------------------------------------------------------
+
+## Output: tabela descritiva básica
+
+```{r}
+#| label: tbl-summary-basico-output
+#| echo: false
+
+amostras_solo |>
+  select(ph, materia_organica, argila) |>
+  tbl_summary()
+```
+
+- **A tabela já apresenta mediana e intervalo interquartil por padrão, a medida mais apropriada quando não se assume normalidade previamente. O formato de saída já corresponde ao esperado por periódicos científicos.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 2
+
+## Comparação entre Grupos
+:::
+
+------------------------------------------------------------------------
+
+## Código: tbl_summary() por grupo com add_p()
+
+```{r}
+#| label: tbl-summary-grupo-codigo
+#| eval: false
+
+amostras_solo |>
+  select(regiao, ph, materia_organica, argila) |>
+  tbl_summary(by = regiao) |>
+  add_p()
+```
+
+------------------------------------------------------------------------
+
+## Output: tabela comparativa com teste estatístico
+
+```{r}
+#| label: tbl-summary-grupo-output
+#| echo: false
+
+amostras_solo |>
+  select(regiao, ph, materia_organica, argila) |>
+  tbl_summary(by = regiao) |>
+  add_p()
+```
+
+- **A função `add_p()` seleciona automaticamente um teste estatístico apropriado ao tipo de variável, ANOVA ou Kruskal-Wallis para variáveis contínuas comparadas entre três grupos, e adiciona o valor de p em uma coluna própria, sem cálculo manual separado.**
+
+------------------------------------------------------------------------
+
+## Código: personalizações
+
+```{r}
+#| label: tbl-summary-personalizacao-codigo
+#| eval: false
+
+amostras_solo |>
+  select(regiao, ph, materia_organica, argila) |>
+  tbl_summary(
+    by = regiao,
+    label = list(
+      ph                ~ "pH do solo",
+      materia_organica  ~ "Matéria orgânica (%)",
+      argila            ~ "Argila (%)")) |>
+  add_p() |>
+  add_overall() |>
+  bold_labels() |>
+  modify_header(label ~ "**Variável**")
+```
+
+------------------------------------------------------------------------
+
+## Output: tabela final formatada
+
+```{r}
+#| label: tbl-summary-personalizacao-output
+#| echo: false
+
+amostras_solo |>
+  select(regiao, ph, materia_organica, argila) |>
+  tbl_summary(
+    by = regiao,
+    label = list(
+      ph                ~ "pH do solo",
+      materia_organica  ~ "Matéria orgânica (%)",
+      argila            ~ "Argila (%)")) |>
+  add_p() |>
+  add_overall() |>
+  bold_labels() |>
+  modify_header(label ~ "**Variável**")
+```
+
+- **A coluna geral, adicionada por `add_overall()`, mostra o resumo de todas as regiões juntas, útil para o leitor comparar cada grupo ao conjunto total. Rótulos legíveis substituem os nomes técnicos das colunas do banco de dados.**
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 3
+
+## Exportação
+:::
+
+------------------------------------------------------------------------
+
+## Código: exportação para Word e HTML
+
+```{r}
+#| label: exportacao-codigo
+#| eval: false
+
+tabela_final <- amostras_solo |>
+  select(regiao, ph, materia_organica, argila) |>
+  tbl_summary(by = regiao) |>
+  add_p()
+
+tabela_final |> as_gt() |> gt::gtsave("tabela_solo.html")
+
+tabela_final |> as_flex_table() |>
+  flextable::save_as_docx(path = "tabela_solo.docx")
+```
+
+- `as_gt()` converte a tabela para o formato do pacote `gt`, adequado para exportação em HTML. `as_flex_table()` converte para o formato do pacote `flextable`, adequado para exportação direta em documento Word.
+
+------------------------------------------------------------------------
+
+## Boas práticas para tabela de publicação
+
+- Reportar mediana e intervalo interquartil para variáveis sem distribuição normal confirmada, e média com desvio padrão apenas quando a normalidade for verificada.
+
+- Incluir o teste estatístico utilizado em nota de rodapé da tabela, não apenas o valor de p isolado.
+
+- Manter os rótulos das variáveis em linguagem acessível ao leitor do artigo, evitando nomes técnicos de coluna do banco de dados.
+
+------------------------------------------------------------------------
+
+::: {style="text-align: center; padding-top: 160px;"}
+# Bloco 4
+
+## Erros Comuns
+:::
+
+------------------------------------------------------------------------
+
+## Erro comum 1, reportar apenas média quando a variável não é normal
+
+- O padrão do `tbl_summary()` já reporta mediana e IQR, mas trocar manualmente para média e desvio padrão sem verificar a normalidade da variável reintroduz o problema que o padrão do pacote evita.
+
+- Verificar a distribuição antes de decidir qual estatística de resumo faz mais sentido reportar.
+
+------------------------------------------------------------------------
+
+## Erro comum 2, não ajustar o teste estatístico ao tipo de variável
+
+- O `add_p()` escolhe um teste padrão razoável, mas esse padrão pode não ser o mais adequado para todas as situações, como dados pareados ou variáveis ordinais.
+
+- O argumento `test` de `add_p()` permite especificar manualmente o teste apropriado quando o padrão automático não se ajusta à estrutura dos dados.
+
+------------------------------------------------------------------------
+
+## Resumo: gtsummary
+
+| Função | O que faz |
+|---------------------|---------------------------------------------------|
+| `tbl_summary()` | Gera a tabela descritiva a partir do data frame |
+| `add_p()` | Adiciona teste estatístico comparando os grupos |
+| `add_overall()` | Adiciona coluna com o resumo geral |
+| `bold_labels()` | Formata os rótulos das variáveis em negrito |
+| `as_gt()`, `as_flex_table()` | Preparam a tabela para exportação em HTML ou Word |
+
+------------------------------------------------------------------------
+
+## Obrigada!
+
+![](imagens/comunidade.png){fig-align="center" width="420"}
+
+**Continue praticando e explorando.**
+
+*Esta aula é parte do projeto Café com R. É open source. Use, compartilhe e adapte.*
+
+------------------------------------------------------------------------
+
+## Siga o Café com R
+
+> - Que cada gole desperte uma nova ideia.
+>
+> - Que cada script abra uma nova conversa.
+>
+> - Que o Café com R se torne um ponto de encontro nosso.
+>
+> **SITE OFICIAL \>** <https://jenniferlopes.github.io/meu_site/>
