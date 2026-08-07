@@ -292,6 +292,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<style>
+  /* Correção do cabeçalho azul-marinho — só nesta página.
+     Usa cores fixas (não var()) porque as variáveis de estilo_jeni.css
+     não estavam resolvendo aqui, deixando o azul padrão do tema flatly aparecer. */
+  .navbar,
+  .navbar.navbar-expand-lg,
+  .navbar.bg-light,
+  .navbar.navbar-dark,
+  .navbar.navbar-light,
+  .navbar.navbar-expand-lg.bg-light {
+    background: linear-gradient(120deg, #6B4F4F 0%, #5A3F3F 100%) !important;
+    border-bottom: none !important;
+    padding: 0.6em 1.5em !important;
+  }
+
+  .navbar .navbar-brand,
+  .navbar .nav-link {
+    color: #ffffff !important;
+    white-space: nowrap !important;
+    font-size: 0.85em !important;
+    padding: 0.4em 0.7em !important;
+  }
+
+  .navbar .nav-link:hover {
+    color: #f7f2ee !important;
+  }
+
+  .navbar-nav {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+</style>
 <hr>
 <blockquote class="blockquote">
 <p><strong>Esta página reúne os recursos mais relevantes para quem deseja aprender R com base sólida. O conteúdo foi selecionado com critério técnico e está organizado por categoria para facilitar a navegação.</strong></p>
