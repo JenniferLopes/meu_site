@@ -1,27 +1,5 @@
 [
   {
-    "listing": "/cafecomr/index.html",
-    "items": [
-      "/cafecomr/posts/dose13.html",
-      "/cafecomr/posts/cha_cap3.html",
-      "/cafecomr/posts/cha_cap2.html",
-      "/cafecomr/posts/dose12.html",
-      "/cafecomr/posts/dose11.html",
-      "/cafecomr/posts/cha_cap1.html",
-      "/cafecomr/posts/dose10_2505.html",
-      "/cafecomr/posts/dose9_1905.html",
-      "/cafecomr/posts/dose8_12_05.html",
-      "/cafecomr/posts/09_03_tutorial_newsletter_automacao.html",
-      "/cafecomr/posts/06_01_dose6.html",
-      "/cafecomr/posts/09_12_dose5.html",
-      "/cafecomr/posts/02_12_dose4.html",
-      "/cafecomr/posts/25_11_dose3.html",
-      "/cafecomr/posts/18_11-resenhalivro.html",
-      "/cafecomr/posts/13_11_R_AI.html",
-      "/cafecomr/posts/10_11_dose1.html"
-    ]
-  },
-  {
     "listing": "/apresentações/index.html",
     "items": [
       "/apresentações/posts/para_2026.html",
@@ -88,6 +66,29 @@
       "/apresentações/posts/aula60_dbc.html",
       "/apresentações/posts/aula61_dbi.html",
       "/apresentações/posts/aula62_modelos_mistos.html"
+    ]
+  },
+  {
+    "listing": "/cafecomr/index.html",
+    "items": [
+      "/cafecomr/posts/cha_cap4.html",
+      "/cafecomr/posts/cha_cap3.html",
+      "/cafecomr/posts/dose13.html",
+      "/cafecomr/posts/cha_cap2.html",
+      "/cafecomr/posts/dose12.html",
+      "/cafecomr/posts/dose11.html",
+      "/cafecomr/posts/cha_cap1.html",
+      "/cafecomr/posts/dose10_2505.html",
+      "/cafecomr/posts/dose9_1905.html",
+      "/cafecomr/posts/dose8_12_05.html",
+      "/cafecomr/posts/09_03_tutorial_newsletter_automacao.html",
+      "/cafecomr/posts/06_01_dose6.html",
+      "/cafecomr/posts/09_12_dose5.html",
+      "/cafecomr/posts/02_12_dose4.html",
+      "/cafecomr/posts/25_11_dose3.html",
+      "/cafecomr/posts/18_11-resenhalivro.html",
+      "/cafecomr/posts/13_11_R_AI.html",
+      "/cafecomr/posts/10_11_dose1.html"
     ]
   }
 ]
