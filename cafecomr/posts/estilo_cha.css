@@ -1,0 +1,254 @@
+/* ================================================
+   estilo_cha.css
+   Série: Uma Senhora Toma Chá | Café com R
+   Jennifer Lopes
+   ================================================ */
+
+/* PALETA */
+/* Marrom escuro:  #4B2C20  */
+/* Caramelo:       #C8864A  */
+/* Bege claro:     #F5E6D3  */
+/* Bege médio:     #EFEBE9  */
+/* Bege borda:     #A1887F  */
+
+/* ── LINHA DO TEMPO ───────────────────────────── */
+
+.cha-timeline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #F5E6D3;
+  border: 1px solid #C8864A;
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.cha-serie-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4B2C20;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.cha-caps {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cha-cap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+
+.cha-cap.done {
+  background: #C8864A;
+  color: #fff;
+  cursor: pointer;
+}
+
+.cha-cap.done:hover {
+  transform: scale(1.15);
+  background: #4B2C20;
+}
+
+.cha-cap.current {
+  background: #4B2C20;
+  color: #F5E6D3;
+  outline: 3px solid #C8864A;
+  outline-offset: 2px;
+}
+
+.cha-cap.future {
+  background: #EFEBE9;
+  color: #A1887F;
+  border: 1px solid #C8864A;
+}
+
+.cha-cap.dot {
+  width: auto;
+  border-radius: 4px;
+  padding: 0 6px;
+  letter-spacing: 2px;
+}
+
+/* ── CAPA DO CAPÍTULO ─────────────────────────── */
+
+.cha-capa {
+  background: #4B2C20;
+  color: #F5E6D3;
+  border-radius: 10px;
+  padding: 36px 40px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.cha-capa-numero {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #C8864A;
+  margin-bottom: 10px;
+}
+
+.cha-capa-titulo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #F5E6D3;
+  margin-bottom: 18px;
+  line-height: 1.2;
+}
+
+.cha-capa-frase {
+  font-size: 0.95rem;
+  color: #EFEBE9;
+  font-style: italic;
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 auto;
+  border-top: 1px solid #C8864A;
+  padding-top: 16px;
+}
+
+/* ── BLOCO DE INTRODUÇÃO (substituiu o inline) ── */
+
+.cha-intro {
+  background: #EFEBE9;
+  border-left: 4px solid #C8864A;
+  padding: 16px 20px;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+
+.cha-intro li {
+  list-style: none;
+  color: #4B2C20;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+/* ── CITAÇÕES DESTACADAS ──────────────────────── */
+
+.cha-citacao {
+  background: #F5E6D3;
+  border-left: 5px solid #C8864A;
+  padding: 16px 22px;
+  border-radius: 0 6px 6px 0;
+  margin: 20px 0;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: #3E2018;
+  font-style: italic;
+}
+
+/* ── DESTAQUE (frase de abertura) ────────────── */
+
+.cha-destaque {
+  background: #EFEBE9;
+  border: 1px solid #C8864A;
+  border-radius: 8px;
+  padding: 20px 26px;
+  margin: 20px 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #4B2C20;
+  font-weight: 500;
+}
+
+/* ── CALLOUTS COM IDENTIDADE DA SÉRIE ─────────── */
+
+.callout-note {
+  border-left-color: #4B2C20 !important;
+}
+
+.callout-note > .callout-header {
+  background: #EFEBE9 !important;
+  color: #4B2C20 !important;
+}
+
+.callout-tip {
+  border-left-color: #C8864A !important;
+}
+
+.callout-tip > .callout-header {
+  background: #F5E6D3 !important;
+  color: #4B2C20 !important;
+}
+
+.callout-important {
+  border-left-color: #4B2C20 !important;
+}
+
+.callout-important > .callout-header {
+  background: #4B2C20 !important;
+  color: #F5E6D3 !important;
+}
+
+.callout-warning {
+  border-left-color: #C8864A !important;
+}
+
+.callout-warning > .callout-header {
+  background: #F5E6D3 !important;
+  color: #4B2C20 !important;
+}
+
+/* ── RODAPÉS ──────────────────────────────────── */
+
+.cha-proximo {
+  background: #EFEBE9;
+  border: 1px solid #A1887F;
+  border-radius: 8px;
+  padding: 22px 26px;
+  margin-top: 32px;
+  text-align: center;
+  color: #4B2C20;
+  line-height: 1.7;
+}
+
+.cha-proximo strong {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #C8864A;
+  margin-bottom: 8px;
+}
+
+.cha-assine {
+  background: #EFEBE9;
+  border-left: 4px solid #C8864A;
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  color: #4B2C20;
+  line-height: 1.8;
+}
+
+.cha-assine li {
+  list-style: none;
+  font-size: 0.95rem;
+}
+
+.cha-assine a {
+  color: #C8864A !important;
+  font-weight: 700;
+}
+
+.cha-assine a:hover {
+  color: #4B2C20 !important;
+}
